@@ -30,7 +30,7 @@ final class ReaderModel {
     /// Names Jev picked for listings the page left unlabelled.
     private(set) var listingNames: [String: String] = [:]
 
-    var address: String = "https://www.lanacion.com.ar"
+    var address: String = "https://es.wikipedia.org/wiki/Buenos_Aires"
 
     private let engine = HeadlessWebView()
     private let analyzer: PageAnalyzer?

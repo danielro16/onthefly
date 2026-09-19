@@ -122,6 +122,117 @@
     };
   }
 
+  /*
+   * A data table, kept as a table.
+   *
+   * Flattening one into prose destroys the only thing that makes it readable:
+   * which column a value belongs to. A bank statement is a table, and "12/03,
+   * Transferencia, -5.000" is meaningless without knowing that those are date,
+   * concept and amount.
+   *
+   * Column headers travel with the rows so the native side can speak each cell
+   * as "Concepto: Transferencia" — the pairing a sighted reader gets for free
+   * from the grid.
+   *
+   * Returns null for layout tables: markup used for positioning, not for data.
+   */
+  function tableBlock(el, id) {
+    const rows = Array.prototype.slice.call(el.rows);
+    if (rows.length < 2) return null;
+
+    /*
+     * Finding the header row is harder than rows[0].
+     *
+     * Wikipedia's climate table opens with a single cell spanning the whole
+     * width — a title, not headers — and the real column names sit in the
+     * next row. Taking rows[0] blindly yielded one header for a fourteen
+     * column table, leaving every value after the first labelled "Columna N".
+     *
+     * The width that most rows share is the table's real shape; any leading
+     * row narrower than that is a caption in disguise.
+     */
+    const widths = {};
+    for (const row of rows) {
+      const n = row.cells.length;
+      widths[n] = (widths[n] || 0) + 1;
+    }
+    let shape = 0, shapeCount = 0;
+    for (const width in widths) {
+      if (widths[width] > shapeCount) { shapeCount = widths[width]; shape = Number(width); }
+    }
+
+    let headerIndex = -1;
+    let spanningTitle = "";
+    for (let i = 0; i < rows.length && i < 3; i++) {
+      const cells = rows[i].cells;
+      if (cells.length < shape) {
+        // Narrower than the table: a title band.
+        if (!spanningTitle) spanningTitle = textOf(rows[i]).slice(0, 120);
+        continue;
+      }
+      let ths = 0;
+      for (const cell of cells) if (cell.tagName === "TH") ths++;
+      if (ths >= Math.max(1, cells.length / 2)) { headerIndex = i; }
+      break;
+    }
+
+    let headers = [];
+    if (headerIndex >= 0) {
+      headers = Array.prototype.map.call(rows[headerIndex].cells, function (c) {
+        return textOf(c).slice(0, 40);
+      });
+    }
+
+    /*
+     * Key–value tables put their headers in the first COLUMN, not the first
+     * row: Wikipedia infoboxes, product spec sheets, order details, account
+     * summaries. Without detecting this, "Coordenadas | 34°35'59\"S" reads as
+     * "Columna 1: Coordenadas, Columna 2: 34°35'59\"S" — the label announced
+     * as a value, and every field named after its position.
+     *
+     * Reported separately so the native side can render one line per field
+     * instead of a record list.
+     */
+    let rowHeaders = 0;
+    for (const row of rows) {
+      if (row.cells.length >= 2 && row.cells[0].tagName === "TH") rowHeaders++;
+    }
+    const keyValue = headerIndex < 0 && shape === 2 &&
+      rowHeaders >= Math.max(2, rows.length * 0.6);
+
+    const body = [];
+    const start = headerIndex >= 0 ? headerIndex + 1 : 0;
+    for (let i = start; i < rows.length && body.length < 200; i++) {
+      // In a key-value table a row narrower than the shape is a section band
+      // ("Bandera", "Escudo"), not a field. Keeping it as a record produces a
+      // value with no name.
+      if (keyValue && rows[i].cells.length < shape) continue;
+      const cells = Array.prototype.map.call(rows[i].cells, function (c) {
+        return textOf(c).slice(0, 200);
+      });
+      if (cells.some(function (c) { return c.length > 0; })) body.push(cells);
+    }
+    if (!body.length) return null;
+
+    // Layout table: no headers, no caption, and cells long enough to be prose
+    // rather than data. Treating it as a table would invent structure.
+    const caption = el.caption ? textOf(el.caption) : spanningTitle;
+    if (headerIndex < 0 && !caption) {
+      const avgLength = body[0].join("").length / Math.max(1, body[0].length);
+      if (body[0].length <= 2 && avgLength > 120) return null;
+    }
+
+    return {
+      id: id,
+      type: "table",
+      caption: caption.slice(0, 120),
+      headers: headers,
+      rows: body,
+      keyValue: keyValue,
+      columnCount: Math.max.apply(null, body.map(function (r) { return r.length; })),
+    };
+  }
+
   function listBlock(el, id) {
     const items = [];
     for (const li of el.children) {
@@ -240,14 +351,9 @@
         }
 
         if (tag === "TABLE") {
-          // Tables need their own treatment to stay navigable. Until that
-          // exists, mark the gap instead of flattening it into fake prose.
-          blocks.push({
-            id: nextId(),
-            type: "unsupported",
-            kind: "table",
-            text: textOf(el).slice(0, 200),
-          });
+          const block = tableBlock(el, nextId());
+          if (block) blocks.push(block);
+          else counter--;
           continue;
         }
 

@@ -399,6 +399,9 @@ struct BlockView: View {
         case .separator:
             Divider().accessibilityHidden(true)
 
+        case .table(_, let caption, let headers, let rows, let keyValue):
+            TableBlockView(caption: caption, headers: headers, rows: rows, keyValue: keyValue)
+
         case .unsupported(_, let kind, let text):
             VStack(alignment: .leading, spacing: 4) {
                 Label("\(kind.capitalized) — not simplified yet", systemImage: "questionmark.square.dashed")

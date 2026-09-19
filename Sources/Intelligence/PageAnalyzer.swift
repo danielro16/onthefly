@@ -425,6 +425,7 @@ private extension Block {
         case .quote: return "quote"
         case .code: return "code"
         case .separator: return "separator"
+        case .table: return "table"
         case .unsupported(_, let kind, _): return kind
         }
     }

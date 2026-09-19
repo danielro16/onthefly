@@ -206,6 +206,7 @@ enum Block: Codable, Sendable, Identifiable {
     case quote(id: String, text: String, links: [Link])
     case code(id: String, text: String)
     case separator(id: String)
+    case table(id: String, caption: String, headers: [String], rows: [[String]], keyValue: Bool)
     case unsupported(id: String, kind: String, text: String)
 
     var id: String {
@@ -213,7 +214,8 @@ enum Block: Codable, Sendable, Identifiable {
         case .heading(let id, _, _), .paragraph(let id, _, _),
              .list(let id, _, _), .image(let id, _, _, _, _),
              .quote(let id, _, _), .code(let id, _),
-             .separator(let id), .unsupported(let id, _, _):
+             .separator(let id), .unsupported(let id, _, _),
+             .table(let id, _, _, _, _):
             return id
         }
     }
@@ -229,6 +231,10 @@ enum Block: Codable, Sendable, Identifiable {
             return items.map(\.text).joined(separator: ", ")
         case .image(_, _, let alt, _, let caption):
             return caption ?? alt
+        case .table(_, let caption, _, let rows, _):
+            return caption.isEmpty
+                ? "Tabla de \(rows.count) filas"
+                : "\(caption). \(rows.count) filas"
         case .separator:
             return ""
         }
@@ -249,6 +255,7 @@ enum Block: Codable, Sendable, Identifiable {
     private enum CodingKeys: String, CodingKey {
         case id, type, level, text, links, ordered, items
         case src, alt, needsAlt, caption, kind
+        case headers, rows, keyValue
     }
 
     init(from decoder: Decoder) throws {
@@ -293,6 +300,14 @@ enum Block: Codable, Sendable, Identifiable {
             self = .code(id: id, text: try c.decode(String.self, forKey: .text))
         case "separator":
             self = .separator(id: id)
+        case "table":
+            self = .table(
+                id: id,
+                caption: try c.decodeIfPresent(String.self, forKey: .caption) ?? "",
+                headers: try c.decodeIfPresent([String].self, forKey: .headers) ?? [],
+                rows: try c.decodeIfPresent([[String]].self, forKey: .rows) ?? [],
+                keyValue: try c.decodeIfPresent(Bool.self, forKey: .keyValue) ?? false
+            )
         default:
             self = .unsupported(
                 id: id,
@@ -333,6 +348,12 @@ enum Block: Codable, Sendable, Identifiable {
             try c.encode(text, forKey: .text)
         case .separator:
             try c.encode("separator", forKey: .type)
+        case .table(_, let caption, let headers, let rows, let keyValue):
+            try c.encode("table", forKey: .type)
+            try c.encode(caption, forKey: .caption)
+            try c.encode(headers, forKey: .headers)
+            try c.encode(rows, forKey: .rows)
+            try c.encode(keyValue, forKey: .keyValue)
         case .unsupported(_, let kind, let text):
             try c.encode("unsupported", forKey: .type)
             try c.encode(kind, forKey: .kind)
