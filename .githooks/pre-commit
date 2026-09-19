@@ -1,0 +1,11 @@
+#!/bin/bash
+# Bloquea el commit si hay algo que parezca una credencial real.
+# Instalar: git config core.hooksPath .githooks
+patterns='vck_[A-Za-z0-9]{40,}|sk-[A-Za-z0-9]{32,}|ghp_[A-Za-z0-9]{36}|AIza[A-Za-z0-9_-]{35}'
+hits=$(git diff --cached -U0 | grep -E "^\+" | grep -E "$patterns" | grep -viE 'x{10,}|placeholder|example|redactado')
+if [ -n "$hits" ]; then
+  echo "❌ Parece haber una credencial en el commit:"
+  echo "$hits" | sed -E 's/(vck_|sk-|ghp_|AIza)[A-Za-z0-9_-]*/\1…REDACTADO/g' | head -5
+  echo "Si es un falso positivo: git commit --no-verify"
+  exit 1
+fi
