@@ -1254,12 +1254,13 @@
       if (isHidden(link)) continue;
       // A link with no destination of its own is a button in a link's
       // clothes: "Secciones" on lanacion.com.ar is <a href="#"> and opens
-      // the site's menu from JavaScript. Sent as an address it reloaded the
-      // front page, and the seventy sections behind it could not be
-      // reached at all. Without an href the native side presses it inside
-      // the page, like any other control.
+      // the site's menu from JavaScript; "SUSCRIBITE" is <a href="#promo">
+      // and opens a panel. Sent as an address, the first reloaded the front
+      // page and the second did too — and the click handler that does the
+      // real work never ran. Without an href the native side presses it
+      // inside the page, like any other control.
       const raw = (link.getAttribute("href") || "").trim();
-      if (!raw || /^#!?$/.test(raw) || /^javascript:/i.test(raw)) {
+      if (!opensAnotherPage(raw)) {
         push({ kind: "link", label: labelFor(link), region: regionOf(link) }, link);
         continue;
       }
@@ -1967,6 +1968,32 @@
     return title ? title.trim() : "";
   }
 
+  /*
+   * Whether a destination is another document, or a place inside this one.
+   *
+   * The difference decides how a link is offered. A link to another document
+   * is an address the reader can load. A link to this same document — an
+   * empty href, a bare "#", a fragment like "#newsletter", the page's own
+   * path — goes nowhere on its own: whatever it does, the page's JavaScript
+   * does on click. Handed to the reader as an address, it reloaded the page
+   * and the click handler never ran, so the modal it was meant to open never
+   * opened and the person heard the same page again.
+   */
+  function opensAnotherPage(href) {
+    const raw = (href || "").trim();
+    if (!raw || /^#/.test(raw) || /^javascript:/i.test(raw)) return false;
+    let target;
+    try {
+      target = new URL(raw, document.baseURI);
+    } catch (_) {
+      return false;
+    }
+    if (target.protocol !== "http:" && target.protocol !== "https:") return false;
+    return target.origin !== location.origin
+      || target.pathname !== location.pathname
+      || target.search !== location.search;
+  }
+
   /// Whether following an anchor would leave the page behind, which is what
   /// separates "read our policy" from "accept".
   function leavesPage(anchor) {
@@ -2226,12 +2253,8 @@
       put(entry, el);
     }
 
-    /// A destination the reader can load. The same document under another
-    /// fragment is a jump inside the page, and only the page can make it.
-    function opens(href) {
-      if (!href || !/^https?:/i.test(href)) return false;
-      return href.split("#")[0] !== location.href.split("#")[0];
-    }
+    /// A destination the reader can load. Ver `opensAnotherPage`.
+    const opens = opensAnotherPage;
 
     function putLink(label, href, el, level, group) {
       label = (label || "").replace(/\s+/g, " ").trim();
@@ -3151,6 +3174,13 @@ allowedVideoRegex: /^$/,
       page.title, page.blocks.length, page.listings.length,
       page.actions.map(function (a) {
         return a.label + (a.fields ? "/" + a.fields.map(function (f) { return f.name + ":" + f.type; }).join(",") : "");
+      }).join("|"),
+      // The walk is what the reader draws on a page read in its own order.
+      // Left out, a tap that changed only the walk — a panel that opened
+      // with no new controls, a section that expanded — read as "nothing
+      // happened" and was never sent.
+      (page.stream || []).map(function (e) {
+        return e.kind + (e.ref || e.label || (e.block && e.block.text) || "").slice(0, 40);
       }).join("|"),
       page.overlay ? page.overlay.text : "",
     ].join("\n");

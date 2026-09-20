@@ -40,10 +40,24 @@ struct ExtractedPage: Codable, Sendable {
     func isEquivalent(to other: ExtractedPage?) -> Bool {
         guard let other else { return false }
         return title == other.title
+            && url == other.url
             && blocks.count == other.blocks.count
             && listings.count == other.listings.count
             && actions.map(\.shape) == other.actions.map(\.shape)
+            && streamShape == other.streamShape
             && overlay?.text == other.overlay?.text
+    }
+
+    /// Lo que el recorrido dice, para distinguir dos lecturas.
+    ///
+    /// En una página que se lee en su orden, el recorrido ES lo que se
+    /// dibuja. Sin mirarlo, un toque que abrió un panel sin traer controles
+    /// nuevos —o que expandió una sección— se leía como "la página no
+    /// cambió", y la app se lo decía al usuario en voz alta.
+    private var streamShape: [String] {
+        (stream ?? []).map { entry in
+            entry.kind + "|" + (entry.ref ?? entry.label ?? entry.block?.plainText.prefix(40).description ?? "")
+        }
     }
 
     /// Every field on the page, in order.
