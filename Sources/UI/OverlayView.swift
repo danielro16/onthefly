@@ -17,6 +17,8 @@ struct OverlayView: View {
     let overlay: Overlay
     var onChoose: (Overlay.Choice) -> Void
     var onOpenLink: (String) -> Void = { _ in }
+    /// The way through a check the native view cannot pass: a captcha.
+    var onOpenOriginal: () -> Void = {}
 
     @State private var showingOriginal = false
 
@@ -29,6 +31,17 @@ struct OverlayView: View {
                 Text(overlay.kind.explanation)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+            }
+
+            if overlay.kind == .captcha {
+                Button {
+                    onOpenOriginal()
+                } label: {
+                    Text("Abrir la página original")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .accessibilityHint("La web tal cual, con navegación web estándar, para completar la verificación")
             }
 
             if !overlay.choices.isEmpty {

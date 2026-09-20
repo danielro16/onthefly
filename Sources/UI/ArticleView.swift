@@ -26,6 +26,7 @@ struct ArticleView: View {
     var onSubmitForm: (Action) -> Void = { _ in }
     var onOpenURL: (String) -> Void = { _ in }
     var onOverlayChoice: (Overlay.Choice) -> Void = { _ in }
+    var onOpenOriginal: () -> Void = {}
 
     /// Ties each block view to its rotor entries so VoiceOver can jump to it.
     @Namespace private var rotorNamespace
@@ -157,7 +158,7 @@ struct ArticleView: View {
             return RotorTarget(
                 id: id,
                 destination: id,
-                label: label.isEmpty ? (needsAlt ? "Undescribed image" : "Image") : label
+                label: label.isEmpty ? (needsAlt ? "Imagen sin descripción" : "Imagen") : label
             )
         }
     }
@@ -176,7 +177,10 @@ struct ArticleView: View {
                 // Antes que nada: si algo tapa la página, eso es lo primero
                 // que el usuario tiene que resolver.
                 if let overlay = page.overlay {
-                    OverlayView(overlay: overlay, onChoose: onOverlayChoice, onOpenLink: onOpenURL)
+                    OverlayView(
+                        overlay: overlay, onChoose: onOverlayChoice,
+                        onOpenLink: onOpenURL, onOpenOriginal: onOpenOriginal
+                    )
                 }
 
                 intentPanel
@@ -624,7 +628,7 @@ struct BlockView: View {
         if let caption, !caption.isEmpty { return caption }
         // v2 fills this in with on-device vision. Saying so is better than a
         // silent unlabeled image, which VoiceOver reads as just "image".
-        return needsAlt ? "Image without a description" : "Image"
+        return needsAlt ? "Imagen sin descripción" : "Imagen"
     }
 
     /// Builds text with real, focusable inline links.

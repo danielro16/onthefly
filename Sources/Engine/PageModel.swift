@@ -138,7 +138,7 @@ struct Overlay: Codable, Sendable {
     let links: [Reference]?
 
     enum Kind: String, Codable, Sendable {
-        case cookies, paywall, newsletter, login, age, other
+        case cookies, paywall, newsletter, login, age, captcha, other
 
         var title: String {
             switch self {
@@ -147,6 +147,7 @@ struct Overlay: Codable, Sendable {
             case .newsletter: return "Invitación a suscribirte"
             case .login:      return "Hay que iniciar sesión"
             case .age:        return "Verificación de edad"
+            case .captcha:    return "Verificación de seguridad"
             case .other:      return "Aviso de la página"
             }
         }
@@ -163,6 +164,8 @@ struct Overlay: Codable, Sendable {
                 return "Hace falta una cuenta para ver esto."
             case .age:
                 return "La página pide confirmar tu edad."
+            case .captcha:
+                return "La página pide comprobar que sos una persona. Eso no se puede resolver desde esta vista: abrí la página original, completalo ahí y volvé."
             case .other:
                 return "La página muestra un aviso encima del contenido."
             }

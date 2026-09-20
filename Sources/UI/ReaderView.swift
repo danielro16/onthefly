@@ -462,7 +462,8 @@ struct ReaderView: View {
                 },
                 onOverlayChoice: { choice in
                     Task { await model.resolveOverlay(choice) }
-                }
+                },
+                onOpenOriginal: { model.showOriginal() }
             )
         case .failed(let message):
             FailureView(

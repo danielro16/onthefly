@@ -459,6 +459,7 @@
       /^(cerrar alerta|close alert)$/i,
       /^(quitar|agregar|remove|add) (uno|one)$/i,     // stepper controls
       /^(anterior|siguiente|previous|next)$/i,
+      /^(página|page)\s*\d+$/i,                    // carousel pagination
     ];
 
     function isNoise(label) {
@@ -894,6 +895,10 @@
       "button, [role=button], input[type=submit], input[type=button]"
     )) {
       if (isHidden(button)) continue;
+      // A disabled button is not an action; offering it reads as a control
+      // that does nothing. When the page enables it, the next extraction
+      // picks it up.
+      if (button.disabled || button.getAttribute("aria-disabled") === "true") continue;
       // Already reported as part of a form's submit.
       if (button.closest("form") && button.matches("[type=submit]")) continue;
       if (button.hasAttribute("data-jef-id")) continue;
@@ -1098,9 +1103,16 @@
    * screen-reader user nothing, which is the same failure as calling a group
    * "Pie de página": a fact about the markup, not about what it holds.
    */
+  /// "button-row-carousel" is a class name someone put in an aria-label.
+  /// A name with no spaces and a dash or underscore in it is code, not a
+  /// title, and a title that is code is worse than none.
+  function looksLikeCode(text) {
+    return /^[\w-]+$/.test(text) && /[-_]/.test(text);
+  }
+
   function listingTitle(container) {
     const aria = container.getAttribute("aria-label");
-    if (aria && aria.trim()) return aria.trim();
+    if (aria && aria.trim() && !looksLikeCode(aria.trim())) return aria.trim();
 
     const labelledBy = container.getAttribute("aria-labelledby");
     if (labelledBy) {
@@ -1332,13 +1344,44 @@
     return { interactive: interactive, images: images, headings: headings };
   }
 
+  /*
+   * A human check the reader cannot pass for anyone.
+   *
+   * MercadoLibre answers a search with "Por seguridad, completá este paso" and
+   * a reCAPTCHA in an iframe — off limits by design — under a disabled
+   * "Continuar". Rebuilt, that page was a heading, a cookie notice and a
+   * button that did nothing. What the user needs to hear is what it is and
+   * where the way through is: the original page, where the check can be
+   * solved with VoiceOver's own web navigation, in the same session.
+   */
+  function detectChallenge() {
+    const frames = Array.prototype.slice.call(document.querySelectorAll("iframe"));
+    const frame = frames.find(function (f) {
+      const src = (f.getAttribute("src") || "") + " " + (f.getAttribute("title") || "");
+      return /recaptcha|hcaptcha|turnstile|challenges\.cloudflare|arkoselabs|funcaptcha/i.test(src) && !isHidden(f);
+    });
+    const words = /no soy un robot|i'm not a robot|verific[aá] que (sos|eres)|verify you are human|completá este paso/i;
+    if (!frame && !words.test(textOf(document.body).slice(0, 3000))) return null;
+
+    const heading = document.querySelector("h1, h2, [role=heading]");
+    const said = heading ? textOf(heading) : "";
+    return {
+      kind: "captcha",
+      text: said || "La página pide comprobar que sos una persona.",
+      choices: [],
+      links: [],
+    };
+  }
+
   function extract() {
     // Collected before Readability runs, and from the live document: the parse
     // below throws all of this away.
     // Overlay first: it stamps its own controls, and the action inventory has
     // to know which elements are already spoken for.
     const found = detectOverlay();
-    const overlay = found ? found.overlay : null;
+    // A human check outranks a cookie notice: nothing else on the page works
+    // until it is passed.
+    const overlay = detectChallenge() || (found ? found.overlay : null);
     const actions = collectActions(found ? found.element : null);
     const groups = groupActions(actions);
     const listings = collectListings();
