@@ -518,7 +518,15 @@
       // UI cannot press it — it has to ask this element to click itself. A CSS
       // selector would break on any re-render; an attribute survives until the
       // node is replaced, and a re-extraction re-stamps everything anyway.
-      if (element) element.setAttribute("data-jef-id", action.id);
+      if (element) {
+        element.setAttribute("data-jef-id", action.id);
+        // Never seen by any extraction of this document: what the last tap
+        // made appear. Unlike the id, this mark is not cleared, so a second
+        // "Comprar" — the one inside the modal that "Comprar" opened — is
+        // new even though its label is not.
+        action.fresh = !element.hasAttribute("data-jef-seen");
+        element.setAttribute("data-jef-seen", "1");
+      }
       actions.push(action);
       stamped.push({ action: action, element: element });
     }
@@ -2065,6 +2073,7 @@ allowedVideoRegex: /^$/,
       '[data-jef-id="' + String(actionId).replace(/"/g, "") + '"]'
     );
     if (!anchor) return { ok: false, reason: "gone" };
+    lateRounds = 0;
 
     const left = leaveField();
     const form = anchor.tagName === "FORM" ? anchor : anchor.closest("form");
@@ -2109,6 +2118,9 @@ allowedVideoRegex: /^$/,
   window.__jefActivate = function (id) {
     const el = document.querySelector('[data-jef-id="' + String(id).replace(/"/g, '') + '"]');
     if (!el) return { ok: false, reason: "gone" };
+    // A tap is a new trigger; the late-change budget is per trigger, not
+    // per URL, or the fourth tap on a page stopped being watched.
+    lateRounds = 0;
 
     const left = leaveField();
     const before = documentKey();
@@ -2124,14 +2136,11 @@ allowedVideoRegex: /^$/,
   };
 
   /// Re-runs extraction on demand, after an activation changed the page.
+  /// Through extractAndSend, so what the page does NEXT is watched too: the
+  /// "Comprar" bar slid in a second after the fare was picked, and the
+  /// re-extraction that followed the tap had already come and gone.
   window.__jefReextract = function () {
-    whenSettled(function () {
-      try {
-        send(extract());
-      } catch (e) {
-        send({ ok: false, reason: "error", message: String((e && e.message) || e), url: location.href });
-      }
-    });
+    whenSettled(extractAndSend);
   };
 
   function extractAndSend() {

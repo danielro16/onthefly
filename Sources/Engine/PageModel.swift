@@ -255,6 +255,8 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
     /// Sits in the bar pinned to the bottom of the screen: the page's own
     /// next step, whatever it is called.
     let primary: Bool?
+    /// First seen by this extraction: what the last tap made appear.
+    let fresh: Bool?
 
     enum Kind: String, Codable, Sendable {
         case form, button, link

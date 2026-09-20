@@ -377,16 +377,16 @@ final class ReaderModel {
         )
     }
 
-    /// What is new in `page` compared with the one on screen, by label:
-    /// the controls a tap made appear.
+    /// What is new in `page` compared with the one on screen: the controls
+    /// a tap made appear. New by element, as the extractor marks them —
+    /// a second "Comprar" inside a modal is new though its label is not.
     private func noteArrivals(in page: ExtractedPage, cause: String) {
-        let before = Set((self.page?.actions ?? []).map { "\($0.kind.rawValue)|\($0.label)" })
         // A different page is a different page, not an arrival.
-        guard let current = self.page, current.url == page.url, !before.isEmpty else {
+        guard let current = self.page, current.url == page.url else {
             arrivals = []
             return
         }
-        let fresh = page.actions.filter { !before.contains("\($0.kind.rawValue)|\($0.label)") && $0.kind != .form }
+        let fresh = page.actions.filter { $0.fresh == true && $0.kind != .form }
         arrivals = Array(fresh.prefix(12))
         arrivalCause = cause
     }
