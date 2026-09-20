@@ -209,6 +209,7 @@ struct ArticleView: View {
             ListingView(
                 listing: listing,
                 fallbackName: listingNames[listing.id],
+                startsExpanded: leadsWithContent,
                 onOpenURL: onOpenURL
             )
         }

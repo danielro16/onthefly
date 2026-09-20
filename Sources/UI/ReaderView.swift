@@ -339,36 +339,63 @@ struct ReaderView: View {
                     }
                 }
             }
-            .navigationTitle(model.page?.displayTitle ?? "Reader")
-            .navigationBarTitleDisplayMode(.inline)
-            .safeAreaInset(edge: .top) {
+            // Como Safari: nada arriba. El título de la página vive en el
+            // contenido y no se repite en el cromo, y la barra va abajo, donde
+            // la gente ya la tiene desde iOS 15.
+            .toolbar(.hidden, for: .navigationBar)
+            .safeAreaInset(edge: .bottom) {
                 addressBar
             }
         }
     }
 
+    /// El dominio de la página cargada, como lo escribe Safari: sin esquema y
+    /// sin `www.`.
+    private var displayHost: String {
+        guard
+            let page = model.page,
+            let host = URL(string: page.url)?.host()
+        else { return "" }
+        return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
+    }
+
+    /// Un solo campo que muestra dos cosas, como el de Safari: el dominio
+    /// mientras se lee, la dirección entera mientras se escribe.
+    private var barText: Binding<String> {
+        Binding(
+            get: { addressFocused || displayHost.isEmpty ? model.address : displayHost },
+            set: { model.address = $0 }
+        )
+    }
+
     private var addressBar: some View {
         HStack(spacing: 8) {
-            TextField("Address", text: $model.address)
+            TextField("Buscar o ingresar dirección", text: barText)
                 .textFieldStyle(.roundedBorder)
+                .multilineTextAlignment(addressFocused ? .leading : .center)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .keyboardType(.URL)
                 .submitLabel(.go)
                 .focused($addressFocused)
-                .accessibilityLabel("Web address")
-                .accessibilityHint("Enter a site to read")
+                .accessibilityLabel("Dirección")
+                .accessibilityHint("Tocá dos veces para ir a otro sitio")
                 .onSubmit {
                     addressFocused = false
                     Task { await model.go() }
                 }
 
-            Button("Go") {
-                addressFocused = false
-                Task { await model.go() }
+            // Safari no muestra ningún botón mientras se lee: la barra en
+            // reposo es sólo el dominio. Al escribir sí hace falta un destino
+            // que no sea la tecla "ir" del teclado.
+            if addressFocused {
+                Button("Ir") {
+                    addressFocused = false
+                    Task { await model.go() }
+                }
+                .buttonStyle(.borderedProminent)
+                .accessibilityHint("Carga y simplifica la página")
             }
-            .buttonStyle(.borderedProminent)
-            .accessibilityHint("Loads and simplifies the page")
         }
         .padding(.horizontal)
         .padding(.vertical, 8)
@@ -383,7 +410,7 @@ private struct EmptyStateView: View {
         ContentUnavailableView(
             "Nothing loaded",
             systemImage: "doc.text",
-            description: Text("Enter an address above to read a page.")
+            description: Text("Enter an address below to read a page.")
         )
     }
 }

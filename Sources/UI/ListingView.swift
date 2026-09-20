@@ -13,6 +13,15 @@ struct ListingView: View {
     let listing: Listing
     /// What Jev called it, used only when the page named nothing.
     var fallbackName: String?
+    /// Open from the start when this listing IS the page.
+    ///
+    /// A newspaper's home page is an index, not an article: the headlines are
+    /// the content. Collapsed, the whole traversal of lanacion.com.ar was four
+    /// closed boxes and the legal imprint — twelve stops without a single
+    /// headline, where the real site says "Masivo corte en el AMBA" by stop
+    /// eighteen. Shorter is not the goal; getting there is.
+    var startsExpanded = false
+
     var onOpenURL: (String) -> Void
 
     /// The page's own words beat Jev's category, which beats a bare count.
@@ -40,7 +49,7 @@ struct ListingView: View {
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Image(systemName: expanded ? "chevron.down" : "chevron.right")
+                    Image(systemName: (expanded || startsExpanded) ? "chevron.down" : "chevron.right")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -50,9 +59,9 @@ struct ListingView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("\(displayName), \(listing.subtitle)")
             .accessibilityAddTraits([.isHeader, .isButton])
-            .accessibilityValue(expanded ? "expandido" : "contraído")
+            .accessibilityValue((expanded || startsExpanded) ? "expandido" : "contraído")
 
-            if expanded {
+            if expanded || startsExpanded {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(listing.items.enumerated()), id: \.offset) { index, item in
                         row(item, position: index + 1)
