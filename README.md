@@ -63,7 +63,10 @@ comparte sin cambios.
 - [x] Fallback a la página original cuando la reconstrucción falla o el usuario lo pide
 - [ ] Probar con VoiceOver real end-to-end
 - [ ] Calibrar umbrales contra páginas reales
-- [ ] Formularios de facto: grupos de inputs sin `<form>` (el buscador de vuelos)
+- [x] Formularios de facto: grupos de inputs sin `<form>` (el buscador de vuelos)
+- [x] Autocompletados: las sugerencias de la página como lista nativa
+- [x] Navegación SPA (`pushState`) y páginas que cambian después de leídas
+- [x] Captcha detectado y dicho, con la salida a la página original al lado
 - [ ] Foundation Models: alt-text de imágenes sin descripción
 - [ ] Caché por template
 
@@ -231,12 +234,16 @@ gobierno fallan por lo mismo: tablas y trámites de varios pasos.
 | Formulario simple | contacto, login, búsqueda | ✅ |
 | **Listado repetido** | e-commerce, feeds, resultados | ✅ |
 | Tabla de datos | bancos, gobierno, salud | ❌ marcada como hueco |
+| Formulario sin `<form>` | toda SPA (buscador de vuelos) | ✅ |
+| Autocompletado | aerolínea, e-commerce, direcciones | ✅ |
+| Grilla de opciones (calendario de precios) | aerolínea | ✅ como "Elegí una opción, 34" |
+| Navegación SPA / resultados que llegan tarde | toda SPA | ✅ |
 | Trámite multi-paso | gobierno, checkout | ⚠️ la sesión aguanta; sin probar |
 | Contenido tras login | bancos, salud | ⚠️ la sesión aguanta; sin probar |
 | Scroll infinito | feeds, catálogos | ❌ sin probar |
 | Modal / paywall | diarios | ❌ sin probar |
 | iframe | pasarelas de pago | ⛔ cerrado por diseño → página original |
-| Captcha / anti-bot | e-commerce | ⛔ no se reconstruye → página original |
+| Captcha / anti-bot | e-commerce | ✅ se dice y se ofrece la página original |
 
 ### Medido sobre sitios reales
 
@@ -278,6 +285,57 @@ El nombre del listado sale, por orden: del heading que la página pone antes, de
 un `choice` de Jev entre seis tipos (noticias, productos, trámites, categorías,
 resultados, enlaces) con confianza ≥ 0.5, y recién al final del conteo. Medido
 en La Nación: 2 de 4 listados tenían heading propio, Jev nombró los otros.
+
+## El enfoque de intenciones, medido a ciegas
+
+Después de usar la app sin mirar la pantalla —leyendo sólo el árbol de
+accesibilidad con `Scripts/voiceover-walk.py` y tocando por etiqueta con
+`Scripts/voiceover-tap.py`— en Google, Wikipedia, La Nación, Aerolíneas (home
+y resultados) y MercadoLibre, esto es lo que aguanta y lo que no.
+
+**Lo que aguanta.** "¿Para qué está hecha esta página?" es la pregunta
+correcta como *primera* decisión, porque decide el orden, y el orden es todo
+para quien navega linealmente: en Google el buscador va primero (`lookup`), en
+La Nación los titulares (`read`) con las acciones al final, en Aerolíneas el
+formulario de vuelos (`transact`). En los cuatro Jev acertó la intención
+principal con confianza alta (0.74 a 1.00), y con el orden correcto las
+paradas caen de 182 a 16 y de 336 a 40 sin perder ningún titular.
+
+**Lo que no aguanta: clasificar acción por acción.** Los 34 botones de un
+calendario de precios son *un* control para una persona. Juzgados uno por uno,
+Jev los repartió entre "Comparar", "Comprar" y "Consultar" según lo que dijera
+cada etiqueta, y en la corrida siguiente los mandó enteros a "Gestionar lo que
+ya tengo", contraídos detrás de "¿Qué querés hacer?". No es un problema de
+calibración: la etiqueta "10 de octubre de 2026, 112935 ARS" no contiene la
+información de que hay 33 hermanas iguales. Esa información está en el DOM, y
+el DOM la da gratis. Por eso los hermanos de igual forma viajan como un
+`cluster`, se juzgan una vez, y cuando un cluster es la mayoría de la página
+lidera como lo que es —"Elegí una opción, 34 opciones"— sin que nadie pregunte.
+
+**La regla que sale de esto.** Jev decide *intención* (qué quiere hacer alguien
+acá) y elige entre nombres que ya existen. La *estructura* —qué es un
+formulario, qué es una grilla, qué es el paso siguiente, qué es un aviso que
+bloquea— se decide en código, antes, porque el DOM la declara y un modelo sólo
+puede perderla. Cada vez que el código sabe la respuesta, preguntar es ruido:
+la pregunta con cuatro categorías contraídas sobre un calendario fue la peor
+pantalla de la sesión.
+
+**Lo que la intención no resuelve.** Las llamadas a la acción: para Jev
+"Continuar" es una transacción, pero en la pantalla de resultados es *el paso
+siguiente*, y filado bajo "Más de este sitio" quedaba a tres niveles del día
+que el usuario acababa de elegir. Un CTA vive en el flujo, no en una categoría.
+Y la variabilidad: la misma página dio `assume(compare)` a 0.94 y `ask` en
+corridas consecutivas. Los umbrales siguen sin calibrar; el sesgo elegido
+(preguntar antes que ordenar mal) es correcto, pero la pregunta tiene que ser
+la excepción, no la salida por defecto.
+
+**Sobre "proponer según el tipo de sitio".** No hace falta un catálogo de tipos
+de sitio. Lo que rompe es estructural y se repite entre rubros: el formulario
+sin `<form>` (aerolínea, pero cualquier SPA), el autocompletado (aerolínea,
+e-commerce, direcciones), la navegación por `pushState` (todas las SPA), el
+captcha (e-commerce, bancos), los listados (todos). Cada patrón se resolvió una
+vez y sirve para todos. La intención elige el *orden* entre esos patrones; no
+los reemplaza.
 
 ## Deuda conocida
 
