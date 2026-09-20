@@ -1300,6 +1300,23 @@ allowedVideoRegex: /^$/,
   /// Submits the form that owns a control, preferring a real submit button
   /// over form.submit() — frameworks hang their handlers on the click, and
   /// form.submit() skips validation and those handlers entirely.
+  /*
+   * What identifies the document, as opposed to the state inside it.
+   *
+   * aerolineas.com.ar's "VUELOS" tab moves the URL from "/" to
+   * "/?activeTab=searchBox" without leaving the page: same document, one node
+   * different. Reported as a navigation, the native side threw away the live
+   * WebView and reloaded from scratch, so the user watched a spinner and
+   * landed back on the screen they were already on — and the tab state the
+   * click had just produced was lost along with the WebView.
+   *
+   * A query string or a fragment is state inside a page. A different path or
+   * origin is a different page.
+   */
+  function documentKey() {
+    return location.origin + location.pathname;
+  }
+
   window.__jefSubmitForm = function (actionId) {
     const anchor = document.querySelector(
       '[data-jef-id="' + String(actionId).replace(/"/g, "") + '"]'
@@ -1307,7 +1324,7 @@ allowedVideoRegex: /^$/,
     if (!anchor) return { ok: false, reason: "gone" };
 
     const form = anchor.tagName === "FORM" ? anchor : anchor.closest("form");
-    const before = location.href;
+    const before = documentKey();
 
     try {
       if (anchor.tagName !== "FORM" && typeof anchor.click === "function") {
@@ -1322,14 +1339,14 @@ allowedVideoRegex: /^$/,
     } catch (e) {
       return { ok: false, reason: "error", message: String((e && e.message) || e) };
     }
-    return { ok: true, navigated: location.href !== before, href: location.href };
+    return { ok: true, navigated: documentKey() !== before, href: location.href };
   };
 
   window.__jefActivate = function (id) {
     const el = document.querySelector('[data-jef-id="' + String(id).replace(/"/g, '') + '"]');
     if (!el) return { ok: false, reason: "gone" };
 
-    const before = location.href;
+    const before = documentKey();
     try {
       // scrollIntoView first: some frameworks only wire handlers to elements
       // once they enter the viewport.
@@ -1338,7 +1355,7 @@ allowedVideoRegex: /^$/,
     } catch (e) {
       return { ok: false, reason: "error", message: String((e && e.message) || e) };
     }
-    return { ok: true, navigated: location.href !== before, href: location.href };
+    return { ok: true, navigated: documentKey() !== before, href: location.href };
   };
 
   /// Re-runs extraction on demand, after an activation changed the page.

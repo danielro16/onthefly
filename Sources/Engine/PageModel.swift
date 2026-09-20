@@ -25,6 +25,22 @@ struct ExtractedPage: Codable, Sendable {
     let overlay: Overlay?
     let stats: Stats
 
+    /// Whether a re-extraction produced the same page.
+    ///
+    /// Pressing a control that turns out to change nothing is common: a tab
+    /// that was already selected, a menu that reopens the same items. Swapping
+    /// the state for an identical page rebuilds the view and throws VoiceOver
+    /// focus back to the top, so the user is punished for a tap that did
+    /// nothing. Better to say it did nothing and leave them where they are.
+    func isEquivalent(to other: ExtractedPage?) -> Bool {
+        guard let other else { return false }
+        return title == other.title
+            && blocks.count == other.blocks.count
+            && listings.count == other.listings.count
+            && actions.map(\.label) == other.actions.map(\.label)
+            && overlay?.text == other.overlay?.text
+    }
+
     /// What to call this page on screen. Some pages ship an empty `<title>`;
     /// the host is a worse name, but it is never blank.
     var displayTitle: String { title.isEmpty ? siteName : title }

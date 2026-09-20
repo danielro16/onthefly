@@ -172,6 +172,16 @@ final class ReaderModel {
                 await go()
 
             case .updated(let page):
+                // A control that changed nothing is not an error and must not
+                // look like one. Rebuilding the view would also send VoiceOver
+                // back to the top of the page for nothing.
+                guard !page.isEquivalent(to: self.page) else {
+                    UIAccessibility.post(
+                        notification: .announcement,
+                        argument: "\(action.label) no cambió la página."
+                    )
+                    return
+                }
                 state = .loaded(page)
                 collapsed = []
                 UIAccessibility.post(
@@ -214,6 +224,13 @@ final class ReaderModel {
                 address = url.absoluteString
                 await go()
             case .updated(let page):
+                guard !page.isEquivalent(to: self.page) else {
+                    UIAccessibility.post(
+                        notification: .announcement,
+                        argument: "Formulario enviado. La página no cambió."
+                    )
+                    return
+                }
                 state = .loaded(page)
                 collapsed = []
                 UIAccessibility.post(
