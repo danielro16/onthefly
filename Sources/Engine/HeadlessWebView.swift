@@ -63,6 +63,12 @@ final class HeadlessWebView: NSObject {
     /// no longer the one loaded.
     var onPageChanged: ((Result<ExtractedPage, Error>) -> Void)?
 
+    /// Una navegación arrancó desde que se apretó el último control.
+    ///
+    /// El WebView lo sabe antes que nadie —se entera por su delegado— y es el
+    /// único que no miente: preguntárselo a la página en el mismo instante del
+    /// click siempre daba que no, porque navegar es asincrónico.
+    private var navigationStarted = false
     private var continuation: CheckedContinuation<ExtractedPage, Error>?
     /// A page that arrived while nobody was waiting for one. The next waiter
     /// takes it instead of blocking on a load that already happened.
@@ -120,6 +126,13 @@ final class HeadlessWebView: NSObject {
         case stale
     }
 
+    /// How long a page gets to decide that it is navigating.
+    ///
+    /// A click that leads somewhere starts its load within a frame or two; the
+    /// gap is the browser's, not the network's. Measured across five sites:
+    /// every navigation that was going to happen had started well inside this.
+    private static let navigationGrace = Duration.milliseconds(450)
+
     /// Presses a control the UI rebuilt, then re-extracts.
     ///
     /// A `<button>`'s behaviour lives in the page's own JavaScript, so a native
@@ -127,12 +140,26 @@ final class HeadlessWebView: NSObject {
     /// to ask the real element to click itself. On an airline home page the
     /// three main actions (VUELOS, CHECK IN, ESTADO DE VUELO) are all buttons,
     /// so without this the reader is read-only exactly where it matters most.
+    ///
+    /// The hard part is not the press: it is knowing what the press DID.
+    /// Asking the page — which is what this used to do — cannot work, because
+    /// the answer is needed in the same turn of the event loop in which the
+    /// click was dispatched, and a navigation has not started by then. The
+    /// answer was therefore always "it did not navigate", so the reader
+    /// re-extracted the document that was already on its way out and handed
+    /// the user the page they had just left. Measured on five sites: every
+    /// single control that navigates reported `navigated: false`. That is the
+    /// "I press it and it shows me the same thing again" everyone was hitting.
+    ///
+    /// So the WebView is asked instead, and it is asked after giving the page
+    /// a moment to start.
     func activate(actionID: String) async throws -> ActivationOutcome {
         guard let web = webView else { throw ExtractionError.noSession }
 
         // The id is ours, generated during extraction — never page-supplied —
         // so a page cannot use this path to press its own controls.
         let escaped = actionID.filter { $0.isLetter || $0.isNumber }
+        navigationStarted = false
         let result = try await web.evaluateJavaScript("window.__jefActivate('\(escaped)')")
 
         guard let dict = result as? [String: Any], dict["ok"] as? Bool == true else {
@@ -144,15 +171,24 @@ final class HeadlessWebView: NSObject {
             )
         }
 
-        // Another document is on its way; its own extraction will arrive
-        // when it settles. Waiting for it beats reloading the URL, which
-        // would replay a GET where the page just did a POST.
+        // The page said so itself: a same-document route change, which a SPA
+        // does synchronously. Nothing to wait for.
         if dict["navigated"] as? Bool == true {
             unconsumed = nil
             return .updated(try await nextPage())
         }
 
-        // Same URL, changed DOM: a menu opened, a tab switched, a panel
+        try? await Task.sleep(for: Self.navigationGrace)
+
+        // Another document is on its way; its own extraction will arrive when
+        // it settles. Waiting for it beats reloading the URL, which would
+        // replay a GET where the page just did a POST.
+        if navigationStarted || web.isLoading {
+            unconsumed = nil
+            return .updated(try await nextPage())
+        }
+
+        // Same document, changed DOM: a menu opened, a tab switched, a panel
         // appeared. Re-extract so the native view matches what the page now is.
         return .updated(try await reextract(web))
     }
@@ -240,6 +276,7 @@ final class HeadlessWebView: NSObject {
         guard let web = webView else { throw ExtractionError.noSession }
 
         let safeID = actionID.filter { $0.isLetter || $0.isNumber }
+        navigationStarted = false
         let result = try await web.evaluateJavaScript("window.__jefSubmitForm('\(safeID)')")
 
         guard let dict = result as? [String: Any], dict["ok"] as? Bool == true else {
@@ -250,6 +287,14 @@ final class HeadlessWebView: NSObject {
         }
 
         if dict["navigated"] as? Bool == true {
+            unconsumed = nil
+            return .updated(try await nextPage())
+        }
+
+        // Same reason as in `activate`: a submit that leaves for another page
+        // has not started doing it by the time this line runs.
+        try? await Task.sleep(for: Self.navigationGrace)
+        if navigationStarted || web.isLoading {
             unconsumed = nil
             return .updated(try await nextPage())
         }
@@ -421,6 +466,15 @@ extension HeadlessWebView: WKNavigationDelegate {
         // Only web content. A page must not be able to steer the hidden engine
         // into a custom scheme and open another app behind the user's back.
         return (scheme == "https" || scheme == "http") ? .allow : .cancel
+    }
+
+    /// The only honest answer to "did that press lead somewhere". See
+    /// `activate(actionID:)`.
+    func webView(
+        _ webView: WKWebView,
+        didStartProvisionalNavigation navigation: WKNavigation!
+    ) {
+        navigationStarted = true
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
