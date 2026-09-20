@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Controles sin nombre | Fixture JEF</title>
+<meta name="description" content="Caso de prueba: controles que el sitio dejó sin nombre accesible.">
+</head>
+<body>
+<main>
+  <h1>Controles sin nombre</h1>
+  <p>Esta página existe para probar qué hace el extractor con controles que
+     el sitio dejó sin nombre accesible. Cada uno abajo es un caso real visto
+     en producción.</p>
+
+  <!-- El clásico: la × de un modal, sólo un glifo -->
+  <button class="modal__close">×</button>
+
+  <!-- Sólo un SVG, con la pista en la clase -->
+  <button class="header-search-toggle"><svg width="20" height="20"><circle cx="9" cy="9" r="7" fill="none" stroke="currentColor"/></svg></button>
+
+  <!-- Menú hamburguesa sin etiqueta -->
+  <button class="nav-toggle"><span></span><span></span><span></span></button>
+
+  <!-- Sólo una imagen, con alt: debe llamarse por el alt -->
+  <button class="brand"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Visa"></button>
+
+  <!-- Sin nombre y sin pista: último recurso -->
+  <button class="x7fk2"><span></span></button>
+
+  <!-- Con nombre de verdad: control -->
+  <button>Seguir comprando</button>
+</main>
+</body>
+</html>

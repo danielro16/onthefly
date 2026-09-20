@@ -509,6 +509,9 @@
     const actions = [];
     const seen = new Set();
     const stamped = [];
+    // "Botón sin nombre" is a last resort, and a page full of them is
+    // worse than a page without them.
+    let unnamed = 0;
     // Elements this run has reported. Not the stamp: a stamp now outlives
     // the run that set it.
     const reported = new Set();
@@ -524,7 +527,11 @@
       // bare "Aceptar" is a confirm button, and the fare warning's one was
       // being thrown away with the banners'.
       /^(aceptar|accept|rechazar|reject|permitir|allow)\b.*(cookie|esencial|essential|todas|all)/i,
-      /^(ok|got it|entendido|cerrar|close|dismiss)\b/i,
+      // "Cerrar" is NOT here on purpose. An overlay's own controls are
+      // already excluded, so the only close buttons that reach this list
+      // belong to modals we failed to detect — and there, closing is the
+      // one way out. Discarding it turned the modal into a trap.
+      /^(ok|got it|entendido)\b/i,
       /^(ir a|skip to|saltar a)\b/i,                  // skip links
       /^(cerrar alerta|close alert)$/i,
       /^(quitar|agregar|remove|add) (uno|one)$/i,     // stepper controls
@@ -539,7 +546,47 @@
       return NOISE.some(function (pattern) { return pattern.test(label); });
     }
 
+    /// A guess at what an unnamed control does, from the words the page
+    /// used in its own markup. Weak evidence, but "Cerrar" beats silence
+    /// and beats discarding the only way out of a modal.
+    function inferredName(element) {
+      if (!element) return "";
+      const glyph = textOf(element);
+      if (/^[×✕✖xX]$/.test(glyph)) return "Cerrar";
+      const hint = (String(element.className || "") + " " + (element.id || "")).toLowerCase();
+      if (/close|cerrar|dismiss/.test(hint)) return "Cerrar";
+      if (/burger|hamburger|menu-?toggle|nav-?toggle|open-?menu/.test(hint)) return "Abrir el menú";
+      if (/search|buscar|lupa/.test(hint)) return "Buscar";
+      if (/\bback\b|volver|atras|atrás/.test(hint)) return "Volver";
+      if (/\bnext\b|siguiente|forward/.test(hint)) return "Siguiente";
+      if (/\bprev\b|anterior/.test(hint)) return "Anterior";
+      if (/play|reproducir/.test(hint)) return "Reproducir";
+      if (/^[+➕]$/.test(glyph) || /\badd\b|agregar|sumar/.test(hint)) return "Agregar";
+      if (/^[−-]$/.test(glyph) || /remove|quitar|restar/.test(hint)) return "Quitar";
+      if (/cart|carrito/.test(hint)) return "Carrito";
+      if (/account|cuenta|user|perfil/.test(hint)) return "Mi cuenta";
+      return "";
+    }
+
     function push(action, element) {
+      // A control with no accessible name is the site's bug, and the "×"
+      // that closes a modal is usually one of them. Discarding it made the
+      // modal a trap. Ambiguous is bad; missing is worse.
+      //
+      // A lone glyph counts as no name: "×" is a drawing of a cross, and a
+      // screen reader says "multiplicación" or nothing at all.
+      const nameless = !action.label
+        || /^[\s×✕✖✗xX+−·•–—<>‹›«»←-⇿✀-➿]{1,2}$/.test(action.label);
+      if (nameless && action.kind === "button" && element) {
+        const guess = inferredName(element);
+        if (guess) {
+          action.label = guess;
+        } else if (unnamed < 4) {
+          unnamed++;
+          action.label = "Botón sin nombre";
+          action.unnamed = true;
+        }
+      }
       if (!action.label || isNoise(action.label)) return;
       // Controls the overlay owns are reported as its choices, not as page
       // actions. Listing them twice would also mean stamping one element with
@@ -1111,8 +1158,24 @@
       // that does nothing. When the page enables it, the next extraction
       // picks it up.
       if (button.disabled || button.getAttribute("aria-disabled") === "true") return false;
-      // Already reported as part of a form's submit.
-      if (button.closest("form") && button.matches("[type=submit]")) return false;
+      // Ya reportado como el botón de envío de su formulario.
+      //
+      // Sólo ése. Un formulario puede tener varios submit y el login de un
+      // diario los usa para lo que más se usa: "Iniciar sesión con Google",
+      // "con Facebook", "con Apple" son los tres type=submit del mismo form
+      // que el de "INICIAR SESIÓN". Descartarlos a todos dejaba una página de
+      // ingreso con una sola forma de ingresar — menos de lo que la página
+      // original ofrece, que es lo único que esta app no puede hacer.
+      if (button.closest("form") && button.matches("[type=submit]")) {
+        const form = button.closest("form");
+        const label = (labelFor(button) || "").trim().toLowerCase();
+        const twin = Array.prototype.slice
+          .call(form.querySelectorAll("[data-jef-id]"))
+          .some(function (el) {
+            return (labelFor(el) || "").trim().toLowerCase() === label;
+          });
+        if (twin) return false;
+      }
       return !reported.has(button);
     });
     // The bottom bar first: it is last in the DOM, and a page of sixty day
@@ -1878,9 +1941,16 @@
 
     const heading = document.querySelector("h1, h2, [role=heading]");
     const said = heading ? textOf(heading) : "";
+    // reCAPTCHA and hCaptcha both offer an audio challenge, and it lives
+    // inside their iframe — another origin, so we cannot press it from
+    // here. What we can do is say it exists, which is more than handing
+    // over a page whose whole point is that it cannot be seen.
+    const src = frame ? (frame.getAttribute("src") || "") : "";
+    const audio = /recaptcha|hcaptcha/i.test(src);
     return {
       kind: "captcha",
       text: said || "La página pide comprobar que sos una persona.",
+      audioChallenge: audio,
       choices: [],
       links: [],
     };

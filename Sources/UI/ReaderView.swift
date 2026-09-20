@@ -22,7 +22,19 @@ final class ReaderModel {
         case undecided
     }
 
-    private(set) var state: State = .idle
+    private(set) var state: State = .idle {
+        // La pila del WebView no es observable, así que se copia acá cada vez
+        // que la página cambia: es lo que decide si "Volver" está activo.
+        didSet { canGoBack = engine.canGoBack }
+    }
+    private(set) var canGoBack = false
+    /// Llegamos a esta página tocando una opción, no escribiendo una
+    /// dirección.
+    ///
+    /// Entonces la intención ya está clara y no se vuelve a preguntar: quien
+    /// tocó "Ingresar" no necesita que le ofrezcan ingresar. UX.md lo llama
+    /// "el tipo se pega al flujo"; acá el flujo es el toque que trajo.
+    private(set) var inFlow = false
     private(set) var intentState: IntentState = .unavailable
     /// Blocks Jev judged irrelevant, with enough confidence to act on.
     private(set) var collapsed: Set<String> = []
@@ -40,7 +52,17 @@ final class ReaderModel {
     /// buried among forty old controls it was unreachable.
     private(set) var arrivals: [Action] = []
     private(set) var arrivalCause = ""
+    /// Where VoiceOver should land after the page changed under someone's
+    /// feet. Rebuilding the view destroys the element the cursor was on,
+    /// and the cursor falls back to the top — which is complaint number
+    /// four on every list of what screen-reader users hate. Announcing the
+    /// change is not enough: the focus has to go somewhere deliberate.
+    /// `nil` leaves it where it is.
+    private(set) var focusTarget: String?
     private var suggestionTask: Task<Void, Never>?
+    /// Puente entre `activate` y `go`: la dirección que sigue vino de un
+    /// toque, no del teclado.
+    private var openedByTap = false
 
     var address: String = "https://es.wikipedia.org/wiki/Buenos_Aires"
 
@@ -103,7 +125,7 @@ final class ReaderModel {
             // that "the page changed" — the person is in the middle of it.
             let known = Set((self.page?.fields ?? []).map(\.name))
             let added = page.url == self.page?.url
-                ? page.fields.filter { !known.contains($0.name) }.map(\.name)
+                ? page.fields.filter { !known.contains($0.name) }
                 : []
             noteArrivals(in: page, cause: arrivalCause)
             address = page.url
@@ -112,9 +134,13 @@ final class ReaderModel {
             if added.isEmpty {
                 announce("\(page.displayTitle). La página cambió.")
             } else {
-                announce(added.count == 1
-                    ? "Apareció un campo: \(added[0])"
-                    : "Aparecieron \(added.count) campos: \(added.joined(separator: ", "))")
+                let names = added.map(\.name)
+                announce(names.count == 1
+                    ? "Apareció un campo: \(names[0])"
+                    : "Aparecieron \(names.count) campos: \(names.joined(separator: ", "))")
+                // The person was filling this form. Put them on what
+                // appeared, not back at the title.
+                focusTarget = added.first?.id
             }
             Task { await detectIntent(for: page) }
         case .failure(let error):
@@ -130,6 +156,11 @@ final class ReaderModel {
 
         state = .loading(url)
         collapsed = []
+        focusTarget = nil
+        // Sólo cuando la dirección la escribió una persona. Un link abierto
+        // desde la página pasa por acá también, y ése sí viene de un toque.
+        inFlow = openedByTap
+        openedByTap = false
         intentGroups = []
         listingNames = [:]
         suggestions = [:]
@@ -233,9 +264,12 @@ final class ReaderModel {
         // A link with an href needs no round trip through the page.
         if action.kind == .link, let href = action.href {
             address = href
+            openedByTap = true
             await go()
             return
         }
+        openedByTap = false
+        inFlow = true
 
         UIAccessibility.post(notification: .announcement, argument: "Activando \(action.label)")
 
@@ -262,6 +296,7 @@ final class ReaderModel {
                         ? "\(action.label) activado. La página cambió."
                         : "\(action.label) activado. Aparecieron \(arrivals.count) opciones."
                 )
+                focusTarget = arrivals.isEmpty ? nil : ReaderModel.arrivalsAnchor
                 await detectIntent(for: page)
 
             case .stale:
@@ -353,6 +388,7 @@ final class ReaderModel {
                     arrivals = []
                     suggestions = [:]
                     state = .loaded(page)
+                    focusTarget = complaints.first?.id
                     UIAccessibility.post(
                         notification: .announcement,
                         argument: complaints.count > 1
@@ -394,6 +430,35 @@ final class ReaderModel {
     func choose(_ intent: Intent) async {
         guard let page else { return }
         await apply(intent, to: page)
+    }
+
+    /// Volver a la página anterior.
+    ///
+    /// En un navegador sin vista, volver es el gesto más usado de todos: se
+    /// entra a algo, no era, se sale. Por eso está en un lugar fijo de la
+    /// barra y además atado al gesto de escape de VoiceOver — dos dedos, Z —
+    /// que es como se sale de todo lo demás en iOS.
+    func back() async {
+        guard engine.canGoBack else {
+            UIAccessibility.post(notification: .announcement, argument: "No hay página anterior")
+            return
+        }
+        UIAccessibility.post(notification: .announcement, argument: "Volviendo")
+        do {
+            let page = try await engine.goBack()
+            inFlow = false
+            address = page.url
+            state = .loaded(page)
+            collapsed = []
+            intentGroups = []
+            listingNames = [:]
+            arrivals = []
+            intentState = .unavailable
+            announce("\(page.displayTitle). \(page.stats.blockCount) secciones.")
+            await detectIntent(for: page)
+        } catch {
+            state = .failed(error.localizedDescription)
+        }
     }
 
     /// Reads the page again, as it is now. For when the native view fell
@@ -463,18 +528,31 @@ final class ReaderModel {
         arrivalCause = cause
     }
 
+    /// The id of the "what just appeared" box, for moving focus there.
+    static let arrivalsAnchor = "jef.arrivals"
+
+    /// Consumed by the view once the cursor has been placed.
+    func clearFocusTarget() { focusTarget = nil }
+
     /// Accepts what people actually type: bare hosts, missing schemes.
     static func normalize(_ raw: String) -> URL? {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
 
-        let candidate = trimmed.contains("://") ? trimmed : "https://\(trimmed)"
+        let explicit = trimmed.contains("://")
+        let candidate = explicit ? trimmed : "https://\(trimmed)"
         guard
             let url = URL(string: candidate),
             let scheme = url.scheme?.lowercased(),
             scheme == "https" || scheme == "http",
-            let host = url.host(), host.contains(".")
+            let host = url.host()
         else { return nil }
+
+        // A dot is how a guess tells a domain from a search term. It is not
+        // a rule about addresses: `localhost` and intranet names have none,
+        // and an office or a hospital runs on those. When the person wrote
+        // the scheme, they were not searching.
+        guard explicit || host == "localhost" || host.contains(".") else { return nil }
 
         return url
     }
@@ -482,10 +560,32 @@ final class ReaderModel {
 
 struct ReaderView: View {
     @State private var model = ReaderModel()
+    /// Las pantallas abiertas sobre la página.
+    ///
+    /// Se vacía apenas se toca algo que navega: la página nueva se carga
+    /// debajo, y quedarse en la lista de opciones de la página anterior se
+    /// siente —y suena— como que el toque no hizo nada.
+    @State private var path = NavigationPath()
+    @State private var sites = SavedSites()
+    @State private var showingSites = false
+    @State private var showingSettings = false
+    @AppStorage("jef.textSize") private var textSize = TextSize.system.rawValue
+    @AppStorage("jef.appearance") private var appearance = Appearance.system.rawValue
+    @Environment(\.dynamicTypeSize) private var systemTypeSize
     @FocusState private var addressFocused: Bool
+    /// Where the VoiceOver cursor is. Moved deliberately when the page
+    /// changes under someone, so they do not get dropped back at the top.
+    @AccessibilityFocusState private var focused: String?
+
+    /// El tamaño que manda: el de Ajustes si se eligió uno, el del sistema si
+    /// no. Se calcula acá porque leer el entorno en la misma vista que lo
+    /// escribe devuelve el valor de entrada, no el elegido.
+    private var typeSize: DynamicTypeSize {
+        TextSize(rawValue: textSize)?.dynamicTypeSize ?? systemTypeSize
+    }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             // The native view stays alive underneath the original page —
             // hidden, not gone — so what the user typed into a form is still
             // there when they come back. The WebView itself stays out of the
@@ -503,10 +603,103 @@ struct ReaderView: View {
             // Como Safari: nada arriba. El título de la página vive en el
             // contenido y no se repite en el cromo, y la barra va abajo, donde
             // la gente ya la tiene desde iOS 15.
+            //
+            // Abajo también por una razón que Safari no tuvo que pensar:
+            // VoiceOver lee el cromo DESPUÉS del contenido, así que la app no
+            // gasta ninguna parada antes de que la página diga su nombre. El
+            // toque de cuatro dedos abajo cae directo acá.
             .toolbar(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
-                addressBar
+                chrome
             }
+            // Salir es volver. Es el gesto con el que se sale de todo lo demás
+            // en iOS, y acá no estaba atado a nada.
+            .accessibilityAction(.escape) {
+                Task { await model.back() }
+            }
+            // Una categoría abre una pantalla, no se despliega. Ver [Route].
+            .navigationDestination(for: Route.self) { route in
+                switch route {
+                case .options(let title, let actions):
+                    OptionsScreen(title: title, actions: actions) { action in
+                        open(action)
+                    }
+                case .groups(let title, let groups):
+                    GroupsScreen(title: title, groups: groups) { action in
+                        open(action)
+                    }
+                case .headlines:
+                    if let page = model.page {
+                        HeadlinesScreen(
+                            page: page,
+                            listingNames: model.listingNames,
+                            onOpenURL: { href in
+                                path = NavigationPath()
+                                model.address = href
+                                Task { await model.go() }
+                            },
+                            onActivate: { id in
+                                guard let action = page.actions.first(where: { $0.id == id })
+                                else { return }
+                                open(action)
+                            }
+                        )
+                    }
+                }
+            }
+            .sheet(isPresented: $showingSites) {
+                SavedSitesView(
+                    sites: sites,
+                    onOpen: { open($0) },
+                    onDone: { showingSites = false }
+                )
+            }
+            .sheet(isPresented: $showingSettings) {
+                SettingsView { showingSettings = false }
+            }
+            // After the view is rebuilt, not before: the element to focus
+            // has to exist, and the announcement that says why should be
+            // heard first rather than cut off by the cursor landing.
+            .onChange(of: model.focusTarget) { _, target in
+                guard let target else { return }
+                Task {
+                    try? await Task.sleep(for: .milliseconds(900))
+                    focused = target
+                    model.clearFocusTarget()
+                }
+            }
+        }
+        .dynamicTypeSize(typeSize)
+        .preferredColorScheme(Appearance(rawValue: appearance)?.colorScheme)
+    }
+
+    /// Abre una opción desde una pantalla: cierra la pantalla y activa el
+    /// control en la página.
+    private func open(_ action: Action) {
+        path = NavigationPath()
+        Task { await model.activate(action) }
+    }
+
+    private func open(_ site: SavedSites.Site) {
+        showingSites = false
+        addressFocused = false
+        model.address = site.url
+        Task { await model.go() }
+    }
+
+    private var isSaved: Bool {
+        guard let page = model.page else { return false }
+        return sites.contains(page.url)
+    }
+
+    private func toggleSaved() {
+        guard let page = model.page else { return }
+        if sites.contains(page.url) {
+            sites.remove(page.url)
+            UIAccessibility.post(notification: .announcement, argument: "Quitado de mis sitios")
+        } else {
+            sites.save(name: page.displaySite, url: page.url)
+            UIAccessibility.post(notification: .announcement, argument: "Guardado en mis sitios")
         }
     }
 
@@ -533,12 +726,17 @@ struct ReaderView: View {
     private var content: some View {
         switch model.state {
         case .idle:
-            EmptyStateView()
+            // La app abre en la lista de sitios. Para quien no ve, escribir
+            // una dirección es lo más caro de un navegador, y una pantalla de
+            // inicio vacía obliga a hacerlo todas las veces.
+            SavedSitesView(sites: sites, onOpen: { open($0) })
         case .loading(let url):
             LoadingView(host: url.host() ?? "")
         case .loaded(let page):
             ArticleView(
                 page: page,
+                focused: $focused,
+                inFlow: model.inFlow,
                 intentState: model.intentState,
                 collapsed: model.collapsed,
                 intentGroups: model.intentGroups,
@@ -578,41 +776,61 @@ struct ReaderView: View {
         }
     }
 
-    private var addressBar: some View {
-        HStack(spacing: 8) {
-            // Where Safari keeps its page menu: the way out of the native
-            // view, and the way back. Hidden while typing to leave room.
-            if !addressFocused, model.liveWebView != nil {
-                Button {
-                    model.showingOriginal ? model.showAccessible() : model.showOriginal()
-                } label: {
-                    Image(systemName: model.showingOriginal ? "doc.plaintext" : "globe")
-                        .font(.title3)
-                }
-                .accessibilityLabel(
-                    model.showingOriginal ? "Volver a la vista accesible" : "Ver la página original"
-                )
-                .accessibilityHint(
-                    model.showingOriginal
-                        ? "La página reconstruida, con rotores y grupos"
-                        : "La web tal cual, con navegación web estándar"
-                )
-            }
+    /// El cromo: la dirección y cinco destinos fijos.
+    ///
+    /// Fijos es la palabra. Una barra que cambia según el sitio no se puede
+    /// aprender de memoria, y aprenderla de memoria es exactamente para lo
+    /// que sirve. Lo que ofrece cada sitio vive adentro de la página, en
+    /// "Más de este sitio", y nunca acá.
+    private var chrome: some View {
+        VStack(spacing: 10) {
+            addressField
+            if !addressFocused { toolbar }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 10)
+        .padding(.bottom, 4)
+        .background(.bar)
+    }
 
-            TextField("Buscar o ingresar dirección", text: barText)
-                .textFieldStyle(.roundedBorder)
-                .multilineTextAlignment(addressFocused ? .leading : .center)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-                .keyboardType(.URL)
-                .submitLabel(.go)
-                .focused($addressFocused)
-                .accessibilityLabel("Dirección")
-                .accessibilityHint("Tocá dos veces para ir a otro sitio")
-                .onSubmit {
-                    addressFocused = false
-                    Task { await model.go() }
+    /// Un solo campo que muestra dos cosas, como el de Safari: el dominio
+    /// mientras se lee, la dirección entera mientras se escribe.
+    private var addressField: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 10) {
+                TextField("Buscar o ingresar dirección", text: barText)
+                    .textFieldStyle(.plain)
+                    .multilineTextAlignment(addressFocused ? .leading : .center)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .keyboardType(.URL)
+                    .submitLabel(.go)
+                    .focused($addressFocused)
+                    .accessibilityLabel("Dirección")
+                    .accessibilityValue(displayHost)
+                    .accessibilityHint("Tocá dos veces para ir a otro sitio")
+                    .onSubmit {
+                        addressFocused = false
+                        Task { await model.go() }
+                    }
+
+                // Where Safari keeps reload. Reads the page again as it is
+                // now, for when the native view fell behind it.
+                if !addressFocused, model.liveWebView != nil, !model.showingOriginal {
+                    Button {
+                        Task { await model.reread() }
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+                    .accessibilityLabel("Leer de nuevo")
+                    .accessibilityHint("Vuelve a leer la página tal como está ahora")
                 }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
+            .background(Color(.tertiarySystemFill), in: Capsule())
 
             // Safari no muestra ningún botón mientras se lee: la barra en
             // reposo es sólo el dominio. Al escribir sí hace falta un destino
@@ -623,37 +841,94 @@ struct ReaderView: View {
                     Task { await model.go() }
                 }
                 .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
                 .accessibilityHint("Carga y simplifica la página")
-            } else if model.liveWebView != nil, !model.showingOriginal {
-                // Where Safari keeps reload. Reads the page again as it is
-                // now, for when the native view fell behind it.
-                Button {
-                    Task { await model.reread() }
-                } label: {
-                    Image(systemName: "arrow.clockwise")
-                        .font(.title3)
-                }
-                .accessibilityLabel("Leer de nuevo")
-                .accessibilityHint("Vuelve a leer la página tal como está ahora")
             }
         }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(.bar)
+    }
+
+    private var toolbar: some View {
+        HStack(spacing: 0) {
+            toolbarButton(
+                symbol: "chevron.left", label: "Volver", enabled: model.canGoBack,
+                hint: "Vuelve a la página anterior"
+            ) {
+                Task { await model.back() }
+            }
+
+            toolbarButton(symbol: "book", label: "Mis sitios", hint: "Tus sitios guardados") {
+                addressFocused = false
+                showingSites = true
+            }
+
+            toolbarButton(
+                symbol: isSaved ? "bookmark.fill" : "bookmark",
+                label: isSaved ? "Guardado" : "Guardar",
+                enabled: model.page != nil,
+                hint: isSaved ? "Lo quita de tus sitios" : "Lo agrega a tus sitios"
+            ) {
+                toggleSaved()
+            }
+
+            toolbarButton(
+                symbol: model.showingOriginal ? "doc.plaintext" : "globe",
+                label: model.showingOriginal ? "Accesible" : "Original",
+                enabled: model.liveWebView != nil,
+                hint: model.showingOriginal
+                    ? "La página reconstruida, con rotores y grupos"
+                    : "La web tal cual, con navegación web estándar"
+            ) {
+                model.showingOriginal ? model.showAccessible() : model.showOriginal()
+            }
+
+            toolbarButton(symbol: "gearshape", label: "Ajustes", hint: "Tamaño del texto y apariencia") {
+                addressFocused = false
+                showingSettings = true
+            }
+        }
+    }
+
+    /// Un destino de la barra.
+    ///
+    /// Con su palabra debajo: un ícono solo es un acertijo para quien ve poco
+    /// y para quien nunca usó la app. A tamaños de accesibilidad la palabra se
+    /// va —ahí sí rompería la fila— y el ícono crece; VoiceOver la dice igual,
+    /// porque nunca dependió de que estuviera dibujada.
+    @ViewBuilder
+    private func toolbarButton(
+        symbol: String,
+        label: String,
+        enabled: Bool = true,
+        hint: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        let big = typeSize.isAccessibilitySize
+
+        Button(action: action) {
+            VStack(spacing: 3) {
+                Image(systemName: symbol)
+                    .font(.system(size: big ? 26 : 20, weight: .regular))
+                    .frame(height: big ? 30 : 22)
+                if !big {
+                    Text(label)
+                        .font(.caption2)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(enabled ? AnyShapeStyle(.tint) : AnyShapeStyle(.tertiary))
+        .disabled(!enabled)
+        .accessibilityLabel(label)
+        .accessibilityHint(hint)
+        .accessibilityAddTraits(.isButton)
     }
 }
 
 // MARK: - States
-
-private struct EmptyStateView: View {
-    var body: some View {
-        ContentUnavailableView(
-            "Nothing loaded",
-            systemImage: "doc.text",
-            description: Text("Enter an address below to read a page.")
-        )
-    }
-}
 
 private struct LoadingView: View {
     let host: String
@@ -661,12 +936,13 @@ private struct LoadingView: View {
     var body: some View {
         VStack(spacing: 12) {
             ProgressView()
-            Text("Reading \(host)…")
+            Text("Leyendo \(host)…")
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemBackground))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Reading \(host)")
+        .accessibilityLabel("Leyendo \(host)")
         .accessibilityAddTraits(.updatesFrequently)
     }
 }
@@ -679,16 +955,17 @@ private struct FailureView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label("Could not read this page", systemImage: "exclamationmark.triangle")
+            Label("No se pudo leer esta página", systemImage: "exclamationmark.triangle")
         } description: {
             Text(message)
         } actions: {
-            Button("Try again", action: retry)
+            Button("Intentar de nuevo", action: retry)
                 .buttonStyle(.borderedProminent)
             if let openOriginal {
                 Button("Abrir la página original", action: openOriginal)
                     .accessibilityHint("La web tal cual, con navegación web estándar")
             }
         }
+        .background(Color(.systemBackground))
     }
 }

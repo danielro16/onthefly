@@ -12,6 +12,8 @@ import SwiftUI
 /// grouped by landmark and produced "Pie de página", which is a fact about the
 /// HTML and not about anything the user wants.
 ///
+/// Cada caja **abre una pantalla**; no se despliega. Ver [Route].
+///
 /// Each title carries `.isHeader`, so every goal is a stop in VoiceOver's
 /// headings rotor. aerolineas.com.ar declares one heading of its own.
 struct ActionGroupsView: View {
@@ -21,23 +23,20 @@ struct ActionGroupsView: View {
     /// question with one answer.
     var title: String? = "¿Qué querés hacer?"
     /// The goal that leads the page opens by itself: it is the answer, not one
-    /// option among several.
+    /// option among several. Entonces se muestra acá mismo, abierto, en vez de
+    /// esconderse detrás de una pantalla más.
     var expandedByDefault = false
     var onOpen: (Action) -> Void
 
     @Namespace private var rotorNamespace
-    /// Toggled away from the default: opened when closed by default, closed
-    /// when open by default. Relative, so a group that is open by default
-    /// is open from its first render — onAppear was not reliably rerun when
-    /// the section came and went, and "Apareció al tocar…" showed up shut.
-    @State private var toggled: Set<String> = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             if let title {
                 Text(title)
-                    .font(.headline)
+                    .font(.title3.weight(.semibold))
                     .accessibilityAddTraits(.isHeader)
+                    .padding(.top, 4)
             }
 
             ForEach(groups) { group in
@@ -53,100 +52,81 @@ struct ActionGroupsView: View {
         }
     }
 
+    /// Lo que hay adentro, con las palabras del sitio.
+    ///
+    /// Sólo visual: la parada de VoiceOver sigue siendo "el grupo, N
+    /// opciones", que es corta y dice lo mismo. Para quien ve, esta línea es
+    /// el vistazo que la lectura lineal no da — y es información que la
+    /// página ya tenía, no una etiqueta nuestra.
+    private func preview(_ group: IntentGroup) -> String {
+        let count = "\(group.count) \(group.count == 1 ? "opción" : "opciones")"
+        let names = group.actions.prefix(3)
+            .map { $0.label.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        guard !names.isEmpty else { return count }
+        return "\(count) · \(names.joined(separator: ", "))"
+    }
+
+    /// Forms render as real forms above; listing them here too would be the
+    /// same task twice.
+    private func options(_ group: IntentGroup) -> [Action] {
+        group.actions.filter { $0.kind != .form || ($0.fields ?? []).isEmpty }
+    }
+
     @ViewBuilder
     private func section(_ group: IntentGroup) -> some View {
-        let isOpen = expandedByDefault != toggled.contains(group.id)
-
-        VStack(alignment: .leading, spacing: 6) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.15)) {
-                    if toggled.contains(group.id) { toggled.remove(group.id) } else { toggled.insert(group.id) }
-                }
-            } label: {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(group.label)
-                            .font(.body.weight(.medium))
-                        Text("\(group.count) \(group.count == 1 ? "opción" : "opciones")")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+        if expandedByDefault {
+            // Lo que lidera la página ya es la respuesta: mostrarlo detrás de
+            // un toque sería esconder aquello a lo que la persona vino.
+            VStack(alignment: .leading, spacing: 6) {
+                heading(group, opens: false)
+                Divider().padding(.vertical, 4)
+                VStack(alignment: .leading, spacing: 2) {
+                    ForEach(options(group)) { action in
+                        ActionRow(
+                            action: action,
+                            uncertain: group.uncertain.contains(action.id),
+                            onOpen: onOpen
+                        )
                     }
-                    Spacer()
-                    Image(systemName: isOpen ? "chevron.down" : "chevron.right")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
                 }
-                .contentShape(.rect)
+            }
+            .jefCard()
+        } else {
+            NavigationLink(value: Route.options(group.label, options(group))) {
+                heading(group, opens: true)
             }
             .buttonStyle(.plain)
+            .jefCard()
             // The collapsed goal is ONE stop. That is where the saving comes
             // from: 194 stops become one per goal.
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("\(group.label), \(group.count) \(group.count == 1 ? "opción" : "opciones")")
             .accessibilityAddTraits([.isHeader, .isButton])
-            .accessibilityValue(isOpen ? "expandido" : "contraído")
-            .accessibilityHint(isOpen ? "Tocá dos veces para contraer" : "Tocá dos veces para ver las opciones")
-
-            if isOpen {
-                VStack(alignment: .leading, spacing: 2) {
-                    // Forms render as real forms above; listing them here too
-                    // would be the same task twice.
-                    ForEach(group.actions.filter { $0.kind != .form || ($0.fields ?? []).isEmpty }) { action in
-                        row(action, uncertain: group.uncertain.contains(action.id))
-                    }
-                }
-                .padding(.leading, 10)
-                .padding(.top, 2)
-            }
+            .accessibilityHint("Abre sus opciones en otra pantalla")
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))
     }
 
-    @ViewBuilder
-    private func row(_ action: Action, uncertain: Bool) -> some View {
-        Button {
-            onOpen(action)
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: action.kind == .link ? "arrow.up.right" : "hand.tap")
-                    .font(.caption)
-                    .foregroundStyle(.tint)
-                    .frame(width: 16)
-                    .accessibilityHidden(true)
-                Text(action.label)
-                    .font(.callout)
+    private func heading(_ group: IntentGroup, opens: Bool) -> some View {
+        HStack(spacing: 14) {
+            IconBadge(symbol: group.intent.symbol, color: group.intent.color)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(group.label)
+                    .font(.headline)
                     .multilineTextAlignment(.leading)
-                Spacer(minLength: 0)
+                Text(preview(group))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
             }
-            .contentShape(.rect)
-            .padding(.vertical, 7)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(action.label)
-        .accessibilityHint(hint(action, uncertain: uncertain))
-    }
-
-    private func hint(_ action: Action, uncertain: Bool) -> String {
-        // Flagging a shaky classification is honest and cheap: the user can
-        // decide the label is wrong far faster than we can.
-        let doubt = uncertain ? " Puede no corresponder a este grupo." : ""
-
-        switch action.kind {
-        case .link:
-            return "Abre esta sección." + doubt
-        case .form:
-            guard let fields = action.fields, !fields.isEmpty else {
-                return "Abre el formulario." + doubt
+            Spacer(minLength: 8)
+            if opens {
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
             }
-            return "Formulario con \(fields.count) campos: "
-                + fields.map(\.name).joined(separator: ", ") + "." + doubt
-        case .button:
-            // Pressed inside the live page, which is the only way a rebuilt
-            // view can honour a control whose behaviour is the page's own
-            // JavaScript.
-            return "Activa este control en la página." + doubt
         }
+        .contentShape(.rect)
     }
 }

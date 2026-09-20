@@ -34,6 +34,13 @@ struct OverlayView: View {
             }
 
             if overlay.kind == .captcha {
+                // The audio challenge is the only way through this without
+                // sight, and it is buried inside the widget. Saying where
+                // it is costs one line and is the whole difference.
+                if overlay.audioChallenge == true {
+                    Text("Esta verificación tiene desafío de audio. En la página original, entrá al recuadro de verificación y buscá el botón de auriculares: reproduce un audio y te pide escribir lo que se escucha.")
+                        .font(.footnote)
+                }
                 Button {
                     onOpenOriginal()
                 } label: {

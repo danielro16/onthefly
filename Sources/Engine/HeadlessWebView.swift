@@ -180,6 +180,20 @@ final class HeadlessWebView: NSObject {
         return (result as? [String: Any])?["ok"] as? Bool == true
     }
 
+    /// Whether there is a page to go back to.
+    var canGoBack: Bool { webView?.canGoBack ?? false }
+
+    /// Volver, con la sesión intacta: la misma pila del WebView que usaría
+    /// Safari, así que la página anterior vuelve con su login y su carrito,
+    /// no recargada desde cero.
+    func goBack() async throws -> ExtractedPage {
+        guard let web = webView, web.canGoBack else { throw ExtractionError.noSession }
+        settle(.failure(CancellationError()))
+        unconsumed = nil
+        web.goBack()
+        return try await nextPage()
+    }
+
     /// Reads the live page again, on request. The safety valve: every
     /// heuristic about when a page has finished changing is a guess, and
     /// the person can always ask.

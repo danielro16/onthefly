@@ -11,51 +11,41 @@ import SwiftUI
 /// So the dominant intent decides what leads, and the rest collapses to here.
 /// Last in reading order is where "everything else" belongs, and it is one
 /// swipe away from the end of the page — VoiceOver's four-finger tap on the
-/// bottom half lands on it. A fixed bottom bar was the alternative and loses
-/// on two counts: it breaks at accessibility text sizes, and a bar whose items
-/// change per site gives up the predictability that makes a bar worth its
-/// screen space.
+/// bottom half lands on it.
+///
+/// Esto no es la barra de abajo, y la diferencia es la regla: **lo del sitio
+/// va en la página, lo de JEF va en el cromo, y no comparten forma visual.**
+/// Una barra fija cuyos ítems cambian en cada sitio no se puede aprender; la
+/// de abajo tiene siempre los mismos cinco y por eso puede ser fija.
 struct SiteMenuView: View {
     let groups: [IntentGroup]
     var onOpen: (Action) -> Void
 
-    @State private var open = false
-
     private var total: Int { groups.reduce(0) { $0 + $1.count } }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.15)) { open.toggle() }
-            } label: {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Más de este sitio")
-                            .font(.body.weight(.medium))
-                        Text("\(total) \(total == 1 ? "opción" : "opciones")")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Image(systemName: open ? "chevron.down" : "chevron.right")
-                        .font(.footnote)
+        NavigationLink(value: Route.groups("Más de este sitio", groups)) {
+            HStack(spacing: 14) {
+                IconBadge(symbol: "ellipsis", color: .gray)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Más de este sitio")
+                        .font(.headline)
+                    Text("\(total) \(total == 1 ? "opción" : "opciones")")
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
-                .contentShape(.rect)
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
             }
-            .buttonStyle(.plain)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Más de este sitio, \(total) \(total == 1 ? "opción" : "opciones")")
-            .accessibilityAddTraits([.isHeader, .isButton])
-            .accessibilityValue(open ? "expandido" : "contraído")
-            .accessibilityHint(open ? "Tocá dos veces para contraer" : "Tocá dos veces para ver el resto del sitio")
-
-            if open {
-                ActionGroupsView(groups: groups, title: nil, onOpen: onOpen)
-            }
+            .contentShape(.rect)
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))
+        .buttonStyle(.plain)
+        .jefCard()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Más de este sitio, \(total) \(total == 1 ? "opción" : "opciones")")
+        .accessibilityAddTraits([.isHeader, .isButton])
+        .accessibilityHint("Abre el resto del sitio en otra pantalla")
     }
 }

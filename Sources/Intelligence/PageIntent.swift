@@ -76,7 +76,7 @@ enum Intent: String, CaseIterable, Codable, Sendable, Identifiable {
 /// Replaces the earlier DOM-shaped grouping. The user sees "Comprar o
 /// reservar", not "Contenido principal", and the groups are ordered by how
 /// likely they are to be what the user came for.
-struct IntentGroup: Identifiable, Sendable {
+struct IntentGroup: Identifiable, Sendable, Hashable {
     let intent: Intent
     let actions: [Action]
     /// Actions Jev placed here with low confidence. Kept in the group — moving

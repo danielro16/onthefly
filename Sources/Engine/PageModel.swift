@@ -48,6 +48,86 @@ struct ExtractedPage: Codable, Sendable {
     /// the host is a worse name, but it is never blank.
     var displayTitle: String { title.isEmpty ? siteName : title }
 
+    /// El nombre del sitio, o el dominio cuando la página no lo declara.
+    ///
+    /// Un `og:site_name` que no se parece en nada al dominio es el nombre de
+    /// la organización, no el del sitio: "Wikimedia Foundation, Inc." sobre
+    /// es.wikipedia.org. El dominio es lo que la persona tipeó y lo que
+    /// reconoce, así que gana.
+    var displaySite: String {
+        let host = (URL(string: url)?.host()).map {
+            $0.hasPrefix("www.") ? String($0.dropFirst(4)) : $0
+        } ?? ""
+        guard !siteName.isEmpty else { return host }
+        guard !host.isEmpty else { return siteName }
+
+        func letters(_ text: String) -> String {
+            text.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+                .filter(\.isLetter)
+        }
+        let name = letters(siteName)
+        let domain = letters(host)
+        guard !name.isEmpty else { return host }
+        return domain.contains(name) || name.contains(domain) ? siteName : host
+    }
+
+    /// El nombre de ESTA página, sin el del sitio.
+    ///
+    /// Un `<title>` está escrito para una pestaña: "Inicio | Braille Perú",
+    /// "Buenos Aires - Wikipedia, la enciclopedia libre". El sitio se dice
+    /// antes y aparte, así que repetirlo acá es una parada que no informa.
+    /// Cuando no queda nada, la página es la portada.
+    var sectionTitle: String {
+        let raw = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !raw.isEmpty else { return "Inicio" }
+
+        // Un guión sólo separa cuando tiene aire a los costados: "Check-in"
+        // es una palabra.
+        let normalized = raw
+            .replacingOccurrences(of: " - ", with: "|")
+            .replacingOccurrences(of: " : ", with: "|")
+        let parts = normalized
+            .components(separatedBy: CharacterSet(charactersIn: "|–—·»"))
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+
+        guard parts.count > 1 else { return parts.first ?? "Inicio" }
+
+        let site = displaySite.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        let kept = parts.filter { part in
+            let candidate = part.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+            guard !site.isEmpty else { return true }
+            return !candidate.contains(site) && !site.contains(candidate)
+        }
+        // Sin nombre de sitio que descartar, el título de la página es lo
+        // primero: el sitio se firma al final en casi toda la web.
+        return kept.first ?? "Inicio"
+    }
+
+    /// La línea de qué es esto: la descripción del sitio, o la primera frase
+    /// del contenido.
+    ///
+    /// Vacía cuando repetiría lo que ya está abajo. Readability usa el primer
+    /// párrafo como excerpt si la página no declaró descripción, y decir dos
+    /// veces el mismo párrafo es una parada que roba.
+    var summary: String {
+        let text = excerpt.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard text.count > 20 else { return "" }
+
+        if let first = blocks.first(where: { if case .paragraph = $0 { return true }; return false })?
+            .plainText.trimmingCharacters(in: .whitespacesAndNewlines),
+            first.hasPrefix(String(text.prefix(40))) {
+            return ""
+        }
+
+        guard text.count > 180 else { return text }
+        // Una frase. Cortar a la mitad de la segunda es peor que no decirla.
+        if let end = text.prefix(180).lastIndex(of: ".") {
+            return String(text[...end])
+        }
+        return String(text.prefix(180)) + "…"
+    }
+
     /// The control set that IS the page, when there is one.
     ///
     /// A flight calendar is 34 sibling day buttons and little else. Asking
@@ -133,6 +213,10 @@ struct ActionGroup: Codable, Sendable, Identifiable {
 struct Overlay: Codable, Sendable {
     let kind: Kind
     let text: String
+    /// The check offers an audio alternative. It lives inside the widget's
+    /// own iframe, so the app cannot press it — but saying it exists is
+    /// the difference between a wall and a door.
+    let audioChallenge: Bool?
     let choices: [Choice]
     /// Links out of the overlay — the privacy policy, the terms. Kept apart
     /// from `choices` because following one abandons the page instead of
@@ -276,6 +360,12 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
     /// appeared inside it, usually why it did not go through.
     let notices: [String]?
     let region: String
+    /// El sitio no le puso nombre y tuvimos que inventarle uno.
+    ///
+    /// No se descarta —cerrar un modal suele ser uno de éstos— pero no puede
+    /// encabezar una lista: "Botón sin nombre" como opción de login es ruido
+    /// nuestro encima del ruido del sitio.
+    let unnamed: Bool?
 
     /// What makes this action the same action on a later reading: its
     /// label, and for a form, its fields. Picking "DNI" added three date

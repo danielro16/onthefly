@@ -12,6 +12,10 @@ import SwiftUI
 ///    for `UIAccessibilityCustomRotor` at all.
 struct ArticleView: View {
     let page: ExtractedPage
+    /// The VoiceOver cursor, so a change can put it where it belongs.
+    var focused: AccessibilityFocusState<String?>.Binding
+    /// Se llegó tocando una opción. Ver `ReaderModel.inFlow`.
+    var inFlow = false
     var intentState: ReaderModel.IntentState = .unavailable
     var collapsed: Set<String> = []
     var intentGroups: [IntentGroup] = []
@@ -69,7 +73,7 @@ struct ArticleView: View {
     /// "Consultar un dato, 1 opción" and "Información del sitio, 1 opción"
     /// is a menu of one item each, dressed as a decision.
     private var fewActions: Bool {
-        intentGroups.reduce(0) { $0 + $1.count } <= 3
+        groups.reduce(0) { $0 + $1.count } <= 3
     }
 
     /// A shop. Listings that carry prices are what the visitor came for;
@@ -98,6 +102,24 @@ struct ArticleView: View {
         }
     }
 
+    /// The groups the view actually renders: what Jev decided, or — when it
+    /// decided nothing — every action as one plain list.
+    ///
+    /// A model's silence must not delete the page's controls. Without this
+    /// a page whose intent request failed, or was still in flight, rendered
+    /// its text and not one of its buttons: unreachable, which is worse
+    /// than ungrouped. Measured on a fixture whose six buttons vanished
+    /// until a second reading arrived.
+    private var groups: [IntentGroup] {
+        if !intentGroups.isEmpty { return intentGroups }
+        let inListings = Set(page.listings.flatMap { $0.items.flatMap(\.pressableIds) })
+        let rest = page.actions.filter { $0.kind != .form && !inListings.contains($0.id) }
+        guard !rest.isEmpty else { return [] }
+        return [IntentGroup(
+            intent: .info, actions: rest, uncertain: [], title: "Opciones de la página"
+        )]
+    }
+
     private var contentFirst: Bool {
         leadsWithContent || isCatalog || hasResults
             || (nothingLeads && (!page.listings.isEmpty || !visibleBlocks.isEmpty))
@@ -111,7 +133,7 @@ struct ArticleView: View {
         // "Información del sitio, 28 opciones" on top: the leftovers bucket,
         // presented as the point of the page.
         guard !dominant.isCatchAll else { return nil }
-        return intentGroups.first { $0.intent == dominant }
+        return groups.first { $0.intent == dominant }
     }
 
     /// The page as one control set, when it is one. See `dominantCluster`.
@@ -133,13 +155,13 @@ struct ArticleView: View {
     private var demoted: [IntentGroup] {
         if let leadCluster {
             let taken = Set(leadCluster.actions.map(\.id))
-            return intentGroups.compactMap { group in
+            return groups.compactMap { group in
                 let rest = group.actions.filter { !taken.contains($0.id) }
                 return rest.isEmpty ? nil : IntentGroup(intent: group.intent, actions: rest, uncertain: group.uncertain)
             }
         }
-        guard let leadGroup, !contentFirst else { return contentFirst ? intentGroups : [] }
-        return intentGroups.filter { $0.id != leadGroup.id }
+        guard let leadGroup, !contentFirst else { return contentFirst ? groups : [] }
+        return groups.filter { $0.id != leadGroup.id }
     }
 
     /// The button that moves the task forward, wherever Jev filed it.
@@ -160,7 +182,7 @@ struct ArticleView: View {
         "^(ingres[aá]r?|iniciar sesi[oó]n|acceder|acced[eé]|entrar|login|log in|sign in|online banking|home banking|mi cuenta|abrir men[uú]|men[uú]|open menu|abrir el men[uú])$"
 
     private var nextSteps: [Action] {
-        Array(intentGroups.flatMap(\.actions)
+        Array(groups.flatMap(\.actions)
             .filter {
                 $0.primary == true
                 || ($0.kind == .button
@@ -205,11 +227,84 @@ struct ArticleView: View {
                 )],
                 title: nil, expandedByDefault: true, onOpen: onOpenAction
             )
+            .accessibilityFocused(focused, equals: ReaderModel.arrivalsAnchor)
         }
     }
 
     /// Everything else the site offers. One stop at the end.
-    private var menuGroups: [IntentGroup] { withoutNextSteps(demoted) }
+    private var menuGroups: [IntentGroup] {
+        // En una página simple no hay cajón: todo se mostró arriba, abierto.
+        if isSimple { return [] }
+        // En una portada las categorías están arriba, todas: lo único que
+        // baja al cajón es el bucket de sobras.
+        return isIndex
+            ? withoutSections(withoutNextSteps(groups)).filter { $0.intent.isCatchAll }
+            : withoutNextSteps(demoted)
+    }
+
+    /// Una página que ya era simple.
+    ///
+    /// El login de La Nación tiene dieciséis paradas. No hay nada que
+    /// ahorrar, y todo lo que la app hace para ahorrar —categorías, cajas,
+    /// un menú al final— ahí sólo agrega: los tres botones de "ingresar con"
+    /// terminaron a tres toques de profundidad, dentro de "Más de este
+    /// sitio", dentro de "Mi cuenta". Una página que se recorre en dieciséis
+    /// pasos se muestra entera, en orden, sin cajas.
+    ///
+    /// Es lo que UX.md llama "cuándo no intervenir", medido sobre el DOM y
+    /// no sobre lo que Jev opine.
+    private var isSimple: Bool {
+        // Una portada de sección sigue siendo una portada, y una nota sigue
+        // siendo una nota: haber llegado tocando no las convierte en tareas.
+        guard !isIndex, !isArticle else { return false }
+        return inFlow || (page.stats.originalStops > 0 && page.stats.originalStops <= 30)
+    }
+
+    /// Una portada: listas de enlaces y poca prosa.
+    ///
+    /// No es un texto para leer, es un índice para elegir — y ésa es la
+    /// diferencia que la app no hacía. Un diario y una nota de Wikipedia
+    /// caían los dos en "leer contenido", así que la portada se volcaba
+    /// entera sobre la página. Una tienda y una página de resultados también
+    /// son listas, pero ahí el volcado es correcto: la persona ya eligió, y
+    /// los resultados son la respuesta.
+    private var isIndex: Bool {
+        leadsWithContent && !isArticle && !isCatalog && !hasResults
+            && page.listings.contains { $0.isNavigable && $0.items.count >= 4 }
+    }
+
+    /// Las secciones del sitio: los enlaces de su navegación.
+    ///
+    /// En un diario esto es "Política, Economía, Deportes" — la respuesta a
+    /// "quiero ver esto ordenado". Hoy vivían repartidos entre las categorías
+    /// de Jev y el cajón del final, junto al login y los legales.
+    private var sectionActions: [Action] {
+        var seen = Set<String>()
+        return page.actions.filter { action in
+            guard action.kind == .link, action.region == "nav" || action.region == "navigation"
+            else { return false }
+            let key = action.label.lowercased()
+            guard !key.isEmpty, !seen.contains(key) else { return false }
+            seen.insert(key)
+            return true
+        }
+    }
+
+    private func withoutSections(_ groups: [IntentGroup]) -> [IntentGroup] {
+        let taken = Set(sectionActions.map(\.id))
+        return groups.compactMap { group in
+            let rest = group.actions.filter { !taken.contains($0.id) }
+            return rest.isEmpty ? nil : IntentGroup(
+                intent: group.intent, actions: rest, uncertain: group.uncertain, title: group.title
+            )
+        }
+    }
+
+    /// Las categorías de una portada: sin las secciones (que van en su propia
+    /// caja) y sin el bucket de sobras (que va al cajón del final).
+    private var indexGroups: [IntentGroup] {
+        withoutSections(withoutNextSteps(groups)).filter { !$0.intent.isCatchAll }
+    }
 
     private static let menuDestination = "jef-site-menu"
 
@@ -282,19 +377,47 @@ struct ArticleView: View {
 
                 intentPanel
                 arrivalsSection
-                savingsNote
 
                 // The order of the page is the answer to what the page is for,
                 // not a fixed sequence of sections. A newspaper opens with the
                 // news; a search engine opens with the box. Putting eleven
                 // actions — dollar quotes among them — above the headlines is
                 // what made the reader read as more confusing than the site.
-                if contentFirst {
+                if isSimple {
+                    // La intención ya está clara: acá no se pregunta nada ni
+                    // se categoriza nada. Lo que dice la página, lo que
+                    // ofrece —como lista, en su orden— y lo que pide. El
+                    // ruido en una sola caja al final.
+                    blocksSection
+                    plainOptions
+                    formsSection(searchOnly: nil)
+                    listingsSection
+                    asideListingsSection
+                    otherOptions
+                } else if isIndex {
+                    // Una portada ofrece; no vuelca. El usuario decide si se
+                    // entera de lo que el sitio recomienda o va por su
+                    // sección, y las dos cosas están a una parada.
+                    indexOptions
+                    formsSection(searchOnly: nil)
+                    // La prosa suelta de una portada son los legales y las
+                    // fichas técnicas. No se pierde: va detrás de todo.
+                    blocksSection
+                    asideListingsSection
+                } else if contentFirst {
                     // A search box is the page's first tool wherever it is;
                     // a newsletter signup waits behind the content.
                     formsSection(searchOnly: true)
-                    listingsSection
-                    blocksSection
+                    // En un artículo el texto va primero y las listas
+                    // —notas, "leé también"— detrás. En una portada las
+                    // listas son las noticias, y el orden se invierte.
+                    if isArticle {
+                        blocksSection
+                        listingsSection
+                    } else {
+                        listingsSection
+                        blocksSection
+                    }
                     asideListingsSection
                     formsSection(searchOnly: false)
                 } else {
@@ -314,11 +437,18 @@ struct ArticleView: View {
                                 onOpen: onOpenAction
                             )
                         }
-                    } else if !intentGroups.isEmpty {
+                    } else if !groups.isEmpty, !isDetecting {
                         // Jev found no dominant goal. Then the categories are
                         // the honest answer and they stay where they were.
+                        //
+                        // `!isDetecting` es la diferencia entre ofrecer y
+                        // adivinar. Los grupos llegan antes que la decisión, y
+                        // dibujarlos ahí ponía "¿Qué querés hacer?" con cuatro
+                        // cajas sobre un diario para borrarlas un segundo
+                        // después: para quien mira, parpadea; para quien
+                        // escucha, el cursor se cae de lo que estaba leyendo.
                         ActionGroupsView(
-                            groups: withoutNextSteps(intentGroups),
+                            groups: withoutNextSteps(groups),
                             title: fewActions ? nil : "¿Qué querés hacer?",
                             expandedByDefault: fewActions,
                             onOpen: onOpenAction
@@ -332,19 +462,26 @@ struct ArticleView: View {
 
                 nextStepSection
 
-                if !menuGroups.isEmpty {
+                // En una portada ya se mostró arriba, con las demás opciones.
+                if !menuGroups.isEmpty, !isIndex {
                     SiteMenuView(groups: menuGroups, onOpen: onOpenAction)
                         .id(Self.menuDestination)
                         .accessibilityRotorEntry(id: Self.menuDestination, in: rotorNamespace)
                 }
 
                 collapsedSection
+                // Lo que la app tiene para decir sobre sí misma va al final,
+                // detrás de todo lo que la página tenía para decir.
+                savingsNote
                 footer
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+        // El fondo agrupado de iOS: las tarjetas se despegan de él sin
+        // necesidad de bordes ni sombras.
+        .background(Color(.systemBackground))
         // System rotors, not custom ones: VoiceOver users already know these,
         // they are localized by the OS, and they sit where people expect them.
         // This is the interaction React Native cannot offer at all.
@@ -379,6 +516,172 @@ struct ArticleView: View {
         })
     }
 
+    /// Las opciones de una página cuya intención ya está clara, como lista.
+    ///
+    /// "Ingresar con correo. Ingresar con Google. Ingresar con Facebook."
+    /// Sin categorías encima y en el orden en que la página las puso: cuando
+    /// ya entraste a hacer una cosa, nombrar la categoría de lo que estás
+    /// haciendo es decirte lo que ya sabés, y ordenarlo distinto de como
+    /// estaba es hacerte buscar.
+    private var taskActions: [Action] {
+        let aside = Set(asideActions.map(\.id))
+        let promoted = Set(nextSteps.map(\.id))
+        let inListings = Set(page.listings.flatMap { $0.items.flatMap(\.pressableIds) })
+        return page.actions.filter { action in
+            guard action.kind != .form || (action.fields ?? []).isEmpty else { return false }
+            return !aside.contains(action.id)
+                && !promoted.contains(action.id)
+                && !inListings.contains(action.id)
+        }
+    }
+
+    /// Lo que no es a lo que viniste: recuperar la contraseña, el pie, las
+    /// redes. No se descarta —nada se descarta— pero va detrás de una puerta
+    /// con su nombre.
+    private var asideActions: [Action] {
+        let leftovers = groups.filter { $0.intent.isCatchAll }.flatMap(\.actions)
+        let noise = page.actions.filter { action in
+            action.unnamed == true
+                || action.label.trimmingCharacters(in: .whitespaces)
+                    .range(of: Self.plumbing, options: [.regularExpression, .caseInsensitive]) != nil
+        }
+        var seen = Set<String>()
+        return (leftovers + noise).filter { seen.insert($0.id).inserted }
+    }
+
+    /// Controles que existen para moverse por la página, no para hacer algo
+    /// en ella. No se pierden: van a "Otras opciones".
+    private static let plumbing =
+        "^(volver|atr[aá]s|back|cerrar|close|men[uú]|abrir el men[uú]|bot[oó]n sin nombre)$"
+
+    @ViewBuilder
+    private var plainOptions: some View {
+        if !taskActions.isEmpty {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(Array(taskActions.enumerated()), id: \.element.id) { index, action in
+                    if index > 0 { Divider() }
+                    ActionRow(action: action, onOpen: onOpenAction)
+                }
+            }
+            .jefCard()
+        }
+    }
+
+    @ViewBuilder
+    private var otherOptions: some View {
+        let others = asideActions
+        if !others.isEmpty {
+            NavigationLink(value: Route.options("Otras opciones", others)) {
+                optionLabel(
+                    symbol: "ellipsis", color: .gray, title: "Otras opciones",
+                    subtitle: "\(others.count) \(others.count == 1 ? "opción" : "opciones")"
+                )
+            }
+            .buttonStyle(.plain)
+            .jefCard()
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Otras opciones, \(others.count) \(others.count == 1 ? "opción" : "opciones")")
+            .accessibilityAddTraits([.isHeader, .isButton])
+            .accessibilityHint("Abre el resto de esta página en otra pantalla")
+        }
+    }
+
+    /// El tramo 3 de una portada: qué querés hacer, con las palabras del
+    /// sitio y con el conteo de lo que hay detrás de cada puerta.
+    @ViewBuilder
+    private var indexOptions: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("¿Qué querés hacer?")
+                .font(.title3.weight(.semibold))
+                .accessibilityAddTraits(.isHeader)
+                .padding(.top, 4)
+
+            headlinesCard
+            sectionsCard
+
+            if !indexGroups.isEmpty {
+                ActionGroupsView(groups: indexGroups, title: nil, onOpen: onOpenAction)
+            }
+
+            // El resto del sitio es una opción más, la última. Apartada al
+            // final de la página quedaba detrás de los legales: para llegar
+            // al menú había que escuchar el ISSN y el domicilio legal.
+            if !menuGroups.isEmpty {
+                SiteMenuView(groups: menuGroups, onOpen: onOpenAction)
+                    .id(Self.menuDestination)
+                    .accessibilityRotorEntry(id: Self.menuDestination, in: rotorNamespace)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var headlinesCard: some View {
+        let total = HeadlinesScreen.total(of: page)
+        if total > 0 {
+            let preview = HeadlinesScreen.preview(of: page)
+            NavigationLink(value: Route.headlines) {
+                optionLabel(
+                    symbol: "newspaper", color: .blue, title: "Leer los titulares",
+                    // El conteo es la diferencia entre una puerta con cartel y
+                    // una puerta cerrada: sin él, quien no ve no sabe si detrás
+                    // hay tres cosas o doscientas.
+                    subtitle: preview.isEmpty
+                        ? "\(total) \(total == 1 ? "noticia" : "noticias")"
+                        : "\(total) noticias · \(preview)"
+                )
+            }
+            .buttonStyle(.plain)
+            .jefCard()
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Leer los titulares, \(total) \(total == 1 ? "noticia" : "noticias")")
+            .accessibilityAddTraits([.isHeader, .isButton])
+            .accessibilityHint("Abre todas las noticias de la portada, en orden")
+        }
+    }
+
+    @ViewBuilder
+    private var sectionsCard: some View {
+        let sections = sectionActions
+        if sections.count >= 3 {
+            let names = sections.prefix(4).map(\.label).joined(separator: ", ")
+            NavigationLink(value: Route.options("Secciones", sections)) {
+                optionLabel(
+                    symbol: "square.grid.2x2", color: .green, title: "Ir a una sección",
+                    subtitle: "\(sections.count) secciones · \(names)"
+                )
+            }
+            .buttonStyle(.plain)
+            .jefCard()
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Ir a una sección, \(sections.count) secciones")
+            .accessibilityAddTraits([.isHeader, .isButton])
+            .accessibilityHint("Abre las secciones del sitio en otra pantalla")
+        }
+    }
+
+    private func optionLabel(
+        symbol: String, color: Color, title: String, subtitle: String
+    ) -> some View {
+        HStack(spacing: 14) {
+            IconBadge(symbol: symbol, color: color)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.headline)
+                    .multilineTextAlignment(.leading)
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+            }
+            Spacer(minLength: 8)
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .contentShape(.rect)
+    }
+
     @ViewBuilder
     private var nextStepSection: some View {
         if !nextSteps.isEmpty {
@@ -410,6 +713,7 @@ struct ArticleView: View {
                 action: form,
                 suggestions: suggestions,
                 resolvedValues: resolvedValues,
+                voiceOverFocus: focused,
                 onFill: onFillField,
                 onChooseSuggestion: onChooseSuggestion,
                 onOpenField: onOpenField,
@@ -453,7 +757,13 @@ struct ArticleView: View {
             ListingView(
                 listing: listing,
                 fallbackName: listingNames[listing.id],
-                startsExpanded: contentFirst && isContent(listing),
+                // Abierta o cerrada se decide con lo que dice el DOM, no con
+                // lo que va a decir Jev: atado a `contentFirst`, la misma
+                // lista arrancaba cerrada y se abría sola al llegar la
+                // respuesta. Una lista abierta dentro de un artículo sí tapa
+                // el artículo — las 297 notas al pie de Wikipedia antes de la
+                // primera línea del texto — y eso el DOM ya lo sabe.
+                startsExpanded: isContent(listing) && !isArticle,
                 onOpenURL: onOpenURL,
                 onActivate: { id in
                     if let action = page.actions.first(where: { $0.id == id }) { onOpenAction(action) }
@@ -471,22 +781,64 @@ struct ArticleView: View {
         }
     }
 
+    /// Tramo 1 — dónde estoy. Siempre, dos paradas.
+    ///
+    /// El sitio primero y la página después, sin el separador ni los sufijos:
+    /// `Inicio | Braille Perú` se dice "Braille Perú. Inicio.". Y una línea de
+    /// qué es esto. Es el ancla: si entraste mal, esto es lo único que te lo
+    /// dice, y por eso nada va antes — ni siquiera lo que la app tenga para
+    /// contar sobre sí misma.
     private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(page.displayTitle)
-                .font(.largeTitle.weight(.bold))
-                .accessibilityAddTraits(.isHeader)
+        VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(page.displaySite)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Text(page.sectionTitle)
+                    .font(.largeTitle.weight(.bold))
+            }
+            // Las dos líneas son una parada: "Braille Perú. Inicio.". Leerlas
+            // por separado son dos paradas para decir un solo lugar.
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("\(page.displaySite). \(page.sectionTitle).")
+            .accessibilityAddTraits(.isHeader)
 
-            // El sitio no se repite acá: ya está en la barra de direcciones,
-            // visible y sin gastar una parada de VoiceOver.
-            if !page.byline.isEmpty {
-                Text(page.byline)
+            if !subtitle.isEmpty {
+                Text(subtitle)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(.bottom, 4)
-        .accessibilityElement(children: .combine)
+        .padding(.bottom, 2)
+    }
+
+    /// Qué es esto: la descripción del sitio, o de quién es la nota.
+    ///
+    /// Una firma que repite el nombre del sitio no es una firma:
+    /// "Colaboradores de los proyectos Wikimedia" no le dice a nadie qué es
+    /// esta página, y ocupa la única línea que sí podía decirlo.
+    private var subtitle: String {
+        let summary = page.summary
+        if !summary.isEmpty { return summary }
+
+        let byline = page.byline.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !byline.isEmpty else { return "" }
+        let flat = byline.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        let echoesSite = page.siteName
+            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+            .split(separator: " ")
+            .contains { $0.count > 3 && flat.contains($0) }
+        return echoesSite ? "" : byline
+    }
+
+    /// Prosa de verdad: un artículo, no una portada.
+    ///
+    /// Decide el orden. Wikipedia tiene 297 notas al pie agrupadas en una
+    /// lista, y una lista antes del texto es 297 elementos antes de la
+    /// primera línea de la nota. Una portada no tiene este problema porque
+    /// sus listas SON el contenido.
+    private var isArticle: Bool {
+        visibleBlocks.reduce(0) { $0 + $1.plainText.count } >= 1200
     }
 
     private var collapsedNote: String {
@@ -502,8 +854,8 @@ struct ArticleView: View {
     /// impressive.
     @ViewBuilder
     private var savingsNote: some View {
-        let stops = page.stats.originalStops
-        let now = (intentGroups.isEmpty ? page.groups.count : intentGroups.count)
+        let stops = isSimple ? 0 : page.stats.originalStops
+        let now = (groups.isEmpty ? page.groups.count : groups.count)
             + page.listings.count + visibleBlocks.count
         if stops > 0, now < stops {
             Text("Esta página tenía \(stops) elementos para recorrer. Quedaron \(now).")
@@ -577,7 +929,10 @@ struct ArticleView: View {
             .background(.tint.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
 
         case .applied(let intent):
-            if !collapsed.isEmpty {
+            // En una página simple no se agrupó nada, así que no hay nada
+            // que explicar ni que deshacer: "Ordenado para Mi cuenta. Ver
+            // todo." sobre un login era una parada que no quería decir nada.
+            if !collapsed.isEmpty, !isSimple {
                 HStack(spacing: 8) {
                     Image(systemName: "wand.and.sparkles")
                         .foregroundStyle(.tint)

@@ -15,6 +15,11 @@ struct FormView: View {
     var suggestions: [String: [String]] = [:]
     /// What the page put in a field after a suggestion was picked.
     var resolvedValues: [String: String] = [:]
+    /// The VoiceOver cursor, so a field that just appeared — or one the
+    /// page is complaining about — can be where the person lands. Separate
+    /// from `focused` below, which is the keyboard: moving the keyboard
+    /// would pop it open unasked.
+    var voiceOverFocus: AccessibilityFocusState<String?>.Binding
     var onFill: (Action.Field, String) -> Void
     var onChooseSuggestion: (Action.Field, Int) -> Void = { _, _ in }
     /// Presses a read-only field so the page opens its list.
@@ -229,6 +234,7 @@ struct FormView: View {
                     .accessibilityLabel("Error en \(field.name): \(error)")
             }
         }
+        .accessibilityFocused(voiceOverFocus, equals: field.id)
     }
 
     /// Writes through to the live page on every edit, so the page's own
