@@ -67,6 +67,9 @@ comparte sin cambios.
 - [x] Autocompletados: las sugerencias de la página como lista nativa
 - [x] Navegación SPA (`pushState`) y páginas que cambian después de leídas
 - [x] Captcha detectado y dicho, con la salida a la página original al lado
+- [x] Lo que un toque abre se escucha primero ("Apareció al tocar…"); la barra fija al pie es el paso siguiente
+- [x] Tarjetas, catálogos con precio vigente y resultados de búsqueda como listas activables
+- [x] Embudo de compra de Aerolíneas completo hasta datos del pasajero, verificado con el árbol de accesibilidad
 - [ ] Foundation Models: alt-text de imágenes sin descripción
 - [ ] Caché por template
 
@@ -242,7 +245,7 @@ gobierno fallan por lo mismo: tablas y trámites de varios pasos.
 | Autocompletado | aerolínea, e-commerce, direcciones | ✅ |
 | Grilla de opciones (calendario de precios) | aerolínea | ✅ como "Elegí una opción, 34" |
 | Navegación SPA / resultados que llegan tarde | toda SPA | ✅ |
-| Trámite multi-paso | gobierno, checkout | ⚠️ la sesión aguanta; sin probar |
+| Trámite multi-paso | aerolínea (checkout), gobierno | ✅ vuelo BUE→COR hasta datos del pasajero, a ciegas |
 | Contenido tras login | bancos, salud | ⚠️ la sesión aguanta; sin probar |
 | Scroll infinito | feeds, catálogos | ❌ sin probar |
 | Modal / paywall | diarios | ❌ sin probar |
