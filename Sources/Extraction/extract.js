@@ -1793,6 +1793,17 @@
       }
     }
 
+    // A card that opens by its link can still hold buttons of its own —
+    // "Guardar" on every recipe of foodit.lanacion.com.ar. They belong to
+    // the card: listed apart, fifteen rows reading "Guardar" say nothing
+    // about what each one saves.
+    if (item.href) {
+      const extras = Array.prototype.slice.call(el.querySelectorAll("[data-jef-id]"), 0, 4).map(function (b) {
+        return { id: b.getAttribute("data-jef-id"), label: (labelOf(b) || imageName(b)).slice(0, 60) };
+      }).filter(function (extra) { return extra.label; });
+      if (extras.length) item.extras = extras;
+    }
+
     // Currency, because on a product card the price is the point — the
     // price it is now, not the one struck through above it.
     let priceMatch = null;
@@ -2106,6 +2117,7 @@
       for (const item of listing.items) {
         if (item.actionId) inListings.add(item.actionId);
         for (const choice of item.choices || []) inListings.add(choice.id);
+        for (const extra of item.extras || []) inListings.add(extra.id);
       }
     }
     const placed = new Set();
@@ -2332,13 +2344,51 @@
       return ordered;
     }
 
+    /// The buttons a card holds, when buttons are all it holds: they are
+    /// the card's own actions and travel with it. Null when it holds any
+    /// other reported control — a form's field, a navigation link — because
+    /// then it is not one thing.
+    function cardButtons(el) {
+      const found = [];
+      for (const inner of el.querySelectorAll("[data-jef-id], [data-jef-field], [data-jef-listing]")) {
+        const action = byId.get(inner.getAttribute("data-jef-id") || "");
+        if (!action || action.kind !== "button") return null;
+        if (!placed.has(action.id)) found.push(action);
+      }
+      return found;
+    }
+
+    /// A card's name: its headline first, then the rest of what it says,
+    /// minus what its buttons say.
+    function cardLabel(el, heading, buttons) {
+      const title = heading ? textOf(heading) : "";
+      let rest = textOf(el);
+      if (title) rest = rest.replace(title, "");
+      for (const button of buttons) rest = rest.replace(button.label, "");
+      rest = tidy(rest);
+      return title ? (rest ? title + ", " + rest : title) : (rest || imageName(el));
+    }
+
+    function putCard(label, href, el, level, buttons) {
+      const before = entries.length;
+      putLink(label, href, el, level, groupOf(el));
+      // The same card twice is dropped whole, buttons included.
+      const entry = entries.length > before ? entries[entries.length - 1] : null;
+      for (const button of buttons) {
+        placed.add(button.id);
+        if (entry && !button.unnamed) (entry.extras = entry.extras || []).push(button.id);
+      }
+    }
+
     /// A card under an empty link. clarin.com closes every <article> with
     /// an <a> that holds nothing and is stretched over the whole card: read
     /// in order, that is a headline nobody can open and a link with no
     /// name. They are one thing — one heading, one destination — and the
     /// headline is what the link is called.
     function cardLink(el) {
-      if (holdsStamp.has(el) || !el.matches("article, li, [class*=card], [class*=story], [class*=item]")) return null;
+      if (!el.matches("article, li, [class*=card], [class*=story], [class*=item]")) return null;
+      const buttons = holdsStamp.has(el) ? cardButtons(el) : [];
+      if (!buttons) return null;
       const headings = el.querySelectorAll("h1, h2, h3, h4, h5, h6, [role=heading]");
       if (headings.length !== 1) return null;
       const heading = headings[0];
@@ -2351,13 +2401,12 @@
       }
       if (hrefs.size !== 1) return null;
       const href = hrefs.values().next().value;
-      const title = textOf(heading);
-      if (!title || !opens(href) || isHidden(el)) return null;
-      const rest = tidy(textOf(el).replace(title, ""));
+      if (!textOf(heading) || !opens(href) || isHidden(el)) return null;
       return {
-        label: rest ? title + ", " + rest : title,
+        label: cardLabel(el, heading, buttons),
         href: href,
         level: HEADING_LEVEL[heading.tagName] || 2,
+        buttons: buttons,
       };
     }
 
@@ -2432,7 +2481,7 @@
 
       const card = cardLink(el);
       if (card) {
-        putLink(card.label, card.href, el, card.level, groupOf(el));
+        putCard(card.label, card.href, el, card.level, card.buttons);
         return;
       }
 
@@ -2519,14 +2568,18 @@
       // a title, a picture, a blurb — or a picture alone. One stop that
       // says the card and opens it; split into its parts, the parts were
       // text nobody could open.
-      if (tag === "A" && el.hasAttribute("href") && !holdsStamp.has(el)) {
+      // foodit.lanacion.com.ar puts "Guardar" inside the link itself: read
+      // piece by piece, the recipe was a headline nobody could open and a
+      // button that said nothing about what it saved.
+      const held = tag === "A" && el.hasAttribute("href") ? (holdsStamp.has(el) ? cardButtons(el) : []) : null;
+      if (held) {
         const href = absolute(el.getAttribute("href") || "");
         if (opens(href)) {
           if (isHidden(el)) return;
           const heading = el.querySelector("h1, h2, h3, h4, h5, h6, [role=heading]");
-          const name = textOf(el) || imageName(el);
+          const name = cardLabel(el, heading, held);
           if (name && !looksLikeCode(name)) {
-            putLink(name, href, el, heading ? (HEADING_LEVEL[heading.tagName] || 2) : 0, groupOf(el));
+            putCard(name, href, el, heading ? (HEADING_LEVEL[heading.tagName] || 2) : 0, held);
           } else if (!saidLinks.has("|" + href)) {
             // No words and no named picture: the site's unnamed control.
             saidLinks.add("|" + href);

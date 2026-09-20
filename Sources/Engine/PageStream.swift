@@ -31,6 +31,8 @@ struct StreamEntry: Codable, Sendable, Identifiable {
     /// las que sólo se tocan, vecinas. Lo dice el DOM —el contenedor que
     /// repite su forma—, no una cuenta nuestra.
     let group: String?
+    /// Los botones que una tarjeta lleva adentro: acciones suyas, por id.
+    let extras: [String]?
 }
 
 /// Cuántas paradas son muchas. En un solo lugar, para calibrarlo con uso real.
@@ -65,6 +67,9 @@ struct StreamOption: Identifiable, Sendable {
     let action: Action
     /// Un titular es una opción y además un encabezado, para el rotor.
     let headingLevel: Int?
+    /// Lo que además se puede hacer con ella: "Guardar", en una receta. Una
+    /// parada con sus acciones, no una parada por botón.
+    var extras: [Action] = []
 
     var id: String { action.id }
 }
@@ -289,7 +294,7 @@ extension ExtractedPage {
                     id: "jef-feed", kind: .feed, title: "Portada",
                     amount: Self.amount(headlineCount(in: feed), "titular", "titulares"),
                     preview: first,
-                    hint: "Abre las noticias de la portada, por sección",
+                    hint: "Abre la portada, por sección",
                     entries: feed.map(\.id)
                 )
             }
@@ -355,7 +360,8 @@ extension ExtractedPage {
                 guard let label = entry.label, let href = entry.href else { continue }
                 option = StreamOption(
                     action: .link(id: entry.id, label: label, href: href, region: entry.zone),
-                    headingLevel: entry.level
+                    headingLevel: entry.level,
+                    extras: (entry.extras ?? []).compactMap { actionsByID[$0] }
                 )
             case "listing":
                 guard let listing = entry.ref.flatMap({ listingsByID[$0] }) else { continue }
@@ -375,7 +381,8 @@ extension ExtractedPage {
                     if let href = item.href {
                         run.append((StreamOption(
                             action: .link(id: id, label: item.spokenLabel, href: href, region: entry.zone),
-                            headingLevel: nil
+                            headingLevel: nil,
+                            extras: (item.extras ?? []).compactMap { actionsByID[$0.id] }
                         ), entry.id))
                     } else if let action = item.actionId.flatMap({ actionsByID[$0] }) {
                         run.append((StreamOption(action: action, headingLevel: nil), entry.id))
@@ -498,7 +505,7 @@ extension ExtractedPage {
         guard stops > StopBudget.screen, parts.count >= 2 else { return nil }
 
         return parts.map { part in
-            let title = part.title.isEmpty ? "Noticias principales" : part.title
+            let title = part.title.isEmpty ? "Lo principal" : part.title
             return .door(StreamDoor(
                 id: "sec-\(part.ids.first ?? title)", kind: .section, title: title,
                 amount: Self.amount(part.count, "titular", "titulares"),

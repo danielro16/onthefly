@@ -315,6 +315,11 @@ struct Listing: Codable, Sendable, Identifiable {
         let imageAlt: String?
         /// Whatever else the card said, minus title and price.
         let meta: String?
+        /// Buttons the card holds besides the link that opens it — "Guardar"
+        /// on every recipe. They are the card's own actions, not stops of
+        /// their own: fifteen rows reading "Guardar" say nothing about what
+        /// each one saves.
+        let extras: [Choice]?
 
         var id: String { (href ?? "") + title }
 
@@ -325,7 +330,7 @@ struct Listing: Codable, Sendable, Identifiable {
 
         /// Every action this card already offers, so nothing lists it twice.
         var pressableIds: [String] {
-            (actionId.map { [$0] } ?? []) + (choices ?? []).map(\.id)
+            (actionId.map { [$0] } ?? []) + (choices ?? []).map(\.id) + (extras ?? []).map(\.id)
         }
 
         /// One sentence for VoiceOver, in the order that matters: what it is,

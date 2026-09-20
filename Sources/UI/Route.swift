@@ -28,18 +28,50 @@ struct ActionRow: View {
     var uncertain = false
     /// Un titular: se toca como opción y se alcanza como encabezado.
     var isHeading = false
+    /// Lo que además se puede hacer con esta opción: "Guardar", en una
+    /// receta. Para VoiceOver son acciones de esta misma parada —el rotor de
+    /// acciones, como en Mail—; para quien ve, un menú al costado.
+    var extras: [Action] = []
     var onOpen: (Action) -> Void
 
     var body: some View {
-        Button {
-            onOpen(action)
-        } label: {
-            Self.label(action)
+        HStack(spacing: 4) {
+            Button {
+                onOpen(action)
+            } label: {
+                Self.label(action)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(action.label)
+            .accessibilityHint(Self.hint(action, uncertain: uncertain) + extrasHint)
+            .accessibilityAddTraits(isHeading ? .isHeader : [])
+            .accessibilityActions {
+                ForEach(extras) { extra in
+                    Button(extra.label) { onOpen(extra) }
+                }
+            }
+
+            if !extras.isEmpty {
+                Menu {
+                    ForEach(extras) { extra in
+                        Button(extra.label) { onOpen(extra) }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.body)
+                        .foregroundStyle(.tint)
+                        .frame(width: 36, height: 36)
+                        .contentShape(.rect)
+                }
+                // Ya están en la fila, como acciones.
+                .accessibilityHidden(true)
+            }
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel(action.label)
-        .accessibilityHint(Self.hint(action, uncertain: uncertain))
-        .accessibilityAddTraits(isHeading ? .isHeader : [])
+    }
+
+    private var extrasHint: String {
+        guard !extras.isEmpty else { return "" }
+        return " Más acciones: " + extras.map(\.label).joined(separator: ", ") + "."
     }
 
     /// Cómo se ve una opción, la abra quien la abra.
@@ -185,9 +217,12 @@ struct OptionList: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(option.action.label)
-                    .accessibilityHint("Abre las noticias de la portada, por sección")
+                    .accessibilityHint("Abre la portada, por sección")
                 } else {
-                    ActionRow(action: option.action, isHeading: option.headingLevel != nil, onOpen: onOpen)
+                    ActionRow(
+                        action: option.action, isHeading: option.headingLevel != nil,
+                        extras: option.extras, onOpen: onOpen
+                    )
                 }
             }
         }
