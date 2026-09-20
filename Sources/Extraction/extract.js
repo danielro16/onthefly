@@ -17,7 +17,10 @@
   "use strict";
 
   const MAX_BLOCKS = 2000;
-  const MAX_ACTIONS = 40;
+  // A calendar alone is 68 day buttons; with the cap at 40 the bar at the
+  // bottom of the page — "Ver vuelos" — never made it in. Clusters mean Jev
+  // judges a grid once, so the cap costs nothing to raise.
+  const MAX_ACTIONS = 80;
 
   // Nodes that never carry reader content, independent of site.
   const SKIP_TAGS = new Set([
@@ -91,7 +94,11 @@
   /// Tag plus leading classes: what makes two siblings "the same kind of
   /// thing" to the eye, without reading their content.
   function shapeOf(el) {
-    const cls = String(el.className || "").split(/\s+/).slice(0, 2).join(".");
+    // The first class only. Styled-components put the component's name
+    // first and a hash of its props second, so the highlighted card in a
+    // row ("¡La mejor tarifa!") differed from its six siblings and the row
+    // fell under the similarity bar.
+    const cls = String(el.className || "").split(/\s+/).slice(0, 1).join(".");
     return el.tagName + "|" + cls;
   }
 
@@ -446,6 +453,18 @@
    *
    * Runs against the live document, not Readability's output.
    */
+  /// Every extraction stamps afresh. Stamps from the previous one survive
+  /// on any node the framework did not rebuild — and a button carrying an
+  /// old stamp used to be skipped as "already reported", so the second
+  /// extraction of a page lost every control the first had seen. The bar
+  /// with "Ver vuelos" was one of them. Cleared before anything stamps:
+  /// the overlay's choices come first and must keep theirs.
+  function clearStamps() {
+    for (const attr of ["data-jef-id", "data-jef-field", "data-jef-option"]) {
+      for (const el of document.querySelectorAll("[" + attr + "]")) el.removeAttribute(attr);
+    }
+  }
+
   function collectActions(excluded) {
     const actions = [];
     const seen = new Set();
@@ -482,9 +501,14 @@
       // actions. Listing them twice would also mean stamping one element with
       // two ids, and the second stamp wins: the action becomes unpressable.
       if (excluded && element && excluded.contains(element)) return;
-      // Same label twice is the same action to a user, however the markup
+      // Same label twice is the same link to a user, however the markup
       // differs (mobile nav duplicating desktop nav is the usual culprit).
-      const key = action.kind + "|" + action.label.toLowerCase();
+      // Not so for buttons: "Desde 81.987 ARS" sits on three different
+      // flights, and deduplicating it left two of them with nothing to
+      // press.
+      const key = action.kind === "button"
+        ? action.kind + "|" + counter
+        : action.kind + "|" + action.label.toLowerCase();
       if (seen.has(key) || actions.length >= MAX_ACTIONS) return;
       seen.add(key);
       action.id = "a" + counter++;
@@ -938,19 +962,43 @@
       }, entry.submit);
     }
 
-    for (const button of document.querySelectorAll(
+    /*
+     * The button in the bar pinned to the bottom of the screen is the
+     * page's own answer to "and now what?": "Ver vuelos" under the total,
+     * "Agregar al carrito", "Pagar". Its words vary; its place does not. A
+     * sighted person's thumb finds it without reading; a screen reader
+     * finds it forty stops later, in whatever group the words fell into.
+     */
+    function inBottomBar(el) {
+      for (let n = el.parentElement; n && n !== document.body; n = n.parentElement) {
+        const style = window.getComputedStyle(n);
+        if (style.position !== "fixed" && style.position !== "sticky") continue;
+        const rect = n.getBoundingClientRect();
+        return rect.bottom >= window.innerHeight - 8 && rect.height < window.innerHeight * 0.35;
+      }
+      return false;
+    }
+
+    const buttons = Array.prototype.slice.call(document.querySelectorAll(
       "button, [role=button], input[type=submit], input[type=button]"
-    )) {
-      if (isHidden(button)) continue;
+    )).filter(function (button) {
+      if (isHidden(button)) return false;
       // A disabled button is not an action; offering it reads as a control
       // that does nothing. When the page enables it, the next extraction
       // picks it up.
-      if (button.disabled || button.getAttribute("aria-disabled") === "true") continue;
+      if (button.disabled || button.getAttribute("aria-disabled") === "true") return false;
       // Already reported as part of a form's submit.
-      if (button.closest("form") && button.matches("[type=submit]")) continue;
-      if (button.hasAttribute("data-jef-id")) continue;
+      if (button.closest("form") && button.matches("[type=submit]")) return false;
+      return !button.hasAttribute("data-jef-id");
+    });
+    // The bottom bar first: it is last in the DOM, and a page of sixty day
+    // buttons hit the cap before it.
+    buttons.sort(function (a, b) { return (inBottomBar(b) ? 1 : 0) - (inBottomBar(a) ? 1 : 0); });
+    for (const button of buttons) {
       const label = labelFor(button) || button.getAttribute("value") || "";
-      push({ kind: "button", label: label, region: regionOf(button) }, button);
+      const action = { kind: "button", label: label, region: regionOf(button) };
+      if (inBottomBar(button)) action.primary = true;
+      push(action, button);
     }
 
     // Navigation links only. Every <a> on the page would be hundreds of
@@ -1112,8 +1160,16 @@
       // pressable. Reporting it again as a listing read the flight
       // calendar twice: 34 day buttons, then the same 34 days as items
       // nobody could activate.
+      // When the items ARE the buttons — a calendar's days, greyed out or
+      // not — the row is an action set, already reported, not a list of
+      // things. A card that merely holds a button (a flight with its price,
+      // a product with "Agregar") is still a card: its text says far more
+      // than its button.
       const pressable = matching.filter(function (k) {
-        return k.hasAttribute("data-jef-id") || k.querySelector("[data-jef-id]");
+        if (k.matches("button, [role=button], a[href]")) return true;
+        const button = k.querySelector("[data-jef-id], button[disabled], [aria-disabled=true]");
+        if (!button) return false;
+        return textOf(k).length <= textOf(button).length + 12;
       });
       if (pressable.length >= matching.length * 0.5) continue;
 
@@ -1143,6 +1199,15 @@
         items: candidate.items.slice(0, 30).map(itemOf),
       };
     });
+
+    // The same list twice — a mobile page carries its nav for two layouts —
+    // is one list. Same first three titles, same list.
+    const signatures = new Set();
+    for (let i = listings.length - 1; i >= 0; i--) {
+      const key = listings[i].items.slice(0, 3).map(function (it) { return it.title; }).join("|");
+      if (signatures.has(key)) listings.splice(i, 1);
+      else signatures.add(key);
+    }
 
     // Cards the shape detector missed, minus anything already listed.
     const taken = new Set();
@@ -1283,7 +1348,7 @@
   // last one used to come out as "$153", because the pattern only knew
   // digits in groups of three. It must end at a word boundary: a price cut
   // short is a wrong price, spoken with full confidence.
-  const PRICE = /(?:US\s*\$|AR\s*\$|\$|€|£|R\$)\s?(?:\d{1,3}(?:[.,]\d{3})+|\d+)(?:[.,]\d{1,2})?(?![\d.,]\d)/;
+  const PRICE = /(?:US\s*\$|AR\s*\$|\$|€|£|R\$)\s?(?:\d{1,3}(?:[.,]\d{3})+|\d+)(?:[.,]\d{1,2})?(?![\d.,]\d)|(?:\d{1,3}(?:[.,]\d{3})+|\d+)(?:[.,]\d{1,2})?\s?(?:ARS|USD|EUR|BRL|CLP|MXN|COP|PEN|UYU)\b|\b(?:ARS|USD|EUR|BRL|CLP|MXN|COP|PEN|UYU)\s?(?:\d{1,3}(?:[.,]\d{3})+|\d+)(?:[.,]\d{1,2})?(?![\d.,]\d)/;
 
   /// Card text minus what was already said, without the pauses that
   /// removal leaves behind: ", , $749.999 6, , Precio" is three pauses for
@@ -1325,22 +1390,47 @@
     // A product card has no heading, and its link wraps the whole card, so
     // the link's text is everything at once. The name is the first line of
     // text that is not a price.
-    let title = heading ? textOf(heading) : "";
+    // Leaves spoken for by the title (and, below, the price) stay out of
+    // the rest: replacing the title's string in the card's text missed
+    // whenever the two were joined differently, and the rest repeated it.
+    const used = new Set();
+    let title = "";
+    if (heading) {
+      title = textOf(heading);
+      for (const leaf of leaves) if (heading.contains(leaf.node)) used.add(leaf.node);
+    }
     if (!title && link) {
       const linkText = textOf(link);
-      if (linkText.length < text.length - 20 || linkText.length <= 80) title = linkText;
+      if (linkText.length < text.length - 20 || linkText.length <= 80) {
+        title = linkText;
+        for (const leaf of leaves) if (link.contains(leaf.node)) used.add(leaf.node);
+      }
     }
     if (!title) {
+      // What the card says, minus what its buttons say: "Ver itinerario"
+      // names an action, not a flight.
+      const said = leaves.filter(function (leaf) {
+        return !leaf.node.closest("button, a[href], [role=button]") && !PRICE.test(leaf.text);
+      });
       // The longest of the first few lines: a news card opens with a
       // two-word kicker ("Farmear aura") above the headline, a product card
-      // with its name above the prices.
-      const lines = leaves
-        .filter(function (leaf) { return leaf.text.length >= 8 && !PRICE.test(leaf.text); })
-        .slice(0, 3)
-        .map(function (leaf) { return leaf.text; });
-      title = lines.length
-        ? lines.reduce(function (best, line) { return line.length > best.length ? line : best; }, "")
-        : text.slice(0, 80);
+      // with its name above the prices. When no line says much on its own
+      // — a flight is "Domingo", "07:00", "AEP", "1h 30m" — the lines
+      // together are the name.
+      const first = said.slice(0, 4);
+      const longest = first.reduce(function (best, leaf) { return leaf.text.length > best.text.length ? leaf : best; }, { text: "" });
+      if (longest.text.length >= 20) {
+        title = longest.text;
+        used.add(longest.node);
+      } else {
+        let joined = "";
+        for (const leaf of said) {
+          if (joined.length + leaf.text.length > 80) break;
+          joined += (joined ? " " : "") + leaf.text;
+          used.add(leaf.node);
+        }
+        title = joined || text.slice(0, 80);
+      }
     }
 
     const item = { title: title.slice(0, 120) };
@@ -1348,13 +1438,17 @@
       const href = absolute(link.getAttribute("href") || "");
       if (href) item.href = href;
     }
+    // A card with no link but a button — "Desde 81.987 ARS" on a flight —
+    // opens by pressing that button.
+    const button = el.querySelector("[data-jef-id]");
+    if (!item.href && button) item.actionId = button.getAttribute("data-jef-id");
 
     // Currency, because on a product card the price is the point — the
     // price it is now, not the one struck through above it.
     let priceMatch = null;
     for (const leaf of leaves) {
       const m = leaf.text.match(PRICE);
-      if (m && !isStruck(leaf.node)) { priceMatch = m; break; }
+      if (m && !isStruck(leaf.node)) { priceMatch = m; used.add(leaf.node); break; }
     }
     if (!priceMatch) priceMatch = text.match(PRICE);
 
@@ -1371,14 +1465,12 @@
     }
 
     // Whatever else the card says, minus the title and price we already have.
-    let rest = text;
-    if (title) rest = rest.replace(title, "");
+    let rest = leaves.length
+      ? leaves.filter(function (leaf) { return !used.has(leaf.node); }).map(function (leaf) { return leaf.text; }).join(", ")
+      : text.replace(title, "");
     if (item.price) rest = rest.replace(item.price, "");
-    // Taking the title and the price out leaves their commas behind:
-    // ", , $749.999 6, , Precio s/imp." — each empty segment is a pause
-    // VoiceOver makes for nothing.
     rest = tidy(rest);
-    if (rest && rest.length < 120) item.meta = rest;
+    if (rest) item.meta = rest.slice(0, 200);
 
     return item;
   }
@@ -1570,6 +1662,7 @@
   }
 
   function extract() {
+    clearStamps();
     // Collected before Readability runs, and from the live document: the parse
     // below throws all of this away.
     // Overlay first: it stamps its own controls, and the action inventory has
@@ -1641,7 +1734,14 @@ allowedVideoRegex: /^$/,
      */
     const holder = new DOMParser().parseFromString(article.content, "text/html");
 
-    const blocks = toBlocks(holder.body);
+    // A short paragraph a listing item already says — "Domingo", "05:20",
+    // "AEP", the flight card read back as prose — is said once.
+    const saidByItems = [];
+    for (const listing of listings) for (const item of listing.items) saidByItems.push(item.title + " " + (item.meta || ""));
+    const blocks = toBlocks(holder.body).filter(function (block) {
+      if (block.type !== "paragraph" || block.text.length >= 60) return true;
+      return !saidByItems.some(function (said) { return said.indexOf(block.text) !== -1; });
+    });
 
     return {
       ok: true,

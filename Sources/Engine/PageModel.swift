@@ -204,6 +204,8 @@ struct Listing: Codable, Sendable, Identifiable {
 
     struct Item: Codable, Sendable, Identifiable, Hashable {
         let title: String
+        /// The button inside the card, when the card has no link of its own.
+        let actionId: String?
         let href: String?
         let price: String?
         let image: String?
@@ -250,6 +252,9 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
     /// Shared by sibling buttons of the same shape — the 34 cells of a
     /// calendar, the 12 tiles of a grid. One control set, judged once.
     let cluster: String?
+    /// Sits in the bar pinned to the bottom of the screen: the page's own
+    /// next step, whatever it is called.
+    let primary: Bool?
 
     enum Kind: String, Codable, Sendable {
         case form, button, link

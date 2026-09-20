@@ -23,6 +23,8 @@ struct ListingView: View {
     var startsExpanded = false
 
     var onOpenURL: (String) -> Void
+    /// Presses the button a card carries instead of a link.
+    var onActivate: (String) -> Void = { _ in }
 
     /// The page's own words beat Jev's category, which beats a bare count.
     private var displayName: String {
@@ -105,6 +107,7 @@ struct ListingView: View {
     private func row(_ item: Listing.Item, position: Int) -> some View {
         Button {
             if let href = item.href { onOpenURL(href) }
+            else if let id = item.actionId { onActivate(id) }
         } label: {
             VStack(alignment: .leading, spacing: 3) {
                 Text(item.title)
@@ -129,12 +132,12 @@ struct ListingView: View {
             .padding(.vertical, 9)
         }
         .buttonStyle(.plain)
-        .disabled(item.href == nil)
+        .disabled(item.href == nil && item.actionId == nil)
         // One element, one utterance. Position matters on a long list: it is
         // the only way to know how far in you are without counting swipes.
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(position) de \(listing.items.count). \(item.spokenLabel)")
-        .accessibilityHint(item.href == nil ? "" : "Abre este elemento")
-        .accessibilityAddTraits(item.href == nil ? [] : [.isButton])
+        .accessibilityHint(item.href != nil ? "Abre este elemento" : item.actionId != nil ? "Elige esta opción en la página" : "")
+        .accessibilityAddTraits(item.href == nil && item.actionId == nil ? [] : [.isButton])
     }
 }

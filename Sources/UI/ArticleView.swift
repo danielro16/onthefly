@@ -158,7 +158,8 @@ struct ArticleView: View {
     private var nextSteps: [Action] {
         Array(intentGroups.flatMap(\.actions)
             .filter {
-                ($0.kind == .button
+                $0.primary == true
+                || ($0.kind == .button
                     && $0.label.range(of: Self.callToAction, options: [.regularExpression, .caseInsensitive]) != nil)
                 || $0.label.trimmingCharacters(in: .whitespaces)
                     .range(of: Self.entrance, options: [.regularExpression, .caseInsensitive]) != nil
@@ -166,11 +167,14 @@ struct ArticleView: View {
             .prefix(3))
     }
 
-    /// The groups as shown: the calls to action live in the flow instead.
+    /// The groups as shown: the calls to action live in the flow instead,
+    /// and a button a listing row already presses — "Desde 81.987 ARS" on
+    /// its flight — is not listed a second time on its own.
     private func withoutNextSteps(_ groups: [IntentGroup]) -> [IntentGroup] {
         let promoted = Set(nextSteps.map(\.id))
+        let inListings = Set(page.listings.flatMap { $0.items.compactMap(\.actionId) })
         return groups.compactMap { group in
-            let rest = group.actions.filter { !promoted.contains($0.id) }
+            let rest = group.actions.filter { !promoted.contains($0.id) && !inListings.contains($0.id) }
             return rest.isEmpty ? nil : IntentGroup(intent: group.intent, actions: rest, uncertain: group.uncertain)
         }
     }
@@ -399,7 +403,10 @@ struct ArticleView: View {
                 listing: listing,
                 fallbackName: listingNames[listing.id],
                 startsExpanded: contentFirst && isContent(listing),
-                onOpenURL: onOpenURL
+                onOpenURL: onOpenURL,
+                onActivate: { id in
+                    if let action = page.actions.first(where: { $0.id == id }) { onOpenAction(action) }
+                }
             )
         }
     }

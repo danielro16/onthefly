@@ -155,6 +155,10 @@ struct FormView: View {
                     }
                 }
                 .pickerStyle(.menu)
+                // The visible label sits above; with the picker's own label
+                // as well, VoiceOver said "Número de documento, Número de
+                // documento".
+                .labelsHidden()
                 .accessibilityLabel(field.name)
 
             } else if field.type == "textarea" {
