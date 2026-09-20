@@ -183,6 +183,9 @@ final class HeadlessWebView: NSObject {
     /// Whether there is a page to go back to.
     var canGoBack: Bool { webView?.canGoBack ?? false }
 
+    /// Where "back" leads, so the wait can name it.
+    var backURL: URL? { webView?.backForwardList.backItem?.url }
+
     /// Volver, con la sesión intacta: la misma pila del WebView que usaría
     /// Safari, así que la página anterior vuelve con su login y su carrito,
     /// no recargada desde cero.

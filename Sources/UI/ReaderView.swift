@@ -178,9 +178,21 @@ final class ReaderModel {
             announce("\(page.title). \(page.stats.blockCount) secciones.")
             await detectIntent(for: page)
         } catch {
+            guard !Self.wasSuperseded(error) else { return }
             state = .failed(error.localizedDescription)
             UIAccessibility.post(notification: .announcement, argument: "No se pudo leer esta página")
         }
+    }
+
+    /// Una carga que otra más nueva reemplazó no falló: dejó de importar.
+    ///
+    /// El motor atiende una página por vez, y cuando llega un pedido nuevo le
+    /// avisa al anterior con un `CancellationError`. Tratado como error, el
+    /// pedido viejo pisaba el "Leyendo…" del nuevo con "No se pudo leer esta
+    /// página" — en un diario que tarda veinte segundos, bastaba con tocar
+    /// "Volver" dos veces. Quien manda en la pantalla es el último pedido.
+    private static func wasSuperseded(_ error: Error) -> Bool {
+        error is CancellationError
     }
 
     // MARK: - Intent
@@ -257,6 +269,7 @@ final class ReaderModel {
                 await go()
             }
         } catch {
+            guard !Self.wasSuperseded(error) else { return }
             UIAccessibility.post(
                 notification: .announcement, argument: "No se pudo responder el aviso"
             )
@@ -316,6 +329,7 @@ final class ReaderModel {
                 await go()
             }
         } catch {
+            guard !Self.wasSuperseded(error) else { return }
             UIAccessibility.post(
                 notification: .announcement,
                 argument: "No se pudo activar \(action.label)"
@@ -427,6 +441,7 @@ final class ReaderModel {
                 await go()
             }
         } catch {
+            guard !Self.wasSuperseded(error) else { return }
             UIAccessibility.post(
                 notification: .announcement, argument: "No se pudo enviar el formulario"
             )
@@ -451,6 +466,11 @@ final class ReaderModel {
             return
         }
         UIAccessibility.post(notification: .announcement, argument: "Volviendo")
+        // Volver es una carga como cualquier otra y se tiene que ver como
+        // una: sin esto la pantalla no cambiaba hasta que la página anterior
+        // llegaba, el toque parecía no haber hecho nada, y el segundo toque
+        // cancelaba al primero.
+        if let url = engine.backURL { state = .loading(url) }
         do {
             let page = try await engine.goBack()
             inFlow = false
@@ -464,6 +484,7 @@ final class ReaderModel {
             announce("\(page.displayTitle). \(page.stats.blockCount) secciones.")
             await detectIntent(for: page)
         } catch {
+            guard !Self.wasSuperseded(error) else { return }
             state = .failed(error.localizedDescription)
         }
     }
@@ -484,6 +505,7 @@ final class ReaderModel {
             )
             await detectIntent(for: page)
         } catch {
+            guard !Self.wasSuperseded(error) else { return }
             UIAccessibility.post(notification: .announcement, argument: "No se pudo leer la página")
         }
     }

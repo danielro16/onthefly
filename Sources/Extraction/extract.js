@@ -3261,5 +3261,18 @@ allowedVideoRegex: /^$/,
     }).observe(document.head || document.documentElement, { childList: true, characterData: true, subtree: true });
   })();
 
+  /*
+   * A page that comes back from the back/forward cache loads nothing.
+   *
+   * "Volver" restores the previous document as it was — no parse, no
+   * document end, so this script does not run again and nobody tells the
+   * reader that the page is there. It waited out its whole timeout on a
+   * page that had been ready from the first instant. `persisted` is how the
+   * page says it was restored rather than loaded.
+   */
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted) whenSettled(extractAndSend);
+  });
+
   whenSettled(function () { wakeLazyContent(function () { whenSettled(extractAndSend); }); });
 })();
