@@ -3178,9 +3178,10 @@ allowedVideoRegex: /^$/,
       // The walk is what the reader draws on a page read in its own order.
       // Left out, a tap that changed only the walk — a panel that opened
       // with no new controls, a section that expanded — read as "nothing
-      // happened" and was never sent.
+      // happened" and was never sent. Its shape, not its text: a ticker
+      // rewrites itself on its own and must not read as a new page.
       (page.stream || []).map(function (e) {
-        return e.kind + (e.ref || e.label || (e.block && e.block.text) || "").slice(0, 40);
+        return e.kind + (e.ref || e.href || "");
       }).join("|"),
       page.overlay ? page.overlay.text : "",
     ].join("\n");
@@ -3328,6 +3329,19 @@ allowedVideoRegex: /^$/,
       };
     }
     window.addEventListener("popstate", function () { setTimeout(routeChanged, 0); });
+
+    /*
+     * A fragment is a move inside the same document.
+     *
+     * `documentKey` deliberately ignores the hash — two fragments of one page
+     * are not two pages — so `routeChanged` never fires for them. But now
+     * that a link into this same page is pressed instead of loaded, a tab
+     * strip or an accordion built on fragments changes the page and nothing
+     * was watching: the reader kept whatever it had read before the tap.
+     */
+    window.addEventListener("hashchange", function () {
+      whenSettled(function () { extractAndSend(true); });
+    });
 
     // The title arrives after the page: "Ofertas de vuelos" was still read
     // as "Calendario de vuelos" because the SPA renamed the document after

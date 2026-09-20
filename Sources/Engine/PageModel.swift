@@ -48,15 +48,22 @@ struct ExtractedPage: Codable, Sendable {
             && overlay?.text == other.overlay?.text
     }
 
-    /// Lo que el recorrido dice, para distinguir dos lecturas.
+    /// La FORMA del recorrido, para distinguir dos lecturas.
     ///
-    /// En una página que se lee en su orden, el recorrido ES lo que se
-    /// dibuja. Sin mirarlo, un toque que abrió un panel sin traer controles
-    /// nuevos —o que expandió una sección— se leía como "la página no
-    /// cambió", y la app se lo decía al usuario en voz alta.
+    /// En una página que se lee en su orden, el recorrido es lo que se dibuja.
+    /// Sin mirarlo, un toque que abrió un panel sin traer controles nuevos —o
+    /// que expandió una sección— se leía como "la página no cambió", y la app
+    /// se lo decía al usuario en voz alta.
+    ///
+    /// La forma, y no el texto: un reloj, un ticker o un aviso que rota
+    /// cambian el texto solos, y si eso contara como página nueva la vista se
+    /// reconstruiría sin que nadie tocara nada — que es exactamente lo que
+    /// `isEquivalent` existe para evitar, porque reconstruir tira el cursor de
+    /// VoiceOver al principio. Un bloque cuenta por estar, no por lo que diga;
+    /// un link, por su dirección, que es lo que hace que sea otro link.
     private var streamShape: [String] {
         (stream ?? []).map { entry in
-            entry.kind + "|" + (entry.ref ?? entry.label ?? entry.block?.plainText.prefix(40).description ?? "")
+            entry.kind + "|" + (entry.ref ?? entry.href ?? "")
         }
     }
 
