@@ -414,17 +414,24 @@ struct ReaderView: View {
 
     var body: some View {
         NavigationStack {
-            // The native view stays alive underneath the original page —
-            // hidden, not gone — so what the user typed into a form is still
-            // there when they come back.
+            // The WebView is always in the hierarchy, underneath. Off the
+            // screen WebKit stops requestAnimationFrame, and React Helmet
+            // renames the document inside one: the title stayed "Calendario
+            // de vuelos" through the whole purchase. Covered by the native
+            // view it keeps running; the native view stays alive on top —
+            // hidden, not gone — so what the user typed is still there
+            // when they come back from the original page.
             ZStack {
+                if let web = model.liveWebView {
+                    WebPageView(webView: web)
+                        .allowsHitTesting(model.showingOriginal)
+                        .accessibilityHidden(!model.showingOriginal)
+                }
                 content
+                    .background(Color(.systemBackground))
                     .opacity(model.showingOriginal ? 0 : 1)
                     .allowsHitTesting(!model.showingOriginal)
                     .accessibilityHidden(model.showingOriginal)
-                if model.showingOriginal, let web = model.liveWebView {
-                    WebPageView(webView: web)
-                }
             }
             // Como Safari: nada arriba. El título de la página vive en el
             // contenido y no se repite en el cromo, y la barra va abajo, donde

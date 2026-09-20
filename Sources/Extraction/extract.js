@@ -479,7 +479,10 @@
      */
     const NOISE = [
       /^\d+$/,                                        // carousel dots
-      /^(aceptar|accept|rechazar|reject|permitir|allow)\b.*(cookie|esencial|essential|todas|all)?/i,
+      // Cookie consent only — the overlay reports those as its choices. A
+      // bare "Aceptar" is a confirm button, and the fare warning's one was
+      // being thrown away with the banners'.
+      /^(aceptar|accept|rechazar|reject|permitir|allow)\b.*(cookie|esencial|essential|todas|all)/i,
       /^(ok|got it|entendido|cerrar|close|dismiss)\b/i,
       /^(ir a|skip to|saltar a)\b/i,                  // skip links
       /^(cerrar alerta|close alert)$/i,
@@ -1539,8 +1542,11 @@
       const style = window.getComputedStyle(el);
       if (style.position !== "fixed" && style.position !== "sticky") continue;
       if (isHidden(el)) continue;
+      // Modals do not all climb to z-index 100: the fare warning sat lower
+      // and read as prose with its buttons scattered. Anything pinned, on
+      // top, and a fifth of the screen is in the way.
       const zIndex = parseInt(style.zIndex, 10) || 0;
-      if (zIndex < 100) continue;
+      if (zIndex < 10) continue;
       const rect = el.getBoundingClientRect();
       if (rect.width * rect.height < viewportArea * 0.2) continue;
       if (isPopupList(el)) continue;
@@ -1675,7 +1681,18 @@
       return /recaptcha|hcaptcha|turnstile|challenges\.cloudflare|arkoselabs|funcaptcha/i.test(src) && !isHidden(f);
     });
     const words = /no soy un robot|i'm not a robot|verific[aá] que (sos|eres)|verify you are human|completá este paso/i;
-    if (!frame && !words.test(textOf(document.body).slice(0, 3000))) return null;
+    const saysSo = words.test(textOf(document.body).slice(0, 3000));
+    if (!frame && !saysSo) return null;
+    // A form with an invisible reCAPTCHA badge is a form, not a wall. The
+    // passenger-data page carried one and read as "Verificación de
+    // seguridad" over forty fields. A wall says so, or has nothing else.
+    if (frame && !saysSo) {
+      const controls = Array.prototype.filter.call(
+        document.querySelectorAll("input:not([type=hidden]), select, textarea, button, a[href]"),
+        function (c) { return !isHidden(c); }
+      );
+      if (controls.length > 12) return null;
+    }
 
     const heading = document.querySelector("h1, h2, [role=heading]");
     const said = heading ? textOf(heading) : "";
