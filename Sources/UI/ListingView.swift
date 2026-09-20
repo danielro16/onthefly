@@ -31,6 +31,13 @@ struct ListingView: View {
         return "Listado de \(listing.count) elementos"
     }
 
+    /// When the name IS the count, saying the count again underneath it —
+    /// "Listado de 5 elementos, 5 elementos" — is one stop saying one thing
+    /// twice.
+    private var named: Bool {
+        !listing.title.isEmpty || !(fallbackName ?? "").isEmpty
+    }
+
     @Namespace private var rotorNamespace
     @State private var expanded = false
 
@@ -44,9 +51,11 @@ struct ListingView: View {
                         Text(displayName)
                             .font(.body.weight(.medium))
                             .multilineTextAlignment(.leading)
-                        Text(listing.subtitle)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        if named {
+                            Text(listing.subtitle)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                     Spacer()
                     Image(systemName: (expanded || startsExpanded) ? "chevron.down" : "chevron.right")
@@ -57,7 +66,7 @@ struct ListingView: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(displayName), \(listing.subtitle)")
+            .accessibilityLabel(named ? "\(displayName), \(listing.subtitle)" : displayName)
             .accessibilityAddTraits([.isHeader, .isButton])
             .accessibilityValue((expanded || startsExpanded) ? "expandido" : "contraído")
 

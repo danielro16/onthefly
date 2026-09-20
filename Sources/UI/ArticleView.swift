@@ -398,6 +398,8 @@ struct ArticleView: View {
 struct BlockView: View {
     let block: Block
 
+    @Environment(\.openURL) private var openURL
+
     var body: some View {
         switch block {
         case .heading(_, let level, let text):
@@ -412,6 +414,7 @@ struct BlockView: View {
                 .lineSpacing(4)
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityActions { linkActions(text, links) }
 
         case .quote(_, let text, let links):
             HStack(alignment: .top, spacing: 12) {
@@ -419,6 +422,7 @@ struct BlockView: View {
                     .fill(.tint)
                     .frame(width: 3)
                 Text(Self.attributed(text, links: links))
+                    .accessibilityActions { linkActions(text, links) }
                     .font(.body.italic())
             }
             .accessibilityElement(children: .combine)
@@ -428,15 +432,20 @@ struct BlockView: View {
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        // The number is part of what an ordered item says; a
+                        // bullet is not.
                         Text(ordered ? "\(index + 1)." : "•")
                             .font(.body.monospacedDigit())
                             .foregroundStyle(.secondary)
-                            .accessibilityHidden(true)
+                            .accessibilityHidden(!ordered)
                         Text(Self.attributed(item.text, links: item.links))
                             .font(.body)
                     }
-                    .accessibilityElement(children: .contain)
-                    .accessibilityLabel("Item \(index + 1) of \(items.count)")
+                    // One stop that says the item. An earlier version labelled
+                    // the container "Item 1 of 7" and nothing else — a list of
+                    // seven things read as seven positions.
+                    .accessibilityElement(children: .combine)
+                    .accessibilityActions { linkActions(item.text, item.links) }
                 }
             }
 
@@ -515,6 +524,42 @@ struct BlockView: View {
     ///
     /// `Link.range(in:)` clamps offsets, so malformed ranges from a hostile
     /// page are dropped rather than trusted.
+    /// Every link in a block, as a VoiceOver custom action.
+    ///
+    /// A paragraph is one stop and stays one stop — that is the point of
+    /// grouping. But a stop with links inside must still let the user follow
+    /// them, and the way VoiceOver users do that on native apps is the
+    /// actions rotor: swipe up or down on the element, hear "Abrir: X",
+    /// double-tap. Safari instead makes every link its own stop, which is
+    /// exactly the 224-element traversal this app exists to shrink.
+    ///
+    /// Verified in the accessibility tree: without this, a Wikipedia
+    /// paragraph with a dozen links exposed zero of them — one static text,
+    /// no children, no actions.
+    @ViewBuilder
+    private func linkActions(_ text: String, _ links: [Link]) -> some View {
+        // Reversed because the system lists actions last-added first; the
+        // user should hear them in the order they appear in the text.
+        ForEach(Array(links.reversed().enumerated()), id: \.offset) { _, link in
+            if let range = link.range(in: text),
+               let swiftRange = Range(range, in: text),
+               let url = URL(string: link.href),
+               let scheme = url.scheme?.lowercased(),
+               scheme == "https" || scheme == "http",
+               // A footnote mark — "[9]" — is a link, but "Abrir: [9]" five
+               // times over is noise, not navigation.
+               !Self.isFootnote(text[swiftRange]) {
+                Button("Abrir: \(text[swiftRange])") { openURL(url) }
+            }
+        }
+    }
+
+    static func isFootnote(_ label: Substring) -> Bool {
+        let trimmed = label.trimmingCharacters(in: .whitespaces)
+        return trimmed.hasPrefix("[") && trimmed.hasSuffix("]") &&
+               trimmed.dropFirst().dropLast().allSatisfy { $0.isNumber || $0 == "," || $0 == " " }
+    }
+
     static func attributed(_ text: String, links: [Link]) -> AttributedString {
         guard !links.isEmpty else { return AttributedString(text) }
 

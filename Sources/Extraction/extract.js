@@ -518,6 +518,22 @@
      * "Customer name" and "Telephone" — technically a label, useless to read
      * aloud, and exactly the failure this app exists to fix.
      */
+    /*
+     * A label's own words, without the control it wraps.
+     *
+     * <label>Enter a user-agent string: <textarea>Mozilla/5.0 …</textarea></label>
+     * is one label, but textOf() reads the textarea's content as part of it,
+     * so the field was named after its own current value — a sixty-word
+     * label that changed every time the user typed.
+     */
+    function labelText(label) {
+      const clone = label.cloneNode(true);
+      for (const control of clone.querySelectorAll("input, select, textarea, button")) {
+        control.remove();
+      }
+      return textOf(clone);
+    }
+
     function controlLabel(control) {
       const aria = control.getAttribute("aria-label");
       if (aria && aria.trim()) return aria.trim();
@@ -537,7 +553,7 @@
         try {
           const label = document.querySelector('label[for="' + CSS.escape(id) + '"]');
           if (label) {
-            const t = textOf(label);
+            const t = labelText(label);
             if (t) return t;
           }
         } catch (_) { /* malformed id */ }
@@ -546,7 +562,7 @@
       // <label>text <input></label>
       const wrapper = control.closest("label");
       if (wrapper) {
-        const t = textOf(wrapper);
+        const t = labelText(wrapper);
         if (t) return t;
       }
 

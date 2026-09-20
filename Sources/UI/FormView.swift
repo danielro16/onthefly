@@ -70,6 +70,10 @@ struct FormView: View {
     @ViewBuilder
     private func control(_ field: Action.Field) -> some View {
         VStack(alignment: .leading, spacing: 4) {
+            // Sighted context only. The control below carries the same name
+            // as its accessibility label, so leaving this in the tree made
+            // every field two stops: "Buscar con Google", then "Buscar con
+            // Google, campo de texto".
             HStack(spacing: 4) {
                 Text(field.name)
                     .font(.subheadline)
@@ -79,6 +83,7 @@ struct FormView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            .accessibilityHidden(true)
 
             if field.type == "radiogroup", let options = field.options, !options.isEmpty {
                 // A radio group is one decision. Rendering each option as its
