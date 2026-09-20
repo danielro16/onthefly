@@ -225,6 +225,53 @@ arreglar.
 large" eran tres campos sueltos. Ahora se agrupan por `name` y se renderizan
 como un solo control segmentado, que es lo que la página significa.
 
+## Un checkout entero, a ciegas
+
+Comprar un vuelo en aerolineas.com.ar sin ver la pantalla es la prueba más
+dura que tiene el proyecto: nueve pasos, una SPA que renombra el documento y
+renderiza tarde, y un formulario de veinte campos donde ninguno es un control
+HTML común. Lo que costó cada paso:
+
+**El combobox que no es un campo.** Día, Mes, Año, Tipo de Documento y los
+países son `react-select`: un `<input>` cuyo `value` se vacía al elegir, y la
+elección queda en un hermano. Leído como campo de texto, salía vacío y tipear
+no servía. Ahora un `aria-autocomplete=list` es un `combobox`: se puede
+escribir para filtrar, y un botón "Opciones de X" abre la lista entera —
+importante para alguien que no sabe qué contiene. El valor se lee de donde la
+página realmente lo muestra.
+
+**Los ids tenían que dejar de moverse.** Cada extracción renumeraba desde
+cero. Una re-extracción que la app descarta por "es la misma página" dejaba al
+lector con los ids viejos apuntando a otros nodos: "Opciones de Nacionalidad"
+abría la lista de 31 días. Ahora un nodo conserva el sello que recibió y los
+contadores siguen desde el más alto del documento.
+
+**Un formulario que no avanza tiene que decir por qué.** "Siguiente" no hacía
+nada audible: la página se quedaba igual y el lector leía lo mismo otra vez.
+Ahora, cuando el sitio marca un campo (`aria-invalid` + `aria-describedby`),
+el mensaje va debajo de ese campo; y cuando no lo marca —"Debes indicar la
+fecha de caducidad" colgaba de tres selects sin pertenecer a ninguno— se toma
+lo que apareció dentro del formulario después de apretar el botón. Se anuncia
+"No se envió. …" y se lee antes que los campos.
+
+**Una tarjeta con varias formas de elegirla no es un botón.** El paso de pago
+son siete planes de cuotas, y cada uno ofrece varias marcas de tarjeta como
+botones hechos sólo de un logo. Sin nombre accesible no existían. Ahora un
+botón que es sólo una imagen se llama por su `alt`, y las marcas de una fila
+son acciones personalizadas de VoiceOver sobre esa fila: una parada que dice
+"1 Cuota sin interés", con Visa, Mastercard y el resto en el rotor.
+
+**La página cambia sola, y hay que decirlo bien.** Elegir "DNI" agrega tres
+campos de vencimiento. Esa lectura se descartaba como "la misma página"
+porque las etiquetas de las acciones no habían cambiado; ahora la comparación
+mira también los campos, y en vez de "La página cambió" se anuncia
+"Aparecieron 3 campos: Día de vencimiento, Mes de vencimiento, Año de
+vencimiento".
+
+No se cargan datos de tarjeta ni se intenta pagar: el pago real vive en un
+iframe de pasarela, y eso es [territorio de la página original](#sesión-y-salida-de-emergencia)
+por diseño.
+
 ## Cobertura por patrón
 
 Lo que rompe no es el rubro — es el patrón estructural. Un banco y un sitio de
@@ -245,7 +292,9 @@ gobierno fallan por lo mismo: tablas y trámites de varios pasos.
 | Autocompletado | aerolínea, e-commerce, direcciones | ✅ |
 | Grilla de opciones (calendario de precios) | aerolínea | ✅ como "Elegí una opción, 34" |
 | Navegación SPA / resultados que llegan tarde | toda SPA | ✅ |
-| Trámite multi-paso | aerolínea (checkout), gobierno | ✅ vuelo BUE→COR hasta datos del pasajero, a ciegas |
+| Trámite multi-paso | aerolínea (checkout), gobierno | ✅ vuelo BUE→COR hasta el paso de pago, a ciegas |
+| Combobox de framework | react-select: fechas, países, documentos | ✅ se abre entero o se filtra escribiendo |
+| Formulario que rechaza el envío | checkout, registro | ✅ dice qué campo y qué falta |
 | Contenido tras login | bancos, salud | ⚠️ la sesión aguanta; sin probar |
 | Scroll infinito | feeds, catálogos | ❌ sin probar |
 | Modal / paywall | diarios | ❌ sin probar |
@@ -336,6 +385,17 @@ corridas consecutivas. Los umbrales siguen sin calibrar; el sesgo elegido
 (preguntar antes que ordenar mal) es correcto, pero la pregunta tiene que ser
 la excepción, no la salida por defecto.
 
+**Lo que el checkout agrega: a mitad de un trámite no hay intención que
+detectar.** En la pantalla de datos del pasajero la pregunta "¿para qué está
+hecha esta página?" no tiene interés: hay una sola tarea, la persona ya la
+eligió cinco pantallas atrás, y lo único que importa es el *estado* — qué
+campo falta, qué acaba de aparecer, por qué el botón no avanzó. Ordenar por
+intención ahí no aporta nada; lo que aporta es avisar que aparecieron tres
+campos al elegir "DNI", y decir "No se envió: Email, debes ingresar un correo
+electrónico". Eso no es clasificación: es leer lo que la página ya dice y no
+dejar que se pierda. La intención sirve al *entrar* a un sitio; adentro de un
+flujo, lo que sirve es el seguimiento del estado.
+
 **Sobre "proponer según el tipo de sitio".** No hace falta un catálogo de tipos
 de sitio. Lo que rompe es estructural y se repite entre rubros: el formulario
 sin `<form>` (aerolínea, pero cualquier SPA), el autocompletado (aerolínea,
@@ -357,12 +417,10 @@ solo cambia de endpoint — pero no puede olvidarse.
 TypeSafe es calibrarlos contra datos etiquetados del dominio. El sesgo elegido
 es preguntar de más antes que reordenar mal.
 
-**El buscador de vuelos no se detecta como formulario.** En aerolineas.com.ar
-`collectActions` encontró 0 `<form>`: el buscador es un div con botones, como
-en casi toda SPA moderna. Se rescata por los botones ("VUELOS", "Buscar
-vuelos") pero se pierden los campos (origen, destino, fechas), que es
-justamente lo que haría falta para guiar a alguien a completarlo. Falta
-detectar formularios de facto — grupos de inputs sin `<form>`.
+**El observador de cambios tardíos es una heurística, no una garantía.** Sabe
+esperar hasta 90 s, cuenta hasta seis lecturas por ruta y sólo gasta una
+cuando lo leído cambió de verdad. Aun así puede errarle, y por eso la barra
+tiene "Leer de nuevo": la válvula de escape cuando ninguna heurística alcanza.
 
 **La página tenía un solo heading.** Las SPA modernas casi no usan headings
 semánticos, así que la navegación por encabezados —la más usada en VoiceOver—

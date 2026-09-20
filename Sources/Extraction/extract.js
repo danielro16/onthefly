@@ -2452,6 +2452,8 @@ allowedVideoRegex: /^$/,
   const LATE_WINDOW_MS = 90000;
   const LATE_THRESHOLD = 20;
   const LATE_MAX_ROUNDS = 6;
+  /// How long a change may keep churning before it is read anyway.
+  const LATE_DEADLINE_MS = 2500;
   let lateObserver = null;
   let lateRounds = 0;
   let lateRoute = null;
@@ -2474,6 +2476,16 @@ allowedVideoRegex: /^$/,
 
     let pending = 0;
     let quiet = null;
+    let deadline = null;
+
+    function read() {
+      clearTimeout(quiet);
+      clearTimeout(deadline);
+      observer.disconnect();
+      if (lateObserver === observer) lateObserver = null;
+      extractAndSend(true);
+    }
+
     const observer = new MutationObserver(function (records) {
       for (const record of records) {
         if (record.type === "attributes") {
@@ -2487,12 +2499,14 @@ allowedVideoRegex: /^$/,
         pending += weight(record.addedNodes) + weight(record.removedNodes);
       }
       if (pending < LATE_THRESHOLD) return;
+      // Wait for quiet, but not forever. A spinner animating by class
+      // never leaves 600 ms of silence, and the checkout's passenger
+      // form sat there unread until the person pressed "Leer de nuevo".
+      // Reading too early costs nothing now: a reading that says the
+      // same thing is not sent, and the observer arms again after.
+      if (!deadline) deadline = setTimeout(read, LATE_DEADLINE_MS);
       clearTimeout(quiet);
-      quiet = setTimeout(function () {
-        observer.disconnect();
-        if (lateObserver === observer) lateObserver = null;
-        extractAndSend(true);
-      }, 600);
+      quiet = setTimeout(read, 600);
     });
     observer.observe(document.documentElement, {
       childList: true, subtree: true,
