@@ -276,6 +276,12 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
         /// user is already on.
         var isSecure: Bool { type == "password" }
 
+        /// A search box, by type or by what it calls itself. Typed as-is: no
+        /// capital letter the page did not ask for, no autocorrected city.
+        var isSearch: Bool {
+            type == "search" || name.range(of: "busc|search|query|consult", options: [.regularExpression, .caseInsensitive]) != nil
+        }
+
         /// Maps the HTML type to the right keyboard, so a date field does not
         /// open a QWERTY.
         var contentHint: String { type }

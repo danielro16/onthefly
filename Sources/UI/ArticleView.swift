@@ -49,10 +49,40 @@ struct ArticleView: View {
     /// listings and the prose ARE the page. Nothing may sit above them.
     private var leadsWithContent: Bool { dominant == .read }
 
+    private var isDetecting: Bool {
+        if case .detecting = intentState { return true }
+        return false
+    }
+
+    /// No goal, no grid, no article: a portal. Its listings are what it has
+    /// to offer — argentina.gob.ar is "Más temas" and little else — and
+    /// collapsed they were two closed boxes over one paragraph.
+    private var nothingLeads: Bool {
+        !isDetecting && !leadsWithContent && leadGroup == nil && leadCluster == nil
+    }
+
+    /// Two lone links are not a question. "¿Qué querés hacer?" over
+    /// "Consultar un dato, 1 opción" and "Información del sitio, 1 opción"
+    /// is a menu of one item each, dressed as a decision.
+    private var fewActions: Bool {
+        intentGroups.reduce(0) { $0 + $1.count } <= 3
+    }
+
+    /// The content opens the page: an article, a newspaper, or a portal with
+    /// nothing leading — where four goal categories over "Más temas" were a
+    /// question before the answer. The site's actions go to the menu.
+    private var contentFirst: Bool {
+        leadsWithContent || (nothingLeads && (!page.listings.isEmpty || !visibleBlocks.isEmpty))
+    }
+
     /// The one goal that answers the dominant intent. It leads instead of
     /// sitting as one category among four.
     private var leadGroup: IntentGroup? {
         guard let dominant, !leadsWithContent else { return nil }
+        // The catch-all never leads. A bank's marketing home came out as
+        // "Información del sitio, 28 opciones" on top: the leftovers bucket,
+        // presented as the point of the page.
+        guard !dominant.isCatchAll else { return nil }
         return intentGroups.first { $0.intent == dominant }
     }
 
@@ -80,7 +110,7 @@ struct ArticleView: View {
                 return rest.isEmpty ? nil : IntentGroup(intent: group.intent, actions: rest, uncertain: group.uncertain)
             }
         }
-        guard let leadGroup else { return leadsWithContent ? intentGroups : [] }
+        guard let leadGroup else { return contentFirst ? intentGroups : [] }
         return intentGroups.filter { $0.id != leadGroup.id }
     }
 
@@ -191,9 +221,13 @@ struct ArticleView: View {
                 // news; a search engine opens with the box. Putting eleven
                 // actions — dollar quotes among them — above the headlines is
                 // what made the reader read as more confusing than the site.
-                if leadsWithContent {
+                if contentFirst {
+                    // A portal's search box is still its first tool; only on
+                    // a page that is there to be read does a form wait.
+                    if !leadsWithContent { formsSection }
                     listingsSection
                     blocksSection
+                    if leadsWithContent { formsSection }
                 } else {
                     // A rebuilt form IS the task on a check-in, booking or
                     // search page, so nothing goes above it.
@@ -214,7 +248,12 @@ struct ArticleView: View {
                     } else if !intentGroups.isEmpty {
                         // Jev found no dominant goal. Then the categories are
                         // the honest answer and they stay where they were.
-                        ActionGroupsView(groups: withoutNextSteps(intentGroups), onOpen: onOpenAction)
+                        ActionGroupsView(
+                            groups: withoutNextSteps(intentGroups),
+                            title: fewActions ? nil : "¿Qué querés hacer?",
+                            expandedByDefault: fewActions,
+                            onOpen: onOpenAction
+                        )
                     }
 
                     listingsSection
@@ -302,13 +341,23 @@ struct ArticleView: View {
         }
     }
 
+    /// A listing worth opening on a content-first page is one that IS
+    /// content: the page named it, or Jev saw news, products, services or
+    /// results in it. A footer's seventeen links, opened, are seventeen
+    /// stops of nothing before the page.
+    private func isContent(_ listing: Listing) -> Bool {
+        if !listing.title.isEmpty { return true }
+        guard let kind = listingNames[listing.id] else { return false }
+        return ["Noticias", "Productos", "Trámites y servicios", "Resultados"].contains(kind)
+    }
+
     @ViewBuilder
     private var listingsSection: some View {
         ForEach(page.listings) { listing in
             ListingView(
                 listing: listing,
                 fallbackName: listingNames[listing.id],
-                startsExpanded: leadsWithContent,
+                startsExpanded: contentFirst && isContent(listing),
                 onOpenURL: onOpenURL
             )
         }

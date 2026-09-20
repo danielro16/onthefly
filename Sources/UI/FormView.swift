@@ -177,7 +177,7 @@ struct FormView: View {
                     .keyboardType(keyboard(for: field))
                     .textContentType(contentType(for: field))
                     .textInputAutocapitalization(autocapitalization(for: field))
-                    .autocorrectionDisabled(field.type == "email" || field.type == "url")
+                    .autocorrectionDisabled(field.type == "email" || field.type == "url" || field.isSearch)
                     .focused($focused, equals: field.id)
                     .accessibilityLabel(field.name)
                     .accessibilityHint(field.required ? "Campo obligatorio" : "")
@@ -219,7 +219,10 @@ struct FormView: View {
     private func autocapitalization(for field: Action.Field) -> TextInputAutocapitalization {
         switch field.type {
         case "email", "url": return .never
-        default: return .sentences
+        // The phone capitalises the first letter of a sentence; a search box
+        // is not a sentence. "Dni" went into a case-sensitive path and came
+        // back with no results; "dni" found 2807.
+        default: return field.isSearch ? .never : .sentences
         }
     }
 }

@@ -464,6 +464,8 @@
 
     function isNoise(label) {
       if (label.length < 3) return true;
+      // "search-icon" is the name of a glyph, not of an action.
+      if (looksLikeCode(label)) return true;
       return NOISE.some(function (pattern) { return pattern.test(label); });
     }
 
@@ -785,6 +787,9 @@
 
       const fields = fieldsOf(form);
       const submit = primarySubmit(form);
+      // A form with nothing to fill in is a button at best; its button is
+      // collected below on its own.
+      if (!fields.length) continue;
 
       push({
         kind: "form",
@@ -908,8 +913,12 @@
 
     // Navigation links only. Every <a> on the page would be hundreds of
     // entries, most of them body citations that the block list already carries.
+    // A footer is navigation too — "Trámites: Turnos, Trámites a distancia"
+    // on argentina.gob.ar lived only there — and a link dressed as a button
+    // ("Volver a la página de búsqueda", class btn) is an action wherever it
+    // sits.
     for (const link of document.querySelectorAll(
-      "nav a[href], header a[href], [role=navigation] a[href], [role=menuitem]"
+      "nav a[href], header a[href], footer a[href], [role=navigation] a[href], [role=menuitem], a[href][class*=btn], a[href][class*=button]"
     )) {
       if (isHidden(link)) continue;
       const href = absolute(link.getAttribute("href") || "");
@@ -1396,7 +1405,14 @@ allowedVideoRegex: /^$/,
     // A page with no prose but with actions is not a failure — it is a task
     // page, which is precisely the case the actions pass exists for.
     if (!article || !article.content) {
-      if (actions.length || listings.length) {
+      // Readability found no article, but the page still says things: "No
+      // se encontraron resultados" is a heading on a page with no prose,
+      // and dropping it left the user with the site's name and a footer.
+      // The main landmark, read as it is, capped.
+      const main = document.querySelector("main, [role=main], article") || document.body;
+      const said = toBlocks(main).slice(0, 60);
+
+      if (actions.length || listings.length || said.length) {
         return {
           ok: true,
           url: location.href,
@@ -1405,7 +1421,7 @@ allowedVideoRegex: /^$/,
           siteName: location.hostname,
           excerpt: "",
           lang: document.documentElement.lang || "",
-          blocks: [],
+          blocks: said,
           actions: actions,
           groups: groups,
           listings: listings,
