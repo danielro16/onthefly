@@ -93,6 +93,11 @@ struct Overlay: Codable, Sendable {
     let kind: Kind
     let text: String
     let choices: [Choice]
+    /// Links out of the overlay — the privacy policy, the terms. Kept apart
+    /// from `choices` because following one abandons the page instead of
+    /// answering anything, and offering it as a third button beside "Aceptar"
+    /// misrepresents what it does.
+    let links: [Reference]?
 
     enum Kind: String, Codable, Sendable {
         case cookies, paywall, newsletter, login, age, other
@@ -129,6 +134,13 @@ struct Overlay: Codable, Sendable {
     struct Choice: Codable, Sendable, Identifiable, Hashable {
         let id: String
         let label: String
+    }
+
+    struct Reference: Codable, Sendable, Identifiable, Hashable {
+        let label: String
+        let href: String
+
+        var id: String { href }
     }
 }
 

@@ -943,10 +943,25 @@
     const el = outer[0] || candidates[0];
 
     const choices = [];
+    const links = [];
     for (const control of el.querySelectorAll("button, [role=button], a[href], input[type=submit]")) {
       if (isHidden(control)) continue;
       const label = labelOf(control);
-      if (!label || choices.length >= 8) continue;
+      if (!label) continue;
+
+      // A link to the privacy policy is not an answer to the banner. Offered
+      // beside "Aceptar" it reads as a third option, and taking it abandons
+      // the page instead of resolving anything. Measured on aerolineas.com.ar,
+      // where "Puedes conocer nuestras políticas de cookies y privacidad."
+      // came back as the first of three choices.
+      if (control.tagName === "A" && leavesPage(control)) {
+        if (links.length >= 4) continue;
+        if (links.some(function (l) { return l.label === label; })) continue;
+        links.push({ label: label, href: control.href });
+        continue;
+      }
+
+      if (choices.length >= 8) continue;
       if (choices.some(function (c) { return c.label === label; })) continue;
       const id = "o" + choices.length;
       control.setAttribute("data-jef-id", id);
@@ -958,7 +973,7 @@
     // A fixed box with nothing to read and nothing to press is layout, not an
     // overlay: spiegel.de has one and it rendered as an empty "Aviso de la
     // página" card at the top of the article.
-    if (!choices.length && !text) return null;
+    if (!choices.length && !links.length && !text) return null;
 
     return {
       // Kept so the action inventory can skip what belongs to the overlay.
@@ -968,6 +983,7 @@
         kind: classifyOverlay(text, choices),
         text: text.slice(0, 400),
         choices: choices,
+        links: links,
       },
     };
   }
@@ -980,6 +996,21 @@
     if (text) return text.slice(0, 60);
     const title = el.getAttribute("title");
     return title ? title.trim() : "";
+  }
+
+  /// Whether following an anchor would leave the page behind, which is what
+  /// separates "read our policy" from "accept".
+  function leavesPage(anchor) {
+    const href = anchor.getAttribute("href") || "";
+    if (!href || href.charAt(0) === "#") return false;
+    if (/^javascript:/i.test(href)) return false;
+    try {
+      const target = new URL(href, document.baseURI);
+      if (target.protocol !== "http:" && target.protocol !== "https:") return false;
+      return target.origin !== location.origin || target.pathname !== location.pathname;
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Names the overlay from its own words. A guess, but a narrow one, and the

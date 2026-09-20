@@ -16,6 +16,7 @@ import SwiftUI
 struct OverlayView: View {
     let overlay: Overlay
     var onChoose: (Overlay.Choice) -> Void
+    var onOpenLink: (String) -> Void = { _ in }
 
     @State private var showingOriginal = false
 
@@ -45,6 +46,26 @@ struct OverlayView: View {
                         .padding(.horizontal, 14)
                         .background(.background, in: RoundedRectangle(cornerRadius: 9))
                         .accessibilityHint("Responde el aviso de la página")
+                    }
+                }
+            }
+
+            // Named as what they are. A policy is something to read before
+            // deciding, not a way of deciding.
+            if let references = overlay.links, !references.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(references) { reference in
+                        Button {
+                            onOpenLink(reference.href)
+                        } label: {
+                            Text(reference.label)
+                                .font(.footnote)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.tint)
+                        .accessibilityHint("Abre esta página. No responde el aviso.")
                     }
                 }
             }

@@ -90,7 +90,7 @@ struct ArticleView: View {
                 // Antes que nada: si algo tapa la página, eso es lo primero
                 // que el usuario tiene que resolver.
                 if let overlay = page.overlay {
-                    OverlayView(overlay: overlay, onChoose: onOverlayChoice)
+                    OverlayView(overlay: overlay, onChoose: onOverlayChoice, onOpenLink: onOpenURL)
                 }
 
                 intentPanel
