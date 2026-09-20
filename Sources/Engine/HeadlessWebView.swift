@@ -1,15 +1,25 @@
 import Foundation
 import WebKit
 
-/// The extraction engine.
+/// The browsing engine.
 ///
-/// A `WKWebView` that is never shown. It loads the real page, runs the shared
-/// `extract.js` inside it, and hands back a typed `ExtractedPage`. The user
-/// never sees this view — the app renders native SwiftUI from its output.
+/// One `WKWebView` for the life of the app. It loads the real page, runs the
+/// shared `extract.js` inside it, and hands back a typed `ExtractedPage`; the
+/// app renders native SwiftUI from that output and the WebView stays off
+/// screen. That split is the whole architecture: the web engine parses,
+/// native code renders, and VoiceOver behaves like a native app rather than
+/// like a web page in a wrapper.
 ///
-/// That split is the whole architecture: the web engine parses, native code
-/// renders. It is also why VoiceOver behaves like a native app here rather
-/// than like a web page in a wrapper.
+/// Two things follow from it being ONE WebView rather than one per load:
+///
+/// - It is a session. Cookies, logins and the state a site keeps between
+///   pages survive navigation, which is what puts banks, government portals
+///   and anything behind a sign-in within reach. With a fresh WebView per URL
+///   none of those could ever work, whatever the extractor learned to read.
+/// - It can be shown. When the native rebuild fails — a captcha, an anti-bot
+///   wall, a payment iframe, a page that simply did not extract — the user is
+///   handed the live page itself instead of a dead end, and whatever they do
+///   there (solve the captcha, sign in) is still there when they switch back.
 @MainActor
 final class HeadlessWebView: NSObject {
 
@@ -42,8 +52,21 @@ final class HeadlessWebView: NSObject {
         }
     }
 
-    private var webView: WKWebView?
+    /// The live page. Nil until the first load. Exposed so the UI can put it
+    /// on screen as the fallback; nothing else should reach into it.
+    private(set) var webView: WKWebView?
+
+    /// Called when the page changed without anyone awaiting it: the user
+    /// navigated inside the visible WebView, a site redirected, a form the
+    /// engine submitted came back after its own re-extraction. Failures are
+    /// reported too, so the native view never keeps showing a page that is
+    /// no longer the one loaded.
+    var onPageChanged: ((Result<ExtractedPage, Error>) -> Void)?
+
     private var continuation: CheckedContinuation<ExtractedPage, Error>?
+    /// A page that arrived while nobody was waiting for one. The next waiter
+    /// takes it instead of blocking on a load that already happened.
+    private var unconsumed: ExtractedPage?
     private var timeoutTask: Task<Void, Never>?
 
     private let timeout: Duration
@@ -53,38 +76,45 @@ final class HeadlessWebView: NSObject {
         super.init()
     }
 
-    /// Loads `url`, extracts it, and returns the typed page.
+    /// Loads `url` in the session and returns the extracted page.
     ///
-    /// The WebView stays alive afterwards so `activate(_:)` can press controls
-    /// the native UI rebuilt. One extraction at a time per instance; a second
-    /// call while one is in flight fails the earlier one rather than silently
-    /// interleaving.
+    /// One extraction at a time per instance; a second call while one is in
+    /// flight fails the earlier one rather than silently interleaving.
     func extract(url: URL) async throws -> ExtractedPage {
         settle(.failure(CancellationError()))
-        teardown()
+        let web = try session()
+
+        // Anything that arrived before this load belongs to the previous page.
+        unconsumed = nil
+        var request = URLRequest(url: url)
+        request.attribution = .user
+        web.load(request)
+        return try await nextPage()
+    }
+
+    /// The WebView, created on first use and kept for the life of the engine.
+    private func session() throws -> WKWebView {
+        if let webView { return webView }
 
         let config = try makeConfiguration()
         let web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = self
-        // Never rendered, but a non-zero size makes layout-dependent sites
-        // (lazy images, responsive templates) resolve as they would on screen.
+        web.uiDelegate = self
+        // Off screen most of the time, but a real size makes layout-dependent
+        // sites (lazy images, responsive templates) resolve as they would on
+        // screen. When shown, SwiftUI gives it the screen's frame instead.
         web.frame = CGRect(x: 0, y: 0, width: 390, height: 844)
         webView = web
-
-        return try await withCheckedThrowingContinuation { cont in
-            self.continuation = cont
-            self.startTimeout()
-            var request = URLRequest(url: url)
-            request.attribution = .user
-            web.load(request)
-        }
+        return web
     }
 
     enum ActivationOutcome: Sendable {
-        /// The control was pressed and the page re-extracted.
+        /// The control was pressed and this is what the page became — the
+        /// same document re-extracted, or the page it navigated to. The
+        /// session carries over either way, so a navigation is never reloaded
+        /// from scratch: the POST that just happened, the tab that just
+        /// opened, the login that just succeeded all stay put.
         case updated(ExtractedPage)
-        /// The control was pressed and the page navigated elsewhere.
-        case navigated(URL)
         /// The element is no longer in the DOM — the page re-rendered since we
         /// extracted it.
         case stale
@@ -114,9 +144,12 @@ final class HeadlessWebView: NSObject {
             )
         }
 
-        if dict["navigated"] as? Bool == true,
-           let href = dict["href"] as? String, let url = URL(string: href) {
-            return .navigated(url)
+        // Another document is on its way; its own extraction will arrive
+        // when it settles. Waiting for it beats reloading the URL, which
+        // would replay a GET where the page just did a POST.
+        if dict["navigated"] as? Bool == true {
+            unconsumed = nil
+            return .updated(try await nextPage())
         }
 
         // Same URL, changed DOM: a menu opened, a tab switched, a panel
@@ -161,9 +194,9 @@ final class HeadlessWebView: NSObject {
             )
         }
 
-        if dict["navigated"] as? Bool == true,
-           let href = dict["href"] as? String, let url = URL(string: href) {
-            return .navigated(url)
+        if dict["navigated"] as? Bool == true {
+            unconsumed = nil
+            return .updated(try await nextPage())
         }
 
         return .updated(try await reextract(web))
@@ -176,16 +209,26 @@ final class HeadlessWebView: NSObject {
 
     /// Re-runs extraction in the live page and waits for the result.
     private func reextract(_ web: WKWebView) async throws -> ExtractedPage {
-        try await withCheckedThrowingContinuation { cont in
+        unconsumed = nil
+        web.evaluateJavaScript("window.__jefReextract()") { _, error in
+            if let error {
+                self.settle(.failure(
+                    ExtractionError.activationFailed(error.localizedDescription)
+                ))
+            }
+        }
+        return try await nextPage()
+    }
+
+    /// The next page the engine produces, or the one that already arrived.
+    private func nextPage() async throws -> ExtractedPage {
+        if let page = unconsumed {
+            unconsumed = nil
+            return page
+        }
+        return try await withCheckedThrowingContinuation { cont in
             self.continuation = cont
             self.startTimeout()
-            web.evaluateJavaScript("window.__jefReextract()") { _, error in
-                if let error {
-                    self.settle(.failure(
-                        ExtractionError.activationFailed(error.localizedDescription)
-                    ))
-                }
-            }
         }
     }
 
@@ -225,7 +268,15 @@ final class HeadlessWebView: NSObject {
 
         let config = WKWebViewConfiguration()
         config.userContentController = controller
-        config.websiteDataStore = .nonPersistent()
+        // Persistent on purpose: this is a browser, and a login that vanishes
+        // on the next page is not a session. Same store Safari uses.
+        config.websiteDataStore = .default()
+        // Say "Safari", because that is what this is: the same WebKit, on the
+        // same phone. The bare WKWebView agent lacks the Version/Safari
+        // tokens, and anti-bot walls read that as automation — MercadoLibre
+        // served a "Seguridad" page to it before any content.
+        let os = ProcessInfo.processInfo.operatingSystemVersion.majorVersion
+        config.applicationNameForUserAgent = "Version/\(os).0 Mobile/15E148 Safari/604.1"
         config.defaultWebpagePreferences.allowsContentJavaScript = true
         config.suppressesIncrementalRendering = true
         config.allowsInlineMediaPlayback = false
@@ -252,9 +303,20 @@ final class HeadlessWebView: NSObject {
         cont.resume(with: result)
     }
 
-    /// Disposes of the session. Only on a new load or an explicit cancel —
-    /// tearing down after every extraction is what used to make buttons
-    /// unpressable.
+    /// Hands a page to whoever is waiting for one — or, if nobody is, reports
+    /// that the page changed on its own and keeps it for the next waiter.
+    private func deliver(_ result: Result<ExtractedPage, Error>) {
+        if continuation != nil {
+            settle(result)
+            return
+        }
+        if case .success(let page) = result { unconsumed = page }
+        onPageChanged?(result)
+    }
+
+    /// Disposes of the session. Only on an explicit cancel: the WebView is the
+    /// user's session, and throwing it away is what used to lose their login
+    /// on every navigation.
     private func teardown() {
         webView?.stopLoading()
         webView?.configuration.userContentController
@@ -274,16 +336,16 @@ final class HeadlessWebView: NSObject {
         let decoder = JSONDecoder()
 
         if let page = try? decoder.decode(ExtractedPage.self, from: data), page.ok {
-            settle(.success(page))
+            deliver(.success(page))
             return
         }
 
         if let failure = try? decoder.decode(ExtractionFailure.self, from: data) {
-            settle(.failure(ExtractionError.notReadable(failure.message ?? failure.reason)))
+            deliver(.failure(ExtractionError.notReadable(failure.message ?? failure.reason)))
             return
         }
 
-        settle(.failure(ExtractionError.malformedPayload))
+        deliver(.failure(ExtractionError.malformedPayload))
     }
 }
 
@@ -307,7 +369,7 @@ extension HeadlessWebView: WKNavigationDelegate {
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        settle(.failure(ExtractionError.navigationFailed(error.localizedDescription)))
+        report(error)
     }
 
     func webView(
@@ -315,7 +377,35 @@ extension HeadlessWebView: WKNavigationDelegate {
         didFailProvisionalNavigation navigation: WKNavigation!,
         withError error: Error
     ) {
-        settle(.failure(ExtractionError.navigationFailed(error.localizedDescription)))
+        report(error)
+    }
+
+    private func report(_ error: Error) {
+        // A load that a newer load replaced comes back as cancelled. The newer
+        // one has its own waiter; failing it for the old one's sake would
+        // fail every navigation that starts while another is in flight.
+        if (error as NSError).code == NSURLErrorCancelled { return }
+        deliver(.failure(ExtractionError.navigationFailed(error.localizedDescription)))
+    }
+}
+
+// MARK: - WKUIDelegate
+
+extension HeadlessWebView: WKUIDelegate {
+
+    /// `target="_blank"` asks for a new window. There is one page here, so the
+    /// link opens in it; without this the tap does nothing at all, silently,
+    /// which on the visible page is a dead end the user cannot even hear.
+    func webView(
+        _ webView: WKWebView,
+        createWebViewWith configuration: WKWebViewConfiguration,
+        for navigationAction: WKNavigationAction,
+        windowFeatures: WKWindowFeatures
+    ) -> WKWebView? {
+        if navigationAction.targetFrame == nil {
+            webView.load(navigationAction.request)
+        }
+        return nil
     }
 }
 

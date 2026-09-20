@@ -59,11 +59,13 @@ comparte sin cambios.
 - [x] Colapsado por relevancia, con la confianza como freno
 - [x] Activar botones de la página desde la vista nativa
 - [x] Formularios reconstruidos: texto, tel, email, radio, checkbox, select, textarea
+- [x] Un solo WebView con sesión persistente: cookies y login sobreviven la navegación
+- [x] Fallback a la página original cuando la reconstrucción falla o el usuario lo pide
 - [ ] Probar con VoiceOver real end-to-end
 - [ ] Calibrar umbrales contra páginas reales
+- [ ] Formularios de facto: grupos de inputs sin `<form>` (el buscador de vuelos)
 - [ ] Foundation Models: alt-text de imágenes sin descripción
 - [ ] Caché por template
-- [ ] Modo híbrido para páginas interactivas
 
 ## El modelo de intención
 
@@ -155,6 +157,28 @@ Sources/
 - Jev no resiste inyección adversarial. Cuando entre en v1, sus decisiones no
   pueden ser la única barrera para nada que importe.
 
+## Sesión y salida de emergencia
+
+Hay **un solo WebView** para toda la vida de la app, con el `websiteDataStore`
+por defecto — el mismo que usa Safari. Antes se creaba uno nuevo, sin
+persistencia, por cada URL: eso hacía imposible cualquier cosa detrás de un
+login, que es justamente donde están las tablas de un banco y los trámites de
+ARCA. Ahora una navegación es una navegación, no una recarga: el POST que
+acaba de ocurrir, la pestaña que se abrió, la sesión que se inició, todo sigue
+ahí.
+
+También se presenta como Safari (`Version/x Mobile Safari/604.1`), porque lo
+es: mismo WebKit, mismo teléfono. El user agent pelado de WKWebView es lo que
+MercadoLibre leyó como bot.
+
+Y cuando la reconstrucción no alcanza —captcha, muro anti-bot, iframe de pago,
+una página sin prosa ni acciones— el usuario **ve la página real**, dentro de
+la app, con la navegación web normal de VoiceOver. Es el mismo WebView, así que
+lo que haga ahí (resolver el captcha, iniciar sesión) sigue vigente al volver, y
+lo que navegue se extrae solo y lo espera del lado nativo. Nadie queda en un
+callejón sin salida: peor que la vista nativa, infinitamente mejor que "no se
+pudo leer esta página".
+
 ## Interacción: el WebView como ejecutor
 
 El WebView no solo extrae, también ejecuta. Sigue invisible, pero es
@@ -207,11 +231,12 @@ gobierno fallan por lo mismo: tablas y trámites de varios pasos.
 | Formulario simple | contacto, login, búsqueda | ✅ |
 | **Listado repetido** | e-commerce, feeds, resultados | ✅ |
 | Tabla de datos | bancos, gobierno, salud | ❌ marcada como hueco |
-| Trámite multi-paso | gobierno, checkout | ❌ sin probar |
-| Contenido tras login | bancos, salud | ❌ sin probar |
+| Trámite multi-paso | gobierno, checkout | ⚠️ la sesión aguanta; sin probar |
+| Contenido tras login | bancos, salud | ⚠️ la sesión aguanta; sin probar |
 | Scroll infinito | feeds, catálogos | ❌ sin probar |
 | Modal / paywall | diarios | ❌ sin probar |
-| iframe | pasarelas de pago | ⛔ cerrado por diseño |
+| iframe | pasarelas de pago | ⛔ cerrado por diseño → página original |
+| Captcha / anti-bot | e-commerce | ⛔ no se reconstruye → página original |
 
 ### Medido sobre sitios reales
 

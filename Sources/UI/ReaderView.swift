@@ -1,4 +1,5 @@
 import SwiftUI
+import WebKit
 
 @MainActor
 @Observable
@@ -32,16 +33,69 @@ final class ReaderModel {
 
     var address: String = "https://es.wikipedia.org/wiki/Buenos_Aires"
 
+    /// Whether the live page is on screen instead of the native rebuild.
+    ///
+    /// The escape hatch. Nothing the extractor cannot read may leave the user
+    /// stuck: a captcha, an anti-bot wall, a payment iframe, a page with no
+    /// prose and no actions. From here they browse the real page with
+    /// VoiceOver's ordinary web navigation and come back whenever they like.
+    private(set) var showingOriginal = false
+
     private let engine = HeadlessWebView()
     private let analyzer: PageAnalyzer?
 
     init() {
         analyzer = JevClient.fromEnvironment().map(PageAnalyzer.init)
+        engine.onPageChanged = { [weak self] result in
+            self?.pageChangedOnItsOwn(result)
+        }
     }
 
     var page: ExtractedPage? {
         if case .loaded(let page) = state { return page }
         return nil
+    }
+
+    /// The engine's WebView, for the fallback view. Nil before the first load.
+    var liveWebView: WKWebView? { engine.webView }
+
+    func showOriginal() {
+        guard engine.webView != nil else { return }
+        showingOriginal = true
+        UIAccessibility.post(
+            notification: .screenChanged,
+            argument: "Página original. Navegación web estándar."
+        )
+    }
+
+    func showAccessible() {
+        showingOriginal = false
+        UIAccessibility.post(notification: .screenChanged, argument: "Vista accesible.")
+    }
+
+    /// Announcements that describe the native view, held back while the user
+    /// is on the original page: hearing "3 grupos de opciones" over a web
+    /// they are reading themselves is noise about a screen they cannot see.
+    private func announce(_ text: String) {
+        guard !showingOriginal else { return }
+        UIAccessibility.post(notification: .announcement, argument: text)
+    }
+
+    /// The page changed and nobody was waiting for it: the user navigated
+    /// inside the visible WebView, or a site redirected, or a submit the
+    /// engine already answered came back later. The native view follows.
+    private func pageChangedOnItsOwn(_ result: Result<ExtractedPage, Error>) {
+        switch result {
+        case .success(let page):
+            guard !page.isEquivalent(to: self.page) else { return }
+            address = page.url
+            state = .loaded(page)
+            collapsed = []
+            announce("\(page.displayTitle). La página cambió.")
+            Task { await detectIntent(for: page) }
+        case .failure(let error):
+            state = .failed(error.localizedDescription)
+        }
     }
 
     func go() async {
@@ -59,13 +113,11 @@ final class ReaderModel {
 
         do {
             let page = try await engine.extract(url: url)
+            address = page.url
             state = .loaded(page)
             // Screen-reader users get no visual cue that the page swapped, so
             // say it. Without this the app looks frozen to VoiceOver.
-            UIAccessibility.post(
-                notification: .announcement,
-                argument: "\(page.title). \(page.stats.blockCount) secciones."
-            )
+            announce("\(page.title). \(page.stats.blockCount) secciones.")
             await detectIntent(for: page)
         } catch {
             state = .failed(error.localizedDescription)
@@ -88,10 +140,7 @@ final class ReaderModel {
                 intentGroups = await analyzer.classify(
                     actions: page.actions, site: page.siteName, scores: scores
                 )
-                UIAccessibility.post(
-                    notification: .announcement,
-                    argument: "\(page.title). \(intentGroups.count) grupos de opciones."
-                )
+                announce("\(page.title). \(intentGroups.count) grupos de opciones.")
             }
 
             if !page.listings.isEmpty {
@@ -130,10 +179,8 @@ final class ReaderModel {
         UIAccessibility.post(notification: .announcement, argument: "Respondiendo: \(choice.label)")
         do {
             switch try await engine.activate(actionID: choice.id) {
-            case .navigated(let url):
-                address = url.absoluteString
-                await go()
             case .updated(let page):
+                address = page.url
                 state = .loaded(page)
                 collapsed = []
                 UIAccessibility.post(
@@ -154,7 +201,7 @@ final class ReaderModel {
     /// Presses a control the page owns, then refreshes from whatever it became.
     ///
     /// Links navigate; buttons are clicked inside the live page. Either way the
-    /// native view is rebuilt from the result, so the user never sees a WebView.
+    /// native view is rebuilt from the result, in the same session.
     func activate(_ action: Action) async {
         // A link with an href needs no round trip through the page.
         if action.kind == .link, let href = action.href {
@@ -167,10 +214,6 @@ final class ReaderModel {
 
         do {
             switch try await engine.activate(actionID: action.id) {
-            case .navigated(let url):
-                address = url.absoluteString
-                await go()
-
             case .updated(let page):
                 // A control that changed nothing is not an error and must not
                 // look like one. Rebuilding the view would also send VoiceOver
@@ -182,6 +225,7 @@ final class ReaderModel {
                     )
                     return
                 }
+                address = page.url
                 state = .loaded(page)
                 collapsed = []
                 UIAccessibility.post(
@@ -220,9 +264,6 @@ final class ReaderModel {
         UIAccessibility.post(notification: .announcement, argument: "Enviando formulario")
         do {
             switch try await engine.submit(actionID: action.id) {
-            case .navigated(let url):
-                address = url.absoluteString
-                await go()
             case .updated(let page):
                 guard !page.isEquivalent(to: self.page) else {
                     UIAccessibility.post(
@@ -231,6 +272,7 @@ final class ReaderModel {
                     )
                     return
                 }
+                address = page.url
                 state = .loaded(page)
                 collapsed = []
                 UIAccessibility.post(
@@ -274,9 +316,8 @@ final class ReaderModel {
         intentState = .applied(intent)
 
         let hidden = collapsed.count
-        UIAccessibility.post(
-            notification: .announcement,
-            argument: hidden == 0
+        announce(
+            hidden == 0
                 ? "Página lista. No se ocultó nada."
                 : "Página simplificada. \(hidden) elementos agrupados al final."
         )
@@ -306,37 +347,10 @@ struct ReaderView: View {
     var body: some View {
         NavigationStack {
             Group {
-                switch model.state {
-                case .idle:
-                    EmptyStateView()
-                case .loading(let url):
-                    LoadingView(host: url.host() ?? "")
-                case .loaded(let page):
-                    ArticleView(
-                        page: page,
-                        intentState: model.intentState,
-                        collapsed: model.collapsed,
-                        intentGroups: model.intentGroups,
-                        listingNames: model.listingNames,
-                        onChoose: { intent in Task { await model.choose(intent) } },
-                        onShowEverything: { model.showEverything() },
-                        onOpenAction: { action in
-                            Task { await model.activate(action) }
-                        },
-                        onFillField: { field, value in model.fill(field, with: value) },
-                        onSubmitForm: { action in Task { await model.submit(action) } },
-                        onOpenURL: { href in
-                            model.address = href
-                            Task { await model.go() }
-                        },
-                        onOverlayChoice: { choice in
-                            Task { await model.resolveOverlay(choice) }
-                        }
-                    )
-                case .failed(let message):
-                    FailureView(message: message) {
-                        Task { await model.go() }
-                    }
+                if model.showingOriginal, let web = model.liveWebView {
+                    WebPageView(webView: web)
+                } else {
+                    content
                 }
             }
             // Como Safari: nada arriba. El título de la página vive en el
@@ -368,8 +382,67 @@ struct ReaderView: View {
         )
     }
 
+    @ViewBuilder
+    private var content: some View {
+        switch model.state {
+        case .idle:
+            EmptyStateView()
+        case .loading(let url):
+            LoadingView(host: url.host() ?? "")
+        case .loaded(let page):
+            ArticleView(
+                page: page,
+                intentState: model.intentState,
+                collapsed: model.collapsed,
+                intentGroups: model.intentGroups,
+                listingNames: model.listingNames,
+                onChoose: { intent in Task { await model.choose(intent) } },
+                onShowEverything: { model.showEverything() },
+                onOpenAction: { action in
+                    Task { await model.activate(action) }
+                },
+                onFillField: { field, value in model.fill(field, with: value) },
+                onSubmitForm: { action in Task { await model.submit(action) } },
+                onOpenURL: { href in
+                    model.address = href
+                    Task { await model.go() }
+                },
+                onOverlayChoice: { choice in
+                    Task { await model.resolveOverlay(choice) }
+                }
+            )
+        case .failed(let message):
+            FailureView(
+                message: message,
+                retry: { Task { await model.go() } },
+                // Only once there is a page to show. A bad address never
+                // loaded anything.
+                openOriginal: model.liveWebView == nil ? nil : { model.showOriginal() }
+            )
+        }
+    }
+
     private var addressBar: some View {
         HStack(spacing: 8) {
+            // Where Safari keeps its page menu: the way out of the native
+            // view, and the way back. Hidden while typing to leave room.
+            if !addressFocused, model.liveWebView != nil {
+                Button {
+                    model.showingOriginal ? model.showAccessible() : model.showOriginal()
+                } label: {
+                    Image(systemName: model.showingOriginal ? "doc.plaintext" : "globe")
+                        .font(.title3)
+                }
+                .accessibilityLabel(
+                    model.showingOriginal ? "Volver a la vista accesible" : "Ver la página original"
+                )
+                .accessibilityHint(
+                    model.showingOriginal
+                        ? "La página reconstruida, con rotores y grupos"
+                        : "La web tal cual, con navegación web estándar"
+                )
+            }
+
             TextField("Buscar o ingresar dirección", text: barText)
                 .textFieldStyle(.roundedBorder)
                 .multilineTextAlignment(addressFocused ? .leading : .center)
@@ -434,6 +507,8 @@ private struct LoadingView: View {
 private struct FailureView: View {
     let message: String
     let retry: () -> Void
+    /// The way out. Nil only when nothing was ever loaded.
+    var openOriginal: (() -> Void)? = nil
 
     var body: some View {
         ContentUnavailableView {
@@ -443,6 +518,10 @@ private struct FailureView: View {
         } actions: {
             Button("Try again", action: retry)
                 .buttonStyle(.borderedProminent)
+            if let openOriginal {
+                Button("Abrir la página original", action: openOriginal)
+                    .accessibilityHint("La web tal cual, con navegación web estándar")
+            }
         }
     }
 }
