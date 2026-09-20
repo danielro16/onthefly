@@ -233,6 +233,10 @@ gobierno fallan por lo mismo: tablas y trámites de varios pasos.
 | Menú de tareas | aerolíneas, gobierno | ✅ |
 | Formulario simple | contacto, login, búsqueda | ✅ |
 | **Listado repetido** | e-commerce, feeds, resultados | ✅ |
+| Catálogo con precios | e-commerce (fravega.com) | ✅ abre primero; precio vigente, no el tachado |
+| Resultados de búsqueda (tarjetas título-link) | Google, portales | ✅ |
+| Login real | banco (Galicia) | ✅ DNI, usuario, clave; "Enviar" dice qué falta |
+| Portal / home sin tarea dominante | gobierno | ✅ contenido primero, acciones al menú |
 | Tabla de datos | bancos, gobierno, salud | ❌ marcada como hueco |
 | Formulario sin `<form>` | toda SPA (buscador de vuelos) | ✅ |
 | Autocompletado | aerolínea, e-commerce, direcciones | ✅ |

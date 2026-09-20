@@ -69,7 +69,11 @@
           continue;
         }
         const isBlock = BLOCK_TAGS.has(child.tagName);
+        // Siblings laid out apart by CSS have no space between them in the
+        // text: a product card's "$749.999" and its "6" badge read as
+        // "$749.9996". A space between elements costs nothing to the ear.
         if (isBlock) raw += "\n";
+        else if (raw && !/\s$/.test(raw)) raw += " ";
         walk(child);
         if (isBlock) raw += "\n";
       }
@@ -351,6 +355,9 @@
 
         if (tag === "P") {
           const content = inlineContent(el);
+          // A video that did not load says so in a paragraph, four times a
+          // page. Nothing a reader can do with it.
+          if (/video player failed|error code:?\s*\d/i.test(content.text)) continue;
           if (content.text) {
             blocks.push({
               id: nextId(),
@@ -919,7 +926,9 @@
 
     for (const entry of defactoForms()) {
       const fields = fieldsOf(entry.box);
-      if (!fields.length) continue;
+      // Something to type into, or it is not a form: a lone checkbox next
+      // to a button is a CSS menu toggle ("Side Menu", "Boton Ingresar").
+      if (!fields.some(function (f) { return f.type !== "checkbox" && f.type !== "radiogroup"; })) continue;
       push({
         kind: "form",
         label: formLabel(entry.box, entry.submit, fields),
@@ -1126,7 +1135,7 @@
 
     kept.sort(function (a, b) { return b.items.length - a.items.length; });
 
-    return kept.slice(0, 4).map(function (candidate, index) {
+    const listings = kept.slice(0, 4).map(function (candidate, index) {
       return {
         id: "L" + index,
         title: listingTitle(candidate.container),
@@ -1134,6 +1143,85 @@
         items: candidate.items.slice(0, 30).map(itemOf),
       };
     });
+
+    // Cards the shape detector missed, minus anything already listed.
+    const taken = new Set();
+    for (const listing of listings) for (const item of listing.items) if (item.href) taken.add(item.href);
+    for (const group of collectCards(taken).slice(0, 2)) {
+      listings.push({
+        id: "L" + listings.length,
+        title: listingTitle(group.container),
+        count: group.items.length,
+        items: group.items.slice(0, 30),
+      });
+    }
+    return listings;
+  }
+
+  /*
+   * Cards: a link that carries a heading, with some text beside it.
+   *
+   * Google's results are exactly that — a <div role=heading> inside an <a>,
+   * a snippet next to it — and they share no class from one result to the
+   * next, so the repeated-shape detector above never sees them. Read as
+   * prose, a results page was six snippets with no title and nothing to
+   * open. A card is found by its heading link and grown outwards until it
+   * holds some text of its own and no second heading link; cards under the
+   * same parent are one listing.
+   */
+  function collectCards(taken) {
+    const HEADING = "h1, h2, h3, h4, h5, h6, [role=heading]";
+    const byParent = new Map();
+    const seen = new Set();
+
+    for (const heading of document.querySelectorAll(HEADING)) {
+      if (isHidden(heading)) continue;
+      // The link may wrap the heading, sit inside it, or — clarin.com —
+      // be an empty overlay at the end of the <article>, a sibling of
+      // everything it opens.
+      let anchor = heading.closest("a[href]") || heading.querySelector("a[href]");
+      if (!anchor) {
+        const card = heading.closest("article, li, [class*=card], [class*=item], [class*=story]");
+        if (card && card.querySelectorAll(HEADING).length === 1) anchor = card.querySelector("a[href]");
+      }
+      if (!anchor) continue;
+      const href = absolute(anchor.getAttribute("href") || "");
+      if (!href || seen.has(href) || taken.has(href)) continue;
+      const title = textOf(heading);
+      if (title.length < 8) continue;
+
+      let card = anchor;
+      for (let hops = 0; hops < 5 && card.parentElement && card.parentElement !== document.body; hops++) {
+        const up = card.parentElement;
+        const rivals = Array.prototype.filter.call(up.querySelectorAll("a[href]"), function (a) {
+          return a !== anchor && a.querySelector(HEADING) && !anchor.contains(a);
+        });
+        if (rivals.length) break;
+        card = up;
+        if (textOf(card).length >= title.length + 30) break;
+      }
+      const parent = card.parentElement;
+      if (!parent) continue;
+
+      seen.add(href);
+      const meta = tidy(textOf(card).replace(title, "")).slice(0, 200);
+      if (!byParent.has(parent)) byParent.set(parent, []);
+      byParent.get(parent).push({ title: title.slice(0, 120), href: href, meta: meta });
+    }
+
+    const found = [];
+    const loose = [];
+    for (const [parent, items] of byParent) {
+      if (items.length >= 3) found.push({ container: parent, items: items });
+      else loose.push.apply(loose, items);
+    }
+    // Cards that share no parent — Google nests each result at its own
+    // depth — are still the page's results, in page order.
+    if (!found.length && loose.length >= 3) {
+      found.push({ container: document.body, items: loose });
+    }
+    found.sort(function (a, b) { return b.items.length - a.items.length; });
+    return found;
   }
 
   /*
@@ -1191,32 +1279,85 @@
     return "";
   }
 
+  // Handles "$ 1.299.999", "US$ 45,50", "€1,299.00" and "$1535,00" — the
+  // last one used to come out as "$153", because the pattern only knew
+  // digits in groups of three. It must end at a word boundary: a price cut
+  // short is a wrong price, spoken with full confidence.
+  const PRICE = /(?:US\s*\$|AR\s*\$|\$|€|£|R\$)\s?(?:\d{1,3}(?:[.,]\d{3})+|\d+)(?:[.,]\d{1,2})?(?![\d.,]\d)/;
+
+  /// Card text minus what was already said, without the pauses that
+  /// removal leaves behind: ", , $749.999 6, , Precio" is three pauses for
+  /// nothing.
+  function tidy(text) {
+    return text.replace(/\s+/g, " ").replace(/(\s*,\s*)+/g, ", ").replace(/^,\s*|,\s*$/g, "").trim();
+  }
+
+  /// Text leaves of a card, in reading order.
+  function leavesOf(el) {
+    const out = [];
+    for (const node of el.querySelectorAll("*")) {
+      if (node.children.length || SKIP_TAGS.has(node.tagName)) continue;
+      const text = (node.textContent || "").replace(/\s+/g, " ").trim();
+      if (text) out.push({ node: node, text: text });
+    }
+    return out;
+  }
+
+  /// Struck through, by tag or by style: the price it used to be.
+  function isStruck(node) {
+    for (let n = node; n && n !== document.body; n = n.parentElement) {
+      if (/^(S|DEL|STRIKE)$/.test(n.tagName)) return true;
+      const deco = window.getComputedStyle(n).textDecorationLine || "";
+      if (deco.indexOf("line-through") !== -1) return true;
+    }
+    return false;
+  }
+
   /// Pulls the fields a list item actually carries. Everything is optional:
   /// a news card has no price, a product card has no date.
   function itemOf(el) {
     const heading = el.querySelector("h1,h2,h3,h4,h5,h6,[role=heading]");
     const link = el.querySelector("a[href]");
     const image = el.querySelector("img");
-
-    // Currency first, because on a product card the price is the point.
-    // Handles "$ 1.299.999", "US$ 45,50", "€1,299.00" and "$1535,00" — the
-    // last one used to come out as "$153", because the pattern only knew
-    // digits in groups of three. It must end at a word boundary: a price
-    // cut short is a wrong price, spoken with full confidence.
     const text = textOf(el);
-    const priceMatch = text.match(
-      /(?:US\s*\$|AR\s*\$|\$|€|£|R\$)\s?(?:\d{1,3}(?:[.,]\d{3})+|\d+)(?:[.,]\d{1,2})?(?![\d.,]\d)/
-    );
+    const leaves = leavesOf(el);
 
+    // A product card has no heading, and its link wraps the whole card, so
+    // the link's text is everything at once. The name is the first line of
+    // text that is not a price.
     let title = heading ? textOf(heading) : "";
-    if (!title && link) title = textOf(link);
-    if (!title) title = text.slice(0, 80);
+    if (!title && link) {
+      const linkText = textOf(link);
+      if (linkText.length < text.length - 20 || linkText.length <= 80) title = linkText;
+    }
+    if (!title) {
+      // The longest of the first few lines: a news card opens with a
+      // two-word kicker ("Farmear aura") above the headline, a product card
+      // with its name above the prices.
+      const lines = leaves
+        .filter(function (leaf) { return leaf.text.length >= 8 && !PRICE.test(leaf.text); })
+        .slice(0, 3)
+        .map(function (leaf) { return leaf.text; });
+      title = lines.length
+        ? lines.reduce(function (best, line) { return line.length > best.length ? line : best; }, "")
+        : text.slice(0, 80);
+    }
 
     const item = { title: title.slice(0, 120) };
     if (link) {
       const href = absolute(link.getAttribute("href") || "");
       if (href) item.href = href;
     }
+
+    // Currency, because on a product card the price is the point — the
+    // price it is now, not the one struck through above it.
+    let priceMatch = null;
+    for (const leaf of leaves) {
+      const m = leaf.text.match(PRICE);
+      if (m && !isStruck(leaf.node)) { priceMatch = m; break; }
+    }
+    if (!priceMatch) priceMatch = text.match(PRICE);
+
     // "Dólar oficial $1535,00" already says its price; repeating it as a
     // separate field made the stop read "Dólar oficial $1535,00, $1535,00".
     if (priceMatch && !title.includes(priceMatch[0])) {
@@ -1233,7 +1374,10 @@
     let rest = text;
     if (title) rest = rest.replace(title, "");
     if (item.price) rest = rest.replace(item.price, "");
-    rest = rest.replace(/\s+/g, " ").trim();
+    // Taking the title and the price out leaves their commas behind:
+    // ", , $749.999 6, , Precio s/imp." — each empty segment is a pause
+    // VoiceOver makes for nothing.
+    rest = tidy(rest);
     if (rest && rest.length < 120) item.meta = rest;
 
     return item;
@@ -1550,6 +1694,34 @@ allowedVideoRegex: /^$/,
    * page with a spinner or a polling widget never goes quiet, and waiting
    * forever is worse than extracting something.
    */
+  /*
+   * Wakes up what only loads on scroll.
+   *
+   * clarin.com's mobile home renders the first screen and fetches the rest
+   * as the reader scrolls; the hidden WebView never scrolls, so the page
+   * extracted as one headline over a footer — 12 elements where the site
+   * has hundreds. A few trips to the bottom, spaced out, fire the same
+   * observers a thumb would; then back to the top, so positions mean what
+   * they meant. Bounded, because an infinite feed is infinite.
+   */
+  function wakeLazyContent(done) {
+    let trips = 0;
+    let lastHeight = 0;
+    function trip() {
+      const height = document.documentElement.scrollHeight;
+      if (trips >= 4 || (trips > 0 && height === lastHeight)) {
+        window.scrollTo(0, 0);
+        setTimeout(done, 200);
+        return;
+      }
+      lastHeight = height;
+      trips++;
+      window.scrollTo(0, height);
+      setTimeout(trip, 500);
+    }
+    trip();
+  }
+
   function whenSettled(callback) {
     const QUIET_MS = 600;
     const MAX_WAIT_MS = 6000;
@@ -1946,5 +2118,5 @@ allowedVideoRegex: /^$/,
     window.addEventListener("popstate", function () { setTimeout(routeChanged, 0); });
   })();
 
-  whenSettled(extractAndSend);
+  whenSettled(function () { wakeLazyContent(function () { whenSettled(extractAndSend); }); });
 })();

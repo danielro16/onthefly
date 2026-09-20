@@ -68,11 +68,35 @@ struct ArticleView: View {
         intentGroups.reduce(0) { $0 + $1.count } <= 3
     }
 
-    /// The content opens the page: an article, a newspaper, or a portal with
-    /// nothing leading — where four goal categories over "Más temas" were a
-    /// question before the answer. The site's actions go to the menu.
+    /// A shop. Listings that carry prices are what the visitor came for;
+    /// Jev read fravega.com's home as "Ayuda" — two phone numbers on top,
+    /// seventy priced products folded away underneath.
+    private var isCatalog: Bool {
+        page.listings.contains { isPriced($0) }
+    }
+
+    private func isPriced(_ listing: Listing) -> Bool {
+        let priced = listing.items.filter { $0.price != nil }.count
+        return priced >= 3 && priced * 2 >= listing.items.count
+    }
+
+    /// The content opens the page: an article, a newspaper, a shop, or a
+    /// portal with nothing leading — where four goal categories over "Más
+    /// temas" were a question before the answer. The site's actions go to
+    /// the menu.
+    /// A results page. Whatever the query was for, the results are the
+    /// answer; on Google Jev led with "Comparar opciones" and the seven
+    /// results sat collapsed beneath it.
+    private var hasResults: Bool {
+        page.listings.contains { listing in
+            listing.title.range(of: "resultados|results", options: [.regularExpression, .caseInsensitive]) != nil
+                || listingNames[listing.id] == "Resultados"
+        }
+    }
+
     private var contentFirst: Bool {
-        leadsWithContent || (nothingLeads && (!page.listings.isEmpty || !visibleBlocks.isEmpty))
+        leadsWithContent || isCatalog || hasResults
+            || (nothingLeads && (!page.listings.isEmpty || !visibleBlocks.isEmpty))
     }
 
     /// The one goal that answers the dominant intent. It leads instead of
@@ -110,7 +134,7 @@ struct ArticleView: View {
                 return rest.isEmpty ? nil : IntentGroup(intent: group.intent, actions: rest, uncertain: group.uncertain)
             }
         }
-        guard let leadGroup else { return contentFirst ? intentGroups : [] }
+        guard let leadGroup, !contentFirst else { return contentFirst ? intentGroups : [] }
         return intentGroups.filter { $0.id != leadGroup.id }
     }
 
@@ -232,16 +256,16 @@ struct ArticleView: View {
                 // actions — dollar quotes among them — above the headlines is
                 // what made the reader read as more confusing than the site.
                 if contentFirst {
-                    // A portal's search box is still its first tool; only on
-                    // a page that is there to be read does a form wait.
-                    if !leadsWithContent { formsSection }
+                    // A search box is the page's first tool wherever it is;
+                    // a newsletter signup waits behind the content.
+                    formsSection(searchOnly: true)
                     listingsSection
                     blocksSection
-                    if leadsWithContent { formsSection }
+                    formsSection(searchOnly: false)
                 } else {
                     // A rebuilt form IS the task on a check-in, booking or
                     // search page, so nothing goes above it.
-                    formsSection
+                    formsSection(searchOnly: nil)
 
                     if let leadCluster {
                         ActionGroupsView(
@@ -337,9 +361,15 @@ struct ArticleView: View {
         }
     }
 
+    /// The page's forms. `searchOnly` true: just the search boxes; false:
+    /// everything but; nil: all of them.
     @ViewBuilder
-    private var formsSection: some View {
-        ForEach(page.actions.filter { $0.kind == .form && !($0.fields ?? []).isEmpty }) { form in
+    private func formsSection(searchOnly: Bool?) -> some View {
+        ForEach(page.actions.filter { form in
+            guard form.kind == .form, let fields = form.fields, !fields.isEmpty else { return false }
+            guard let searchOnly else { return true }
+            return fields.contains { $0.isSearch } == searchOnly
+        }) { form in
             FormView(
                 action: form,
                 suggestions: suggestions,
@@ -356,7 +386,8 @@ struct ArticleView: View {
     /// results in it. A footer's seventeen links, opened, are seventeen
     /// stops of nothing before the page.
     private func isContent(_ listing: Listing) -> Bool {
-        if !listing.title.isEmpty { return true }
+        if !listing.title.isEmpty || isPriced(listing) { return true }
+        if listingNames[listing.id] == "Resultados" { return true }
         guard let kind = listingNames[listing.id] else { return false }
         return ["Noticias", "Productos", "Trámites y servicios", "Resultados"].contains(kind)
     }
