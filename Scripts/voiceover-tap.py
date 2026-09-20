@@ -80,7 +80,7 @@ def main():
     anywhere = "--no-scroll" in args
     label = args[0]
 
-    for _ in range(8):
+    for _ in range(24):
         point = locate(label, kind, udid)
         if point is None:
             print(f"no hay elemento con etiqueta {label!r}", file=sys.stderr)
@@ -99,11 +99,11 @@ def main():
         # Swipes start high on the screen: a swipe that begins over the
         # keyboard, when a field has focus, scrolls nothing.
         if y > SCREEN_BOTTOM:
-            delta = min(280, y - 430)
-            swipe(udid, 420, 420 - delta)
+            delta = min(600, y - 430)
+            swipe(udid, 720, 720 - delta)
         else:
-            delta = min(280, 430 - y)
-            swipe(udid, 140, 140 + delta)
+            delta = min(600, 430 - y)
+            swipe(udid, 120, 120 + delta)
 
     print(f"no pude traer {label!r} a la pantalla", file=sys.stderr)
     sys.exit(1)

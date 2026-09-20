@@ -125,10 +125,20 @@ struct ArticleView: View {
     private static let callToAction =
         "\\b(continuar|siguiente|comprar|pagar|confirmar|reservar|finalizar|checkout|continue|next|buy|pay|confirm)\\b"
 
+    /// The door in. On a bank's home "Online Banking" is the reason most
+    /// people came, and it sat fortieth in the site menu. A link counts here
+    /// too: sign-in is a link on nearly every site.
+    private static let entrance =
+        "^(ingres[aá]r?|iniciar sesi[oó]n|acceder|acced[eé]|entrar|login|log in|sign in|online banking|home banking|mi cuenta|abrir men[uú]|men[uú]|open menu|abrir el men[uú])$"
+
     private var nextSteps: [Action] {
         Array(intentGroups.flatMap(\.actions)
-            .filter { $0.kind == .button
-                && $0.label.range(of: Self.callToAction, options: [.regularExpression, .caseInsensitive]) != nil }
+            .filter {
+                ($0.kind == .button
+                    && $0.label.range(of: Self.callToAction, options: [.regularExpression, .caseInsensitive]) != nil)
+                || $0.label.trimmingCharacters(in: .whitespaces)
+                    .range(of: Self.entrance, options: [.regularExpression, .caseInsensitive]) != nil
+            }
             .prefix(3))
     }
 

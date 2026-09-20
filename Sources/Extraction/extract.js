@@ -505,9 +505,33 @@
      * page gives the most room to.
      */
     function primarySubmit(form) {
-      const candidates = Array.prototype.slice.call(
+      const all = Array.prototype.slice.call(
         form.querySelectorAll("[type=submit], button:not([type=button]):not([type=reset])")
-      ).filter(function (candidate) { return !isHidden(candidate); });
+      );
+
+      // The button that names what the field names is the one: google.com's
+      // box is labelled "Buscar con Google", and so is one of its two
+      // submits. On a phone that one is not even visible — the page submits
+      // on Enter — while "Buscar con IA" is, and a search typed into the box
+      // went to the AI button. Hidden is fine here: the form is submitted
+      // with requestSubmit(button), which needs a submit control, not a
+      // visible one.
+      const fieldNames = Array.prototype.slice.call(form.querySelectorAll("input, textarea"))
+        .filter(function (c) { return !isHidden(c) && !/^(submit|button|image|reset|hidden)$/i.test(c.getAttribute("type") || ""); })
+        .map(function (c) { return controlLabel(c).toLowerCase(); });
+      // Any button, whatever its type: on a phone Google's "Buscar con
+      // Google" is a type=button wired in JavaScript, and the only real
+      // submit in the form is "Buscar con IA".
+      const anyButton = Array.prototype.slice.call(
+        form.querySelectorAll("button, [type=submit], [role=button]")
+      );
+      const named = anyButton.find(function (candidate) {
+        const label = labelFor(candidate).toLowerCase();
+        return label && fieldNames.indexOf(label) !== -1;
+      });
+      if (named) return named;
+
+      const candidates = all.filter(function (candidate) { return !isHidden(candidate); });
       if (!candidates.length) return null;
 
       let best = candidates[0];
@@ -542,6 +566,12 @@
       }
       const text = dedupeSegments(textOf(el));
       if (text) return text;
+      // <input type=submit value="Buscar con Google"> has no text nodes;
+      // its value is its label.
+      if (el.tagName === "INPUT") {
+        const value = (el.getAttribute("value") || "").trim();
+        if (value) return value;
+      }
       const title = el.getAttribute("title");
       return title ? title.trim() : "";
     }
@@ -710,6 +740,9 @@
       for (const control of container.querySelectorAll("input, select, textarea")) {
         const type = (control.getAttribute("type") || "text").toLowerCase();
         if (type === "hidden" || isHidden(control)) continue;
+        // A submit is a button, not something to fill in: Google's form came
+        // out with "Buscar con Google" and "Voy a tener suerte" as fields.
+        if (type === "submit" || type === "button" || type === "image" || type === "reset") continue;
         // A real form nested in an inferred one reports its own fields.
         if (container.tagName !== "FORM" && control.closest("form")) continue;
         if (fields.length >= 12) break;
@@ -1222,9 +1255,18 @@
   function detectOverlay() {
     const candidates = [];
 
-    // Declared overlays.
+    // Declared overlays. An autocomplete's popup is not one: Google's
+    // suggestions box is a dialog full of "Insert …" buttons, and read as
+    // an overlay it came out as an age gate with eight answers.
+    function isPopupList(el) {
+      if (el.matches("[role=listbox]") || el.querySelector("[role=listbox], [role=option]")) return true;
+      // Whatever holds the field being typed in is the field's own popup,
+      // not something in the way of the page.
+      const active = document.activeElement;
+      return !!(active && active !== document.body && active.matches("input, textarea, [role=combobox]") && el.contains(active));
+    }
     for (const el of document.querySelectorAll("[role=dialog], [role=alertdialog], [aria-modal=true], dialog[open]")) {
-      if (!isHidden(el)) candidates.push(el);
+      if (!isHidden(el) && !isPopupList(el)) candidates.push(el);
     }
 
     // Undeclared ones: fixed or sticky boxes large enough to block, which is
@@ -1239,6 +1281,7 @@
       if (zIndex < 100) continue;
       const rect = el.getBoundingClientRect();
       if (rect.width * rect.height < viewportArea * 0.2) continue;
+      if (isPopupList(el)) continue;
       candidates.push(el);
     }
 
@@ -1738,7 +1781,27 @@ allowedVideoRegex: /^$/,
     const before = documentKey();
 
     try {
-      if (anchor.tagName !== "FORM" && typeof anchor.click === "function") {
+      // A real form submits as a form: requestSubmit(button) runs the
+      // page's validation and submit handlers with that button as the
+      // submitter, and does not care whether the button is on screen —
+      // Google's "Buscar con Google" is not, on a phone.
+      const isSubmitter = anchor.tagName !== "FORM"
+        && anchor.matches("input[type=submit], button[type=submit], button:not([type])");
+      // A type=button named after the field, in a form that has somewhere
+      // to go, is the page's own Enter key: Google's "Buscar con Google"
+      // is wired in JavaScript and only exists while the box is open, so
+      // clicking it after leaving the field clicks nothing. Submitting the
+      // form itself is what Enter does, and it does not need the button.
+      const entersForm = anchor.tagName !== "FORM"
+        && anchor.matches("button[type=button], [role=button]")
+        && form && form.getAttribute("action");
+      if (form && (isSubmitter || entersForm) && typeof form.requestSubmit === "function") {
+        const fire = function () {
+          try { isSubmitter ? form.requestSubmit(anchor) : form.requestSubmit(); }
+          catch (_) { anchor.click(); }
+        };
+        if (left) setTimeout(fire, 300); else fire();
+      } else if (anchor.tagName !== "FORM" && typeof anchor.click === "function") {
         press(anchor, left);
       } else if (form) {
         const submit = form.querySelector("[type=submit], button:not([type=button])");
