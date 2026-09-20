@@ -14,7 +14,37 @@ tres existe, y lo que está en la parada treinta, para la mayoría de la gente,
 no. Reservar un vuelo no puede costar treinta paradas de menú antes de llegar
 al botón.
 
-## Tres principios
+## El principio que limita a todos los demás
+
+**No transformamos el contenido. Lo agrupamos.**
+
+La página se carga tal como es. Nosotros no reescribimos, no resumimos, no
+descartamos y no traducimos lo que el sitio dice. Lo único que hacemos es
+ponerle un orden y unos nombres a los grupos, porque el orden es lo que la
+vista da gratis y una lectura lineal no.
+
+La línea es precisa:
+
+- **Agregar contexto que la página ya tenía en forma visual, sí.** Emparejar
+  un valor con el nombre de su columna, decir "1 de 7", poner título a un
+  grupo. Esa información estaba ahí: la geometría la daba y nosotros la
+  decimos.
+- **Reescribir o descartar, no.** Ni una etiqueta, ni un precio, ni un
+  párrafo.
+
+Las palabras que ponemos nosotros son siempre **nombres de cajas**, nunca
+reemplazos de lo que hay adentro. "Consultar mis cuentas" nombra el grupo;
+adentro el link sigue diciendo "Posición consolidada", que es como lo llama
+el banco y como la persona va a tener que pedirlo si llama por teléfono o si
+un día abre la página original.
+
+Esto tiene una consecuencia concreta sobre la arquitectura actual:
+**Readability no puede seguir siendo el portero de qué es contenido.** Hoy lo
+que queda fuera de "el artículo" puede desaparecer, y de ahí viene el texto
+que aparece suelto al final. Todo lo que está en el cuerpo tiene que aterrizar
+en algún tramo: contenido, una opción, o el cajón de Información.
+
+## Tres principios más
 
 **Nada se pierde.** Todo lo que la página dice tiene que estar en algún lugar
 nombrado. Lo que no entra en ninguna categoría no se descarta ni se deja
