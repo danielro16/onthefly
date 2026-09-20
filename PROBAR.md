@@ -1,5 +1,52 @@
 # Cómo probar JEF Browser
 
+## La prueba que manda: original contra accesible
+
+Pedido de Daniel, 2026-09-20. **Antes de dar por buena cualquier pantalla hay
+que recorrerla entera, control por control, y compararla con la página
+original.** No alcanza con que el recorrido salga lindo en el extractor: lo
+que se mide es lo que una persona puede hacer.
+
+Dos preguntas, y las dos se contestan recorriendo:
+
+1. **¿Se perdió algo?** Todo lo que la página original ofrece tiene que estar
+   en la versión accesible. Agrupado sí —detrás de una puerta, dentro de una
+   lista, en un cajón—, pero **presente y alcanzable**. Si algo está en el
+   original y no aparece en ningún lado de la versión accesible, es un bug,
+   no una simplificación.
+2. **¿Se puede navegar?** Cada cosa que se toca tiene que hacer lo que dice.
+   Un botón que no responde es peor que un botón que no está: la persona lo
+   escucha, lo activa, y no pasa nada.
+
+El método, para cada sitio:
+
+- Abrir la misma URL en las dos vistas. El botón **Original / Accesible** de
+  la barra de abajo alterna entre las dos sin recargar ni perder la sesión.
+- Recorrer la versión accesible de arriba abajo, **tocando cada control** y
+  volviendo. Abrir cada puerta, y adentro de cada puerta, cada caja.
+- Anotar, por cada control: qué dice, qué hizo, y qué hace el equivalente en
+  el original.
+- Lo que falta y lo que no responde son las dos listas que importan.
+
+Sin simulador se puede adelantar la mitad con `./Scripts/read-page.js`: dice
+qué entrega el extractor y cuántos titulares del original llegaron. **No
+reemplaza esta prueba** — Chrome avanza animaciones y frames que un WKWebView
+oculto congela, así que un botón puede andar ahí y no en la app. Eso pasó con
+el menú de La Nación.
+
+### Botones que no responden — abierto
+
+Reportado sobre lanacion.com.ar: el menú hamburguesa y "Secciones" no hacen
+nada. "Secciones" quedó andando al hacer que las transiciones CSS terminen de
+una mientras el WebView no se ve (`8f4cd01`), pero **el reporte es posterior a
+eso**, así que hay al menos un caso más. Sospechas por orden de probabilidad:
+
+1. Un control que el sitio dibuja como `<div>` sin rol, así que ni siquiera se
+   reporta como acción.
+2. Un control que necesita un gesto real (`pointerdown`/`touchstart`) y no el
+   `click()` que `__jefActivate` dispara.
+3. Un control cuyo panel aparece, pero fuera del alcance del recorrido.
+
 ## En tu iPhone (lo que importa)
 
 El simulador **no corre VoiceOver**. Trae un inspector de accesibilidad, que
