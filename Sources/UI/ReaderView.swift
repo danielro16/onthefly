@@ -187,6 +187,13 @@ final class ReaderModel {
 
     private func detectIntent(for page: ExtractedPage) async {
         guard let analyzer else { return }
+        // Una página que se lee en su orden no se agrupa por intención: no
+        // hay nada que preguntarle a Jev, y su forma no puede depender de
+        // que la red conteste.
+        guard !page.readsInOrder else {
+            intentState = .unavailable
+            return
+        }
         intentState = .detecting
 
         do {
@@ -520,11 +527,20 @@ final class ReaderModel {
         // Most of the page being new means the page arrived, not that a
         // tap opened something: the checkout rendered its accordion a
         // minute after its route, and read as seven arrivals.
-        guard fresh.count * 2 < page.actions.count else {
-            arrivals = []
-            return
+        //
+        // Salvo en una página que se lee en su orden, donde lo que llegó va
+        // detrás de una sola puerta con el nombre de lo que se tocó: el menú
+        // de "Secciones" de un diario son treinta links sobre veinte, y son
+        // exactamente la respuesta al toque.
+        if page.readsInOrder {
+            arrivals = fresh.count < page.actions.count ? fresh : []
+        } else {
+            guard fresh.count * 2 < page.actions.count else {
+                arrivals = []
+                return
+            }
+            arrivals = Array(fresh.prefix(12))
         }
-        arrivals = Array(fresh.prefix(12))
         arrivalCause = cause
     }
 
@@ -627,6 +643,24 @@ struct ReaderView: View {
                 case .groups(let title, let groups):
                     GroupsScreen(title: title, groups: groups) { action in
                         open(action)
+                    }
+                case .entries(let title, let ids):
+                    if let page = model.page {
+                        EntriesScreen(
+                            title: title,
+                            segments: page.segments(only: Set(ids), title: title),
+                            onOpen: { action in open(action) },
+                            onOpenURL: { href in
+                                path = NavigationPath()
+                                model.address = href
+                                Task { await model.go() }
+                            },
+                            onActivate: { id in
+                                guard let action = page.actions.first(where: { $0.id == id })
+                                else { return }
+                                open(action)
+                            }
+                        )
                     }
                 case .headlines:
                     if let page = model.page {

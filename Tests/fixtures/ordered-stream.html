@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trámites | Municipio de Prueba</title>
+  <meta name="description" content="Página de prueba del recorrido en orden: lo que se espera de cada regla está escrito al lado.">
+  <style>
+    .shown-backwards { display: flex; flex-direction: column; }
+    .shown-backwards .first  { order: 1; }
+    .shown-backwards .second { order: 2; }
+    .shown-backwards .third  { order: 3; }
+    .icon { width: 16px; height: 16px; }
+    .logo { width: 120px; height: 60px; }
+  </style>
+</head>
+<body>
+  <!-- Una imagen con nombre de archivo no nombra nada: el link es ruido y va al cajón del final. -->
+  <header>
+    <a href="https://example.org/"><img class="logo" alt="prod-logo_v2" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></a>
+  </header>
+
+  <!-- Cinco links seguidos: una lista simple, abierta. -->
+  <nav>
+    <a href="https://example.org/inicio">Inicio</a> |
+    <a href="https://example.org/tramites">Trámites</a> |
+    <a href="https://example.org/turnos">Turnos</a> |
+    <a href="https://example.org/pagos">Pagos</a> |
+    <a href="https://example.org/ingresar">Ingresar</a>
+  </nav>
+
+  <main>
+    <!-- Repite el título de la página: ya se dijo en "dónde estoy". -->
+    <h1>Trámites</h1>
+    <p>Elegí el trámite que necesitás hacer.</p>
+
+    <!-- Un emoji suelto no dice nada: al cajón, no al recorrido. Una viñeta
+         suelta es tipografía, como las barras del menú: no va a ningún lado. -->
+    <p>🎉</p>
+    <div>•</div>
+
+    <!-- Escrito al revés y mostrado al derecho: se lee como se ve. -->
+    <div class="shown-backwards">
+      <p class="third">Tercero en pantalla, primero en el código.</p>
+      <p class="second">Segundo en pantalla.</p>
+      <p class="first">Primero en pantalla, último en el código.</p>
+    </div>
+
+    <!-- Un listado corto va abierto, y no repite el encabezado que le da nombre. -->
+    <h2>Trámites frecuentes</h2>
+    <ul>
+      <li><a href="https://example.org/t/1">Licencia de conducir</a></li>
+      <li><a href="https://example.org/t/2">Partida de nacimiento</a></li>
+      <li><a href="https://example.org/t/3">Habilitación comercial</a></li>
+      <li><a href="https://example.org/t/4">Libre deuda</a></li>
+      <li><a href="https://example.org/t/5">Permiso de obra</a></li>
+    </ul>
+
+    <!-- Ocho opciones seguidas son demasiadas para escucharlas de corrido:
+         una puerta, con el nombre que la página le puso arriba. -->
+    <h2>Áreas del municipio</h2>
+    <div>
+      <a href="https://example.org/a/1">Salud</a> ·
+      <a href="https://example.org/a/2">Educación</a> ·
+      <a href="https://example.org/a/3">Obras públicas</a> ·
+      <a href="https://example.org/a/4">Cultura</a> ·
+      <a href="https://example.org/a/5">Deportes</a> ·
+      <a href="https://example.org/a/6">Tránsito</a> ·
+      <a href="https://example.org/a/7">Ambiente</a> ·
+      <a href="https://example.org/a/8">Turismo</a>
+    </div>
+
+    <!-- Una tarjeta entera es un link: una parada que la dice y la abre. -->
+    <a href="https://example.org/novedad">
+      <h3>Nuevo horario de atención</h3>
+      <p>Desde octubre, de 8 a 16.</p>
+    </a>
+
+    <!-- El sitio no le puso nombre: ruido. -->
+    <button type="button" onclick="void 0"><img class="icon" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></button>
+  </main>
+
+  <!-- Más de siete paradas en el pie: una sola, "Resto del sitio". -->
+  <footer>
+    <p>Municipio de Prueba. Av. Siempreviva 742.</p>
+    <p>Atención: lunes a viernes de 8 a 16.</p>
+    <a href="https://example.org/f/1">Transparencia</a>
+    <a href="https://example.org/f/2">Boletín oficial</a>
+    <a href="https://example.org/f/3">Licitaciones</a>
+    <a href="https://example.org/f/4">Empleo público</a>
+    <a href="https://example.org/f/5">Prensa</a>
+    <a href="https://example.org/f/6">Términos y privacidad</a>
+  </footer>
+</body>
+</html>

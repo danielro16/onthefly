@@ -1,0 +1,28 @@
+# Los sitios contra los que se mide el extractor. Una URL por línea.
+#   ./Scripts/read-page.js --all
+#
+# Cada uno está acá por lo que enseñó, no por su rubro. Agregar un sitio cuando
+# enseñe una regla nueva; no sacar ninguno al arreglarlo.
+
+# Portada de diario: 130 titulares, secciones propias, menú detrás de href="#".
+https://www.lanacion.com.ar
+# Portada que carga al hacer scroll.
+https://www.clarin.com
+# Login: el orden del DOM no es el que se muestra (flex `order`).
+https://micuenta.lanacion.com.ar/
+# Buscador de vuelos sin <form>, un solo encabezado, calendario de 34 botones.
+https://www.aerolineas.com.ar
+# Portal de trámites: listas de links, pie con navegación propia.
+https://www.argentina.gob.ar
+# Tabla de datos y columnas de menú que no son una cosa.
+https://www.bcra.gob.ar
+# Landing con muro de logos.
+https://braille.pe
+# Artículo largo, notas al pie, secciones colapsadas en móvil.
+https://es.wikipedia.org/wiki/Buenos_Aires
+# Tienda: tarjetas con precio.
+https://www.fravega.com
+# Formulario con labels, radios y leyendas.
+https://httpbin.org/forms/post
+# Página mínima.
+https://example.com

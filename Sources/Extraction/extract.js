@@ -40,6 +40,41 @@
     };
   })();
 
+  /*
+   * Transitions end at once while unseen.
+   *
+   * Same cause as the frames above: a WebView that is not on screen does
+   * not advance a CSS transition either. lanacion.com.ar slides its
+   * sections menu in; unseen, the slide never moved, so the panel was
+   * there and its seventy links kept measuring nothing — the reader was
+   * offered the panel as one giant button and none of the sections. With
+   * no duration a transition is already over, which is where a person
+   * finds it by the time they look.
+   *
+   * A constructed sheet, because a page's content policy can refuse a
+   * <style> element; and only while hidden, so the original page still
+   * moves the way its authors meant when the user asks to see it.
+   */
+  (function endTransitionsWhileUnseen() {
+    if (typeof CSSStyleSheet !== "function" || !("adoptedStyleSheets" in document)) return;
+    let sheet;
+    try {
+      sheet = new CSSStyleSheet();
+      sheet.replaceSync(
+        "*, *::before, *::after { transition-duration: 0s !important; transition-delay: 0s !important; " +
+        "animation-duration: 0s !important; animation-delay: 0s !important; }"
+      );
+    } catch (_) {
+      return;
+    }
+    function apply() {
+      const others = Array.prototype.filter.call(document.adoptedStyleSheets, function (s) { return s !== sheet; });
+      document.adoptedStyleSheets = document.visibilityState === "visible" ? others : others.concat([sheet]);
+    }
+    apply();
+    document.addEventListener("visibilitychange", apply);
+  })();
+
   const MAX_BLOCKS = 2000;
   // A calendar alone is 68 day buttons; with the cap at 40 the bar at the
   // bottom of the page — "Ver vuelos" — never made it in. Clusters mean Jev
@@ -197,7 +232,19 @@
       }
     }
 
-    return { text: text.trim(), links: merged };
+    // The offsets were measured before trimming. A paragraph that opens with
+    // a line break had every link shifted by it: "Buscar con DNI" came out
+    // linked from its second letter to three past its end.
+    const lead = text.length - text.replace(/^\s+/, "").length;
+    const trimmed = text.trim();
+    const kept = [];
+    for (const link of merged) {
+      const start = Math.max(0, link.start - lead);
+      const end = Math.min(trimmed.length, link.end - lead);
+      if (end > start) kept.push({ start: start, end: end, href: link.href });
+    }
+
+    return { text: trimmed, links: kept };
   }
 
   function imageBlock(el, id) {
@@ -1158,6 +1205,13 @@
       // that does nothing. When the page enables it, the next extraction
       // picks it up.
       if (button.disabled || button.getAttribute("aria-disabled") === "true") return false;
+      // A "button" that holds other controls is a container with the wrong
+      // role. lanacion.com.ar wraps its whole sections menu — seventy links
+      // and a search box — in <div role="button">: reported, it was one
+      // control named after every word inside it ("overlay, Buscar en LA
+      // NACION, Buscar por voz, Últimas noticias, Política…"), and pressing
+      // it closed the menu. What it holds is reported on its own.
+      if (button.querySelectorAll("a[href], button, [role=button], input:not([type=hidden]), select, textarea").length >= 2) return false;
       // Ya reportado como el botón de envío de su formulario.
       //
       // Sólo ése. Un formulario puede tener varios submit y el login de un
@@ -1198,7 +1252,18 @@
       "nav a[href], header a[href], footer a[href], [role=navigation] a[href], [role=menuitem], a[href][class*=btn], a[href][class*=button]"
     )) {
       if (isHidden(link)) continue;
-      const href = absolute(link.getAttribute("href") || "");
+      // A link with no destination of its own is a button in a link's
+      // clothes: "Secciones" on lanacion.com.ar is <a href="#"> and opens
+      // the site's menu from JavaScript. Sent as an address it reloaded the
+      // front page, and the seventy sections behind it could not be
+      // reached at all. Without an href the native side presses it inside
+      // the page, like any other control.
+      const raw = (link.getAttribute("href") || "").trim();
+      if (!raw || /^#!?$/.test(raw) || /^javascript:/i.test(raw)) {
+        push({ kind: "link", label: labelFor(link), region: regionOf(link) }, link);
+        continue;
+      }
+      const href = absolute(raw);
       if (!href) continue;
       push({ kind: "link", label: labelFor(link), href: href, region: regionOf(link) }, link);
     }
@@ -1409,7 +1474,11 @@
 
     kept.sort(function (a, b) { return b.items.length - a.items.length; });
 
+    // Where each listing sits, so the ordered stream can put it in its place.
+    const containers = new Map();
+
     const listings = kept.slice(0, 4).map(function (candidate, index) {
+      containers.set("L" + index, candidate.container);
       return {
         id: "L" + index,
         title: listingTitle(candidate.container),
@@ -1430,13 +1499,26 @@
     // Cards the shape detector missed, minus anything already listed.
     const taken = new Set();
     for (const listing of listings) for (const item of listing.items) if (item.href) taken.add(item.href);
-    for (const group of collectCards(taken).slice(0, 2)) {
+    // Numbered past the four the shape detector can hand out: counting from
+    // `listings.length` gave a card group the id of a listing that survived
+    // the de-duplication above.
+    collectCards(taken).slice(0, 2).forEach(function (group, index) {
+      const id = "L" + (4 + index);
+      containers.set(id, group.container);
       listings.push({
-        id: "L" + listings.length,
+        id: id,
         title: listingTitle(group.container),
         count: group.items.length,
         items: group.items.slice(0, 30),
       });
+    });
+
+    // A stamp per run: a listing dropped since the last reading must not
+    // keep its place. Loose cards gathered under <body> have no place.
+    for (const el of document.querySelectorAll("[data-jef-listing]")) el.removeAttribute("data-jef-listing");
+    for (const listing of listings) {
+      const container = containers.get(listing.id);
+      if (container && container !== document.body) container.setAttribute("data-jef-listing", listing.id);
     }
     return listings;
   }
@@ -1775,8 +1857,20 @@
       const active = document.activeElement;
       return !!(active && active !== document.body && active.matches("input, textarea, [role=combobox]") && el.contains(active));
     }
+    // Nor is a menu. The sections panel of lanacion.com.ar is pinned, on
+    // top and as tall as the screen — and it is seventy links, which no
+    // notice is. Read as an overlay it came out as "Contenido para
+    // suscriptores" (one of its links says so) with eight answers, and the
+    // other sixty sections were thrown away with it.
+    function isMenu(el) {
+      const links = el.querySelectorAll("a[href]").length;
+      const many = links >= 12
+        || (links >= 5 && !!(el.matches("nav, [role=navigation]") || el.querySelector("nav, [role=navigation]")));
+      // A consent manager lists its partners, and those are links too.
+      return many && !/cookie|consentimiento|consent|gdpr|rgpd/i.test(textOf(el).slice(0, 600));
+    }
     for (const el of document.querySelectorAll("[role=dialog], [role=alertdialog], [aria-modal=true], dialog[open]")) {
-      if (!isHidden(el) && !isPopupList(el)) candidates.push(el);
+      if (!isHidden(el) && !isPopupList(el) && !isMenu(el)) candidates.push(el);
     }
 
     // Undeclared ones: fixed or sticky boxes large enough to block, which is
@@ -1794,7 +1888,7 @@
       if (zIndex < 10) continue;
       const rect = el.getBoundingClientRect();
       if (rect.width * rect.height < viewportArea * 0.2) continue;
-      if (isPopupList(el)) continue;
+      if (isPopupList(el) || isMenu(el)) continue;
       candidates.push(el);
     }
 
@@ -1956,6 +2050,512 @@
     };
   }
 
+  /*
+   * The page, in its own order.
+   *
+   * The passes above build inventories — what the page says, what it lets
+   * you do, what it lists — and each keeps its own order. None knows what
+   * came before what. On a login page the reader could only stack all the
+   * text, then all the buttons, then the form, and "ó ingresá con tu email"
+   * was read before the three buttons it is the alternative to. The order
+   * was the one thing the page had already solved, and it was thrown away.
+   *
+   * One walk of the live document, top to bottom. Text becomes a block
+   * where it stands; a control the action pass reported is a reference to
+   * it, at its place; a form sits where its first field is; a listing where
+   * its container is. Nothing is reordered and nothing is judged here.
+   *
+   * `noise` marks a stop that says nothing: a lone emoji or bullet, an image
+   * named after its file, a button the site never named. It is not dropped —
+   * the native side keeps those out of the way, together, in one place.
+   */
+  const MAX_STREAM = 800;
+  const STREAM_SKIP = new Set([
+    "SCRIPT", "STYLE", "NOSCRIPT", "TEMPLATE", "IFRAME", "SVG", "CANVAS", "VIDEO",
+    "AUDIO", "OBJECT", "EMBED", "MAP", "HEAD", "LINK", "META", "OPTION", "DATALIST",
+  ]);
+  const BLOCKISH = Array.from(BLOCK_TAGS)
+    .filter(function (tag) { return tag !== "BR"; })
+    .join(",").toLowerCase();
+
+  /// Whether a text says anything: a letter or a digit, in any script.
+  function says(text) {
+    return /[\p{L}\p{N}]/u.test(text || "");
+  }
+
+  function collectStream(actions, listings, overlayElement) {
+    const entries = [];
+    const byId = new Map();
+    const formOfField = new Map();
+    const fieldNames = new Set();
+    for (const action of actions) {
+      byId.set(action.id, action);
+      for (const field of action.fields || []) {
+        formOfField.set(field.id, action.id);
+        fieldNames.add(plain(field.name));
+        // What the page holds against a field, and what it wrote back after
+        // a submit, the rebuilt form says where they belong.
+        if (field.error) fieldNames.add(plain(field.error));
+      }
+      for (const notice of action.notices || []) fieldNames.add(plain(notice));
+    }
+    const listed = new Set(listings.map(function (l) { return l.id; }));
+    // Buttons a listing row already presses: the row is their place.
+    const inListings = new Set();
+    for (const listing of listings) {
+      for (const item of listing.items) {
+        if (item.actionId) inListings.add(item.actionId);
+        for (const choice of item.choices || []) inListings.add(choice.id);
+      }
+    }
+    const placed = new Set();
+    const saidLinks = new Set();
+    let counter = 0;
+    function nextId() { return "s" + counter++; }
+
+    /// For telling two labels apart: case, the required mark and the colon
+    /// are typography.
+    function plain(text) {
+      return (text || "").toLowerCase().replace(/[\s*:]+$/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    // What holds something with a place of its own, and what holds a block:
+    // marked once, bottom-up, instead of asked again at every level.
+    const holdsStamp = new WeakSet();
+    for (const el of document.body.querySelectorAll("[data-jef-id], [data-jef-field], [data-jef-listing]")) {
+      for (let up = el.parentElement; up && !holdsStamp.has(up); up = up.parentElement) holdsStamp.add(up);
+    }
+    const holdsBlock = new WeakSet();
+    for (const el of document.body.querySelectorAll(BLOCKISH + ", img, picture, input, select, textarea, button")) {
+      for (let up = el.parentElement; up && !holdsBlock.has(up); up = up.parentElement) holdsBlock.add(up);
+    }
+
+    /// Out of the page for everyone, not just collapsed to nothing: a
+    /// wrapper with `display: contents` or no height of its own still has
+    /// children to read, so size is asked of leaves only.
+    function isPruned(el) {
+      if (el.hasAttribute("hidden") || el.getAttribute("aria-hidden") === "true") return true;
+      const style = window.getComputedStyle(el);
+      return style.display === "none" || style.visibility === "hidden";
+    }
+
+    /// What an option is listed with: the nearest container that repeats
+    /// its shape — the <ul> of a link in an <li>, the row of three sign-in
+    /// buttons. Options that touch but do not share one are neighbours,
+    /// not a list: a news card right under eight department links is not
+    /// the ninth department.
+    const groupIds = new Map();
+    function groupKey(container) {
+      if (!groupIds.has(container)) groupIds.set(container, "g" + groupIds.size);
+      return groupIds.get(container);
+    }
+    function groupOf(el) {
+      let child = el;
+      for (let hops = 0; hops < 6 && child.parentElement; hops++) {
+        const parent = child.parentElement;
+        const shape = shapeOf(child);
+        let alike = 0;
+        for (const sibling of parent.children) if (shapeOf(sibling) === shape) alike++;
+        if (alike >= 2) return groupKey(parent);
+        if (parent === document.body) break;
+        child = parent;
+      }
+      return null;
+    }
+
+    function put(entry, el) {
+      if (entries.length >= MAX_STREAM) return;
+      entry.id = entry.id || nextId();
+      entry.zone = el ? regionOf(el) : "body";
+      entries.push(entry);
+    }
+
+    function isNoiseBlock(block) {
+      switch (block.type) {
+        case "heading": case "paragraph": case "quote":
+          return !says(block.text);
+        case "list":
+          return !block.items.some(function (item) { return says(item.text); });
+        case "image":
+          // "prod-lanacion" is the name of a file, not of a picture.
+          return !says(block.caption) && (!says(block.alt) || looksLikeCode(block.alt));
+        default:
+          return false;
+      }
+    }
+
+    function putBlock(block, el) {
+      const entry = { id: block.id, kind: "block", block: block };
+      if (isNoiseBlock(block)) entry.noise = true;
+      put(entry, el);
+    }
+
+    /// A form and a listing name themselves, and the name was taken from
+    /// the line just above them. Left there, it is one stop said twice.
+    function dropEcho(name) {
+      const last = entries[entries.length - 1];
+      if (!name || !last || last.kind !== "block" || !last.block.text) return;
+      // Listing titles are cut at sixty characters.
+      if (plain(last.block.text).slice(0, 60) === plain(name).slice(0, 60)) entries.pop();
+    }
+
+    function putAction(id, el) {
+      if (placed.has(id)) return;
+      placed.add(id);
+      const action = byId.get(id);
+      if (action.kind === "form") dropEcho(action.label);
+      if (action.kind === "link" && action.href) saidLinks.add(plain(action.label) + "|" + action.href);
+      const entry = { kind: "action", ref: id };
+      if (action.unnamed) entry.noise = true;
+      if (action.kind !== "form") {
+        const group = groupOf(el);
+        if (group) entry.group = group;
+      }
+      put(entry, el);
+    }
+
+    /// A destination the reader can load. The same document under another
+    /// fragment is a jump inside the page, and only the page can make it.
+    function opens(href) {
+      if (!href || !/^https?:/i.test(href)) return false;
+      return href.split("#")[0] !== location.href.split("#")[0];
+    }
+
+    function putLink(label, href, el, level, group) {
+      label = (label || "").replace(/\s+/g, " ").trim();
+      if (!label) return;
+      // The same link twice is the same link to a person — the rule the
+      // action pass already applies to a mobile nav repeating the desktop's.
+      const key = plain(label) + "|" + href;
+      if (saidLinks.has(key)) return;
+      saidLinks.add(key);
+      const entry = { kind: "link", label: label.slice(0, 160), href: href };
+      if (level) entry.level = level;
+      if (group) entry.group = group;
+      if (!says(label)) entry.noise = true;
+      put(entry, el);
+    }
+
+    /// The links of a text that is nothing but links — what sits between
+    /// them is typography: "Términos | Privacidad · Ayuda". Null when the
+    /// text says anything of its own.
+    function linksOnly(content) {
+      if (!content.links.length) return null;
+      let outside = "";
+      let at = 0;
+      const found = [];
+      for (const link of content.links) {
+        outside += content.text.slice(at, link.start);
+        at = link.end;
+        found.push({ label: content.text.slice(link.start, link.end), href: link.href });
+      }
+      outside += content.text.slice(at);
+      if (says(outside)) return null;
+      return found.every(function (link) { return opens(link.href); }) ? found : null;
+    }
+
+    /// Text that stands together is one stop: a run of text nodes and
+    /// inline elements, read as one line with its links inside.
+    function flush(run, anchor, type, level) {
+      if (!run.length) return;
+      const holder = document.createElement("span");
+      for (const node of run) holder.appendChild(node.cloneNode(true));
+      run.length = 0;
+      // An icon's <title> is not part of the sentence, and neither is what
+      // the page hides from a screen reader.
+      for (const unread of holder.querySelectorAll("svg, script, style, noscript, template, [hidden], [aria-hidden=true]")) {
+        unread.remove();
+      }
+      const content = inlineContent(holder);
+      if (!content.text) return;
+      // A bar or a bullet between two links is typography, the same thing
+      // an <hr> is: it goes nowhere, not even to the noise. An emoji said
+      // something to someone, so it is kept — apart.
+      if (!says(content.text) && !/\p{Extended_Pictographic}/u.test(content.text)) return;
+
+      const links = linksOnly(content);
+      if (links && type !== "quote") {
+        // Several links in one line are that line's list; a line that is
+        // one link — a headline — is listed with the lines shaped like it.
+        const group = links.length > 1 ? groupKey(anchor) : groupOf(anchor);
+        for (const link of links) putLink(link.label, link.href, anchor, level, group);
+        return;
+      }
+      if (level) {
+        putBlock({ id: nextId(), type: "heading", level: level, text: content.text }, anchor);
+        return;
+      }
+      // A line that only repeats what the rebuilt form already says — a
+      // field's name, its complaint, the form's notice — is that, said twice.
+      if (!content.links.length && content.text.length <= 200 && fieldNames.has(plain(content.text))) return;
+      if (/video player failed|error code:?\s*\d/i.test(content.text)) return;
+      putBlock({ id: nextId(), type: type || "paragraph", text: content.text, links: content.links }, anchor);
+    }
+
+    /// Whether an element reads as part of the line it sits in.
+    function isFlow(el) {
+      // Upper-cased: an inline <svg> reports its tag in lower case, and its
+      // <title> was being read into the sentence around it.
+      const tag = el.tagName.toUpperCase();
+      if (tag === "BR") return true;
+      if (BLOCK_TAGS.has(tag) || STREAM_SKIP.has(tag)) return false;
+      if (/^(IMG|PICTURE|INPUT|SELECT|TEXTAREA|BUTTON|LABEL|LEGEND)$/.test(tag)) return false;
+      if (el.hasAttribute("data-jef-id") || el.hasAttribute("data-jef-field") || el.hasAttribute("data-jef-listing")) return false;
+      const role = el.getAttribute("role");
+      if (role === "heading" || role === "button") return false;
+      return !holdsStamp.has(el) && !holdsBlock.has(el);
+    }
+
+    /// Children in the order the page SHOWS them. A flex or grid container
+    /// can place its children anywhere with `order`, or run backwards, and
+    /// a sighted reader never knows: La Nación's login is written form
+    /// first and buttons last, and shown the other way round — so "ó
+    /// ingresá con tu email" reads, in the markup's order, after the email
+    /// it is the alternative to. The order on screen is the one that means
+    /// something, and it is geometry the page already had.
+    function shownOrder(parent) {
+      const nodes = Array.prototype.slice.call(parent.childNodes);
+      if (parent.nodeType !== Node.ELEMENT_NODE) return nodes;
+      const style = window.getComputedStyle(parent);
+      if (!/flex|grid/.test(style.display)) return nodes;
+      const keyed = nodes.map(function (node, index) {
+        const order = node.nodeType === Node.ELEMENT_NODE
+          ? parseInt(window.getComputedStyle(node).order, 10) || 0
+          : 0;
+        return { node: node, index: index, order: order };
+      });
+      if (keyed.some(function (k) { return k.order !== 0; })) {
+        keyed.sort(function (a, b) { return a.order - b.order || a.index - b.index; });
+      }
+      const ordered = keyed.map(function (k) { return k.node; });
+      if (/flex/.test(style.display) && /reverse/.test(style.flexDirection)) ordered.reverse();
+      return ordered;
+    }
+
+    /// A card under an empty link. clarin.com closes every <article> with
+    /// an <a> that holds nothing and is stretched over the whole card: read
+    /// in order, that is a headline nobody can open and a link with no
+    /// name. They are one thing — one heading, one destination — and the
+    /// headline is what the link is called.
+    function cardLink(el) {
+      if (holdsStamp.has(el) || !el.matches("article, li, [class*=card], [class*=story], [class*=item]")) return null;
+      const headings = el.querySelectorAll("h1, h2, h3, h4, h5, h6, [role=heading]");
+      if (headings.length !== 1) return null;
+      const heading = headings[0];
+      // The usual shape — the link wraps the headline, or sits in it — is
+      // already read as a link.
+      if (heading.closest("a[href]") || heading.querySelector("a[href]")) return null;
+      const hrefs = new Set();
+      for (const anchor of el.querySelectorAll("a[href]")) {
+        if (!isPruned(anchor)) hrefs.add(absolute(anchor.getAttribute("href") || ""));
+      }
+      if (hrefs.size !== 1) return null;
+      const href = hrefs.values().next().value;
+      const title = textOf(heading);
+      if (!title || !opens(href) || isHidden(el)) return null;
+      const rest = tidy(textOf(el).replace(title, ""));
+      return {
+        label: rest ? title + ", " + rest : title,
+        href: href,
+        level: HEADING_LEVEL[heading.tagName] || 2,
+      };
+    }
+
+    function walk(parent) {
+      const run = [];
+      for (const node of shownOrder(parent)) {
+        if (entries.length >= MAX_STREAM) break;
+        if (node.nodeType === Node.TEXT_NODE) {
+          run.push(node);
+          continue;
+        }
+        if (node.nodeType !== Node.ELEMENT_NODE) continue;
+        if (node === overlayElement || isPruned(node)) continue;
+        if (isFlow(node)) {
+          run.push(node);
+          continue;
+        }
+        flush(run, parent);
+        visit(node);
+      }
+      flush(run, parent);
+    }
+
+    function visit(el) {
+      const tag = el.tagName.toUpperCase();
+      if (STREAM_SKIP.has(tag)) return;
+
+      const listing = el.getAttribute("data-jef-listing");
+      if (listing && listed.has(listing)) {
+        if (!placed.has(listing)) {
+          placed.add(listing);
+          const found = listings.find(function (l) { return l.id === listing; });
+          dropEcho(found && found.title);
+          put({ kind: "listing", ref: listing }, el);
+        }
+        return;
+      }
+
+      const stamp = el.getAttribute("data-jef-id");
+      if (stamp && byId.has(stamp)) {
+        // A form with no submit is stamped on itself. Its first field
+        // places it; what else it holds is still read, in order.
+        if (byId.get(stamp).kind === "form" && el.querySelector("[data-jef-field]")) walk(el);
+        else putAction(stamp, el);
+        return;
+      }
+
+      const fieldStamp = el.getAttribute("data-jef-field");
+      if (fieldStamp) {
+        const owner = formOfField.get(fieldStamp.split(":")[0]);
+        if (owner) putAction(owner, el);
+        return;
+      }
+
+      // A control nobody reported — disabled, past the cap, chrome. Its
+      // words are not prose. Unless it is a container dressed as a button,
+      // which is read like any other container.
+      if (/^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(tag)) return;
+      if (el.getAttribute("role") === "button" && !holdsStamp.has(el)) return;
+
+      // A legend names a group of controls, and the rebuilt form owns its
+      // groups: "Pizza Size" is already the radio group's name, and "Pizza
+      // Toppings" read on its own after the submit button names nothing.
+      if (tag === "LEGEND") return;
+
+      if (tag === "LABEL" && el.control && el.control.hasAttribute("data-jef-field")) {
+        // The field says its own name. A label wrapped around its control
+        // still marks where the form starts.
+        if (el.contains(el.control)) visit(el.control);
+        return;
+      }
+
+      const card = cardLink(el);
+      if (card) {
+        putLink(card.label, card.href, el, card.level, groupOf(el));
+        return;
+      }
+
+      const level = HEADING_LEVEL[tag]
+        || (el.getAttribute("role") === "heading" ? parseInt(el.getAttribute("aria-level") || "2", 10) || 2 : 0);
+      if (level) {
+        // A heading that is a reported control: the control is the stop.
+        if (holdsStamp.has(el)) { walk(el); return; }
+        if (isHidden(el)) return;
+        // A headline is a heading AND a link. As a block it could be jumped
+        // to and never opened; as a link with a level it is both.
+        flush(Array.prototype.slice.call(el.childNodes), el, "paragraph", level);
+        return;
+      }
+
+      if (tag === "P" || tag === "BLOCKQUOTE") {
+        if (holdsStamp.has(el) || holdsBlock.has(el)) { walk(el); return; }
+        flush(Array.prototype.slice.call(el.childNodes), el, tag === "P" ? "paragraph" : "quote");
+        return;
+      }
+
+      if (tag === "UL" || tag === "OL") {
+        if (holdsStamp.has(el) || holdsBlock.has(el)) { walk(el); return; }
+        // A list of links is a list of places to go, each its own stop.
+        const items = Array.prototype.filter.call(el.children, function (li) { return li.tagName === "LI" && !isPruned(li); });
+        const asLinks = items.map(function (li) { return linksOnly(inlineContent(li)); });
+        if (items.length && asLinks.every(Boolean)) {
+          asLinks.forEach(function (links, index) {
+            for (const link of links) putLink(link.label, link.href, items[index], 0, groupKey(el));
+          });
+          return;
+        }
+        const block = listBlock(el, nextId());
+        if (block) putBlock(block, el);
+        return;
+      }
+
+      if (tag === "IMG") {
+        if (isHidden(el)) return;
+        // Drawn small is an icon, whatever size its file is.
+        const drawn = el.getBoundingClientRect();
+        if (drawn.width < 48 && drawn.height < 48) return;
+        const block = imageBlock(el, nextId());
+        if (block) putBlock(block, el);
+        return;
+      }
+
+      if (tag === "FIGURE" && !holdsStamp.has(el)) {
+        const img = el.querySelector("img");
+        const block = img && !isHidden(img) ? imageBlock(img, nextId()) : null;
+        if (block) {
+          const caption = el.querySelector("figcaption");
+          if (caption) block.caption = textOf(caption);
+          putBlock(block, el);
+          return;
+        }
+      }
+
+      if (tag === "PRE") {
+        const text = el.textContent || "";
+        if (text.trim()) putBlock({ id: nextId(), type: "code", text: text }, el);
+        return;
+      }
+
+      if (tag === "HR") {
+        putBlock({ id: nextId(), type: "separator" }, el);
+        return;
+      }
+
+      if (tag === "TABLE") {
+        const block = tableBlock(el, nextId());
+        if (block) {
+          putBlock(block, el);
+          // The table keeps its shape; the buttons in its cells follow it.
+          for (const inner of el.querySelectorAll("[data-jef-id]")) {
+            const id = inner.getAttribute("data-jef-id");
+            if (byId.has(id) && !isPruned(inner)) putAction(id, inner);
+          }
+          return;
+        }
+      }
+
+      // A link that reaches here is not a word in a line: it wraps a card —
+      // a title, a picture, a blurb — or a picture alone. One stop that
+      // says the card and opens it; split into its parts, the parts were
+      // text nobody could open.
+      if (tag === "A" && el.hasAttribute("href") && !holdsStamp.has(el)) {
+        const href = absolute(el.getAttribute("href") || "");
+        if (opens(href)) {
+          if (isHidden(el)) return;
+          const heading = el.querySelector("h1, h2, h3, h4, h5, h6, [role=heading]");
+          const name = textOf(el) || imageName(el);
+          if (name && !looksLikeCode(name)) {
+            putLink(name, href, el, heading ? (HEADING_LEVEL[heading.tagName] || 2) : 0, groupOf(el));
+          } else if (!saidLinks.has("|" + href)) {
+            // No words and no named picture: the site's unnamed control.
+            saidLinks.add("|" + href);
+            put({ kind: "link", label: "Enlace sin nombre", href: href, noise: true }, el);
+          }
+          return;
+        }
+      }
+
+      walk(el);
+    }
+
+    walk(document.body);
+
+    // Reported but never met on the way: inside a listing's card, under a
+    // wrapper hidden from assistive technology. Last, so nothing is lost.
+    for (const listing of listings) {
+      if (!placed.has(listing.id)) put({ kind: "listing", ref: listing.id }, null);
+    }
+    for (const action of actions) {
+      if (placed.has(action.id) || inListings.has(action.id)) continue;
+      const entry = { kind: "action", ref: action.id, id: nextId(), zone: action.region };
+      if (action.unnamed) entry.noise = true;
+      if (entries.length < MAX_STREAM) entries.push(entry);
+    }
+
+    return entries;
+  }
+
   function extract() {
     // Collected before Readability runs, and from the live document: the parse
     // below throws all of this away.
@@ -1969,6 +2569,8 @@
     const groups = groupActions(actions);
     const listings = collectListings();
     const original = countStops();
+    // After the inventories: it places what they reported.
+    const stream = collectStream(actions, listings, found ? found.element : null);
 
     // Readability mutates the document it parses, so hand it a clone.
     const article = new Readability(document.cloneNode(true), {
@@ -1999,6 +2601,7 @@ allowedVideoRegex: /^$/,
           actions: actions,
           groups: groups,
           listings: listings,
+          stream: stream,
           overlay: overlay,
           stats: {
             blockCount: 0,
@@ -2049,6 +2652,7 @@ allowedVideoRegex: /^$/,
       actions: actions,
       groups: groups,
       listings: listings,
+      stream: stream,
       overlay: overlay,
       stats: {
         blockCount: blocks.length,

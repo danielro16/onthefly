@@ -44,6 +44,70 @@ que queda fuera de "el artículo" puede desaparecer, y de ahí viene el texto
 que aparece suelto al final. Todo lo que está en el cuerpo tiene que aterrizar
 en algún tramo: contenido, una opción, o el cajón de Información.
 
+## El orden es el de la página
+
+Durante un tiempo reordenamos: lo que Jev creía que era la intención iba
+arriba, las acciones se repartían en categorías nuestras ("Comprar o
+reservar", "Consultar un dato") y cada tipo de página tenía su propio layout.
+El resultado fue peor que la página original. El login de un diario leía todo
+el texto, después todos los botones y después el formulario, con "ó ingresá
+con tu email" sonando antes que los botones de los que es alternativa; los
+botones de ingreso terminaban en "Otras opciones" junto a "Volver"; la portada
+mostraba 37 de sus 133 titulares.
+
+La causa era una sola: el extractor desarmaba la página en inventarios
+separados —texto, acciones, formularios, listados— y tiraba el orden entre
+ellos, que era lo único que la página ya traía resuelto. Todo lo demás era
+intentar reinventarlo adivinando.
+
+Entonces: **el extractor recorre la página una sola vez, de arriba abajo, y
+entrega cada cosa en el lugar donde la página la muestra.** No reordenamos y
+no categorizamos. El orden que vale es el que se *ve*: cuando el sitio
+reordena con CSS (`order`, `column-reverse`), se lee como se ve y no como
+está escrito, porque eso es geometría que la página ya tenía.
+
+Con ese piso, no entender algo deja de significar perderlo: significa
+mostrarlo donde estaba. Lo peor que puede pasar es que una página quede igual
+que la original.
+
+Sobre ese orden hacemos sólo lo que la vista le da gratis a quien ve:
+
+- **Vecinas que son una lista se leen como una lista.** Opciones seguidas que
+  comparten contenedor van juntas, en una tarjeta, una fila cada una. Las que
+  se tocan sin compartirlo son vecinas, no una lista.
+- **Una lista larga se reconoce sin leerla entera.** Pasado el presupuesto, es
+  una caja con nombre y cantidad, que abre una pantalla con la lista plana.
+- **El pie se saltea.** Largo, es una parada: "Resto del sitio".
+- **Lo que no dice nada no se mira.** Ver "Ruido", abajo.
+
+### Cajas, no desplegables
+
+Lo que se pliega **abre una pantalla; nunca se despliega en el lugar.** Un
+desplegable obliga a recorrer una sección entera para llegar a la siguiente;
+una caja es una parada, y la siguiente caja es la parada siguiente.
+
+El nombre de una caja es el que la página le puso —el encabezado que tenía
+arriba, el título del listado, el control que se tocó para abrirla— y, si no
+le puso ninguno, lo que hay adentro ("Salud, Educación, Cultura y 5 más").
+Nunca una categoría nuestra.
+
+La portada de un diario es el caso grande: ciento treinta titulares no son una
+pantalla. Es una caja —**Portada, 161 titulares**— donde la portada empieza, y
+adentro las secciones que el diario ya tenía ("Análisis", "Actualidad",
+"Deportes"), cada una en su caja, en el orden del diario. El link a la página
+en la que ya se está ("Inicio") abre lo mismo, en vez de recargar.
+
+### Ruido
+
+Hay paradas que no dicen nada: un emoji suelto, una imagen que se llama como
+su archivo (`prod-lanacion`), un botón o un link que el sitio nunca nombró.
+**No se descartan: salen del recorrido y van juntas a una caja al final,**
+"Símbolos y elementos sin nombre". El botón sin nombre puede ser el chat o el
+cierre de un modal; tiene que seguir siendo alcanzable.
+
+Lo único que sí desaparece es la tipografía: la barra entre dos links, la
+viñeta suelta. Es lo mismo que un `<hr>`: geometría, no contenido.
+
 ## Tres principios más
 
 **Nada se pierde.** Todo lo que la página dice tiene que estar en algún lugar
@@ -51,10 +115,26 @@ nombrado. Lo que no entra en ninguna categoría no se descarta ni se deja
 flotando: va a un cajón que se llama por lo que tiene adentro. El costo de
 esconder algo que importaba es mucho más alto que el de una parada de más.
 
-**Hay un presupuesto de paradas.** Entre el título y el contenido no puede
-haber más de ocho paradas. No es un objetivo, es un techo: si algo no entra,
-se contrae. Así "treinta elementos antes de reservar" deja de ser posible
-aunque una heurística se equivoque.
+**Hay un presupuesto de paradas.** No hay una cifra oficial; hay dos cosas
+que sí se saben. Una lista hablada no se puede releer de un vistazo: los
+menús telefónicos se diseñan con cuatro o cinco opciones, y siete es el techo
+de lo que se retiene. Y cada parada cuesta dos o tres segundos entre el gesto
+y la escucha: ocho paradas son veinte segundos, veinticinco un minuto, y las
+359 de la portada de un diario, un cuarto de hora. De ahí los números, que
+viven en un solo lugar del código (`StopBudget`) para calibrarlos con uso
+real:
+
+- **8** paradas como máximo entre el título y el contenido. No es un
+  objetivo, es un techo: si algo no entra, se contrae.
+- **7** opciones seguidas se escuchan enteras. Más, es una caja.
+- **25** paradas por pantalla. Una pantalla que lo pasa y tiene secciones
+  propias las ofrece como cajas.
+- Una lista homogénea —titulares, resultados— puede ser más larga: cada
+  parada dice "3 de 12" y son todas la misma clase de cosa.
+
+Las reglas miran grupos, no páginas: no hay un tamaño de página a partir del
+cual "no se toca". Una página chica sale casi tal cual porque ninguna regla
+dispara, no porque un umbral lo diga — y aun así se le saca el ruido.
 
 **Los nombres son los de una persona, no los nuestros.** "Pie de página" no es
 algo que alguien quiera visitar. Tampoco "información poco relevante": nadie
@@ -63,8 +143,7 @@ puede no ser cierto para esa persona. Un cajón se llama por lo que contiene.
 
 ## La forma
 
-Cinco tramos, en este orden, en toda página. Los tramos pueden estar vacíos;
-el orden no cambia.
+Un solo layout, para toda página.
 
 ### 1. Dónde estoy — siempre, dos paradas
 
@@ -77,96 +156,76 @@ frase del contenido.
 > Señalética braille y accesibilidad para instituciones.
 
 Es el ancla: si entraste mal, esto es lo único que te lo dice. Nada va antes,
-ni siquiera lo que la app tenga para contar sobre sí misma.
+ni siquiera lo que la app tenga para contar sobre sí misma. Lo único que se le
+adelanta al resto es lo que tapa la página —un aviso de cookies, un muro— y
+lo que el último toque hizo aparecer, con el nombre de lo que se tocó
+("Secciones, 32 opciones").
 
-### 2. De un vistazo — sólo si los hay, máximo cuatro
+### 2. La página, en su orden
 
-Los datos que una persona que ve absorbe sin buscarlos: el dólar en un diario,
-el clima, el carrito, las notificaciones sin leer, el estado de un vuelo.
-
-Van acá por una razón precisa: **es lo que la vista da gratis**. No son
-contenido ni son acciones; son cifras al paso. Por eso el tramo es corto y
-sólo admite datos breves — en el momento en que algo de acá ocupa dos
-renglones, no era un dato al paso.
-
-> Dólar oficial 1.534. Dólar blue 1.720.
-
-### 3. Qué querés hacer — las opciones, con las palabras del sitio
-
-De cuatro a seis, nombradas con verbo, abiertas. Lo que no entra va a "más
-opciones", contraído.
-
-El diseño es siempre el mismo — cajas por intención — pero **cada tipo de
-página trae su propio vocabulario, en su propio orden**. Un diario y un
-marketplace no comparten opciones: uno ofrece "Leer los titulares", el otro
-"Buscar un producto". Nombrar a los dos "Consultar un dato" es lo que hace
-que la app suene a sistema y no a sitio.
-
-| Tipo de página | Las opciones, en orden |
-|---|---|
-| **Puerta de entrada** (landing, home institucional) | Qué hacemos · Productos y servicios · Contacto · Sobre la empresa · Ingresar |
-| **Banco o trámite** | Ingresar · Consultar mis cuentas · Operar · Ayuda · Quiénes somos |
-| **Diario o portal** | Leer los titulares · Noticias por sección · Buscar una noticia · Mi suscripción |
-| **Tienda o catálogo** | Buscar un producto · Ver categorías · Ofertas · Mis compras · Mi cuenta |
-| **Artículo o referencia** | *(vacío: no hay tarea, el contenido es el punto)* |
-
-El tramo puede estar vacío. En una nota de Wikipedia no hay nada que hacer, y
-forzar un "¿Qué querés hacer?" ahí es lo que hace que la página suene rara.
-
-Cada vocabulario cierra con un cajón propio para lo que no encaja en ninguna
-de sus opciones, para que ninguna acción quede sin lugar.
-
-### 4. El contenido — lo que la página es
-
-El texto, el listado, la tabla, el formulario. Completo, en orden de lectura,
-con su detalle. Este tramo no se resume ni se recorta: es a lo que vino la
-persona.
+Lo que la página dice, lo que deja hacer y lo que lista, cada cosa donde la
+página la muestra, con las reglas de arriba: listas cortas abiertas, largas
+en cajas, el formulario donde estaba y con los botones que tenía al lado.
 
 En una página que es una tarea — un checkout, un login — el contenido es el
 formulario, y va con su estado por delante: qué campo apareció, cuál falta,
 por qué no avanzó.
 
-### 5. Información — el cajón, en dos partes
+### 3. Lo que se aparta — al final, una parada cada cosa
 
-Todo lo que no entró arriba, en dos grupos contraídos, en este orden:
+- **Resto del sitio** — el pie: legales, redes, el mapa del sitio.
+- **Símbolos y elementos sin nombre** — el ruido.
 
-- **Puede interesarte** — promociones, avisos, secciones destacadas, lo que la
-  página puso a la vista aunque no sea su tema.
-- **Resto del sitio** — menú, pie, legales, redes, "sobre la empresa" cuando
-  no es el tema de la página.
+Nada se descartó: está ahí y se abre si se quiere.
 
-Dos paradas, no cincuenta. Nada se descartó: está ahí y se abre si se quiere.
+### Pendiente: de un vistazo
+
+Los datos que una persona que ve absorbe sin buscarlos — el dólar en un
+diario, el clima, el carrito — hoy quedan donde la página los puso, una
+parada cada uno. La idea sigue en pie: una sola parada corta, "Dólar oficial
+1.534. Dólar blue 1.720.", y nunca más de cuatro datos.
 
 ## Quién decide qué
 
-**El código decide cuando la estructura no deja dudas.** Un formulario de
-veinte campos con su botón es una tarea. Una tabla que ocupa la mayor parte de
-la página es un dato para consultar. Un cluster de botones hermanos idénticos
-es una sola decisión. Nada de esto se le pregunta a nadie: el DOM ya lo dice, y
-preguntarlo sólo agrega ruido y variabilidad.
+**El código decide la forma, siempre.** Todo lo de arriba sale del DOM: el
+orden, qué es una lista, cuándo se pliega, cómo se llama cada caja, qué es
+una portada (la página es sobre todo titulares: links que además son
+encabezado). Nada de eso se le pregunta a nadie, porque preguntarlo agrega
+variabilidad y una espera: la misma página no puede tener una forma si la red
+contesta y otra si no.
 
-**Jev decide tres cosas, y las tres son preguntas tipadas de pocas opciones**,
-que es donde demostró ser confiable:
+**Jev no decide el layout.** Una página que se lee en su orden no lo llama.
+Lo que le queda es lo que el DOM no puede decir — ponerle nombre, eligiendo
+entre candidatos que ya están en la página, a un grupo que el sitio dejó sin
+nombre — y siempre como mejora: si falla, la página es la misma.
 
-1. **Qué tipo de página es esta** — una `choice` entre los cinco tipos de la
-   tabla. Elige el vocabulario y el orden del tramo 3. Si la confianza es
-   baja, cae en "puerta de entrada", que es la más conservadora porque
-   muestra un poco de todo.
-2. **A qué opción pertenece cada acción** — una `choice` entre las opciones
-   de *ese* vocabulario, no entre categorías globales.
-3. **Dónde va cada cosa suelta** — una `choice` entre *dato al paso*, *puede
-   interesarte* y *resto del sitio*, para cada bloque que no encontró lugar.
+Medido, y por eso: los treinta y cuatro botones de un calendario de precios
+son un solo control para una persona, y juzgados de a uno se repartieron
+entre tres categorías distintas y en la corrida siguiente entre otras. La
+etiqueta "10 de octubre, 112.935 ARS" no contiene la información de que hay
+treinta y tres hermanas iguales. El DOM sí.
 
-Lo que Jev **no** hace es clasificar acción por acción. Medido: los treinta y
-cuatro botones de un calendario de precios son un solo control para una
-persona, y juzgados de a uno se repartieron entre tres categorías distintas y
-en la corrida siguiente entre otras. La etiqueta "10 de octubre, 112.935 ARS"
-no contiene la información de que hay treinta y tres hermanas iguales. El DOM
-sí.
+**Todavía en el layout anterior:** los artículos (su texto sale del recorte
+de Readability, que no tiene lugar en el recorrido) y las páginas de tarea
+grandes — el buscador de una aerolínea, la home de un banco. Son lo que
+sigue.
 
-**El tipo se pega al flujo.** Una vez adentro de un trámite, todas las
-pantallas de ese trámite son del mismo tipo. No se vuelve a decidir en cada
-paso, porque eso reordenaría la página en medio de la tarea.
+## Cada arreglo es una regla sobre el DOM
+
+La web real está sucia, y cada sitio nuevo muestra una mugre nueva: un
+`<div role="button">` que envuelve un menú entero, un `<a href="#">` que en
+realidad es un botón, un link vacío estirado sobre una tarjeta, un menú que
+abre con una transición que un WebView fuera de pantalla nunca avanza. No se
+termina, pero se achica: son clases de problema, no sitios.
+
+La condición es que cada arreglo sea **una regla sobre el DOM y no sobre el
+sitio**, escrita una vez en `extract.js`, y nunca un modo nuevo del layout.
+Las reglas se suman; los modos se multiplican.
+
+Y que haya red: `./Scripts/read-page.js --all` corre el extractor real contra
+los sitios de `Tests/sites.txt` y dice, por cada uno, cuántas paradas tenía,
+cuántas quedaron y cuántos titulares de la página original llegaron. Antes de
+cada cambio al extractor.
 
 ## Cuándo no intervenir
 
@@ -196,11 +255,13 @@ cambiarla.
 
 ## Lo que este documento no propone
 
-No proponemos un catálogo de rubros. "E-commerce", "banco", "diario" son
-etiquetas de industria, y lo que rompe no es la industria: la página de
-transferencia de un banco y el checkout de una aerolínea son la misma forma, y
-la home de un diario y una categoría de tienda también. Los cinco tipos de la
-tabla son formas, no rubros.
+No proponemos un catálogo de rubros, ni de tipos de página. "E-commerce",
+"banco", "diario" son etiquetas de industria, y lo que rompe no es la
+industria: la página de transferencia de un banco y el checkout de una
+aerolínea son la misma forma, y la home de un diario y una categoría de
+tienda también. Probamos con cinco tipos y un vocabulario de opciones para
+cada uno; cada tipo terminó siendo un layout distinto, y entre todos nadie
+podía predecir cómo iba a salir una página.
 
 No proponemos esconder para acortar. El número de paradas baja porque las
 cosas se agrupan y se nombran, no porque se descarten. Cada vez que la cuenta

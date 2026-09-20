@@ -20,7 +20,7 @@ import sys
 import time
 
 SCREEN_TOP = 110      # below the status bar and any sticky header
-SCREEN_BOTTOM = 760   # above the address bar
+SCREEN_BOTTOM = 700   # above the address bar and the toolbar under it
 
 
 def run(args):

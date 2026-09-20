@@ -20,7 +20,9 @@ xcrun simctl launch "$U" ai.jef.browser >/dev/null
 sleep 4
 
 printf '%s' "$URL" | xcrun simctl pbcopy "$U"
-axe tap -x 201 -y 811 --udid "$U" >/dev/null       # the address bar
+# By label, not by coordinates: the bar moved when the toolbar arrived under
+# it, and it sits elsewhere again at another text size.
+axe tap --label "Dirección" --udid "$U" >/dev/null
 axe key-combo --modifiers 227 --key 4 --udid "$U" >/dev/null   # cmd+A
 axe key-combo --modifiers 227 --key 25 --udid "$U" >/dev/null  # cmd+V
 sleep 1

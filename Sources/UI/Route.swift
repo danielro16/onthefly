@@ -14,6 +14,9 @@ enum Route: Hashable {
     case groups(String, [IntentGroup])
     /// Todo lo que la portada lista, en el orden del sitio.
     case headlines
+    /// Un cajón del recorrido —el pie del sitio, lo que no dice nada—: su
+    /// nombre y los ids de sus paradas. Ver `ExtractedPage.segments(only:)`.
+    case entries(String, [String])
 }
 
 /// Una opción, como fila.
@@ -23,29 +26,37 @@ enum Route: Hashable {
 struct ActionRow: View {
     let action: Action
     var uncertain = false
+    /// Un titular: se toca como opción y se alcanza como encabezado.
+    var isHeading = false
     var onOpen: (Action) -> Void
 
     var body: some View {
         Button {
             onOpen(action)
         } label: {
-            HStack(spacing: 10) {
-                Image(systemName: action.kind == .link ? "arrow.up.right" : "hand.tap")
-                    .font(.caption)
-                    .foregroundStyle(.tint)
-                    .frame(width: 16)
-                    .accessibilityHidden(true)
-                Text(action.label)
-                    .font(.callout)
-                    .multilineTextAlignment(.leading)
-                Spacer(minLength: 0)
-            }
-            .contentShape(.rect)
-            .padding(.vertical, 8)
+            Self.label(action)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(action.label)
         .accessibilityHint(Self.hint(action, uncertain: uncertain))
+        .accessibilityAddTraits(isHeading ? .isHeader : [])
+    }
+
+    /// Cómo se ve una opción, la abra quien la abra.
+    static func label(_ action: Action) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: action.kind == .link ? "arrow.up.right" : "hand.tap")
+                .font(.caption)
+                .foregroundStyle(.tint)
+                .frame(width: 16)
+                .accessibilityHidden(true)
+            Text(action.label)
+                .font(.callout)
+                .multilineTextAlignment(.leading)
+            Spacer(minLength: 0)
+        }
+        .contentShape(.rect)
+        .padding(.vertical, 8)
     }
 
     static func hint(_ action: Action, uncertain: Bool) -> String {
@@ -55,7 +66,9 @@ struct ActionRow: View {
 
         switch action.kind {
         case .link:
-            return "Abre esta sección." + doubt
+            // Un link sin destino propio —"Secciones", que abre el menú— se
+            // aprieta adentro de la página, como un botón.
+            return (action.href == nil ? "Activa este control en la página." : "Abre esta sección.") + doubt
         case .form:
             guard let fields = action.fields, !fields.isEmpty else {
                 return "Abre el formulario." + doubt
@@ -151,5 +164,134 @@ struct OptionsScreen: View {
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.large)
         .toolbar(.visible, for: .navigationBar)
+    }
+}
+
+/// Opciones seguidas, como lista simple: una tarjeta, una fila por opción.
+struct OptionList: View {
+    let options: [StreamOption]
+    /// Una opción que, en vez de ir a algún lado, abre una pantalla: "Inicio"
+    /// en la portada abre la portada.
+    var routeFor: (Action) -> Route? = { _ in nil }
+    var onOpen: (Action) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(options.enumerated()), id: \.element.id) { index, option in
+                if index > 0 { Divider() }
+                if let route = routeFor(option.action) {
+                    NavigationLink(value: route) {
+                        ActionRow.label(option.action)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(option.action.label)
+                    .accessibilityHint("Abre las noticias de la portada, por sección")
+                } else {
+                    ActionRow(action: option.action, isHeading: option.headingLevel != nil, onOpen: onOpen)
+                }
+            }
+        }
+        .jefCard()
+    }
+}
+
+/// Una puerta, dibujada: qué hay detrás y cuánto. Una parada.
+struct DoorCard: View {
+    let door: StreamDoor
+
+    private var symbol: String {
+        switch door.kind {
+        case .feed, .section: return "newspaper"
+        case .list: return "list.bullet"
+        case .arrivals: return "sparkles"
+        case .footer, .noise: return "ellipsis"
+        }
+    }
+
+    private var color: Color {
+        switch door.kind {
+        case .feed, .section: return .blue
+        case .arrivals: return .orange
+        case .list, .footer, .noise: return .gray
+        }
+    }
+
+    var body: some View {
+        NavigationLink(value: Route.entries(door.title, door.entries)) {
+            HStack(spacing: 14) {
+                IconBadge(symbol: symbol, color: color)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(door.title)
+                        .font(.headline)
+                        .multilineTextAlignment(.leading)
+                    Text(door.preview.isEmpty ? door.amount : "\(door.amount) · \(door.preview)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(2)
+                }
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .jefCard()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(door.title), \(door.amount)")
+        .accessibilityAddTraits([.isHeader, .isButton])
+        .accessibilityHint(door.hint)
+    }
+}
+
+/// Lo que hay detrás de una puerta, en su propia pantalla: las paradas en el
+/// orden de la página. Si no entran en una pantalla y la página las trae en
+/// secciones, cada sección es otra puerta.
+struct EntriesScreen: View {
+    let title: String
+    let segments: [StreamSegment]
+    var onOpen: (Action) -> Void
+    var onOpenURL: (String) -> Void
+    /// Aprieta el botón que una tarjeta de listado lleva en vez de un link.
+    var onActivate: (String) -> Void = { _ in }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(segments) { segment in
+                    switch segment {
+                    case .block(let block):
+                        BlockView(block: block)
+                    case .options(_, let options):
+                        OptionList(options: options, onOpen: onOpen)
+                    case .door(let door):
+                        DoorCard(door: door)
+                    case .listing(let listing):
+                        ListingView(
+                            listing: listing, startsExpanded: true,
+                            onOpenURL: onOpenURL, onActivate: onActivate
+                        )
+                    case .form:
+                        // Un formulario no se guarda detrás de una puerta:
+                        // se queda en la página.
+                        EmptyView()
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .background(Color(.systemBackground))
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar(.visible, for: .navigationBar)
+        // Un link adentro de un párrafo abre acá, no en Safari.
+        .environment(\.openURL, OpenURLAction { url in
+            onOpenURL(url.absoluteString)
+            return .handled
+        })
     }
 }

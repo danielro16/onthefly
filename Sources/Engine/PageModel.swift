@@ -21,6 +21,11 @@ struct ExtractedPage: Codable, Sendable {
     let groups: [ActionGroup]
     /// Repeated structures: product grids, article feeds, result lists.
     let listings: [Listing]
+    /// La página en su orden: lo que dice, lo que deja hacer y lo que lista,
+    /// cada cosa donde la página la muestra. Ver `PageStream.swift`.
+    ///
+    /// Opcional porque un extractor anterior no lo manda.
+    let stream: [StreamEntry]?
     /// Something blocking the page: cookie banner, paywall, login wall.
     let overlay: Overlay?
     let stats: Stats

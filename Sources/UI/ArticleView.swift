@@ -319,15 +319,42 @@ struct ArticleView: View {
         let label: String
     }
 
+    /// Los bloques en pantalla: los del recorrido cuando la página se lee en
+    /// su orden, los del recorte de Readability cuando no.
+    private var shownBlocks: [Block] {
+        guard page.readsInOrder else { return visibleBlocks }
+        return orderedSegments.compactMap { segment in
+            if case .block(let block) = segment { return block }
+            return nil
+        }
+    }
+
     private var headings: [RotorTarget] {
-        visibleBlocks.compactMap { block in
-            guard case .heading(let id, _, let text) = block else { return nil }
-            return RotorTarget(id: id, destination: id, label: text)
+        guard page.readsInOrder else {
+            return visibleBlocks.compactMap { block in
+                guard case .heading(let id, _, let text) = block else { return nil }
+                return RotorTarget(id: id, destination: id, label: text)
+            }
+        }
+        // En su orden, además de los encabezados de la página: cada puerta,
+        // y cada titular — que salta a la lista donde está.
+        return orderedSegments.flatMap { segment -> [RotorTarget] in
+            switch segment {
+            case .block(.heading(let id, _, let text)):
+                return [RotorTarget(id: id, destination: id, label: text)]
+            case .door(let door):
+                return [RotorTarget(id: door.id, destination: door.id, label: door.title)]
+            case .options(let id, let options):
+                return options.filter { $0.headingLevel != nil }
+                    .map { RotorTarget(id: $0.id, destination: id, label: $0.action.label) }
+            default:
+                return []
+            }
         }
     }
 
     private var linkTargets: [RotorTarget] {
-        visibleBlocks.flatMap { block -> [RotorTarget] in
+        shownBlocks.flatMap { block -> [RotorTarget] in
             let text = block.plainText
             return block.links.enumerated().compactMap { index, link in
                 guard
@@ -344,7 +371,7 @@ struct ArticleView: View {
     }
 
     private var imageTargets: [RotorTarget] {
-        visibleBlocks.compactMap { block in
+        shownBlocks.compactMap { block in
             guard case .image(let id, _, let alt, let needsAlt, let caption) = block else { return nil }
             let label = alt.isEmpty ? (caption ?? "") : alt
             return RotorTarget(
@@ -375,104 +402,13 @@ struct ArticleView: View {
                     )
                 }
 
-                intentPanel
-                arrivalsSection
-
-                // The order of the page is the answer to what the page is for,
-                // not a fixed sequence of sections. A newspaper opens with the
-                // news; a search engine opens with the box. Putting eleven
-                // actions — dollar quotes among them — above the headlines is
-                // what made the reader read as more confusing than the site.
-                if isSimple {
-                    // La intención ya está clara: acá no se pregunta nada ni
-                    // se categoriza nada. Lo que dice la página, lo que
-                    // ofrece —como lista, en su orden— y lo que pide. El
-                    // ruido en una sola caja al final.
-                    blocksSection
-                    plainOptions
-                    formsSection(searchOnly: nil)
-                    listingsSection
-                    asideListingsSection
-                    otherOptions
-                } else if isIndex {
-                    // Una portada ofrece; no vuelca. El usuario decide si se
-                    // entera de lo que el sitio recomienda o va por su
-                    // sección, y las dos cosas están a una parada.
-                    indexOptions
-                    formsSection(searchOnly: nil)
-                    // La prosa suelta de una portada son los legales y las
-                    // fichas técnicas. No se pierde: va detrás de todo.
-                    blocksSection
-                    asideListingsSection
-                } else if contentFirst {
-                    // A search box is the page's first tool wherever it is;
-                    // a newsletter signup waits behind the content.
-                    formsSection(searchOnly: true)
-                    // En un artículo el texto va primero y las listas
-                    // —notas, "leé también"— detrás. En una portada las
-                    // listas son las noticias, y el orden se invierte.
-                    if isArticle {
-                        blocksSection
-                        listingsSection
-                    } else {
-                        listingsSection
-                        blocksSection
-                    }
-                    asideListingsSection
-                    formsSection(searchOnly: false)
+                // Una página que se lee en su orden no pasa por nada de lo
+                // de abajo: ni intención, ni cajas por categoría, ni Jev.
+                if page.readsInOrder {
+                    orderedPage
                 } else {
-                    // A rebuilt form IS the task on a check-in, booking or
-                    // search page, so nothing goes above it.
-                    formsSection(searchOnly: nil)
-
-                    if let leadCluster {
-                        ActionGroupsView(
-                            groups: [leadCluster], title: nil, expandedByDefault: true,
-                            onOpen: onOpenAction
-                        )
-                    } else if let leadGroup {
-                        if let shown = withoutNextSteps([leadGroup]).first {
-                            ActionGroupsView(
-                                groups: [shown], title: nil, expandedByDefault: true,
-                                onOpen: onOpenAction
-                            )
-                        }
-                    } else if !groups.isEmpty, !isDetecting {
-                        // Jev found no dominant goal. Then the categories are
-                        // the honest answer and they stay where they were.
-                        //
-                        // `!isDetecting` es la diferencia entre ofrecer y
-                        // adivinar. Los grupos llegan antes que la decisión, y
-                        // dibujarlos ahí ponía "¿Qué querés hacer?" con cuatro
-                        // cajas sobre un diario para borrarlas un segundo
-                        // después: para quien mira, parpadea; para quien
-                        // escucha, el cursor se cae de lo que estaba leyendo.
-                        ActionGroupsView(
-                            groups: withoutNextSteps(groups),
-                            title: fewActions ? nil : "¿Qué querés hacer?",
-                            expandedByDefault: fewActions,
-                            onOpen: onOpenAction
-                        )
-                    }
-
-                    listingsSection
-                    blocksSection
-                    asideListingsSection
+                    groupedPage
                 }
-
-                nextStepSection
-
-                // En una portada ya se mostró arriba, con las demás opciones.
-                if !menuGroups.isEmpty, !isIndex {
-                    SiteMenuView(groups: menuGroups, onOpen: onOpenAction)
-                        .id(Self.menuDestination)
-                        .accessibilityRotorEntry(id: Self.menuDestination, in: rotorNamespace)
-                }
-
-                collapsedSection
-                // Lo que la app tiene para decir sobre sí misma va al final,
-                // detrás de todo lo que la página tenía para decir.
-                savingsNote
                 footer
             }
             .padding(.horizontal, 20)
@@ -514,6 +450,170 @@ struct ArticleView: View {
             onOpenURL(url.absoluteString)
             return .handled
         })
+    }
+
+    /// El layout por intención: lo que Jev decidió lidera y el resto se
+    /// agrupa. Lo usan las páginas que todavía no se leen en su orden.
+    @ViewBuilder
+    private var groupedPage: some View {
+        intentPanel
+        arrivalsSection
+
+        // The order of the page is the answer to what the page is for,
+        // not a fixed sequence of sections. A newspaper opens with the
+        // news; a search engine opens with the box. Putting eleven
+        // actions — dollar quotes among them — above the headlines is
+        // what made the reader read as more confusing than the site.
+        if isSimple {
+            // La intención ya está clara: acá no se pregunta nada ni
+            // se categoriza nada. Lo que dice la página, lo que
+            // ofrece —como lista, en su orden— y lo que pide. El
+            // ruido en una sola caja al final.
+            blocksSection
+            plainOptions
+            formsSection(searchOnly: nil)
+            listingsSection
+            asideListingsSection
+            otherOptions
+        } else if isIndex {
+            // Una portada ofrece; no vuelca. El usuario decide si se
+            // entera de lo que el sitio recomienda o va por su
+            // sección, y las dos cosas están a una parada.
+            indexOptions
+            formsSection(searchOnly: nil)
+            // La prosa suelta de una portada son los legales y las
+            // fichas técnicas. No se pierde: va detrás de todo.
+            blocksSection
+            asideListingsSection
+        } else if contentFirst {
+            // A search box is the page's first tool wherever it is;
+            // a newsletter signup waits behind the content.
+            formsSection(searchOnly: true)
+            // En un artículo el texto va primero y las listas
+            // —notas, "leé también"— detrás. En una portada las
+            // listas son las noticias, y el orden se invierte.
+            if isArticle {
+                blocksSection
+                listingsSection
+            } else {
+                listingsSection
+                blocksSection
+            }
+            asideListingsSection
+            formsSection(searchOnly: false)
+        } else {
+            // A rebuilt form IS the task on a check-in, booking or
+            // search page, so nothing goes above it.
+            formsSection(searchOnly: nil)
+
+            if let leadCluster {
+                ActionGroupsView(
+                    groups: [leadCluster], title: nil, expandedByDefault: true,
+                    onOpen: onOpenAction
+                )
+            } else if let leadGroup {
+                if let shown = withoutNextSteps([leadGroup]).first {
+                    ActionGroupsView(
+                        groups: [shown], title: nil, expandedByDefault: true,
+                        onOpen: onOpenAction
+                    )
+                }
+            } else if !groups.isEmpty, !isDetecting {
+                // Jev found no dominant goal. Then the categories are
+                // the honest answer and they stay where they were.
+                //
+                // `!isDetecting` es la diferencia entre ofrecer y
+                // adivinar. Los grupos llegan antes que la decisión, y
+                // dibujarlos ahí ponía "¿Qué querés hacer?" con cuatro
+                // cajas sobre un diario para borrarlas un segundo
+                // después: para quien mira, parpadea; para quien
+                // escucha, el cursor se cae de lo que estaba leyendo.
+                ActionGroupsView(
+                    groups: withoutNextSteps(groups),
+                    title: fewActions ? nil : "¿Qué querés hacer?",
+                    expandedByDefault: fewActions,
+                    onOpen: onOpenAction
+                )
+            }
+
+            listingsSection
+            blocksSection
+            asideListingsSection
+        }
+
+        nextStepSection
+
+        // En una portada ya se mostró arriba, con las demás opciones.
+        if !menuGroups.isEmpty, !isIndex {
+            SiteMenuView(groups: menuGroups, onOpen: onOpenAction)
+                .id(Self.menuDestination)
+                .accessibilityRotorEntry(id: Self.menuDestination, in: rotorNamespace)
+        }
+
+        collapsedSection
+        // Lo que la app tiene para decir sobre sí misma va al final,
+        // detrás de todo lo que la página tenía para decir.
+        savingsNote
+    }
+
+    /// Los tramos de la página en su orden, con lo que el último toque abrió
+    /// por delante.
+    private var orderedSegments: [StreamSegment] {
+        page.segments(arrivals: Set(arrivals.map(\.id)), cause: arrivalCause)
+    }
+
+    /// La página en su orden. Ver `ExtractedPage.segments(only:title:arrivals:cause:)`.
+    ///
+    /// Un solo layout y ninguna decisión: cada tramo se dibuja como lo que
+    /// es, donde la página lo puso. Una lista corta va abierta; una larga, la
+    /// portada, el pie y lo que no dice nada son una parada cada uno, que
+    /// abre una pantalla. Nada se despliega en el lugar.
+    @ViewBuilder
+    private var orderedPage: some View {
+        let segments = orderedSegments
+        // "Inicio", en la portada, es un link a esta misma página: abre lo
+        // que esta página es, en vez de recargarla.
+        let feed: StreamDoor? = segments.lazy.compactMap { segment -> StreamDoor? in
+            if case .door(let door) = segment, door.kind == .feed { return door }
+            return nil
+        }.first
+
+        ForEach(segments) { segment in
+            switch segment {
+            case .block(let block):
+                BlockView(block: block)
+                    .id(block.id)
+                    .accessibilityRotorEntry(id: block.id, in: rotorNamespace)
+            case .form(let form):
+                formView(form)
+            case .listing(let listing):
+                ListingView(
+                    listing: listing,
+                    startsExpanded: listing.items.count <= StopBudget.openList,
+                    onOpenURL: onOpenURL,
+                    onActivate: { id in
+                        if let action = page.actions.first(where: { $0.id == id }) { onOpenAction(action) }
+                    }
+                )
+            case .options(let id, let options):
+                OptionList(
+                    options: options,
+                    routeFor: { action in
+                        guard let feed, page.isSelfLink(action) else { return nil }
+                        return .entries(feed.title, feed.entries)
+                    },
+                    onOpen: onOpenAction
+                )
+                .id(id)
+                .accessibilityRotorEntry(id: id, in: rotorNamespace)
+                .modifier(ArrivalFocus(active: id == ExtractedPage.arrivalsID, focused: focused))
+            case .door(let door):
+                DoorCard(door: door)
+                    .id(door.id)
+                    .accessibilityRotorEntry(id: door.id, in: rotorNamespace)
+                    .modifier(ArrivalFocus(active: door.kind == .arrivals, focused: focused))
+            }
+        }
     }
 
     /// Las opciones de una página cuya intención ya está clara, como lista.
@@ -709,17 +809,21 @@ struct ArticleView: View {
             guard let searchOnly else { return true }
             return fields.contains { $0.isSearch } == searchOnly
         }) { form in
-            FormView(
-                action: form,
-                suggestions: suggestions,
-                resolvedValues: resolvedValues,
-                voiceOverFocus: focused,
-                onFill: onFillField,
-                onChooseSuggestion: onChooseSuggestion,
-                onOpenField: onOpenField,
-                onSubmit: { onSubmitForm(form) }
-            )
+            formView(form)
         }
+    }
+
+    private func formView(_ form: Action) -> some View {
+        FormView(
+            action: form,
+            suggestions: suggestions,
+            resolvedValues: resolvedValues,
+            voiceOverFocus: focused,
+            onFill: onFillField,
+            onChooseSuggestion: onChooseSuggestion,
+            onOpenField: onOpenField,
+            onSubmit: { onSubmitForm(form) }
+        )
     }
 
     /// A listing worth opening on a content-first page is one that IS
@@ -1003,6 +1107,22 @@ struct ArticleView: View {
             .font(.footnote)
             .foregroundStyle(.secondary)
             .padding(.top, 12)
+        }
+    }
+}
+
+/// Lleva el cursor de VoiceOver a lo que el último toque hizo aparecer, y a
+/// nada más: con `equals: nil` cada tramo de la página se anotaría como el
+/// lugar del cursor cuando no hay ninguno.
+private struct ArrivalFocus: ViewModifier {
+    let active: Bool
+    let focused: AccessibilityFocusState<String?>.Binding
+
+    func body(content: Content) -> some View {
+        if active {
+            content.accessibilityFocused(focused, equals: ReaderModel.arrivalsAnchor)
+        } else {
+            content
         }
     }
 }
