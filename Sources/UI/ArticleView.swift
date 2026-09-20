@@ -23,6 +23,7 @@ struct ArticleView: View {
     var suggestions: [String: [String]] = [:]
     var resolvedValues: [String: String] = [:]
     var onChooseSuggestion: (Action.Field, Int) -> Void = { _, _ in }
+    var onOpenField: (Action.Field) -> Void = { _ in }
     var onSubmitForm: (Action) -> Void = { _ in }
     var onOpenURL: (String) -> Void = { _ in }
     var onOverlayChoice: (Overlay.Choice) -> Void = { _ in }
@@ -409,6 +410,7 @@ struct ArticleView: View {
                 resolvedValues: resolvedValues,
                 onFill: onFillField,
                 onChooseSuggestion: onChooseSuggestion,
+                onOpenField: onOpenField,
                 onSubmit: { onSubmitForm(form) }
             )
         }

@@ -17,6 +17,8 @@ struct FormView: View {
     var resolvedValues: [String: String] = [:]
     var onFill: (Action.Field, String) -> Void
     var onChooseSuggestion: (Action.Field, Int) -> Void = { _, _ in }
+    /// Presses a read-only field so the page opens its list.
+    var onOpenField: (Action.Field) -> Void = { _ in }
     var onSubmit: () -> Void
 
     @State private var values: [String: String] = [:]
@@ -160,6 +162,29 @@ struct FormView: View {
                 // documento".
                 .labelsHidden()
                 .accessibilityLabel(field.name)
+
+            } else if field.type == "combobox" {
+                // Typing filters the page's list; the button opens all of
+                // it, for someone who does not know what the list holds.
+                // Either way the options arrive as suggestions underneath.
+                HStack(spacing: 8) {
+                    TextField(field.name, text: binding(field))
+                        .textFieldStyle(.roundedBorder)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .focused($focused, equals: field.id)
+                        .accessibilityLabel(field.name)
+                        .accessibilityHint("Escribe para filtrar las opciones")
+                    Button {
+                        onOpenField(field)
+                    } label: {
+                        Image(systemName: "chevron.down.circle")
+                            .font(.title3)
+                    }
+                    .accessibilityLabel("Opciones de \(field.name)")
+                    .accessibilityHint("Muestra todas las opciones")
+                }
+                suggestionList(field)
 
             } else if field.type == "textarea" {
                 TextField(field.name, text: binding(field), axis: .vertical)

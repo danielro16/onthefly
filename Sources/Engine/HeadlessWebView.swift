@@ -180,6 +180,22 @@ final class HeadlessWebView: NSObject {
         return (result as? [String: Any])?["ok"] as? Bool == true
     }
 
+    /// Reads the live page again, on request. The safety valve: every
+    /// heuristic about when a page has finished changing is a guess, and
+    /// the person can always ask.
+    func reread() async throws -> ExtractedPage {
+        guard let web = webView else { throw ExtractionError.noSession }
+        return try await reextract(web)
+    }
+
+    /// Opens a combobox's list without typing into it, so `suggestions`
+    /// can read everything it offers.
+    func open(fieldID: String) async throws {
+        guard let web = webView else { throw ExtractionError.noSession }
+        let safeID = fieldID.filter { $0.isLetter || $0.isNumber }
+        _ = try await web.evaluateJavaScript("window.__jefOpen('\(safeID)')")
+    }
+
     /// What an autocomplete under `fieldID` is offering right now.
     func suggestions(fieldID: String) async throws -> [String] {
         guard let web = webView else { throw ExtractionError.noSession }

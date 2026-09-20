@@ -296,6 +296,18 @@ final class ReaderModel {
         }
     }
 
+    /// Opens a combobox's list without typing, then reads the list as
+    /// suggestions for that field: the whole list, for someone who does
+    /// not know what it holds.
+    func openField(_ field: Action.Field) async {
+        suggestionTask?.cancel()
+        try? await engine.open(fieldID: field.id)
+        try? await Task.sleep(for: .milliseconds(500))
+        let found = (try? await engine.suggestions(fieldID: field.id)) ?? []
+        suggestions[field.id] = found
+        announce(found.isEmpty ? "No aparecieron opciones" : "\(found.count) opciones para \(field.name)")
+    }
+
     /// Picks what the page offered. The field then holds whatever the page
     /// decided that pick means — "BUE", or the full airport name.
     func choose(_ field: Action.Field, suggestion index: Int) async {
@@ -351,6 +363,26 @@ final class ReaderModel {
     func choose(_ intent: Intent) async {
         guard let page else { return }
         await apply(intent, to: page)
+    }
+
+    /// Reads the page again, as it is now. For when the native view fell
+    /// behind the page — a form that rendered after the last look.
+    func reread() async {
+        UIAccessibility.post(notification: .announcement, argument: "Leyendo la página de nuevo")
+        do {
+            let page = try await engine.reread()
+            noteArrivals(in: page, cause: "leer de nuevo")
+            address = page.url
+            state = .loaded(page)
+            collapsed = []
+            UIAccessibility.post(
+                notification: .announcement,
+                argument: "\(page.displayTitle). \(page.stats.blockCount) secciones."
+            )
+            await detectIntent(for: page)
+        } catch {
+            UIAccessibility.post(notification: .announcement, argument: "No se pudo leer la página")
+        }
     }
 
     /// Restores the untouched page. Always reachable — nothing Jev decides is
@@ -482,6 +514,7 @@ struct ReaderView: View {
                 onChooseSuggestion: { field, index in
                     Task { await model.choose(field, suggestion: index) }
                 },
+                onOpenField: { field in Task { await model.openField(field) } },
                 onSubmitForm: { action in Task { await model.submit(action) } },
                 onOpenURL: { href in
                     model.address = href
@@ -551,6 +584,17 @@ struct ReaderView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .accessibilityHint("Carga y simplifica la página")
+            } else if model.liveWebView != nil, !model.showingOriginal {
+                // Where Safari keeps reload. Reads the page again as it is
+                // now, for when the native view fell behind it.
+                Button {
+                    Task { await model.reread() }
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.title3)
+                }
+                .accessibilityLabel("Leer de nuevo")
+                .accessibilityHint("Vuelve a leer la página tal como está ahora")
             }
         }
         .padding(.horizontal)

@@ -864,6 +864,19 @@
           value: type === "checkbox" ? (control.checked ? "on" : "") : (control.value || ""),
         };
 
+        // A combobox — react-select's "Día", "Mes", "Año" on the checkout —
+        // keeps what was chosen beside the input, not in it, and shows its
+        // whole list on ArrowDown. A read-only input that opens a picker
+        // when pressed is the same thing to the person: open it, pick one.
+        if (control.tagName === "INPUT" && type === "text" && (
+          control.getAttribute("aria-autocomplete") === "list" ||
+          control.getAttribute("role") === "combobox" ||
+          control.hasAttribute("readonly")
+        )) {
+          field.type = "combobox";
+          field.value = displayedValue(control);
+        }
+
         // A <select>'s options have to travel: a native picker cannot offer
         // choices it does not know about.
         if (control.tagName === "SELECT") {
@@ -1946,6 +1959,43 @@ allowedVideoRegex: /^$/,
    * Without this the fields would look filled and submit empty — worse than
    * not offering them.
    */
+  /// What a control shows as its value. For most that is `.value`; a
+  /// combobox that clears its input on pick — react-select — shows the
+  /// pick in a sibling instead, and its placeholder where nothing is
+  /// picked yet. Walks up while the container holds this one control.
+  function displayedValue(control) {
+    if (control.value) return control.value;
+    const own = [control.getAttribute("aria-label"), control.getAttribute("placeholder")]
+      .map(function (s) { return (s || "").trim(); });
+    let up = control.parentElement;
+    for (let depth = 0; up && depth < 4; up = up.parentElement, depth++) {
+      if (up.querySelectorAll("input, select, textarea").length > 1) break;
+      const clone = up.cloneNode(true);
+      for (const gone of clone.querySelectorAll("[class*=placeholder], input, select, textarea, [aria-live]")) gone.remove();
+      const text = (clone.textContent || "").replace(/\s+/g, " ").trim();
+      if (text) return own.indexOf(text) === -1 ? text : "";
+    }
+    return "";
+  }
+
+  /// Opens a combobox's list without typing: what pressing it and
+  /// ArrowDown do for a person, so `__jefSuggestions` can read all of it.
+  window.__jefOpen = function (fieldId) {
+    const key = String(fieldId).replace(/"/g, "");
+    const el = document.querySelector('[data-jef-field="' + key + '"]');
+    if (!el) return { ok: false, reason: "gone" };
+    try {
+      el.focus();
+      for (const type of ["mousedown", "mouseup", "click"]) {
+        el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true }));
+      }
+      el.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "ArrowDown", code: "ArrowDown", keyCode: 40 }));
+    } catch (e) {
+      return { ok: false, reason: "error", message: String((e && e.message) || e) };
+    }
+    return { ok: true };
+  };
+
   window.__jefFill = function (fieldId, value) {
     const key = String(fieldId).replace(/"/g, "");
 
@@ -2019,7 +2069,10 @@ allowedVideoRegex: /^$/,
     for (let up = control.parentElement, depth = 0; !scope && up && depth < 4; up = up.parentElement, depth++) {
       if (up.querySelector("[role=listbox], [role=option]")) scope = up;
     }
-    if (!scope) return { ok: true, suggestions: [] };
+    // A dropdown rendered at the end of <body> — most date pickers — has
+    // no scope near its field. The person just opened it: what is visible
+    // is what it offers.
+    if (!scope) scope = document;
 
     const shown = Array.prototype.slice.call(
       scope.querySelectorAll("[role=option], [role=listbox] li, [role=listbox] > *")
@@ -2032,7 +2085,7 @@ allowedVideoRegex: /^$/,
 
     const suggestions = [];
     for (const option of shown) {
-      if (suggestions.length >= 8) break;
+      if (suggestions.length >= 40) break;
       const label = textOf(option).slice(0, 120);
       if (suggestions.some(function (s) { return s.label === label; })) continue;
       option.setAttribute("data-jef-option", key + ":" + suggestions.length);
@@ -2058,7 +2111,7 @@ allowedVideoRegex: /^$/,
     // Done with this field: closing it is what stops the list from coming
     // back on the next re-extraction.
     if (control) control.blur();
-    return { ok: true, value: control ? control.value : "" };
+    return { ok: true, value: control ? displayedValue(control) : "" };
   };
 
   /// Submits the form that owns a control, preferring a real submit button
@@ -2212,9 +2265,12 @@ allowedVideoRegex: /^$/,
    * its own. Bounded: a few rounds per route, inside a short window, so a
    * page that never stops moving cannot keep the reader re-rendering.
    */
-  const LATE_WINDOW_MS = 20000;
+  // Ninety seconds, because a checkout took longer than twenty to render
+  // its form and the reader kept a spinner; six rounds, so a page that
+  // never stops moving still stops being re-read.
+  const LATE_WINDOW_MS = 90000;
   const LATE_THRESHOLD = 20;
-  const LATE_MAX_ROUNDS = 4;
+  const LATE_MAX_ROUNDS = 6;
   let lateObserver = null;
   let lateRounds = 0;
   let lateRoute = null;
@@ -2238,7 +2294,17 @@ allowedVideoRegex: /^$/,
     let pending = 0;
     let quiet = null;
     const observer = new MutationObserver(function (records) {
-      for (const record of records) pending += weight(record.addedNodes) + weight(record.removedNodes);
+      for (const record of records) {
+        if (record.type === "attributes") {
+          // An accordion opens by a class: nothing is added, a subtree is
+          // shown. The checkout's passenger form appeared that way and
+          // the reader kept a spinner. Weigh what the change reveals.
+          const target = record.target;
+          if (target.nodeType === Node.ELEMENT_NODE) pending += 1 + target.querySelectorAll("*").length;
+          continue;
+        }
+        pending += weight(record.addedNodes) + weight(record.removedNodes);
+      }
       if (pending < LATE_THRESHOLD) return;
       clearTimeout(quiet);
       quiet = setTimeout(function () {
@@ -2248,7 +2314,10 @@ allowedVideoRegex: /^$/,
         extractAndSend();
       }, 600);
     });
-    observer.observe(document.documentElement, { childList: true, subtree: true });
+    observer.observe(document.documentElement, {
+      childList: true, subtree: true,
+      attributes: true, attributeFilter: ["class", "style", "hidden", "aria-hidden", "aria-expanded", "open", "disabled"],
+    });
     lateObserver = observer;
     setTimeout(function () {
       if (lateObserver === observer) { observer.disconnect(); lateObserver = null; }
