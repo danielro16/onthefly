@@ -61,25 +61,30 @@ renglones, no era un dato al paso.
 
 > Dólar oficial 1.534. Dólar blue 1.720.
 
-### 3. Qué querés hacer — las opciones, rankeadas
+### 3. Qué querés hacer — las opciones, con las palabras del sitio
 
 De cuatro a seis, nombradas con verbo, abiertas. Lo que no entra va a "más
 opciones", contraído.
 
-El ranking **depende del tipo de página**, y eso es todo lo que el tipo de
-página decide. No hay cinco diseños distintos: hay un orden distinto de las
-mismas categorías.
+El diseño es siempre el mismo — cajas por intención — pero **cada tipo de
+página trae su propio vocabulario, en su propio orden**. Un diario y un
+marketplace no comparten opciones: uno ofrece "Leer los titulares", el otro
+"Buscar un producto". Nombrar a los dos "Consultar un dato" es lo que hace
+que la app suene a sistema y no a sitio.
 
-| Tipo de página | Qué va primero | Qué va último |
-|---|---|---|
-| Puerta de entrada (landing, home institucional) | Qué hace esta empresa, sus servicios | Ingresar, legales |
-| Banco, cuenta, trámite | Ingresar, operar | Quiénes somos |
-| Diario, portal de noticias | Leer los titulares | Suscribirse, institucional |
-| Tienda, catálogo | Buscar, ver productos | Sobre la tienda |
-| Artículo, entrada de referencia | *(vacío: no hay tarea, el contenido es el punto)* | — |
+| Tipo de página | Las opciones, en orden |
+|---|---|
+| **Puerta de entrada** (landing, home institucional) | Qué hacemos · Productos y servicios · Contacto · Sobre la empresa · Ingresar |
+| **Banco o trámite** | Ingresar · Consultar mis cuentas · Operar · Ayuda · Quiénes somos |
+| **Diario o portal** | Leer los titulares · Noticias por sección · Buscar una noticia · Mi suscripción |
+| **Tienda o catálogo** | Buscar un producto · Ver categorías · Ofertas · Mis compras · Mi cuenta |
+| **Artículo o referencia** | *(vacío: no hay tarea, el contenido es el punto)* |
 
 El tramo puede estar vacío. En una nota de Wikipedia no hay nada que hacer, y
 forzar un "¿Qué querés hacer?" ahí es lo que hace que la página suene rara.
+
+Cada vocabulario cierra con un cajón propio para lo que no encaja en ninguna
+de sus opciones, para que ninguna acción quede sin lugar.
 
 ### 4. El contenido — lo que la página es
 
@@ -110,14 +115,16 @@ la página es un dato para consultar. Un cluster de botones hermanos idénticos
 es una sola decisión. Nada de esto se le pregunta a nadie: el DOM ya lo dice, y
 preguntarlo sólo agrega ruido y variabilidad.
 
-**Jev decide dos cosas, y las dos son preguntas tipadas de pocas opciones**,
+**Jev decide tres cosas, y las tres son preguntas tipadas de pocas opciones**,
 que es donde demostró ser confiable:
 
 1. **Qué tipo de página es esta** — una `choice` entre los cinco tipos de la
-   tabla. Decide el ranking del tramo 3, nada más. Si la confianza es baja,
-   cae en "puerta de entrada", que es la más conservadora porque muestra un
-   poco de todo.
-2. **Dónde va cada cosa suelta** — una `choice` entre *dato al paso*, *puede
+   tabla. Elige el vocabulario y el orden del tramo 3. Si la confianza es
+   baja, cae en "puerta de entrada", que es la más conservadora porque
+   muestra un poco de todo.
+2. **A qué opción pertenece cada acción** — una `choice` entre las opciones
+   de *ese* vocabulario, no entre categorías globales.
+3. **Dónde va cada cosa suelta** — una `choice` entre *dato al paso*, *puede
    interesarte* y *resto del sitio*, para cada bloque que no encontró lugar.
 
 Lo que Jev **no** hace es clasificar acción por acción. Medido: los treinta y
@@ -130,6 +137,32 @@ sí.
 **El tipo se pega al flujo.** Una vez adentro de un trámite, todas las
 pantallas de ese trámite son del mismo tipo. No se vuelve a decidir en cada
 paso, porque eso reordenaría la página en medio de la tarea.
+
+## Cuándo no intervenir
+
+Reinterpretar una página que ya está bien hecha sólo puede restar: perder
+algo, ordenarlo peor, o llamarlo distinto de como lo llama el sitio. Google
+con VoiceOver funciona; nuestra versión de Google fue de las peores pantallas
+de las pruebas.
+
+Así que hay un paso previo a todo lo anterior: **medir si hace falta**. No es
+una pregunta para Jev, porque la respuesta está en el DOM y se cuenta:
+
+- ¿Hay landmarks y encabezados reales, o un solo `h1` y cuarenta `div`?
+- ¿Todos los controles tienen nombre accesible? ¿Los campos, su `label`?
+- ¿Las imágenes con contenido tienen `alt`?
+- ¿Cuántas paradas tiene para el contenido que ofrece?
+- Y la comparación que sólo nosotros podemos hacer: **cuántas paradas
+  ahorraríamos**. Si son pocas, no hay nada que ganar.
+
+Cuando la página pasa el examen, se muestra tal cual, **y se dice**:
+
+> Esta página ya está bien hecha. La estás viendo tal cual.
+> Tocá dos veces para reinterpretarla.
+
+Nunca en silencio, y siempre reversible en un toque. La decisión de no
+intervenir es una decisión, y quien navega tiene derecho a saberla y a
+cambiarla.
 
 ## Lo que este documento no propone
 
