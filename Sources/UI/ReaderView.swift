@@ -122,6 +122,35 @@ final class ReaderModel {
         }
     }
 
+    /// Answers a blocking overlay with the choice the user picked.
+    ///
+    /// Only ever called from a tap: the app never resolves an overlay on its
+    /// own, because consent and payment are the user's decisions.
+    func resolveOverlay(_ choice: Overlay.Choice) async {
+        UIAccessibility.post(notification: .announcement, argument: "Respondiendo: \(choice.label)")
+        do {
+            switch try await engine.activate(actionID: choice.id) {
+            case .navigated(let url):
+                address = url.absoluteString
+                await go()
+            case .updated(let page):
+                state = .loaded(page)
+                collapsed = []
+                UIAccessibility.post(
+                    notification: .announcement,
+                    argument: page.overlay == nil ? "Aviso resuelto." : "La página sigue mostrando un aviso."
+                )
+                await detectIntent(for: page)
+            case .stale:
+                await go()
+            }
+        } catch {
+            UIAccessibility.post(
+                notification: .announcement, argument: "No se pudo responder el aviso"
+            )
+        }
+    }
+
     /// Presses a control the page owns, then refreshes from whatever it became.
     ///
     /// Links navigate; buttons are clicked inside the live page. Either way the
@@ -282,6 +311,9 @@ struct ReaderView: View {
                         onOpenURL: { href in
                             model.address = href
                             Task { await model.go() }
+                        },
+                        onOverlayChoice: { choice in
+                            Task { await model.resolveOverlay(choice) }
                         }
                     )
                 case .failed(let message):

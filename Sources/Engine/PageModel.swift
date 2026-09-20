@@ -21,6 +21,8 @@ struct ExtractedPage: Codable, Sendable {
     let groups: [ActionGroup]
     /// Repeated structures: product grids, article feeds, result lists.
     let listings: [Listing]
+    /// Something blocking the page: cookie banner, paywall, login wall.
+    let overlay: Overlay?
     let stats: Stats
 
     struct Stats: Codable, Sendable {
@@ -75,6 +77,58 @@ struct ActionGroup: Codable, Sendable, Identifiable {
     /// What VoiceOver announces for the collapsed group.
     func accessibilityLabel(title: String) -> String {
         "\(title), \(size) \(size == 1 ? "elemento" : "elementos")"
+    }
+}
+
+/// Something covering the page that has to be dealt with first.
+///
+/// A sighted visitor sees the page dimmed behind a box and knows the box comes
+/// first. With a screen reader the overlay's controls arrive mixed into the
+/// page's, with no cue that nothing else will work until it is resolved.
+///
+/// The app never resolves one on the user's behalf. Accepting terms or picking
+/// cookie preferences is their decision; this only makes it reachable, names
+/// what it is, and carries the original text so they can judge for themselves.
+struct Overlay: Codable, Sendable {
+    let kind: Kind
+    let text: String
+    let choices: [Choice]
+
+    enum Kind: String, Codable, Sendable {
+        case cookies, paywall, newsletter, login, age, other
+
+        var title: String {
+            switch self {
+            case .cookies:    return "Aviso de cookies"
+            case .paywall:    return "Contenido para suscriptores"
+            case .newsletter: return "Invitación a suscribirte"
+            case .login:      return "Hay que iniciar sesión"
+            case .age:        return "Verificación de edad"
+            case .other:      return "Aviso de la página"
+            }
+        }
+
+        var explanation: String {
+            switch self {
+            case .cookies:
+                return "Esta página pide una decisión sobre cookies antes de seguir."
+            case .paywall:
+                return "El contenido está detrás de una suscripción."
+            case .newsletter:
+                return "La página ofrece suscribirte a novedades. Podés ignorarlo."
+            case .login:
+                return "Hace falta una cuenta para ver esto."
+            case .age:
+                return "La página pide confirmar tu edad."
+            case .other:
+                return "La página muestra un aviso encima del contenido."
+            }
+        }
+    }
+
+    struct Choice: Codable, Sendable, Identifiable, Hashable {
+        let id: String
+        let label: String
     }
 }
 

@@ -27,8 +27,53 @@
 
   const HEADING_LEVEL = { H1: 1, H2: 2, H3: 3, H4: 4, H5: 5, H6: 6 };
 
+  /// Tags that start a new line for a sighted reader.
+  const BLOCK_TAGS = new Set([
+    "ADDRESS", "ARTICLE", "ASIDE", "BLOCKQUOTE", "BR", "DD", "DIV", "DL", "DT",
+    "FIELDSET", "FIGCAPTION", "FIGURE", "FOOTER", "FORM", "H1", "H2", "H3",
+    "H4", "H5", "H6", "HEADER", "HR", "LI", "MAIN", "NAV", "OL", "P", "PRE",
+    "SECTION", "TABLE", "TBODY", "TD", "TFOOT", "TH", "THEAD", "TR", "UL",
+  ]);
+
+  /*
+   * Flattens a subtree to one line, keeping block boundaries as punctuation.
+   *
+   * textContent concatenates siblings with nothing in between. A Wikipedia
+   * infobox cell holding three nested rows came out
+   * "Jefe de GobiernoVicejefa de GobiernoLegislatura", which VoiceOver reads
+   * as one invented word. The boundary is in the DOM; only the flattening
+   * loses it, and a sighted reader gets it for free as a line break.
+   *
+   * A comma and not a space, because the pieces are separate values and comma
+   * is punctuation VoiceOver pauses on instead of pronouncing. Tag-based and
+   * not getComputedStyle, because this runs over every cell, label and button
+   * on the page.
+   */
   function textOf(node) {
-    return (node.textContent || "").replace(/\s+/g, " ").trim();
+    if (!node) return "";
+    let raw = "";
+
+    (function walk(parent) {
+      for (const child of parent.childNodes) {
+        if (child.nodeType === Node.TEXT_NODE) {
+          raw += child.textContent || "";
+          continue;
+        }
+        if (child.nodeType !== Node.ELEMENT_NODE) continue;
+        const isBlock = BLOCK_TAGS.has(child.tagName);
+        if (isBlock) raw += "\n";
+        walk(child);
+        if (isBlock) raw += "\n";
+      }
+    })(node);
+
+    return raw
+      .replace(/[^\S\n]+/g, " ")           // collapse spaces, keep the breaks
+      .replace(/ *\n[\s\n]*/g, "\n")      // a run of breaks is one boundary
+      .replace(/^\n+|\n+$/g, "")
+      .replace(/([,;:.!?\u2026]) *\n/g, "$1 ")  // already punctuated: just separate
+      .replace(/\n/g, ", ")
+      .trim();
   }
 
   function absolute(href) {
@@ -374,7 +419,7 @@
    *
    * Runs against the live document, not Readability's output.
    */
-  function collectActions() {
+  function collectActions(excluded) {
     const actions = [];
     const seen = new Set();
     let counter = 0;
@@ -402,6 +447,10 @@
 
     function push(action, element) {
       if (!action.label || isNoise(action.label)) return;
+      // Controls the overlay owns are reported as its choices, not as page
+      // actions. Listing them twice would also mean stamping one element with
+      // two ids, and the second stamp wins: the action becomes unpressable.
+      if (excluded && element && excluded.contains(element)) return;
       // Same label twice is the same action to a user, however the markup
       // differs (mobile nav duplicating desktop nav is the usual culprit).
       const key = action.kind + "|" + action.label.toLowerCase();
@@ -849,6 +898,102 @@
     return item;
   }
 
+  /*
+   * Detects an overlay blocking the page: cookie banner, paywall, newsletter
+   * prompt, age gate, login wall.
+   *
+   * This has to be surfaced FIRST and as itself. A sighted visitor sees the
+   * page dimmed behind a box and knows the box comes first; a screen-reader
+   * user gets the overlay's controls mixed into the page's, with no cue that
+   * nothing else will work until it is dealt with.
+   *
+   * The app never dismisses one on the user's behalf — accepting terms or
+   * choosing cookie preferences is their decision, not ours. It only makes the
+   * choice reachable and says what it is.
+   */
+  function detectOverlay() {
+    const candidates = [];
+
+    // Declared overlays.
+    for (const el of document.querySelectorAll("[role=dialog], [role=alertdialog], [aria-modal=true], dialog[open]")) {
+      if (!isHidden(el)) candidates.push(el);
+    }
+
+    // Undeclared ones: fixed or sticky boxes large enough to block, which is
+    // how most cookie banners and paywalls are actually built.
+    const viewportArea = window.innerWidth * window.innerHeight;
+    for (const el of document.body.querySelectorAll("div, section, aside")) {
+      if (candidates.indexOf(el) !== -1) continue;
+      const style = window.getComputedStyle(el);
+      if (style.position !== "fixed" && style.position !== "sticky") continue;
+      if (isHidden(el)) continue;
+      const zIndex = parseInt(style.zIndex, 10) || 0;
+      if (zIndex < 100) continue;
+      const rect = el.getBoundingClientRect();
+      if (rect.width * rect.height < viewportArea * 0.2) continue;
+      candidates.push(el);
+    }
+
+    if (!candidates.length) return null;
+
+    // The outermost one: nested panels belong to the same overlay.
+    const outer = candidates.filter(function (c) {
+      return !candidates.some(function (o) { return o !== c && o.contains(c); });
+    });
+    const el = outer[0] || candidates[0];
+
+    const choices = [];
+    for (const control of el.querySelectorAll("button, [role=button], a[href], input[type=submit]")) {
+      if (isHidden(control)) continue;
+      const label = labelOf(control);
+      if (!label || choices.length >= 8) continue;
+      if (choices.some(function (c) { return c.label === label; })) continue;
+      const id = "o" + choices.length;
+      control.setAttribute("data-jef-id", id);
+      choices.push({ id: id, label: label });
+    }
+
+    const text = textOf(el);
+
+    // A fixed box with nothing to read and nothing to press is layout, not an
+    // overlay: spiegel.de has one and it rendered as an empty "Aviso de la
+    // página" card at the top of the article.
+    if (!choices.length && !text) return null;
+
+    return {
+      // Kept so the action inventory can skip what belongs to the overlay.
+      element: el,
+      overlay: {
+        // What it is, so the app can say it plainly.
+        kind: classifyOverlay(text, choices),
+        text: text.slice(0, 400),
+        choices: choices,
+      },
+    };
+  }
+
+  /// Label resolution that works outside collectActions' closure.
+  function labelOf(el) {
+    const aria = el.getAttribute("aria-label");
+    if (aria && aria.trim()) return aria.trim();
+    const text = textOf(el);
+    if (text) return text.slice(0, 60);
+    const title = el.getAttribute("title");
+    return title ? title.trim() : "";
+  }
+
+  /// Names the overlay from its own words. A guess, but a narrow one, and the
+  /// full text travels alongside so the user can judge for themselves.
+  function classifyOverlay(text, choices) {
+    const all = (text + " " + choices.map(function (c) { return c.label; }).join(" ")).toLowerCase();
+    if (/cookie|consentimiento|consent|privacidad|rgpd|gdpr/.test(all)) return "cookies";
+    if (/suscri|subscribe|paywall|seguí leyendo|continuar leyendo|registrate para/.test(all)) return "paywall";
+    if (/newsletter|bolet[ií]n|not[ií]cias por mail/.test(all)) return "newsletter";
+    if (/iniciar sesi[oó]n|log ?in|sign ?in|ingres[aá]/.test(all)) return "login";
+    if (/edad|age|mayor de/.test(all)) return "age";
+    return "other";
+  }
+
   /// Counts what a screen reader would stop on, before any of our work.
   /// Reported so the app can show the user what it saved them, and so the
   /// number stays honest as sites change.
@@ -872,7 +1017,11 @@
   function extract() {
     // Collected before Readability runs, and from the live document: the parse
     // below throws all of this away.
-    const actions = collectActions();
+    // Overlay first: it stamps its own controls, and the action inventory has
+    // to know which elements are already spoken for.
+    const found = detectOverlay();
+    const overlay = found ? found.overlay : null;
+    const actions = collectActions(found ? found.element : null);
     const groups = groupActions(actions);
     const listings = collectListings();
     const original = countStops();
@@ -899,6 +1048,7 @@ allowedVideoRegex: /^$/,
           actions: actions,
           groups: groups,
           listings: listings,
+          overlay: overlay,
           stats: {
             blockCount: 0,
             actionCount: actions.length,
@@ -941,6 +1091,7 @@ allowedVideoRegex: /^$/,
       actions: actions,
       groups: groups,
       listings: listings,
+      overlay: overlay,
       stats: {
         blockCount: blocks.length,
         actionCount: actions.length,

@@ -22,6 +22,7 @@ struct ArticleView: View {
     var onFillField: (Action.Field, String) -> Void = { _, _ in }
     var onSubmitForm: (Action) -> Void = { _ in }
     var onOpenURL: (String) -> Void = { _ in }
+    var onOverlayChoice: (Overlay.Choice) -> Void = { _ in }
 
     /// Ties each block view to its rotor entries so VoiceOver can jump to it.
     @Namespace private var rotorNamespace
@@ -85,6 +86,13 @@ struct ArticleView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 20) {
                 header
+
+                // Antes que nada: si algo tapa la página, eso es lo primero
+                // que el usuario tiene que resolver.
+                if let overlay = page.overlay {
+                    OverlayView(overlay: overlay, onChoose: onOverlayChoice)
+                }
+
                 intentPanel
                 savingsNote
 
@@ -144,6 +152,13 @@ struct ArticleView: View {
                 AccessibilityRotorEntry(Text(target.label), id: target.destination, in: rotorNamespace)
             }
         }
+        // An inline link carries a real URL, so tapping it would hand the user
+        // to Safari — out of the reader and back into the page we just spent
+        // the whole app rebuilding. Every link stays inside.
+        .environment(\.openURL, OpenURLAction { url in
+            onOpenURL(url.absoluteString)
+            return .handled
+        })
     }
 
     private var header: some View {
