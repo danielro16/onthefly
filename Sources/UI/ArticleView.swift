@@ -27,6 +27,9 @@ struct ArticleView: View {
     var onOpenURL: (String) -> Void = { _ in }
     var onOverlayChoice: (Overlay.Choice) -> Void = { _ in }
     var onOpenOriginal: () -> Void = {}
+    /// What the last tap made appear. See `ReaderModel.arrivals`.
+    var arrivals: [Action] = []
+    var arrivalCause = ""
 
     /// Ties each block view to its rotor entries so VoiceOver can jump to it.
     @Namespace private var rotorNamespace
@@ -168,14 +171,39 @@ struct ArticleView: View {
     }
 
     /// The groups as shown: the calls to action live in the flow instead,
-    /// and a button a listing row already presses — "Desde 81.987 ARS" on
-    /// its flight — is not listed a second time on its own.
+    /// a button a listing row already presses — "Desde 81.987 ARS" on its
+    /// flight — is not listed a second time on its own, and what the last
+    /// tap opened is shown where it opened.
     private func withoutNextSteps(_ groups: [IntentGroup]) -> [IntentGroup] {
         let promoted = Set(nextSteps.map(\.id))
         let inListings = Set(page.listings.flatMap { $0.items.compactMap(\.actionId) })
+        let arrived = Set(arrivals.map(\.id))
         return groups.compactMap { group in
-            let rest = group.actions.filter { !promoted.contains($0.id) && !inListings.contains($0.id) }
+            let rest = group.actions.filter {
+                !promoted.contains($0.id) && !inListings.contains($0.id) && !arrived.contains($0.id)
+            }
             return rest.isEmpty ? nil : IntentGroup(intent: group.intent, actions: rest, uncertain: group.uncertain)
+        }
+    }
+
+    /// What the last tap made appear — minus what a listing row already
+    /// says: the return flights' price buttons are the return flights.
+    private var shownArrivals: [Action] {
+        let inListings = Set(page.listings.flatMap { $0.items.compactMap(\.actionId) })
+        return arrivals.filter { !inListings.contains($0.id) }
+    }
+
+    /// What the last tap made appear, first, open, named after the tap.
+    @ViewBuilder
+    private var arrivalsSection: some View {
+        if !shownArrivals.isEmpty {
+            ActionGroupsView(
+                groups: [IntentGroup(
+                    intent: dominant ?? .transact, actions: shownArrivals, uncertain: [],
+                    title: "Apareció al tocar \(arrivalCause)"
+                )],
+                title: nil, expandedByDefault: true, onOpen: onOpenAction
+            )
         }
     }
 
@@ -252,6 +280,7 @@ struct ArticleView: View {
                 }
 
                 intentPanel
+                arrivalsSection
                 savingsNote
 
                 // The order of the page is the answer to what the page is for,

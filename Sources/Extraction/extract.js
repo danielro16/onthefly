@@ -1357,11 +1357,23 @@
     return text.replace(/\s+/g, " ").replace(/(\s*,\s*)+/g, ", ").replace(/^,\s*|,\s*$/g, "").trim();
   }
 
-  /// Text leaves of a card, in reading order.
+  /// Text leaves of a card, in reading order. A button or a link inside
+  /// the card is one leaf, whatever it is made of: "Desde 81.987 ARS", not
+  /// "Desde", "81.987", "ARS".
   function leavesOf(el) {
     const out = [];
+    const done = new Set();
     for (const node of el.querySelectorAll("*")) {
-      if (node.children.length || SKIP_TAGS.has(node.tagName)) continue;
+      if (SKIP_TAGS.has(node.tagName)) continue;
+      const control = node.closest("button, a[href], [role=button]");
+      if (control && control !== el && el.contains(control)) {
+        if (done.has(control)) continue;
+        done.add(control);
+        const text = textOf(control);
+        if (text) out.push({ node: control, text: text });
+        continue;
+      }
+      if (node.children.length) continue;
       const text = (node.textContent || "").replace(/\s+/g, " ").trim();
       if (text) out.push({ node: node, text: text });
     }
@@ -1439,9 +1451,15 @@
       if (href) item.href = href;
     }
     // A card with no link but a button — "Desde 81.987 ARS" on a flight —
-    // opens by pressing that button.
-    const button = el.querySelector("[data-jef-id]");
-    if (!item.href && button) item.actionId = button.getAttribute("data-jef-id");
+    // opens by pressing that button: the one that names the price, or the
+    // last one, which is where a card keeps its choice. The first was "Ver
+    // itinerario", and picking a flight opened its map instead.
+    if (!item.href) {
+      const buttons = Array.prototype.slice.call(el.querySelectorAll("[data-jef-id]"));
+      const priced = buttons.find(function (b) { return PRICE.test(textOf(b)); });
+      const chosen = priced || buttons[buttons.length - 1];
+      if (chosen) item.actionId = chosen.getAttribute("data-jef-id");
+    }
 
     // Currency, because on a product card the price is the point — the
     // price it is now, not the one struck through above it.
@@ -2216,6 +2234,20 @@ allowedVideoRegex: /^$/,
       };
     }
     window.addEventListener("popstate", function () { setTimeout(routeChanged, 0); });
+
+    // The title arrives after the page: "Ofertas de vuelos" was still read
+    // as "Calendario de vuelos" because the SPA renamed the document after
+    // the last extraction. A new title is worth one more read.
+    // Watched from <head>, not from the <title> node: React Helmet swaps
+    // the node out, and an observer on the old one hears nothing.
+    let lastTitle = document.title;
+    let titleTimer = null;
+    new MutationObserver(function () {
+      if (document.title === lastTitle) return;
+      lastTitle = document.title;
+      clearTimeout(titleTimer);
+      titleTimer = setTimeout(function () { whenSettled(extractAndSend); }, 600);
+    }).observe(document.head || document.documentElement, { childList: true, characterData: true, subtree: true });
   })();
 
   whenSettled(function () { wakeLazyContent(function () { whenSettled(extractAndSend); }); });

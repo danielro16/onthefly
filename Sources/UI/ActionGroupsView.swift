@@ -26,7 +26,11 @@ struct ActionGroupsView: View {
     var onOpen: (Action) -> Void
 
     @Namespace private var rotorNamespace
-    @State private var expanded: Set<String> = []
+    /// Toggled away from the default: opened when closed by default, closed
+    /// when open by default. Relative, so a group that is open by default
+    /// is open from its first render — onAppear was not reliably rerun when
+    /// the section came and went, and "Apareció al tocar…" showed up shut.
+    @State private var toggled: Set<String> = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -47,19 +51,16 @@ struct ActionGroupsView: View {
                 AccessibilityRotorEntry(Text(group.label), id: group.id, in: rotorNamespace)
             }
         }
-        .onAppear {
-            if expandedByDefault { expanded = Set(groups.map(\.id)) }
-        }
     }
 
     @ViewBuilder
     private func section(_ group: IntentGroup) -> some View {
-        let isOpen = expanded.contains(group.id)
+        let isOpen = expandedByDefault != toggled.contains(group.id)
 
         VStack(alignment: .leading, spacing: 6) {
             Button {
                 withAnimation(.easeInOut(duration: 0.15)) {
-                    if isOpen { expanded.remove(group.id) } else { expanded.insert(group.id) }
+                    if toggled.contains(group.id) { toggled.remove(group.id) } else { toggled.insert(group.id) }
                 }
             } label: {
                 HStack {

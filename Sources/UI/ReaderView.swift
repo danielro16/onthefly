@@ -34,6 +34,12 @@ final class ReaderModel {
     private(set) var suggestions: [String: [String]] = [:]
     /// What the page put in a field after a suggestion was picked.
     private(set) var resolvedValues: [String: String] = [:]
+    /// Controls that were not there before the last tap: what the tap
+    /// opened. A fare picker unfolding inside a flight card, a menu, an
+    /// accordion — on a SPA the answer to a tap is whatever appeared, and
+    /// buried among forty old controls it was unreachable.
+    private(set) var arrivals: [Action] = []
+    private(set) var arrivalCause = ""
     private var suggestionTask: Task<Void, Never>?
 
     var address: String = "https://es.wikipedia.org/wiki/Buenos_Aires"
@@ -93,6 +99,7 @@ final class ReaderModel {
         switch result {
         case .success(let page):
             guard !page.isEquivalent(to: self.page) else { return }
+            noteArrivals(in: page, cause: arrivalCause)
             address = page.url
             state = .loaded(page)
             collapsed = []
@@ -115,6 +122,7 @@ final class ReaderModel {
         listingNames = [:]
         suggestions = [:]
         resolvedValues = [:]
+        arrivals = []
         intentState = .unavailable
         UIAccessibility.post(notification: .announcement, argument: "Cargando página")
 
@@ -232,12 +240,15 @@ final class ReaderModel {
                     )
                     return
                 }
+                noteArrivals(in: page, cause: action.label)
                 address = page.url
                 state = .loaded(page)
                 collapsed = []
                 UIAccessibility.post(
                     notification: .announcement,
-                    argument: "\(action.label) activado. La página cambió."
+                    argument: arrivals.isEmpty
+                        ? "\(action.label) activado. La página cambió."
+                        : "\(action.label) activado. Aparecieron \(arrivals.count) opciones."
                 )
                 await detectIntent(for: page)
 
@@ -366,6 +377,20 @@ final class ReaderModel {
         )
     }
 
+    /// What is new in `page` compared with the one on screen, by label:
+    /// the controls a tap made appear.
+    private func noteArrivals(in page: ExtractedPage, cause: String) {
+        let before = Set((self.page?.actions ?? []).map { "\($0.kind.rawValue)|\($0.label)" })
+        // A different page is a different page, not an arrival.
+        guard let current = self.page, current.url == page.url, !before.isEmpty else {
+            arrivals = []
+            return
+        }
+        let fresh = page.actions.filter { !before.contains("\($0.kind.rawValue)|\($0.label)") && $0.kind != .form }
+        arrivals = Array(fresh.prefix(12))
+        arrivalCause = cause
+    }
+
     /// Accepts what people actually type: bare hosts, missing schemes.
     static func normalize(_ raw: String) -> URL? {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -463,7 +488,9 @@ struct ReaderView: View {
                 onOverlayChoice: { choice in
                     Task { await model.resolveOverlay(choice) }
                 },
-                onOpenOriginal: { model.showOriginal() }
+                onOpenOriginal: { model.showOriginal() },
+                arrivals: model.arrivals,
+                arrivalCause: model.arrivalCause
             )
         case .failed(let message):
             FailureView(
