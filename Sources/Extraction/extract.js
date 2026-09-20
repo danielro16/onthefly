@@ -1463,14 +1463,69 @@ allowedVideoRegex: /^$/,
         : window.HTMLInputElement.prototype;
 
       const setter = Object.getOwnPropertyDescriptor(prototype, "value").set;
+      // Focus first. An autocomplete only offers suggestions to a focused
+      // field — aerolineas.com.ar's origin box took the value and showed
+      // nothing until it had focus and a key event, both of which a person
+      // typing produces without thinking.
+      el.focus();
       setter.call(el, String(value));
 
-      el.dispatchEvent(new Event("input", { bubbles: true }));
+      el.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertText", data: String(value) }));
       el.dispatchEvent(new Event("change", { bubbles: true }));
+      el.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true }));
     } catch (e) {
       return { ok: false, reason: "error", message: String((e && e.message) || e) };
     }
     return { ok: true, value: el.value };
+  };
+
+  /*
+   * What an autocomplete is offering right now.
+   *
+   * On aerolineas.com.ar typing "Buenos" into the origin field brings up
+   * "Buenos Aires (BUE)", "Aeroparque (AEP)", "Ezeiza (EZE)", and the field
+   * only counts as filled once one of them is picked. That list did not
+   * exist in the native view, so the form could be typed into and never
+   * completed. This reads the options the page is showing and stamps them,
+   * so a pick can click the real one.
+   */
+  window.__jefSuggestions = function (fieldId) {
+    const key = String(fieldId).replace(/"/g, "");
+    const shown = Array.prototype.slice.call(
+      document.querySelectorAll("[role=option], [role=listbox] li, [role=listbox] > *")
+    ).filter(function (o) {
+      // Leaves only. A listbox nested in a listbox — react-autosuggest
+      // wraps its <ul role=listbox> in a <div role=listbox> — read as one
+      // option holding all three airports.
+      return !isHidden(o) && textOf(o) && !o.querySelector("[role=option], li");
+    });
+
+    const suggestions = [];
+    for (const option of shown) {
+      if (suggestions.length >= 8) break;
+      const label = textOf(option).slice(0, 120);
+      if (suggestions.some(function (s) { return s.label === label; })) continue;
+      option.setAttribute("data-jef-option", key + ":" + suggestions.length);
+      suggestions.push({ index: suggestions.length, label: label });
+    }
+    return { ok: true, suggestions: suggestions };
+  };
+
+  /// Picks a suggestion the way a tap on it would.
+  window.__jefChoose = function (fieldId, index) {
+    const key = String(fieldId).replace(/"/g, "");
+    const option = document.querySelector('[data-jef-option="' + key + ":" + parseInt(index, 10) + '"]');
+    if (!option) return { ok: false, reason: "gone" };
+    try {
+      // react-autosuggest commits on mousedown; plain lists on click.
+      for (const type of ["mousedown", "mouseup", "click"]) {
+        option.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true }));
+      }
+    } catch (e) {
+      return { ok: false, reason: "error", message: String((e && e.message) || e) };
+    }
+    const control = document.querySelector('[data-jef-field="' + key + '"]');
+    return { ok: true, value: control ? control.value : "" };
   };
 
   /// Submits the form that owns a control, preferring a real submit button

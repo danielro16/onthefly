@@ -180,6 +180,28 @@ final class HeadlessWebView: NSObject {
         return (result as? [String: Any])?["ok"] as? Bool == true
     }
 
+    /// What an autocomplete under `fieldID` is offering right now.
+    func suggestions(fieldID: String) async throws -> [String] {
+        guard let web = webView else { throw ExtractionError.noSession }
+        let safeID = fieldID.filter { $0.isLetter || $0.isNumber }
+        let result = try await web.evaluateJavaScript("window.__jefSuggestions('\(safeID)')")
+        let list = (result as? [String: Any])?["suggestions"] as? [[String: Any]] ?? []
+        return list.compactMap { $0["label"] as? String }
+    }
+
+    /// Picks one of them, and returns what the page put in the field.
+    func choose(fieldID: String, index: Int) async throws -> String {
+        guard let web = webView else { throw ExtractionError.noSession }
+        let safeID = fieldID.filter { $0.isLetter || $0.isNumber }
+        let result = try await web.evaluateJavaScript("window.__jefChoose('\(safeID)', \(index))")
+        guard let dict = result as? [String: Any], dict["ok"] as? Bool == true else {
+            throw ExtractionError.activationFailed(
+                (result as? [String: Any])?["message"] as? String ?? "gone"
+            )
+        }
+        return dict["value"] as? String ?? ""
+    }
+
     /// Submits the form an action belongs to, then reports what happened.
     func submit(actionID: String) async throws -> ActivationOutcome {
         guard let web = webView else { throw ExtractionError.noSession }

@@ -20,6 +20,9 @@ struct ArticleView: View {
     var onShowEverything: () -> Void = {}
     var onOpenAction: (Action) -> Void = { _ in }
     var onFillField: (Action.Field, String) -> Void = { _, _ in }
+    var suggestions: [String: [String]] = [:]
+    var resolvedValues: [String: String] = [:]
+    var onChooseSuggestion: (Action.Field, Int) -> Void = { _, _ in }
     var onSubmitForm: (Action) -> Void = { _ in }
     var onOpenURL: (String) -> Void = { _ in }
     var onOverlayChoice: (Overlay.Choice) -> Void = { _ in }
@@ -210,7 +213,14 @@ struct ArticleView: View {
     @ViewBuilder
     private var formsSection: some View {
         ForEach(page.actions.filter { $0.kind == .form && !($0.fields ?? []).isEmpty }) { form in
-            FormView(action: form, onFill: onFillField, onSubmit: { onSubmitForm(form) })
+            FormView(
+                action: form,
+                suggestions: suggestions,
+                resolvedValues: resolvedValues,
+                onFill: onFillField,
+                onChooseSuggestion: onChooseSuggestion,
+                onSubmit: { onSubmitForm(form) }
+            )
         }
     }
 

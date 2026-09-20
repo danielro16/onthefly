@@ -11,7 +11,12 @@ import SwiftUI
 /// never kept in the model beyond the field itself.
 struct FormView: View {
     let action: Action
+    /// What the page's autocompletes are offering, per field id.
+    var suggestions: [String: [String]] = [:]
+    /// What the page put in a field after a suggestion was picked.
+    var resolvedValues: [String: String] = [:]
     var onFill: (Action.Field, String) -> Void
+    var onChooseSuggestion: (Action.Field, Int) -> Void = { _, _ in }
     var onSubmit: () -> Void
 
     @State private var values: [String: String] = [:]
@@ -64,6 +69,39 @@ struct FormView: View {
             for field in fields where !field.value.isEmpty {
                 values[field.id] = field.value
             }
+        }
+        // A picked suggestion is the page's word on what the field holds now.
+        .onChange(of: resolvedValues) { _, resolved in
+            for (id, value) in resolved { values[id] = value }
+        }
+    }
+
+    /// The options an autocomplete is showing for this field, as a list a
+    /// screen reader can walk: position, text, and what picking it does.
+    @ViewBuilder
+    private func suggestionList(_ field: Action.Field) -> some View {
+        if let options = suggestions[field.id], !options.isEmpty {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(Array(options.enumerated()), id: \.offset) { index, option in
+                    Button {
+                        onChooseSuggestion(field, index)
+                    } label: {
+                        Text(option)
+                            .font(.callout)
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.vertical, 9)
+                            .padding(.horizontal, 12)
+                            .contentShape(.rect)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("\(index + 1) de \(options.count). \(option)")
+                    .accessibilityHint("Elige esta opción para \(field.name)")
+                    if index < options.count - 1 { Divider() }
+                }
+            }
+            .background(.background, in: RoundedRectangle(cornerRadius: 8))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(.quaternary))
         }
     }
 
@@ -125,6 +163,7 @@ struct FormView: View {
                     .lineLimit(3...8)
                     .focused($focused, equals: field.id)
                     .accessibilityLabel(field.name)
+                suggestionList(field)
 
             } else if field.isSecure {
                 SecureField(field.name, text: binding(field))
@@ -142,6 +181,7 @@ struct FormView: View {
                     .focused($focused, equals: field.id)
                     .accessibilityLabel(field.name)
                     .accessibilityHint(field.required ? "Campo obligatorio" : "")
+                suggestionList(field)
             }
         }
     }

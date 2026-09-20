@@ -30,6 +30,11 @@ final class ReaderModel {
     private(set) var intentGroups: [IntentGroup] = []
     /// Names Jev picked for listings the page left unlabelled.
     private(set) var listingNames: [String: String] = [:]
+    /// What the page's autocompletes are offering, per field.
+    private(set) var suggestions: [String: [String]] = [:]
+    /// What the page put in a field after a suggestion was picked.
+    private(set) var resolvedValues: [String: String] = [:]
+    private var suggestionTask: Task<Void, Never>?
 
     var address: String = "https://es.wikipedia.org/wiki/Buenos_Aires"
 
@@ -108,6 +113,8 @@ final class ReaderModel {
         collapsed = []
         intentGroups = []
         listingNames = [:]
+        suggestions = [:]
+        resolvedValues = [:]
         intentState = .unavailable
         UIAccessibility.post(notification: .announcement, argument: "Cargando página")
 
@@ -251,12 +258,39 @@ final class ReaderModel {
         }
     }
 
-    /// Carries one field edit into the live page.
+    /// Carries one field edit into the live page, then asks what the page
+    /// suggests for it.
     ///
     /// Fire-and-forget on purpose: typing must not wait on a round trip, and a
-    /// failed write is corrected by the next keystroke.
+    /// failed write is corrected by the next keystroke. The suggestions are
+    /// asked for once typing pauses — an autocomplete answers after a fetch,
+    /// and asking on every keystroke would read a stale list.
     func fill(_ field: Action.Field, with value: String) {
-        Task { try? await engine.fill(fieldID: field.id, value: value) }
+        suggestionTask?.cancel()
+        suggestionTask = Task {
+            try? await engine.fill(fieldID: field.id, value: value)
+            try? await Task.sleep(for: .milliseconds(700))
+            guard !Task.isCancelled else { return }
+            let found = (try? await engine.suggestions(fieldID: field.id)) ?? []
+            guard !Task.isCancelled else { return }
+            suggestions[field.id] = found
+            if !found.isEmpty {
+                announce("\(found.count) sugerencias para \(field.name)")
+            }
+        }
+    }
+
+    /// Picks what the page offered. The field then holds whatever the page
+    /// decided that pick means — "BUE", or the full airport name.
+    func choose(_ field: Action.Field, suggestion index: Int) async {
+        do {
+            let value = try await engine.choose(fieldID: field.id, index: index)
+            suggestions[field.id] = []
+            resolvedValues[field.id] = value
+            announce("\(field.name): \(value)")
+        } catch {
+            announce("No se pudo elegir esa opción")
+        }
     }
 
     /// Submits a form and refreshes from whatever the page became.
@@ -346,11 +380,16 @@ struct ReaderView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
+            // The native view stays alive underneath the original page —
+            // hidden, not gone — so what the user typed into a form is still
+            // there when they come back.
+            ZStack {
+                content
+                    .opacity(model.showingOriginal ? 0 : 1)
+                    .allowsHitTesting(!model.showingOriginal)
+                    .accessibilityHidden(model.showingOriginal)
                 if model.showingOriginal, let web = model.liveWebView {
                     WebPageView(webView: web)
-                } else {
-                    content
                 }
             }
             // Como Safari: nada arriba. El título de la página vive en el
@@ -402,6 +441,11 @@ struct ReaderView: View {
                     Task { await model.activate(action) }
                 },
                 onFillField: { field, value in model.fill(field, with: value) },
+                suggestions: model.suggestions,
+                resolvedValues: model.resolvedValues,
+                onChooseSuggestion: { field, index in
+                    Task { await model.choose(field, suggestion: index) }
+                },
                 onSubmitForm: { action in Task { await model.submit(action) } },
                 onOpenURL: { href in
                     model.address = href
