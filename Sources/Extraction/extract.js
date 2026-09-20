@@ -16,6 +16,30 @@
 (function () {
   "use strict";
 
+  /*
+   * Frames keep coming while unseen.
+   *
+   * WebKit stops requestAnimationFrame in a WebView that is not on screen,
+   * and this one never is. React Helmet renames the document inside a
+   * frame, so the title stayed "Calendario de vuelos" through a whole
+   * purchase; anything else a site defers to the next frame stalls the
+   * same way. While the document is hidden a frame is a 16 ms timeout,
+   * which is what a frame is to code that only wants "soon".
+   */
+  (function keepFramesComing() {
+    const nativeRequest = window.requestAnimationFrame;
+    const nativeCancel = window.cancelAnimationFrame;
+    if (typeof nativeRequest !== "function") return;
+    window.requestAnimationFrame = function (callback) {
+      if (document.visibilityState === "visible") return nativeRequest.call(window, callback);
+      return window.setTimeout(function () { callback(window.performance.now()); }, 16);
+    };
+    window.cancelAnimationFrame = function (id) {
+      window.clearTimeout(id);
+      if (typeof nativeCancel === "function") nativeCancel.call(window, id);
+    };
+  })();
+
   const MAX_BLOCKS = 2000;
   // A calendar alone is 68 day buttons; with the cap at 40 the bar at the
   // bottom of the page — "Ver vuelos" — never made it in. Clusters mean Jev
