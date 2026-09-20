@@ -16,6 +16,13 @@ import SwiftUI
 /// headings rotor. aerolineas.com.ar declares one heading of its own.
 struct ActionGroupsView: View {
     let groups: [IntentGroup]
+    /// Nil when the surrounding view already says what this list is. Asking
+    /// "¿Qué querés hacer?" above a single group that Jev already chose is a
+    /// question with one answer.
+    var title: String? = "¿Qué querés hacer?"
+    /// The goal that leads the page opens by itself: it is the answer, not one
+    /// option among several.
+    var expandedByDefault = false
     var onOpen: (Action) -> Void
 
     @Namespace private var rotorNamespace
@@ -23,9 +30,11 @@ struct ActionGroupsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("¿Qué querés hacer?")
-                .font(.headline)
-                .accessibilityAddTraits(.isHeader)
+            if let title {
+                Text(title)
+                    .font(.headline)
+                    .accessibilityAddTraits(.isHeader)
+            }
 
             ForEach(groups) { group in
                 section(group)
@@ -37,6 +46,9 @@ struct ActionGroupsView: View {
             ForEach(groups) { group in
                 AccessibilityRotorEntry(Text(group.label), id: group.id, in: rotorNamespace)
             }
+        }
+        .onAppear {
+            if expandedByDefault { expanded = Set(groups.map(\.id)) }
         }
     }
 

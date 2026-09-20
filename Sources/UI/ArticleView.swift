@@ -35,6 +35,31 @@ struct ArticleView: View {
         page.blocks.filter { collapsed.contains($0.id) }
     }
 
+    /// What Jev decided the page is for, once it decided.
+    private var dominant: Intent? {
+        if case .applied(let intent) = intentState { return intent }
+        return nil
+    }
+
+    /// Reading is what a newspaper or an article is for, and there the
+    /// listings and the prose ARE the page. Nothing may sit above them.
+    private var leadsWithContent: Bool { dominant == .read }
+
+    /// The one goal that answers the dominant intent. It leads instead of
+    /// sitting as one category among four.
+    private var leadGroup: IntentGroup? {
+        guard let dominant, !leadsWithContent else { return nil }
+        return intentGroups.first { $0.intent == dominant }
+    }
+
+    /// Everything else the site offers. One stop at the end.
+    private var menuGroups: [IntentGroup] {
+        guard let leadGroup else { return [] }
+        return intentGroups.filter { $0.id != leadGroup.id }
+    }
+
+    private static let menuDestination = "jef-site-menu"
+
     /// One entry in a VoiceOver rotor.
     ///
     /// `id` only keeps `ForEach` rows distinct. `destination` is what the rotor
@@ -96,35 +121,38 @@ struct ArticleView: View {
                 intentPanel
                 savingsNote
 
-                // Forms come before the goal list: a rebuilt form IS the task
-                // on a check-in or booking page, and burying it under a menu
-                // would undo the saving.
-                ForEach(page.actions.filter { $0.kind == .form && !($0.fields ?? []).isEmpty }) { form in
-                    FormView(
-                        action: form,
-                        onFill: onFillField,
-                        onSubmit: { onSubmitForm(form) }
-                    )
+                // The order of the page is the answer to what the page is for,
+                // not a fixed sequence of sections. A newspaper opens with the
+                // news; a search engine opens with the box. Putting eleven
+                // actions — dollar quotes among them — above the headlines is
+                // what made the reader read as more confusing than the site.
+                if leadsWithContent {
+                    listingsSection
+                    blocksSection
+                } else {
+                    // A rebuilt form IS the task on a check-in, booking or
+                    // search page, so nothing goes above it.
+                    formsSection
+
+                    if let leadGroup {
+                        ActionGroupsView(
+                            groups: [leadGroup], title: nil, expandedByDefault: true,
+                            onOpen: onOpenAction
+                        )
+                    } else if !intentGroups.isEmpty {
+                        // Jev found no dominant goal. Then the categories are
+                        // the honest answer and they stay where they were.
+                        ActionGroupsView(groups: intentGroups, onOpen: onOpenAction)
+                    }
+
+                    listingsSection
+                    blocksSection
                 }
 
-                if !intentGroups.isEmpty {
-                    ActionGroupsView(groups: intentGroups, onOpen: onOpenAction)
-                }
-
-                // Listados después de las acciones: en un catálogo el visitante
-                // ya eligió qué quiere hacer; acá elige sobre qué.
-                ForEach(page.listings) { listing in
-                    ListingView(
-                        listing: listing,
-                        fallbackName: listingNames[listing.id],
-                        onOpenURL: onOpenURL
-                    )
-                }
-
-                ForEach(visibleBlocks) { block in
-                    BlockView(block: block)
-                        .id(block.id)
-                        .accessibilityRotorEntry(id: block.id, in: rotorNamespace)
+                if !menuGroups.isEmpty {
+                    SiteMenuView(groups: menuGroups, onOpen: onOpenAction)
+                        .id(Self.menuDestination)
+                        .accessibilityRotorEntry(id: Self.menuDestination, in: rotorNamespace)
                 }
 
                 collapsedSection
@@ -140,6 +168,13 @@ struct ArticleView: View {
         .accessibilityRotor(.headings) {
             ForEach(headings) { heading in
                 AccessibilityRotorEntry(Text(heading.label), id: heading.destination, in: rotorNamespace)
+            }
+            // This rotor REPLACES the system one, so a heading missing here is
+            // a heading VoiceOver cannot reach by rotor at all.
+            if !menuGroups.isEmpty {
+                AccessibilityRotorEntry(
+                    Text("Más de este sitio"), id: Self.menuDestination, in: rotorNamespace
+                )
             }
         }
         .accessibilityRotor(.links) {
@@ -161,21 +196,46 @@ struct ArticleView: View {
         })
     }
 
+    @ViewBuilder
+    private var formsSection: some View {
+        ForEach(page.actions.filter { $0.kind == .form && !($0.fields ?? []).isEmpty }) { form in
+            FormView(action: form, onFill: onFillField, onSubmit: { onSubmitForm(form) })
+        }
+    }
+
+    @ViewBuilder
+    private var listingsSection: some View {
+        ForEach(page.listings) { listing in
+            ListingView(
+                listing: listing,
+                fallbackName: listingNames[listing.id],
+                onOpenURL: onOpenURL
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var blocksSection: some View {
+        ForEach(visibleBlocks) { block in
+            BlockView(block: block)
+                .id(block.id)
+                .accessibilityRotorEntry(id: block.id, in: rotorNamespace)
+        }
+    }
+
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(page.title)
+            Text(page.displayTitle)
                 .font(.largeTitle.weight(.bold))
                 .accessibilityAddTraits(.isHeader)
 
+            // El sitio no se repite acá: ya está en la barra de direcciones,
+            // visible y sin gastar una parada de VoiceOver.
             if !page.byline.isEmpty {
                 Text(page.byline)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-
-            Text(page.siteName)
-                .font(.caption)
-                .foregroundStyle(.tertiary)
         }
         .padding(.bottom, 4)
         .accessibilityElement(children: .combine)

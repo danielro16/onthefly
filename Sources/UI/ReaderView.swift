@@ -322,7 +322,7 @@ struct ReaderView: View {
                     }
                 }
             }
-            .navigationTitle(model.page?.siteName ?? "Reader")
+            .navigationTitle(model.page?.displayTitle ?? "Reader")
             .navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .top) {
                 addressBar

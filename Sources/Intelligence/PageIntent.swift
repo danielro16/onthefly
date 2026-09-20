@@ -157,9 +157,32 @@ struct IntentScores: Sendable {
     func decide(
         dominant: Double = 0.75,
         plausible: Double = 0.45,
+        primaryFloor: Double = 0.6,
         maxOptions: Int = 5,
         tieBand: Double = 0.1
     ) -> IntentDecision {
+        // The choice question is the only one that answers "what is this page
+        // FOR". The booleans answer "is this present", and on a real site the
+        // answer to "can you sign in" is yes almost everywhere: `account`
+        // scored 0.91 on google.com, 0.92 on lanacion.com.ar and 0.94 on
+        // aerolineas.com.ar — above the true answer on all three.
+        //
+        // Gating the choice on those made `assume` unreachable. `ranked`
+        // promotes the primary to the front but it keeps its own boolean
+        // probability, so `top - runnerUp` came out negative and every page
+        // fell through to `.ask`. The reader then showed four goal categories
+        // above a newspaper's headlines and above Google's search box, which
+        // is more structure than either page ever had.
+        //
+        // Measured on four sites, the choice was right on all four: lookup on
+        // google.com (0.74), read on lanacion.com.ar (0.95), transact on
+        // aerolineas.com.ar (0.99), read on Wikipedia (1.00). The floor stays
+        // above the 0.5 that `ranked` uses to promote, so a coin-flip choice
+        // still asks.
+        if let primary, (primaryConfidence ?? 0) >= primaryFloor {
+            return .assume(primary)
+        }
+
         let sorted = ranked
         guard let top = sorted.first, top.probability >= plausible else {
             return .undecided

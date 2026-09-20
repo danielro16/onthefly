@@ -467,6 +467,34 @@
       actions.push(action);
     }
 
+    /*
+     * The submit a form is actually built around.
+     *
+     * querySelector returns whichever one the markup happens to put first, and
+     * on google.com that is "Buscar con IA" — so the rebuilt search box was
+     * titled and submitted as the AI button while "Buscar con Google", the
+     * point of the page, sat fourth in the action list.
+     *
+     * Same principle the intent model already uses: presence is not
+     * prominence. Among the visible submits, the prominent one is the one the
+     * page gives the most room to.
+     */
+    function primarySubmit(form) {
+      const candidates = Array.prototype.slice.call(
+        form.querySelectorAll("[type=submit], button:not([type=button]):not([type=reset])")
+      ).filter(function (candidate) { return !isHidden(candidate); });
+      if (!candidates.length) return null;
+
+      let best = candidates[0];
+      let bestArea = -1;
+      for (const candidate of candidates) {
+        const rect = candidate.getBoundingClientRect();
+        const area = rect.width * rect.height;
+        if (area > bestArea) { bestArea = area; best = candidate; }
+      }
+      return best;
+    }
+
     function labelFor(el) {
       const aria = el.getAttribute("aria-label");
       if (aria && aria.trim()) return aria.trim();
@@ -539,13 +567,17 @@
      * submit button — which reads as one long unpunctuated sentence. Only
      * these narrow sources name a form.
      */
-    function formLabel(form, submit) {
+    function formLabel(form, submit, fields) {
       const aria = form.getAttribute("aria-label");
       if (aria && aria.trim()) return aria.trim();
 
-      const legend = form.querySelector("legend");
-      if (legend) {
-        const t = textOf(legend);
+      // A legend names its own field group, and only describes the whole form
+      // when there is just one. httpbin's pizza order has two — "Pizza Size"
+      // and "Pizza Toppings" — and taking the first titled the entire order
+      // form after its size selector.
+      const legends = form.querySelectorAll("legend");
+      if (legends.length === 1) {
+        const t = textOf(legends[0]);
         if (t) return t;
       }
 
@@ -554,6 +586,13 @@
         const t = textOf(heading);
         if (t) return t;
       }
+
+      // A form with a single field IS that field, and the field says what it
+      // is for. Naming it after a submit button misreports the task: the only
+      // submit inside google.com's search form is "Buscar con IA", so the box
+      // came out titled as the AI button while its own field read "Buscar con
+      // Google" right underneath.
+      if (fields && fields.length === 1 && fields[0].name) return fields[0].name;
 
       if (submit) {
         const t = labelFor(submit);
@@ -638,13 +677,11 @@
         fields.push(field);
       }
 
-      const submit = form.querySelector(
-        "[type=submit], button:not([type=button]):not([type=reset])"
-      );
+      const submit = primarySubmit(form);
 
       push({
         kind: "form",
-        label: formLabel(form, submit),
+        label: formLabel(form, submit, fields),
         fields: fields,
         submit: submit ? labelFor(submit) : "",
         region: regionOf(form),

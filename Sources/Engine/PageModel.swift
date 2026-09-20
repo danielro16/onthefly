@@ -25,6 +25,10 @@ struct ExtractedPage: Codable, Sendable {
     let overlay: Overlay?
     let stats: Stats
 
+    /// What to call this page on screen. Some pages ship an empty `<title>`;
+    /// the host is a worse name, but it is never blank.
+    var displayTitle: String { title.isEmpty ? siteName : title }
+
     struct Stats: Codable, Sendable {
         let blockCount: Int
         let actionCount: Int
