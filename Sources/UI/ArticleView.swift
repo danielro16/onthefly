@@ -53,8 +53,13 @@ struct ArticleView: View {
     }
 
     /// Everything else the site offers. One stop at the end.
+    ///
+    /// On a page that leads with content there is no lead group, but the
+    /// site's actions do not stop existing: a newspaper's sign-in and its
+    /// sections went nowhere at all, which made them unreachable rather
+    /// than demoted.
     private var menuGroups: [IntentGroup] {
-        guard let leadGroup else { return [] }
+        guard let leadGroup else { return leadsWithContent ? intentGroups : [] }
         return intentGroups.filter { $0.id != leadGroup.id }
     }
 
@@ -109,7 +114,13 @@ struct ArticleView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 20) {
+            // Not lazy, on purpose. A LazyVStack kept showing the first
+            // render after Jev answered: listings stayed collapsed and
+            // unnamed on lanacion.com.ar while the body had already been
+            // re-evaluated with the names in hand. And a lazy stack only
+            // puts the visible part of the page in the accessibility tree,
+            // so a heading further down is not there for the rotor to reach.
+            VStack(alignment: .leading, spacing: 20) {
                 header
 
                 // Antes que nada: si algo tapa la página, eso es lo primero

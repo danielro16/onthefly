@@ -71,7 +71,9 @@ struct ListingView: View {
             .accessibilityValue((expanded || startsExpanded) ? "expandido" : "contraído")
 
             if expanded || startsExpanded {
-                LazyVStack(alignment: .leading, spacing: 0) {
+                // Not lazy: every row has to exist for the links rotor to
+                // reach it, and a lazy stack only creates the visible ones.
+                VStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(listing.items.enumerated()), id: \.offset) { index, item in
                         row(item, position: index + 1)
                             .id("\(listing.id)-\(index)")
