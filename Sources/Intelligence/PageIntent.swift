@@ -82,9 +82,12 @@ struct IntentGroup: Identifiable, Sendable {
     /// Actions Jev placed here with low confidence. Kept in the group — moving
     /// them to a limbo bucket helps nobody — but the UI can flag them.
     let uncertain: Set<String>
+    /// A name that beats the intent's, when the group is not really a goal:
+    /// the grid that is the page says what it is, not what it is for.
+    var title: String? = nil
 
-    var id: String { intent.rawValue }
-    var label: String { intent.label }
+    var id: String { title ?? intent.rawValue }
+    var label: String { title ?? intent.label }
     var count: Int { actions.count }
 }
 

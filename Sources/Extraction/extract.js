@@ -60,6 +60,14 @@
           continue;
         }
         if (child.nodeType !== Node.ELEMENT_NODE) continue;
+        // What a screen reader says for this element, if the page said so:
+        // <abbr aria-label="10 de octubre de 2026">10</abbr> reads as the
+        // date, not as "10". Same rule as the accessible name computation.
+        const aria = child.getAttribute("aria-label");
+        if (aria && aria.trim()) {
+          raw += " " + aria.trim() + " ";
+          continue;
+        }
         const isBlock = BLOCK_TAGS.has(child.tagName);
         if (isBlock) raw += "\n";
         walk(child);
@@ -74,6 +82,13 @@
       .replace(/([,;:.!?\u2026]) *\n/g, "$1 ")  // already punctuated: just separate
       .replace(/\n/g, ", ")
       .trim();
+  }
+
+  /// Tag plus leading classes: what makes two siblings "the same kind of
+  /// thing" to the eye, without reading their content.
+  function shapeOf(el) {
+    const cls = String(el.className || "").split(/\s+/).slice(0, 2).join(".");
+    return el.tagName + "|" + cls;
   }
 
   function absolute(href) {
@@ -127,6 +142,11 @@
           continue;
         }
 
+        // Two elements side by side were laid out apart — on their own
+        // lines, or spaced by CSS the text no longer has. Without a break,
+        // "<label>Total por pasajero/a</label><label>ARS 81.987</label>"
+        // reads as one word. An extra space costs nothing to the ear.
+        if (text && !/\s$/.test(text)) text += " ";
         walk(child, hrefStack);
       }
     })(el, []);
@@ -422,6 +442,7 @@
   function collectActions(excluded) {
     const actions = [];
     const seen = new Set();
+    const stamped = [];
     let counter = 0;
     let fieldCounter = 0;
 
@@ -465,6 +486,7 @@
       // node is replaced, and a re-extraction re-stamps everything anyway.
       if (element) element.setAttribute("data-jef-id", action.id);
       actions.push(action);
+      stamped.push({ action: action, element: element });
     }
 
     /*
@@ -495,6 +517,18 @@
       return best;
     }
 
+    /// Drops a segment that only repeats what an earlier one already said:
+    /// a calendar cell reads "10 de octubre de 2026, 10, 112935, ARS" —
+    /// the second "10" is the visible digit under the accessible date.
+    function dedupeSegments(label) {
+      const kept = [];
+      for (const part of label.split(", ")) {
+        const dup = kept.some(function (k) { return k === part || k.indexOf(part + " ") === 0; });
+        if (!dup) kept.push(part);
+      }
+      return kept.join(", ");
+    }
+
     function labelFor(el) {
       const aria = el.getAttribute("aria-label");
       if (aria && aria.trim()) return aria.trim();
@@ -503,7 +537,7 @@
         const target = document.getElementById(labelledBy.split(/\s+/)[0]);
         if (target) return textOf(target);
       }
-      const text = textOf(el);
+      const text = dedupeSegments(textOf(el));
       if (text) return text;
       const title = el.getAttribute("title");
       return title ? title.trim() : "";
@@ -878,6 +912,35 @@
       push({ kind: "link", label: labelFor(link), href: href, region: regionOf(link) }, link);
     }
 
+    /*
+     * Sibling buttons of the same shape are ONE control set.
+     *
+     * The flight calendar is 34 day buttons under one parent. Judged one by
+     * one, Jev filed them under three different goals — compare, buy, look
+     * up — by whatever the label happened to say, and the grid came out
+     * split across three collapsed groups. A person sees one calendar. The
+     * cluster travels with each action so the classifier can judge the set
+     * once and keep it together.
+     */
+    const siblings = new Map();
+    for (const entry of stamped) {
+      if (!entry.element || entry.action.kind !== "button" || !entry.element.parentElement) continue;
+      const parent = entry.element.parentElement;
+      if (!siblings.has(parent)) siblings.set(parent, new Map());
+      const shapes = siblings.get(parent);
+      const shape = shapeOf(entry.element);
+      if (!shapes.has(shape)) shapes.set(shape, []);
+      shapes.get(shape).push(entry.action);
+    }
+    let clusterCount = 0;
+    for (const shapes of siblings.values()) {
+      for (const members of shapes.values()) {
+        if (members.length < 3) continue;
+        const id = "c" + clusterCount++;
+        for (const action of members) action.cluster = id;
+      }
+    }
+
     return actions;
   }
 
@@ -976,10 +1039,7 @@
     const SIMILARITY = 0.8;
     const candidates = [];
 
-    function signature(el) {
-      const cls = String(el.className || "").split(/\s+/).slice(0, 2).join(".");
-      return el.tagName + "|" + cls;
-    }
+    const signature = shapeOf;
 
     for (const container of document.querySelectorAll("ul, ol, div, section, tbody")) {
       const kids = Array.prototype.filter.call(container.children, function (k) {
@@ -991,6 +1051,20 @@
       const matching = kids.filter(function (k) { return signature(k) === first; });
       if (matching.length < MIN_ITEMS) continue;
       if (matching.length < kids.length * SIMILARITY) continue;
+
+      // A row of buttons is already in the action list, stamped and
+      // pressable. Reporting it again as a listing read the flight
+      // calendar twice: 34 day buttons, then the same 34 days as items
+      // nobody could activate.
+      const pressable = matching.filter(function (k) {
+        return k.hasAttribute("data-jef-id") || k.querySelector("[data-jef-id]");
+      });
+      if (pressable.length >= matching.length * 0.5) continue;
+
+      // A row of short, unlinked tokens is a header or a legend — the
+      // weekday initials over a calendar — not a list of things.
+      const linked = matching.some(function (k) { return k.tagName === "A" || k.querySelector("a[href]"); });
+      if (!linked && matching.every(function (k) { return textOf(k).length <= 12; })) continue;
 
       candidates.push({ container: container, items: matching });
     }
@@ -1491,8 +1565,23 @@ allowedVideoRegex: /^$/,
    */
   window.__jefSuggestions = function (fieldId) {
     const key = String(fieldId).replace(/"/g, "");
+    const control = document.querySelector('[data-jef-field="' + key + '"]');
+    if (!control) return { ok: false, reason: "gone" };
+
+    // Only this field's list. The whole document would also return the
+    // options another field left open: after picking a destination, the
+    // departure date came back with the three airports.
+    let scope = null;
+    const controls = control.getAttribute("aria-controls") || control.getAttribute("aria-owns");
+    if (controls) scope = document.getElementById(controls.split(/\s+/)[0]);
+    if (!scope) scope = control.closest("[role=combobox]");
+    for (let up = control.parentElement, depth = 0; !scope && up && depth < 4; up = up.parentElement, depth++) {
+      if (up.querySelector("[role=listbox], [role=option]")) scope = up;
+    }
+    if (!scope) return { ok: true, suggestions: [] };
+
     const shown = Array.prototype.slice.call(
-      document.querySelectorAll("[role=option], [role=listbox] li, [role=listbox] > *")
+      scope.querySelectorAll("[role=option], [role=listbox] li, [role=listbox] > *")
     ).filter(function (o) {
       // Leaves only. A listbox nested in a listbox — react-autosuggest
       // wraps its <ul role=listbox> in a <div role=listbox> — read as one
@@ -1525,6 +1614,9 @@ allowedVideoRegex: /^$/,
       return { ok: false, reason: "error", message: String((e && e.message) || e) };
     }
     const control = document.querySelector('[data-jef-field="' + key + '"]');
+    // Done with this field: closing it is what stops the list from coming
+    // back on the next re-extraction.
+    if (control) control.blur();
     return { ok: true, value: control ? control.value : "" };
   };
 
@@ -1548,21 +1640,50 @@ allowedVideoRegex: /^$/,
     return location.origin + location.pathname;
   }
 
+  /*
+   * Leave the field before pressing anything.
+   *
+   * A person taps a button and, in doing so, leaves the field they were
+   * typing in; the field commits on that blur. From the native view the tap
+   * lands on a SwiftUI button and the DOM input keeps its focus, so a date
+   * picker that commits on blur never saw the date — "Buscar vuelos" ran
+   * with an empty return date and quietly did nothing.
+   */
+  function leaveField() {
+    const active = document.activeElement;
+    if (!active || active === document.body || typeof active.blur !== "function") return false;
+    active.blur();
+    return true;
+  }
+
+  /*
+   * Presses a control the way a finger does: after leaving the field, and
+   * not in the same instant. A date picker commits its value on blur inside
+   * a setTimeout — so a click that lands in the same tick still sees the
+   * form without the date. With a field to leave, the press waits 300 ms;
+   * the re-extraction that follows waits for the DOM to settle anyway.
+   */
+  function press(el, left) {
+    if (!left) { el.click(); return; }
+    setTimeout(function () { try { el.click(); } catch (_) { /* gone */ } }, 300);
+  }
+
   window.__jefSubmitForm = function (actionId) {
     const anchor = document.querySelector(
       '[data-jef-id="' + String(actionId).replace(/"/g, "") + '"]'
     );
     if (!anchor) return { ok: false, reason: "gone" };
 
+    const left = leaveField();
     const form = anchor.tagName === "FORM" ? anchor : anchor.closest("form");
     const before = documentKey();
 
     try {
       if (anchor.tagName !== "FORM" && typeof anchor.click === "function") {
-        anchor.click();
+        press(anchor, left);
       } else if (form) {
         const submit = form.querySelector("[type=submit], button:not([type=button])");
-        if (submit) submit.click();
+        if (submit) press(submit, left);
         else form.requestSubmit ? form.requestSubmit() : form.submit();
       } else {
         return { ok: false, reason: "no-form" };
@@ -1577,12 +1698,13 @@ allowedVideoRegex: /^$/,
     const el = document.querySelector('[data-jef-id="' + String(id).replace(/"/g, '') + '"]');
     if (!el) return { ok: false, reason: "gone" };
 
+    const left = leaveField();
     const before = documentKey();
     try {
       // scrollIntoView first: some frameworks only wire handlers to elements
       // once they enter the viewport.
       el.scrollIntoView({ block: "center" });
-      el.click();
+      press(el, left);
     } catch (e) {
       return { ok: false, reason: "error", message: String((e && e.message) || e) };
     }
@@ -1600,7 +1722,7 @@ allowedVideoRegex: /^$/,
     });
   };
 
-  whenSettled(function () {
+  function extractAndSend() {
     try {
       send(extract());
     } catch (e) {
@@ -1611,5 +1733,96 @@ allowedVideoRegex: /^$/,
         url: location.href,
       });
     }
-  });
+    watchLateChanges();
+  }
+
+  /*
+   * The page keeps changing after it was read.
+   *
+   * "Buscar vuelos" pushes its route, renders "Estamos buscando resultados
+   * para vos…", and goes quiet while the API answers — long enough for the
+   * extraction to fire and hand the reader a spinner as the page. The
+   * prices arrive two seconds later, and nothing looks again.
+   *
+   * So every extraction leaves an observer behind for a while. A real
+   * change — twenty nodes or more, not a ticker or an ad slot — followed by
+   * the usual quiet is read again and delivered as a page that changed on
+   * its own. Bounded: a few rounds per route, inside a short window, so a
+   * page that never stops moving cannot keep the reader re-rendering.
+   */
+  const LATE_WINDOW_MS = 20000;
+  const LATE_THRESHOLD = 20;
+  const LATE_MAX_ROUNDS = 4;
+  let lateObserver = null;
+  let lateRounds = 0;
+  let lateRoute = null;
+
+  function watchLateChanges() {
+    if (lateObserver) lateObserver.disconnect();
+    if (lateRoute !== documentKey()) { lateRoute = documentKey(); lateRounds = 0; }
+    if (lateRounds >= LATE_MAX_ROUNDS) return;
+
+    // Weigh subtrees, not nodes. A framework builds the whole calendar
+    // detached and appends its root: one added node carrying forty cells.
+    function weight(nodes) {
+      let total = 0;
+      for (const node of nodes) {
+        total += 1;
+        if (node.nodeType === Node.ELEMENT_NODE) total += node.querySelectorAll("*").length;
+      }
+      return total;
+    }
+
+    let pending = 0;
+    let quiet = null;
+    const observer = new MutationObserver(function (records) {
+      for (const record of records) pending += weight(record.addedNodes) + weight(record.removedNodes);
+      if (pending < LATE_THRESHOLD) return;
+      clearTimeout(quiet);
+      quiet = setTimeout(function () {
+        observer.disconnect();
+        if (lateObserver === observer) lateObserver = null;
+        lateRounds++;
+        extractAndSend();
+      }, 600);
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    lateObserver = observer;
+    setTimeout(function () {
+      if (lateObserver === observer) { observer.disconnect(); lateObserver = null; }
+    }, LATE_WINDOW_MS);
+  }
+
+  /*
+   * A single-page app navigates without loading a document.
+   *
+   * "Buscar vuelos" on aerolineas.com.ar answers a second or two after the
+   * click by pushing "/flex-dates-calendar" onto the history and rendering
+   * the results in place. By then the re-extraction that followed the click
+   * had already run — the DOM had been quiet for 600 ms — and captured the
+   * home page; with no document load, nothing ever looked again, and the
+   * reader stayed on a search form while the page showed prices. So the
+   * history is watched: a new path is a new page, extracted once it settles
+   * and delivered like any other page that changed on its own.
+   */
+  (function watchRoutes() {
+    let last = documentKey();
+    function routeChanged() {
+      if (documentKey() === last) return;
+      last = documentKey();
+      whenSettled(extractAndSend);
+    }
+    for (const method of ["pushState", "replaceState"]) {
+      const original = history[method];
+      if (typeof original !== "function") continue;
+      history[method] = function () {
+        const result = original.apply(this, arguments);
+        setTimeout(routeChanged, 0);
+        return result;
+      };
+    }
+    window.addEventListener("popstate", function () { setTimeout(routeChanged, 0); });
+  })();
+
+  whenSettled(extractAndSend);
 })();

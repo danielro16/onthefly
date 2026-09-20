@@ -124,22 +124,50 @@ actor PageAnalyzer {
     ) async -> [IntentGroup] {
         guard !actions.isEmpty else { return [] }
 
-        let batches = stride(from: 0, to: actions.count, by: Self.actionBatchSize).map {
-            Array(actions[$0 ..< min($0 + Self.actionBatchSize, actions.count)])
+        // One judgment per cluster. The flight calendar is 34 sibling day
+        // buttons; judged one by one they landed in three goals and the
+        // grid split into three groups. The first of a cluster stands for
+        // all of them, and its verdict is copied to the rest.
+        var representatives: [Action] = []
+        var grouped: [String: [Action]] = [:]
+        for action in actions {
+            if let cluster = action.cluster {
+                if grouped[cluster] == nil { representatives.append(action) }
+                grouped[cluster, default: []].append(action)
+            } else {
+                representatives.append(action)
+            }
+        }
+        let members = grouped
+
+        let batches = stride(from: 0, to: representatives.count, by: Self.actionBatchSize).map {
+            Array(representatives[$0 ..< min($0 + Self.actionBatchSize, representatives.count)])
         }
 
-        let classified = await withTaskGroup(
+        let judged = await withTaskGroup(
             of: [(action: Action, intent: Intent, confidence: Double)].self
         ) { group in
             for batch in batches {
                 group.addTask { [weak self] in
                     guard let self else { return [] }
-                    return (try? await self.classify(batch: batch, site: site)) ?? []
+                    return (try? await self.classify(batch: batch, site: site, members: members)) ?? []
                 }
             }
             var all: [(action: Action, intent: Intent, confidence: Double)] = []
             for await part in group { all.append(contentsOf: part) }
             return all
+        }
+
+        var classified: [(action: Action, intent: Intent, confidence: Double)] = []
+        for item in judged {
+            if let cluster = item.action.cluster, let all = members[cluster] {
+                // One verdict, and one doubt: a shaky call on the calendar
+                // is not thirty-four shaky calls. Members are trusted so
+                // the hint does not repeat on every day of the month.
+                for member in all { classified.append((member, item.intent, 1.0)) }
+            } else {
+                classified.append(item)
+            }
         }
 
         var byIntent: [Intent: [Action]] = [:]
@@ -181,11 +209,19 @@ actor PageAnalyzer {
 
     private func classify(
         batch: [Action],
-        site: String
+        site: String,
+        members: [String: [Action]] = [:]
     ) async throws -> [(action: Action, intent: Intent, confidence: Double)] {
         let state = ActionState(
             site: site,
-            actions: batch.map { ActionState.Entry(label: $0.label) }
+            actions: batch.map { action in
+                // A cell of a grid is not a lone button. Saying so lets Jev
+                // judge the grid rather than the one label it can see.
+                if let cluster = action.cluster, let count = members[cluster]?.count, count > 1 {
+                    return ActionState.Entry(label: "\(action.label) — one of \(count) alike controls")
+                }
+                return ActionState.Entry(label: action.label)
+            }
         )
 
         let options = Dictionary(

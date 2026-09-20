@@ -55,16 +55,63 @@ struct ArticleView: View {
         return intentGroups.first { $0.intent == dominant }
     }
 
-    /// Everything else the site offers. One stop at the end.
+    /// The page as one control set, when it is one. See `dominantCluster`.
+    private var leadCluster: IntentGroup? {
+        let members = page.dominantCluster
+        guard !members.isEmpty, !leadsWithContent else { return nil }
+        return IntentGroup(
+            intent: dominant ?? .compare, actions: members, uncertain: [],
+            title: "Elegí una opción"
+        )
+    }
+
+    /// Everything that did not lead.
     ///
     /// On a page that leads with content there is no lead group, but the
     /// site's actions do not stop existing: a newspaper's sign-in and its
     /// sections went nowhere at all, which made them unreachable rather
     /// than demoted.
-    private var menuGroups: [IntentGroup] {
+    private var demoted: [IntentGroup] {
+        if let leadCluster {
+            let taken = Set(leadCluster.actions.map(\.id))
+            return intentGroups.compactMap { group in
+                let rest = group.actions.filter { !taken.contains($0.id) }
+                return rest.isEmpty ? nil : IntentGroup(intent: group.intent, actions: rest, uncertain: group.uncertain)
+            }
+        }
         guard let leadGroup else { return leadsWithContent ? intentGroups : [] }
         return intentGroups.filter { $0.id != leadGroup.id }
     }
+
+    /// The button that moves the task forward, wherever Jev filed it.
+    ///
+    /// On the flight calendar the page is "compare" and leads with the
+    /// prices, so "Continuar" — a transaction — went into the site menu,
+    /// three levels down from the day the user had just picked. A call to
+    /// action is the next step of the screen, not one more thing the site
+    /// offers; it stays in the flow, right after the content. Buttons only:
+    /// a nav link that happens to say "Reservar" is navigation.
+    private static let callToAction =
+        "\\b(continuar|siguiente|comprar|pagar|confirmar|reservar|finalizar|checkout|continue|next|buy|pay|confirm)\\b"
+
+    private var nextSteps: [Action] {
+        Array(intentGroups.flatMap(\.actions)
+            .filter { $0.kind == .button
+                && $0.label.range(of: Self.callToAction, options: [.regularExpression, .caseInsensitive]) != nil }
+            .prefix(3))
+    }
+
+    /// The groups as shown: the calls to action live in the flow instead.
+    private func withoutNextSteps(_ groups: [IntentGroup]) -> [IntentGroup] {
+        let promoted = Set(nextSteps.map(\.id))
+        return groups.compactMap { group in
+            let rest = group.actions.filter { !promoted.contains($0.id) }
+            return rest.isEmpty ? nil : IntentGroup(intent: group.intent, actions: rest, uncertain: group.uncertain)
+        }
+    }
+
+    /// Everything else the site offers. One stop at the end.
+    private var menuGroups: [IntentGroup] { withoutNextSteps(demoted) }
 
     private static let menuDestination = "jef-site-menu"
 
@@ -148,20 +195,29 @@ struct ArticleView: View {
                     // search page, so nothing goes above it.
                     formsSection
 
-                    if let leadGroup {
+                    if let leadCluster {
                         ActionGroupsView(
-                            groups: [leadGroup], title: nil, expandedByDefault: true,
+                            groups: [leadCluster], title: nil, expandedByDefault: true,
                             onOpen: onOpenAction
                         )
+                    } else if let leadGroup {
+                        if let shown = withoutNextSteps([leadGroup]).first {
+                            ActionGroupsView(
+                                groups: [shown], title: nil, expandedByDefault: true,
+                                onOpen: onOpenAction
+                            )
+                        }
                     } else if !intentGroups.isEmpty {
                         // Jev found no dominant goal. Then the categories are
                         // the honest answer and they stay where they were.
-                        ActionGroupsView(groups: intentGroups, onOpen: onOpenAction)
+                        ActionGroupsView(groups: withoutNextSteps(intentGroups), onOpen: onOpenAction)
                     }
 
                     listingsSection
                     blocksSection
                 }
+
+                nextStepSection
 
                 if !menuGroups.isEmpty {
                     SiteMenuView(groups: menuGroups, onOpen: onOpenAction)
@@ -208,6 +264,24 @@ struct ArticleView: View {
             onOpenURL(url.absoluteString)
             return .handled
         })
+    }
+
+    @ViewBuilder
+    private var nextStepSection: some View {
+        if !nextSteps.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(nextSteps) { action in
+                    Button {
+                        onOpenAction(action)
+                    } label: {
+                        Text(action.label)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .accessibilityHint("El paso siguiente de esta pantalla. Activa este control en la página.")
+                }
+            }
+        }
     }
 
     @ViewBuilder

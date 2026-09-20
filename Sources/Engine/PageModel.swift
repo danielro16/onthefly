@@ -45,6 +45,24 @@ struct ExtractedPage: Codable, Sendable {
     /// the host is a worse name, but it is never blank.
     var displayTitle: String { title.isEmpty ? siteName : title }
 
+    /// The control set that IS the page, when there is one.
+    ///
+    /// A flight calendar is 34 sibling day buttons and little else. Asking
+    /// what the page is for, or filing those days under a goal, can only
+    /// lose: one run put them under "Comparar", the next under "Gestionar",
+    /// collapsed behind a question. When one cluster holds most of the
+    /// page's actions, it leads as itself — no model needed to see that a
+    /// page made of one grid is that grid.
+    var dominantCluster: [Action] {
+        var byCluster: [String: [Action]] = [:]
+        for action in actions {
+            if let cluster = action.cluster { byCluster[cluster, default: []].append(action) }
+        }
+        guard let largest = byCluster.values.max(by: { $0.count < $1.count }) else { return [] }
+        let share = Double(largest.count) / Double(max(actions.count, 1))
+        return largest.count >= 6 && share >= 0.6 ? largest : []
+    }
+
     struct Stats: Codable, Sendable {
         let blockCount: Int
         let actionCount: Int
@@ -226,6 +244,9 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
     let fields: [Field]?
     let submit: String?
     let region: String
+    /// Shared by sibling buttons of the same shape — the 34 cells of a
+    /// calendar, the 12 tiles of a grid. One control set, judged once.
+    let cluster: String?
 
     enum Kind: String, Codable, Sendable {
         case form, button, link

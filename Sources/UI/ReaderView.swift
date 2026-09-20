@@ -266,6 +266,11 @@ final class ReaderModel {
     /// asked for once typing pauses — an autocomplete answers after a fetch,
     /// and asking on every keystroke would read a stale list.
     func fill(_ field: Action.Field, with value: String) {
+        // The value a pick just put in the field comes back through here as
+        // the text field catches up. The page already has it; writing it
+        // again reopened the list that was just closed.
+        if resolvedValues[field.id] == value { return }
+
         suggestionTask?.cancel()
         suggestionTask = Task {
             try? await engine.fill(fieldID: field.id, value: value)
@@ -283,6 +288,10 @@ final class ReaderModel {
     /// Picks what the page offered. The field then holds whatever the page
     /// decided that pick means — "BUE", or the full airport name.
     func choose(_ field: Action.Field, suggestion index: Int) async {
+        // Whatever typing was still pending — iOS autocorrect fires one last
+        // edit as the tap lands ("Cordoba" → "Córdoba") — must not come back
+        // 700 ms later and reopen the list that was just closed.
+        suggestionTask?.cancel()
         do {
             let value = try await engine.choose(fieldID: field.id, index: index)
             suggestions[field.id] = []
