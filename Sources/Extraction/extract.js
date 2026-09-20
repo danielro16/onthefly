@@ -534,6 +534,43 @@
       return textOf(clone);
     }
 
+    /*
+     * The closest label to a control, by position rather than by markup.
+     *
+     * After it first: a radio or a checkbox puts its text on the right. Then
+     * before it, walking outwards one ancestor at a time and reading that
+     * scope backwards from the control: the first label met is the one, and
+     * the first other control met means this scope has nothing for us — a
+     * label further back belongs to that other control. A bigger scope would
+     * see the same order, so the search stops there.
+     */
+    function nearbyLabel(control) {
+      const next = control.nextElementSibling;
+      if (next && next.tagName === "LABEL" && !next.contains(control)) {
+        const t = labelText(next);
+        if (t && t.length <= 60) return t;
+      }
+
+      let scope = control.parentElement;
+      for (let depth = 0; scope && depth < 4; depth++, scope = scope.parentElement) {
+        const ordered = Array.prototype.slice.call(
+          scope.querySelectorAll("label, input:not([type=hidden]), select, textarea")
+        );
+        const at = ordered.indexOf(control);
+        if (at < 0) continue;
+        for (let i = at - 1; i >= 0; i--) {
+          const el = ordered[i];
+          if (el.tagName === "LABEL") {
+            if (el.contains(control)) continue;
+            const t = labelText(el);
+            return t && t.length <= 60 ? t : "";
+          }
+          return "";
+        }
+      }
+      return "";
+    }
+
     function controlLabel(control) {
       const aria = control.getAttribute("aria-label");
       if (aria && aria.trim()) return aria.trim();
@@ -565,6 +602,13 @@
         const t = labelText(wrapper);
         if (t) return t;
       }
+
+      // A label beside the control with nothing tying them together — the
+      // commonest layout there is: <label>Partida</label><div><input
+      // placeholder="dd/mm/aaaa"></div>. Taken before the placeholder,
+      // because "Partida" is the name and "dd/mm/aaaa" is the format.
+      const near = nearbyLabel(control);
+      if (near) return near;
 
       const placeholder = control.getAttribute("placeholder");
       if (placeholder && placeholder.trim()) return placeholder.trim();
@@ -617,20 +661,20 @@
       return "Formulario";
     }
 
-    // Forms first: they are the highest-value action on a task page, and a
-    // form's fields tell you what the task needs.
-    for (const form of document.querySelectorAll("form")) {
-      if (isHidden(form)) continue;
-
+    /// The fields inside a container. The container is usually a <form>,
+    /// but nothing here needs it to be.
+    function fieldsOf(container) {
       const fields = [];
       // Radios sharing a name are ONE choice, not N controls. Rendering them
       // separately turns "Pizza size: small / medium / large" into three
       // unrelated text boxes.
       const radioGroups = new Map();
 
-      for (const control of form.querySelectorAll("input, select, textarea")) {
+      for (const control of container.querySelectorAll("input, select, textarea")) {
         const type = (control.getAttribute("type") || "text").toLowerCase();
         if (type === "hidden" || isHidden(control)) continue;
+        // A real form nested in an inferred one reports its own fields.
+        if (container.tagName !== "FORM" && control.closest("form")) continue;
         if (fields.length >= 12) break;
 
         const groupName = control.getAttribute("name") || "";
@@ -645,7 +689,10 @@
               name: (function () {
                 const fs = control.closest("fieldset");
                 const legend = fs ? fs.querySelector("legend") : null;
-                return legend ? textOf(legend) : groupName;
+                if (legend) return textOf(legend);
+                const group = control.closest("[role=radiogroup]");
+                const aria = group ? group.getAttribute("aria-label") : "";
+                return aria && aria.trim() ? aria.trim() : groupName;
               })(),
               type: "radiogroup",
               required: control.hasAttribute("required"),
@@ -693,6 +740,15 @@
         fields.push(field);
       }
 
+      return fields;
+    }
+
+    // Forms first: they are the highest-value action on a task page, and a
+    // form's fields tell you what the task needs.
+    for (const form of document.querySelectorAll("form")) {
+      if (isHidden(form)) continue;
+
+      const fields = fieldsOf(form);
       const submit = primarySubmit(form);
 
       push({
@@ -704,12 +760,109 @@
       }, submit || form);
     }
 
+    /*
+     * Forms without a <form>.
+     *
+     * Every SPA framework builds its search boxes out of divs. On
+     * aerolineas.com.ar the flight search is origin, destination, two dates,
+     * a trip-type radio, two switches and a "Buscar vuelos" button, and the
+     * page has zero <form> elements — 16 real controls with nothing grouping
+     * them, so the reader offered the button and none of the fields. The
+     * grouping is inferred from the button instead: the closest ancestor of
+     * a submit-looking button that holds a control, bounded so it never
+     * swallows the page. Biggest buttons first, so a box's prominent button
+     * is the one that claims it.
+     */
+    const SUBMIT_WORDS = /\b(buscar|search|enviar|send|submit|ingresar|entrar|login|iniciar|acceder|continuar|siguiente|next|comprar|pagar|reservar|suscrib\w*|registr\w*|sign|aplicar|apply|confirmar|calcular|cotizar|consultar|ir|go|ok)\b/i;
+
+    function area(el) {
+      const rect = el.getBoundingClientRect();
+      return rect.width * rect.height;
+    }
+
+    function looseControls(box) {
+      return Array.prototype.slice
+        .call(box.querySelectorAll("input:not([type=hidden]), select, textarea"))
+        .filter(function (c) { return !isHidden(c) && !c.closest("form"); });
+    }
+
+    function isSubmitLike(button) {
+      const label = labelFor(button) || button.getAttribute("value") || "";
+      return button.matches("[type=submit]") || SUBMIT_WORDS.test(label);
+    }
+
+    function defactoForms() {
+      const found = [];
+      const buttons = Array.prototype.slice
+        .call(document.querySelectorAll("button, [role=button], input[type=submit], input[type=button]"))
+        .filter(function (b) { return !isHidden(b) && !b.closest("form"); })
+        // "Buscar vuelos" before "1 Pasajero/a, Economy", whatever their
+        // size: the one that says what the form does is the one that owns
+        // it. Size only breaks ties.
+        .sort(function (a, b) {
+          const sa = isSubmitLike(a) ? 1 : 0, sb = isSubmitLike(b) ? 1 : 0;
+          return sb - sa || area(b) - area(a);
+        });
+
+      for (const button of buttons) {
+        const looksLikeSubmit = isSubmitLike(button);
+        // One field is enough behind a "Buscar". A button that says nothing
+        // of the sort needs company, or a header's menu button would claim
+        // the search box beside it.
+        const needed = looksLikeSubmit ? 1 : 2;
+
+        let box = button.parentElement;
+        let claimed = null;
+        for (let depth = 0; box && depth < 8; depth++, box = box.parentElement) {
+          if (box === document.body || box === document.documentElement) break;
+          const controls = looseControls(box);
+          if (controls.length > 30) break;
+          if (controls.length >= needed) { claimed = box; break; }
+        }
+        if (!claimed) continue;
+
+        // Grow while the parent still looks like the same form: it adds
+        // fields, it stays small, and it brings no second submit with it.
+        // The airline's box was found one level too low — the trip-type
+        // radios and the two switches sat in sibling containers.
+        let parent = claimed.parentElement;
+        while (parent && parent !== document.body) {
+          const more = looseControls(parent).length;
+          if (more <= looseControls(claimed).length || more > 30) break;
+          if (textOf(parent).length > 2000) break;
+          const rivals = Array.prototype.slice
+            .call(parent.querySelectorAll("button, [role=button], input[type=submit]"))
+            .filter(function (b) { return b !== button && !isHidden(b) && !claimed.contains(b) && isSubmitLike(b); });
+          if (rivals.length) break;
+          claimed = parent;
+          parent = parent.parentElement;
+        }
+
+        if (found.some(function (f) { return f.box === claimed || f.box.contains(claimed) || claimed.contains(f.box); })) continue;
+        found.push({ box: claimed, submit: button });
+      }
+      return found;
+    }
+
+    for (const entry of defactoForms()) {
+      const fields = fieldsOf(entry.box);
+      if (!fields.length) continue;
+      push({
+        kind: "form",
+        label: formLabel(entry.box, entry.submit, fields),
+        fields: fields,
+        submit: labelFor(entry.submit),
+        region: regionOf(entry.box),
+      }, entry.submit);
+    }
+
     for (const button of document.querySelectorAll(
       "button, [role=button], input[type=submit], input[type=button]"
     )) {
       if (isHidden(button)) continue;
       // Already reported as part of a form's submit.
       if (button.closest("form") && button.matches("[type=submit]")) continue;
+      if (button.hasAttribute("data-jef-id")) continue;
       const label = labelFor(button) || button.getAttribute("value") || "";
       push({ kind: "button", label: label, region: regionOf(button) }, button);
     }
@@ -918,10 +1071,13 @@
     const image = el.querySelector("img");
 
     // Currency first, because on a product card the price is the point.
-    // Handles "$ 1.299.999", "US$ 45,50", "€1,299.00".
+    // Handles "$ 1.299.999", "US$ 45,50", "€1,299.00" and "$1535,00" — the
+    // last one used to come out as "$153", because the pattern only knew
+    // digits in groups of three. It must end at a word boundary: a price
+    // cut short is a wrong price, spoken with full confidence.
     const text = textOf(el);
     const priceMatch = text.match(
-      /(?:US\s*\$|AR\s*\$|\$|€|£|R\$)\s?\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?/
+      /(?:US\s*\$|AR\s*\$|\$|€|£|R\$)\s?(?:\d{1,3}(?:[.,]\d{3})+|\d+)(?:[.,]\d{1,2})?(?![\d.,]\d)/
     );
 
     let title = heading ? textOf(heading) : "";
@@ -933,7 +1089,11 @@
       const href = absolute(link.getAttribute("href") || "");
       if (href) item.href = href;
     }
-    if (priceMatch) item.price = priceMatch[0].replace(/\s+/g, " ").trim();
+    // "Dólar oficial $1535,00" already says its price; repeating it as a
+    // separate field made the stop read "Dólar oficial $1535,00, $1535,00".
+    if (priceMatch && !title.includes(priceMatch[0])) {
+      item.price = priceMatch[0].replace(/\s+/g, " ").trim();
+    }
     if (image) {
       const alt = (image.getAttribute("alt") || "").trim();
       if (alt) item.imageAlt = alt;

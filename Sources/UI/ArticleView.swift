@@ -253,6 +253,12 @@ struct ArticleView: View {
         .accessibilityElement(children: .combine)
     }
 
+    private var collapsedNote: String {
+        collapsed.count == 1
+            ? "1 elemento agrupado al final"
+            : "\(collapsed.count) elementos agrupados al final"
+    }
+
     /// What the grouping actually saved, stated plainly.
     ///
     /// Shown because a screen-reader user cannot see that the page shrank, and
@@ -343,13 +349,19 @@ struct ArticleView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Ordenado para: \(intent.label)")
                             .font(.footnote.weight(.medium))
-                        Text("\(collapsed.count) elementos agrupados al final")
+                        Text(collapsedNote)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
+                    // One stop for the note, one for the button. As three
+                    // stops this read "Ordenado para…", "Ver todo", "1
+                    // elementos agrupados al final" — the button before the
+                    // sentence it undoes.
+                    .accessibilityElement(children: .combine)
                     Spacer()
                     Button("Ver todo", action: onShowEverything)
                         .font(.footnote)
+                        .accessibilityHint("Muestra la página sin agrupar")
                 }
                 .padding(12)
                 .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))

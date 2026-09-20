@@ -72,6 +72,11 @@ def main():
             line += f"  = {value}"
         if hint:
             line += f"  ({hint})"
+        actions = n.get("custom_actions") or []
+        if isinstance(actions, str):
+            actions = [a for a in actions.strip("[]").split("', '") if a] if actions != "[]" else []
+        if actions:
+            line += f"  [+{len(actions)} acciones]"
         print(line)
 
     print(f"\n{len(stops)} paradas, {headings} encabezados")
