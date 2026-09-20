@@ -99,11 +99,23 @@ final class ReaderModel {
         switch result {
         case .success(let page):
             guard !page.isEquivalent(to: self.page) else { return }
+            // Fields the form did not have a moment ago: say which, not
+            // that "the page changed" — the person is in the middle of it.
+            let known = Set((self.page?.fields ?? []).map(\.name))
+            let added = page.url == self.page?.url
+                ? page.fields.filter { !known.contains($0.name) }.map(\.name)
+                : []
             noteArrivals(in: page, cause: arrivalCause)
             address = page.url
             state = .loaded(page)
             collapsed = []
-            announce("\(page.displayTitle). La página cambió.")
+            if added.isEmpty {
+                announce("\(page.displayTitle). La página cambió.")
+            } else {
+                announce(added.count == 1
+                    ? "Apareció un campo: \(added[0])"
+                    : "Aparecieron \(added.count) campos: \(added.joined(separator: ", "))")
+            }
             Task { await detectIntent(for: page) }
         case .failure(let error):
             state = .failed(error.localizedDescription)

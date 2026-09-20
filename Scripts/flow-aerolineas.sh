@@ -31,19 +31,6 @@ filter_pick() {  # $1 field, $2 typed, $3 option text — types to filter, then 
   if [ -z "$c" ]; then echo "sin opción '$3' para $1"; return 1; fi
   T "$c" --type Button; sleep 3
 }
-segment() {  # $1 group label, $2 fraction (0.25 = first of two)
-  axe describe-ui --udid "$U" | python3 -c "
-import json,sys
-t=json.load(sys.stdin); f=[]
-def walk(n):
-    if isinstance(n,list): [walk(c) for c in n]; return
-    if n.get('AXLabel')=='$1' and n.get('role')=='AXTabGroup': f.append(n['frame'])
-    [walk(c) for c in n.get('children') or []]
-walk(t)
-if f: print(int(f[0]['x']+f[0]['width']*$2), int(f[0]['y']+f[0]['height']/2))
-" | { read x y; [ -n "${x:-}" ] && axe tap -x "$x" -y "$y" --udid "$U" >/dev/null && echo "tocado segmento de '$1' en ($x, $y)"; }
-}
-
 funnel() {
   xcrun simctl terminate "$U" ai.jef.browser 2>/dev/null; sleep 2
   xcrun simctl launch "$U" ai.jef.browser >/dev/null; sleep 4
@@ -78,12 +65,20 @@ passenger() {
   pick "Día" "15"
   filter_pick "Mes" "oct" "Octubre"
   filter_pick "Año" "1990" "1990"
-  segment "Género" 0.25
+  T "Género" --type TabGroup --at 0.25; sleep 2
   pick "Tipo de Documento" "DNI"
   type_into "nro documento" "30123456"
+  # Picking the document type adds its expiry date to the form; the
+  # late-change observer brings the new fields in a few seconds later.
+  local waited=0
+  while ! W | grep -q "\] Día de vencimiento" && [ $waited -lt 30 ]; do sleep 5; waited=$((waited + 5)); done
+  echo "vencimiento visible tras ${waited}s"
+  pick "Día de vencimiento" "15"
+  filter_pick "Mes de vencimiento" "dic" "Diciembre"
+  filter_pick "Año de vencimiento" "2030" "2030"
   paste_into "Email" "ana.perez@example.com"
   paste_into "Confirmá tu email" "ana.perez@example.com"
-  segment "Teléfono" 0.75
+  T "Teléfono" --type TabGroup --at 0.25; sleep 2
   type_into "contactInformation_areaCode" "11"
   type_into "contactInformation_phoneNumber" "45678901"
   local box; box=$(W | grep -i "CheckBox\].*\(condicion\|término\|acepto\)" | head -1 | sed -E 's/^ *[0-9]+ \[AXCheckBox\] (.*)  = .*$/\1/')

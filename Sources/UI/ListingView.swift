@@ -105,6 +105,51 @@ struct ListingView: View {
 
     @ViewBuilder
     private func row(_ item: Listing.Item, position: Int) -> some View {
+        if let choices = item.choices, !choices.isEmpty {
+            choiceRow(item, choices: choices, position: position)
+        } else {
+            plainRow(item, position: position)
+        }
+    }
+
+    /// A card that is picked one of several ways — an instalment plan with
+    /// a button per card brand. One stop that says what it is; the ways to
+    /// pick it are its actions, where the rotor finds them, and small
+    /// buttons underneath for everyone else.
+    @ViewBuilder
+    private func choiceRow(_ item: Listing.Item, choices: [Listing.Item.Choice], position: Int) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(item.title)
+                .font(.callout)
+                .multilineTextAlignment(.leading)
+            if let meta = item.meta, !meta.isEmpty {
+                Text(meta)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), alignment: .leading)], alignment: .leading, spacing: 6) {
+                ForEach(choices) { choice in
+                    Button(choice.label) { onActivate(choice.id) }
+                        .buttonStyle(.bordered)
+                        .font(.footnote)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 9)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(position) de \(listing.items.count). \(item.spokenLabel)")
+        .accessibilityHint("\(choices.count) formas de elegirlo, en las acciones")
+        .accessibilityActions {
+            ForEach(choices) { choice in
+                Button(choice.label) { onActivate(choice.id) }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func plainRow(_ item: Listing.Item, position: Int) -> some View {
         Button {
             if let href = item.href { onOpenURL(href) }
             else if let id = item.actionId { onActivate(id) }

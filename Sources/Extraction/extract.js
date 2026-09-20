@@ -649,6 +649,8 @@
       }
       const text = dedupeSegments(textOf(el));
       if (text) return text;
+      const pictured = imageName(el);
+      if (pictured) return pictured;
       // <input type=submit value="Buscar con Google"> has no text nodes;
       // its value is its label.
       if (el.tagName === "INPUT") {
@@ -791,10 +793,25 @@
         if (t) return t;
       }
 
-      const heading = form.querySelector("h1, h2, h3, h4, [role=heading]");
-      if (heading) {
-        const t = textOf(heading);
-        if (t) return t;
+      // A heading names the form only from before its first field: the
+      // checkout's only heading was an upsell ("¡Mejorá la experiencia de
+      // tu vuelo!") sitting after the passenger's fields. With no heading
+      // there, the first short line before the first field is the name —
+      // "Datos de pasajero/ra", the accordion the form lives in.
+      const firstControl = form.querySelector("input:not([type=hidden]), select, textarea");
+      const precedes = function (el) {
+        return !firstControl || !!(el.compareDocumentPosition(firstControl) & Node.DOCUMENT_POSITION_FOLLOWING);
+      };
+      const heading = Array.prototype.find.call(
+        form.querySelectorAll("h1, h2, h3, h4, [role=heading]"), function (h) { return precedes(h) && textOf(h); }
+      );
+      if (heading) return textOf(heading);
+      if (firstControl) {
+        const walker = document.createTreeWalker(form, NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node && precedes(node); node = walker.nextNode()) {
+          const t = (node.textContent || "").replace(/\s+/g, " ").trim();
+          if (t && t.length <= 60 && node.parentElement && !isHidden(node.parentElement)) return t;
+        }
       }
 
       // A form with a single field IS that field, and the field says what it
@@ -866,8 +883,20 @@
                 const legend = fs ? fs.querySelector("legend") : null;
                 if (legend) return textOf(legend);
                 const group = control.closest("[role=radiogroup]");
-                const aria = group ? group.getAttribute("aria-label") : "";
-                return aria && aria.trim() ? aria.trim() : groupName;
+                const aria = (group ? group.getAttribute("aria-label") || "" : "").trim();
+                // Not an aria-label that is the field's internal name —
+                // aria-label="phone_type" sat right after a label saying
+                // "Teléfono".
+                if (aria && !looksLikeCode(aria)) return aria;
+                // The label a sighted person reads sits just before the
+                // group: "Género", "Teléfono" — not "phone_type".
+                for (let up = group || control.parentElement, depth = 0; up && depth < 4; up = up.parentElement, depth++) {
+                  const prev = up.previousElementSibling;
+                  if (!prev || !/^(LABEL|H[1-6]|LEGEND)$/.test(prev.tagName)) continue;
+                  const t = labelText(prev);
+                  if (t && t.length <= 40) return t;
+                }
+                return groupName;
               })(),
               type: "radiogroup",
               required: control.hasAttribute("required"),
@@ -1260,6 +1289,13 @@
       // things. A card that merely holds a button (a flight with its price,
       // a product with "Agregar") is still a card: its text says far more
       // than its button.
+      // Rows of a form — "Nombre, Apellido", "Fecha de Nacimiento" — are
+      // the form, already offered as its fields, not a list of things.
+      const formish = matching.filter(function (k) {
+        return k.querySelector("input:not([type=hidden]), select, textarea");
+      });
+      if (formish.length >= matching.length * 0.5) continue;
+
       const pressable = matching.filter(function (k) {
         if (k.matches("button, [role=button], a[href]")) return true;
         const button = k.querySelector("[data-jef-id], button[disabled], [aria-disabled=true]");
@@ -1455,23 +1491,45 @@
   /// Text leaves of a card, in reading order. A button or a link inside
   /// the card is one leaf, whatever it is made of: "Desde 81.987 ARS", not
   /// "Desde", "81.987", "ARS".
+  /// The name an image gives the element it sits in: a button that is
+  /// only a Visa logo is called "Visa" by its alt, and by nothing else.
+  function imageName(el) {
+    const img = el.querySelector("img[alt], [role=img][aria-label]");
+    if (img) {
+      const alt = (img.getAttribute("alt") || img.getAttribute("aria-label") || "").trim();
+      if (alt) return alt;
+    }
+    const title = el.querySelector("svg > title");
+    return title ? (title.textContent || "").trim() : "";
+  }
+
+  /// The card's lines, in order: each control as one, and each element
+  /// that has text of its own as one. "1 <span>Cuota</span> sin interés"
+  /// is one line, not the lone word "Cuota" — the outer span's own text
+  /// used to be dropped because the span had a child.
   function leavesOf(el) {
     const out = [];
-    const done = new Set();
-    for (const node of el.querySelectorAll("*")) {
-      if (SKIP_TAGS.has(node.tagName)) continue;
-      const control = node.closest("button, a[href], [role=button]");
-      if (control && control !== el && el.contains(control)) {
-        if (done.has(control)) continue;
-        done.add(control);
-        const text = textOf(control);
-        if (text) out.push({ node: control, text: text });
-        continue;
+    (function walk(parent) {
+      for (const node of parent.children) {
+        // Controls first: BUTTON is a skipped tag for prose, and a card's
+        // fare buttons are lines of the card.
+        if (node.matches("button, a[href], [role=button]")) {
+          const text = textOf(node) || imageName(node);
+          if (text) out.push({ node: node, text: text });
+          continue;
+        }
+        if (SKIP_TAGS.has(node.tagName)) continue;
+        const ownText = Array.prototype.some.call(node.childNodes, function (n) {
+          return n.nodeType === Node.TEXT_NODE && (n.textContent || "").trim();
+        });
+        if (!node.children.length || ownText) {
+          const text = textOf(node);
+          if (text) out.push({ node: node, text: text });
+          continue;
+        }
+        walk(node);
       }
-      if (node.children.length) continue;
-      const text = (node.textContent || "").replace(/\s+/g, " ").trim();
-      if (text) out.push({ node: node, text: text });
-    }
+    })(el);
     return out;
   }
 
@@ -1552,8 +1610,18 @@
     if (!item.href) {
       const buttons = Array.prototype.slice.call(el.querySelectorAll("[data-jef-id]"));
       const priced = buttons.find(function (b) { return PRICE.test(textOf(b)); });
-      const chosen = priced || buttons[buttons.length - 1];
-      if (chosen) item.actionId = chosen.getAttribute("data-jef-id");
+      // Several buttons and no price: the card is a choice among them —
+      // "1 Cuota sin interés" with Visa, American Express and Mastercard
+      // to pick from. Each is offered on the card, none is the card.
+      if (!priced && buttons.length > 1) {
+        item.choices = buttons.slice(0, 8).map(function (b) {
+          used.add(b);
+          return { id: b.getAttribute("data-jef-id"), label: (textOf(b) || imageName(b)).slice(0, 60) };
+        }).filter(function (c) { return c.label; });
+      } else {
+        const chosen = priced || buttons[buttons.length - 1];
+        if (chosen) item.actionId = chosen.getAttribute("data-jef-id");
+      }
     }
 
     // Currency, because on a product card the price is the point — the
@@ -1577,9 +1645,15 @@
       if (src) item.image = src;
     }
 
-    // Whatever else the card says, minus the title and price we already have.
+    // Whatever else the card says, minus the title and price we already
+    // have. A button's words describe the card only when they carry a
+    // number: "Plus 232.244 ARS" says something about the flight, "Ver
+    // itinerario" and "Comparar condiciones" only name what pressing does.
     let rest = leaves.length
-      ? leaves.filter(function (leaf) { return !used.has(leaf.node); }).map(function (leaf) { return leaf.text; }).join(", ")
+      ? leaves.filter(function (leaf) {
+          if (used.has(leaf.node)) return false;
+          return !leaf.node.matches("button, a[href], [role=button]") || PRICE.test(leaf.text);
+        }).map(function (leaf) { return leaf.text; }).join(", ")
       : text.replace(title, "");
     if (item.price) rest = rest.replace(item.price, "");
     rest = tidy(rest);

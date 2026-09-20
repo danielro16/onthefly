@@ -6,10 +6,12 @@ below the screen, where the tap lands on the address bar or on nothing at
 all, and reports success either way. VoiceOver scrolls to whatever it
 focuses before activating it; this does the same.
 
-    ./Scripts/voiceover-tap.py "Buscar vuelos" [--udid UDID] [--type Button] [--no-scroll]
+    ./Scripts/voiceover-tap.py "Buscar vuelos" [--udid UDID] [--type Button] [--no-scroll] [--at 0.25]
 
 `--no-scroll` taps wherever the element is: for the address bar and its
-buttons, which sit below the content and are always on screen.
+buttons, which sit below the content and are always on screen. `--at F`
+taps at fraction F of the element's width instead of its centre: the
+segments of a segmented control are not in the tree, only the control.
 """
 
 import json
@@ -45,13 +47,13 @@ def elements(udid):
     return found
 
 
-def locate(label, kind, udid):
+def locate(label, kind, udid, at=0.5):
     for node in elements(udid):
         if kind and node.get("type") != kind:
             continue
         if node.get("AXLabel") == label:
             frame = node.get("frame") or {}
-            return frame["x"] + frame["width"] / 2, frame["y"] + frame["height"] / 2
+            return frame["x"] + frame["width"] * at, frame["y"] + frame["height"] / 2
     return None
 
 
@@ -66,10 +68,10 @@ def swipe(udid, from_y, to_y):
     time.sleep(0.8)
 
 
-def settled(label, kind, udid, point):
+def settled(label, kind, udid, point, at):
     """True once the element stays put between two readings."""
     time.sleep(0.5)
-    again = locate(label, kind, udid)
+    again = locate(label, kind, udid, at)
     return again is not None and abs(again[1] - point[1]) < 1
 
 
@@ -78,18 +80,22 @@ def main():
     udid = args[args.index("--udid") + 1] if "--udid" in args else None
     kind = args[args.index("--type") + 1] if "--type" in args else None
     anywhere = "--no-scroll" in args
+    at = float(args[args.index("--at") + 1]) if "--at" in args else 0.5
     label = args[0]
 
     for _ in range(24):
-        point = locate(label, kind, udid)
+        point = locate(label, kind, udid, at)
         if point is None:
             print(f"no hay elemento con etiqueta {label!r}", file=sys.stderr)
             sys.exit(1)
         x, y = point
         if anywhere or SCREEN_TOP <= y <= SCREEN_BOTTOM:
-            if not anywhere and not settled(label, kind, udid, point):
+            if not anywhere and not settled(label, kind, udid, point, at):
                 continue
-            cmd = ["axe", "tap", "-x", str(x), "-y", str(y)]
+            # A touch with a little duration, not `axe tap`: a zero-length
+            # tap flips a SwiftUI Toggle about one time in three; a finger
+            # rests on the switch for a moment, and then it always does.
+            cmd = ["axe", "touch", "-x", str(x), "-y", str(y), "--down", "--up", "--delay", "0.1"]
             if udid:
                 cmd += ["--udid", udid]
             run(cmd)

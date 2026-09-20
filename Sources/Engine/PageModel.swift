@@ -37,9 +37,12 @@ struct ExtractedPage: Codable, Sendable {
         return title == other.title
             && blocks.count == other.blocks.count
             && listings.count == other.listings.count
-            && actions.map(\.label) == other.actions.map(\.label)
+            && actions.map(\.shape) == other.actions.map(\.shape)
             && overlay?.text == other.overlay?.text
     }
+
+    /// Every field on the page, in order.
+    var fields: [Action.Field] { actions.flatMap { $0.fields ?? [] } }
 
     /// What to call this page on screen. Some pages ship an empty `<title>`;
     /// the host is a worse name, but it is never blank.
@@ -206,6 +209,9 @@ struct Listing: Codable, Sendable, Identifiable {
         let title: String
         /// The button inside the card, when the card has no link of its own.
         let actionId: String?
+        /// Several buttons and no single one that is the card: the ways to
+        /// pick it, each pressable on its own.
+        let choices: [Choice]?
         let href: String?
         let price: String?
         let image: String?
@@ -214,6 +220,16 @@ struct Listing: Codable, Sendable, Identifiable {
         let meta: String?
 
         var id: String { (href ?? "") + title }
+
+        struct Choice: Codable, Sendable, Hashable, Identifiable {
+            let id: String
+            let label: String
+        }
+
+        /// Every action this card already offers, so nothing lists it twice.
+        var pressableIds: [String] {
+            (actionId.map { [$0] } ?? []) + (choices ?? []).map(\.id)
+        }
 
         /// One sentence for VoiceOver, in the order that matters: what it is,
         /// what it costs, then the rest. A price read last is a price missed.
@@ -252,6 +268,14 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
     /// appeared inside it, usually why it did not go through.
     let notices: [String]?
     let region: String
+
+    /// What makes this action the same action on a later reading: its
+    /// label, and for a form, its fields. Picking "DNI" added three date
+    /// fields to the checkout, and the reading that carried them was
+    /// dropped as the same page because the label had not changed.
+    var shape: String {
+        label + (fields ?? []).map { "|\($0.name):\($0.type)" }.joined() + (notices ?? []).joined()
+    }
     /// Shared by sibling buttons of the same shape — the 34 cells of a
     /// calendar, the 12 tiles of a grid. One control set, judged once.
     let cluster: String?

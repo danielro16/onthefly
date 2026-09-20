@@ -177,7 +177,7 @@ struct ArticleView: View {
     /// tap opened is shown where it opened.
     private func withoutNextSteps(_ groups: [IntentGroup]) -> [IntentGroup] {
         let promoted = Set(nextSteps.map(\.id))
-        let inListings = Set(page.listings.flatMap { $0.items.compactMap(\.actionId) })
+        let inListings = Set(page.listings.flatMap { $0.items.flatMap(\.pressableIds) })
         let arrived = Set(arrivals.map(\.id))
         return groups.compactMap { group in
             let rest = group.actions.filter {
@@ -190,7 +190,7 @@ struct ArticleView: View {
     /// What the last tap made appear — minus what a listing row already
     /// says: the return flights' price buttons are the return flights.
     private var shownArrivals: [Action] {
-        let inListings = Set(page.listings.flatMap { $0.items.compactMap(\.actionId) })
+        let inListings = Set(page.listings.flatMap { $0.items.flatMap(\.pressableIds) })
         return arrivals.filter { !inListings.contains($0.id) }
     }
 
