@@ -248,6 +248,9 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
     let href: String?
     let fields: [Field]?
     let submit: String?
+    /// What the page wrote back after this form's last submit: texts that
+    /// appeared inside it, usually why it did not go through.
+    let notices: [String]?
     let region: String
     /// Shared by sibling buttons of the same shape — the 34 cells of a
     /// calendar, the 12 tiles of a grid. One control set, judged once.
@@ -272,6 +275,9 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
         /// Present for `<select>`: a native picker cannot offer choices it
         /// does not know about.
         let options: [Option]?
+        /// What the page holds against the field, when it says so
+        /// (aria-invalid plus the message it points at).
+        let error: String?
 
         struct Option: Codable, Sendable, Hashable {
             let value: String

@@ -477,24 +477,41 @@
    *
    * Runs against the live document, not Readability's output.
    */
-  /// Every extraction stamps afresh. Stamps from the previous one survive
-  /// on any node the framework did not rebuild — and a button carrying an
-  /// old stamp used to be skipped as "already reported", so the second
-  /// extraction of a page lost every control the first had seen. The bar
-  /// with "Ver vuelos" was one of them. Cleared before anything stamps:
-  /// the overlay's choices come first and must keep theirs.
-  function clearStamps() {
-    for (const attr of ["data-jef-id", "data-jef-field", "data-jef-option"]) {
-      for (const el of document.querySelectorAll("[" + attr + "]")) el.removeAttribute(attr);
+  /// Ids are handles the native side holds on to, so a node keeps the id
+  /// it was given for as long as it lives. Numbering restarts per run used
+  /// to shift every id whenever a re-extraction saw one control more or
+  /// less — and a re-extraction that reads as the same page is not shown,
+  /// so the reader kept the old ids: "Opciones de Nacionalidad" opened the
+  /// list of days. Nothing is cleared here: option stamps used to be, and
+  /// a list of thirty-one days opening was itself enough change for the
+  /// observer to re-extract and unstamp the options before the pick.
+  // Counting on from any stamps already in the document: a second copy of
+  // this script in the same document (the test harness, a restored page)
+  // must not hand out ids the first one gave to other nodes.
+  function highestStamp(attr, prefix) {
+    let highest = -1;
+    for (const el of document.querySelectorAll("[" + attr + "]")) {
+      const m = new RegExp("^" + prefix + "(\\d+)").exec(el.getAttribute(attr) || "");
+      if (m) highest = Math.max(highest, parseInt(m[1], 10));
     }
+    return highest + 1;
+  }
+  let nextActionId = highestStamp("data-jef-id", "a");
+  let nextFieldId = highestStamp("data-jef-field", "f");
+  let nextChoiceId = highestStamp("data-jef-id", "o");
+
+  function priorId(element, attr, prefix) {
+    const prior = element ? element.getAttribute(attr) || "" : "";
+    return new RegExp("^" + prefix + "\\d+$").test(prior) ? prior : null;
   }
 
   function collectActions(excluded) {
     const actions = [];
     const seen = new Set();
     const stamped = [];
-    let counter = 0;
-    let fieldCounter = 0;
+    // Elements this run has reported. Not the stamp: a stamp now outlives
+    // the run that set it.
+    const reported = new Set();
 
     /*
      * Chrome that is never a user task. Measured against a real airline home
@@ -528,24 +545,24 @@
       // actions. Listing them twice would also mean stamping one element with
       // two ids, and the second stamp wins: the action becomes unpressable.
       if (excluded && element && excluded.contains(element)) return;
+      if (element && reported.has(element)) return;
       // Same label twice is the same link to a user, however the markup
       // differs (mobile nav duplicating desktop nav is the usual culprit).
       // Not so for buttons: "Desde 81.987 ARS" sits on three different
       // flights, and deduplicating it left two of them with nothing to
       // press.
-      const key = action.kind === "button"
-        ? action.kind + "|" + counter
-        : action.kind + "|" + action.label.toLowerCase();
-      if (seen.has(key) || actions.length >= MAX_ACTIONS) return;
-      seen.add(key);
-      action.id = "a" + counter++;
+      const key = action.kind === "button" ? null : action.kind + "|" + action.label.toLowerCase();
+      if ((key && seen.has(key)) || actions.length >= MAX_ACTIONS) return;
+      if (key) seen.add(key);
+      action.id = priorId(element, "data-jef-id", "a") || "a" + nextActionId++;
       // Stamp the live element so it can be found again later.
       //
       // A button's behaviour lives in the page's own JavaScript, so the native
       // UI cannot press it — it has to ask this element to click itself. A CSS
       // selector would break on any re-render; an attribute survives until the
-      // node is replaced, and a re-extraction re-stamps everything anyway.
+      // node is replaced, and a node keeps the id it was first given.
       if (element) {
+        reported.add(element);
         element.setAttribute("data-jef-id", action.id);
         // Never seen by any extraction of this document: what the last tap
         // made appear. Unlike the id, this mark is not cleared, so a second
@@ -796,6 +813,25 @@
 
     /// The fields inside a container. The container is usually a <form>,
     /// but nothing here needs it to be.
+    /// The validation message a control carries, if any: what
+    /// aria-describedby / aria-errormessage point at when the control says
+    /// aria-invalid, or an alert beside it.
+    function fieldError(control) {
+      if (control.getAttribute("aria-invalid") !== "true") return "";
+      const ids = ((control.getAttribute("aria-errormessage") || "") + " " + (control.getAttribute("aria-describedby") || "")).split(/\s+/).filter(Boolean);
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        const text = el && !isHidden(el) ? textOf(el) : "";
+        if (text) return text.slice(0, 200);
+      }
+      for (let up = control.parentElement, depth = 0; up && depth < 3; up = up.parentElement, depth++) {
+        const alert = up.querySelector("[role=alert], [class*=error], [class*=invalid]");
+        const text = alert && !isHidden(alert) ? textOf(alert) : "";
+        if (text) return text.slice(0, 200);
+      }
+      return "";
+    }
+
     function fieldsOf(container) {
       const fields = [];
       // Radios sharing a name are ONE choice, not N controls. Rendering them
@@ -811,13 +847,16 @@
         if (type === "submit" || type === "button" || type === "image" || type === "reset") continue;
         // A real form nested in an inferred one reports its own fields.
         if (container.tagName !== "FORM" && control.closest("form")) continue;
-        if (fields.length >= 12) break;
+        // A checkout is long: the passenger form has 25 controls, and the
+        // email — the one it will not go on without — came after the cap.
+        if (fields.length >= 40) break;
 
         const groupName = control.getAttribute("name") || "";
 
         if (type === "radio" && groupName) {
           if (!radioGroups.has(groupName)) {
-            const fieldId = "f" + fieldCounter++;
+            const priorGroup = (control.getAttribute("data-jef-field") || "").split(":")[0];
+            const fieldId = /^f\d+$/.test(priorGroup) ? priorGroup : "f" + nextFieldId++;
             const field = {
               id: fieldId,
               // The group's name comes from its fieldset, not from any one
@@ -851,7 +890,7 @@
         const name = controlLabel(control);
         if (!name) continue;
 
-        const fieldId = "f" + fieldCounter++;
+        const fieldId = priorId(control, "data-jef-field", "f") || "f" + nextFieldId++;
         control.setAttribute("data-jef-field", fieldId);
 
         const field = {
@@ -863,6 +902,12 @@
           required: control.hasAttribute("required"),
           value: type === "checkbox" ? (control.checked ? "on" : "") : (control.value || ""),
         };
+
+        // What the page holds against the field. The checkout's "Siguiente"
+        // did nothing audible: the email was missing, the message sat
+        // beside the box, and the reader heard the same page again.
+        const complaint = fieldError(control);
+        if (complaint) field.error = complaint;
 
         // A combobox — react-select's "Día", "Mes", "Año" on the checkout —
         // keeps what was chosen beside the input, not in it, and shows its
@@ -908,6 +953,7 @@
         label: formLabel(form, submit, fields),
         fields: fields,
         submit: submit ? labelFor(submit) : "",
+        notices: noticesOf(form, submit || form),
         region: regionOf(form),
       }, submit || form);
     }
@@ -1006,6 +1052,7 @@
         label: formLabel(entry.box, entry.submit, fields),
         fields: fields,
         submit: labelFor(entry.submit),
+        notices: noticesOf(entry.box, entry.submit),
         region: regionOf(entry.box),
       }, entry.submit);
     }
@@ -1037,7 +1084,7 @@
       if (button.disabled || button.getAttribute("aria-disabled") === "true") return false;
       // Already reported as part of a form's submit.
       if (button.closest("form") && button.matches("[type=submit]")) return false;
-      return !button.hasAttribute("data-jef-id");
+      return !reported.has(button);
     });
     // The bottom bar first: it is last in the DOM, and a page of sixty day
     // buttons hit the cap before it.
@@ -1619,7 +1666,7 @@
 
       if (choices.length >= 8) continue;
       if (choices.some(function (c) { return c.label === label; })) continue;
-      const id = "o" + choices.length;
+      const id = priorId(control, "data-jef-id", "o") || "o" + nextChoiceId++;
       control.setAttribute("data-jef-id", id);
       choices.push({ id: id, label: label });
     }
@@ -1742,7 +1789,6 @@
   }
 
   function extract() {
-    clearStamps();
     // Collected before Readability runs, and from the live document: the parse
     // below throws all of this away.
     // Overlay first: it stamps its own controls, and the action inventory has
@@ -2083,6 +2129,10 @@ allowedVideoRegex: /^$/,
       return !isHidden(o) && textOf(o) && !o.querySelector("[role=option], li");
     });
 
+    // This field's previous list, wherever its nodes ended up, must not
+    // answer for the new one.
+    for (const old of document.querySelectorAll('[data-jef-option^="' + key + ':"]')) old.removeAttribute("data-jef-option");
+
     const suggestions = [];
     for (const option of shown) {
       if (suggestions.length >= 40) break;
@@ -2162,12 +2212,44 @@ allowedVideoRegex: /^$/,
     setTimeout(function () { try { el.click(); } catch (_) { /* gone */ } }, 300);
   }
 
+  /// Every visible run of text under `root`, normalised, as a set.
+  function leafTexts(root) {
+    const texts = new Set();
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const text = (node.textContent || "").replace(/\s+/g, " ").trim();
+      if (!text || !node.parentElement || isHidden(node.parentElement)) continue;
+      texts.add(text);
+    }
+    return texts;
+  }
+
+  // What the page said in reply to the last submit. A form that stays put
+  // after "Siguiente" has usually written why beside a field — and not
+  // always on the field itself: "Debes indicar la fecha de caducidad"
+  // hung under three date boxes with nothing on any of them. Texts that
+  // were not there when the button was pressed are the reply.
+  let submittedTexts = null;
+  let submittedAnchor = null;
+
+  function noticesOf(container, submitEl) {
+    if (!submittedTexts || submitEl !== submittedAnchor) return undefined;
+    const notices = [];
+    for (const text of leafTexts(container)) {
+      if (notices.length >= 6) break;
+      if (text.length <= 200 && !submittedTexts.has(text)) notices.push(text);
+    }
+    return notices.length ? notices : undefined;
+  }
+
   window.__jefSubmitForm = function (actionId) {
     const anchor = document.querySelector(
       '[data-jef-id="' + String(actionId).replace(/"/g, "") + '"]'
     );
     if (!anchor) return { ok: false, reason: "gone" };
     lateRounds = 0;
+    submittedTexts = leafTexts(document.body);
+    submittedAnchor = anchor;
 
     const left = leaveField();
     const form = anchor.tagName === "FORM" ? anchor : anchor.closest("form");
@@ -2237,9 +2319,34 @@ allowedVideoRegex: /^$/,
     whenSettled(extractAndSend);
   };
 
-  function extractAndSend() {
+  /// What a reading of the page amounts to, for telling two apart. Not
+  /// field values: typing must not read as the page changing.
+  function signatureOf(page) {
+    return [
+      page.title, page.blocks.length, page.listings.length,
+      page.actions.map(function (a) {
+        return a.label + (a.fields ? "/" + a.fields.map(function (f) { return f.name + ":" + f.type; }).join(",") : "");
+      }).join("|"),
+      page.overlay ? page.overlay.text : "",
+    ].join("\n");
+  }
+  let lastSignature = "";
+
+  /// `onlyIfChanged`: the late-change observer asks, and a reading that
+  /// says the same as the last one is not sent and costs no round. A
+  /// spinner's class flips used to burn all six rounds before the
+  /// checkout's form arrived, and then nobody was watching when it did.
+  function extractAndSend(onlyIfChanged) {
     try {
-      send(extract());
+      const page = extract();
+      const signature = signatureOf(page);
+      if (onlyIfChanged && signature === lastSignature) {
+        watchLateChanges();
+        return;
+      }
+      if (onlyIfChanged) lateRounds++;
+      lastSignature = signature;
+      send(page);
     } catch (e) {
       send({
         ok: false,
@@ -2310,8 +2417,7 @@ allowedVideoRegex: /^$/,
       quiet = setTimeout(function () {
         observer.disconnect();
         if (lateObserver === observer) lateObserver = null;
-        lateRounds++;
-        extractAndSend();
+        extractAndSend(true);
       }, 600);
     });
     observer.observe(document.documentElement, {

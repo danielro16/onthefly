@@ -201,7 +201,7 @@ struct ArticleView: View {
             ActionGroupsView(
                 groups: [IntentGroup(
                     intent: dominant ?? .transact, actions: shownArrivals, uncertain: [],
-                    title: "Apareció al tocar \(arrivalCause)"
+                    title: arrivalCause.isEmpty ? "Apareció en la página" : "Apareció al tocar \(arrivalCause)"
                 )],
                 title: nil, expandedByDefault: true, onOpen: onOpenAction
             )

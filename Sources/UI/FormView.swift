@@ -39,6 +39,15 @@ struct FormView: View {
                 .font(.headline)
                 .accessibilityAddTraits(.isHeader)
 
+            // The page's reply to the last submit, before the fields: why
+            // it did not go through, where a sighted person sees it first.
+            ForEach(action.notices ?? [], id: \.self) { notice in
+                Text(notice)
+                    .font(.callout)
+                    .foregroundStyle(.red)
+                    .accessibilityLabel("Aviso del formulario: \(notice)")
+            }
+
             ForEach(fields) { field in
                 control(field)
             }
@@ -211,6 +220,13 @@ struct FormView: View {
                     .accessibilityLabel(field.name)
                     .accessibilityHint(field.required ? "Campo obligatorio" : "")
                 suggestionList(field)
+            }
+
+            if let error = field.error, !error.isEmpty {
+                Text(error)
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+                    .accessibilityLabel("Error en \(field.name): \(error)")
             }
         }
     }

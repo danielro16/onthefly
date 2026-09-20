@@ -331,6 +331,24 @@ final class ReaderModel {
         do {
             switch try await engine.submit(actionID: action.id) {
             case .updated(let page):
+                // The page kept the form and marked what is missing. Said
+                // out loud here; each message also sits under its field.
+                let complaints = page.actions.flatMap { $0.fields ?? [] }
+                    .filter { !($0.error ?? "").isEmpty }
+                let notices = page.actions.first { $0.id == action.id }?.notices ?? []
+                let detail = complaints.first.map { "\($0.name): \($0.error ?? "")" } ?? notices.first
+                if page.url == self.page?.url, let detail {
+                    arrivals = []
+                    suggestions = [:]
+                    state = .loaded(page)
+                    UIAccessibility.post(
+                        notification: .announcement,
+                        argument: complaints.count > 1
+                            ? "No se envió. \(complaints.count) campos con errores. \(detail)"
+                            : "No se envió. \(detail)"
+                    )
+                    return
+                }
                 guard !page.isEquivalent(to: self.page) else {
                     UIAccessibility.post(
                         notification: .announcement,
@@ -341,6 +359,7 @@ final class ReaderModel {
                 address = page.url
                 state = .loaded(page)
                 collapsed = []
+                suggestions = [:]
                 UIAccessibility.post(
                     notification: .announcement, argument: "Formulario enviado."
                 )
@@ -413,12 +432,21 @@ final class ReaderModel {
     /// a tap made appear. New by element, as the extractor marks them —
     /// a second "Comprar" inside a modal is new though its label is not.
     private func noteArrivals(in page: ExtractedPage, cause: String) {
-        // A different page is a different page, not an arrival.
+        // A different page is a different page, not an arrival — and what
+        // it shows later is not what the last tap on the old one opened.
         guard let current = self.page, current.url == page.url else {
             arrivals = []
+            arrivalCause = ""
             return
         }
         let fresh = page.actions.filter { $0.fresh == true && $0.kind != .form }
+        // Most of the page being new means the page arrived, not that a
+        // tap opened something: the checkout rendered its accordion a
+        // minute after its route, and read as seven arrivals.
+        guard fresh.count * 2 < page.actions.count else {
+            arrivals = []
+            return
+        }
         arrivals = Array(fresh.prefix(12))
         arrivalCause = cause
     }
