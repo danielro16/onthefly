@@ -1309,6 +1309,30 @@
       const linked = matching.some(function (k) { return k.tagName === "A" || k.querySelector("a[href]"); });
       if (!linked && matching.every(function (k) { return textOf(k).length <= 12; })) continue;
 
+      // A card made of nothing but links, and carrying several, is not one
+      // thing: it is a column of a menu. The BCRA's read as five items
+      // called "Tasas de interés, Datos monetarios diarios, Metodologías
+      // de las estadísticas monetarias y financieras" — three destinations
+      // in one unreachable stop. Each link is its own item.
+      const columns = matching.filter(function (k) {
+        if (k.querySelectorAll("a[href]").length < 2) return false;
+        const clone = k.cloneNode(true);
+        for (const link of clone.querySelectorAll("a[href]")) link.remove();
+        return !textOf(clone);
+      });
+      if (columns.length >= matching.length * 0.5) {
+        const links = [];
+        for (const column of matching) {
+          for (const link of column.querySelectorAll("a[href]")) {
+            if (!isHidden(link) && textOf(link)) links.push(link);
+          }
+        }
+        if (links.length >= MIN_ITEMS) {
+          candidates.push({ container: container, items: links });
+          continue;
+        }
+      }
+
       candidates.push({ container: container, items: matching });
     }
 

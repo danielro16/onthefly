@@ -205,6 +205,14 @@ struct Listing: Codable, Sendable, Identifiable {
     let count: Int
     let items: [Item]
 
+    /// Whether its items lead anywhere. A wall of logos — braille.pe lists
+    /// twenty-three institutions that trust it — is prose laid out in a
+    /// grid: twenty-three stops that go nowhere, and they were arriving
+    /// before the page said what it does. Worth one stop, not twenty-three.
+    var isNavigable: Bool {
+        items.contains { $0.href != nil || $0.actionId != nil || !($0.choices ?? []).isEmpty }
+    }
+
     struct Item: Codable, Sendable, Identifiable, Hashable {
         let title: String
         /// The button inside the card, when the card has no link of its own.

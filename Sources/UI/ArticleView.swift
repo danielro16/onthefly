@@ -295,6 +295,7 @@ struct ArticleView: View {
                     formsSection(searchOnly: true)
                     listingsSection
                     blocksSection
+                    asideListingsSection
                     formsSection(searchOnly: false)
                 } else {
                     // A rebuilt form IS the task on a check-in, booking or
@@ -326,6 +327,7 @@ struct ArticleView: View {
 
                     listingsSection
                     blocksSection
+                    asideListingsSection
                 }
 
                 nextStepSection
@@ -421,15 +423,33 @@ struct ArticleView: View {
     /// results in it. A footer's seventeen links, opened, are seventeen
     /// stops of nothing before the page.
     private func isContent(_ listing: Listing) -> Bool {
+        // Having a name is not enough: "Entidades que confían en Braille
+        // Perú" names a logo wall.
+        if !listing.isNavigable { return false }
         if !listing.title.isEmpty || isPriced(listing) { return true }
         if listingNames[listing.id] == "Resultados" { return true }
         guard let kind = listingNames[listing.id] else { return false }
         return ["Noticias", "Productos", "Trámites y servicios", "Resultados"].contains(kind)
     }
 
+    /// Lists that lead somewhere, and lists that only say things. The
+    /// second kind waits behind the content, collapsed.
+    private var contentListings: [Listing] { page.listings.filter(\.isNavigable) }
+    private var asideListings: [Listing] { page.listings.filter { !$0.isNavigable } }
+
     @ViewBuilder
     private var listingsSection: some View {
-        ForEach(page.listings) { listing in
+        listingRows(contentListings)
+    }
+
+    @ViewBuilder
+    private var asideListingsSection: some View {
+        listingRows(asideListings)
+    }
+
+    @ViewBuilder
+    private func listingRows(_ listings: [Listing]) -> some View {
+        ForEach(listings) { listing in
             ListingView(
                 listing: listing,
                 fallbackName: listingNames[listing.id],

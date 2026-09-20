@@ -41,7 +41,10 @@ funnel() {
   axe key 40 --udid "$U" >/dev/null; sleep 45
   if W | grep -q "\[btn\] Aceptar"; then T "Aceptar" --type Button; sleep 20; fi
   T "Continuar" --type Button; sleep 40
-  T "29 de octubre de 2026, 52768, ARS" --type Button; sleep 25
+  # By date only: the button's label carries the fare, and the fare changes.
+  local day; day=$(W | grep -m1 "\[btn\] 29 de octubre de 2026" | sed -E 's/^ *[0-9]+ \[btn\] (.*[^ ]) *(\(.*\))?$/\1/')
+  if [ -z "$day" ]; then echo "no hay botón para el 29 de octubre"; W | grep "octubre de 2026" | head -3; return 1; fi
+  T "$day" --type Button; sleep 25
   T "Ver vuelos" --type Button; sleep 50
   local l f
   l=$(W | grep -m1 "2 de 7\." | sed -E 's/^ *[0-9]+ \[btn\] (.*)  \(Elige esta opción en la página\)$/\1/'); T "$l"; sleep 40
