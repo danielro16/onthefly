@@ -321,11 +321,22 @@ final class HeadlessWebView: NSObject {
     }
 
     /// The next page the engine produces, or the one that already arrived.
+    ///
+    /// Only one reader waits at a time, and the newest owns the screen.
+    /// Installing over a continuation that was already pending dropped it on
+    /// the floor: that task never resumed, its caller waited forever, and the
+    /// app went quiet with no error anywhere to say why. Two taps in quick
+    /// succession were enough — the first `activate` was still waiting for its
+    /// re-extraction when the second took the slot.
+    ///
+    /// The superseded caller is told the same way every other superseded load
+    /// is told, and `ReaderModel.wasSuperseded` stays quiet about it.
     private func nextPage() async throws -> ExtractedPage {
         if let page = unconsumed {
             unconsumed = nil
             return page
         }
+        settle(.failure(CancellationError()))
         return try await withCheckedThrowingContinuation { cont in
             self.continuation = cont
             self.startTimeout()
