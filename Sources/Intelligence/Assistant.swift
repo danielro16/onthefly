@@ -924,17 +924,32 @@ final class Assistant {
             if case .paragraph(_, let text, _) = $0 { return text } else { return nil }
         }
 
-        func readTheOpening(_ why: String) {
+        // Sin resumen, lo que la página dice primero. En una portada son los
+        // titulares: su primer párrafo largo es el pie, y "dame un resumen de
+        // los titulares" en La Nación terminaba en "Propietario: S.A. LA
+        // NACION - Av. del Libertador 8630". Lo vio Daniel en el simulador.
+        func readTheOpening(offline: Bool = false) {
+            if readsHeadlines(page) {
+                say(offline
+                    ? "Sin conexión no puedo resumirla, pero te cuento los primeros titulares:"
+                    : "Te cuento los primeros titulares:")
+                for (index, title) in Self.headlines(of: page).prefix(3).enumerated() {
+                    say("\(index + 1). \(title.prefix(160))")
+                }
+                return
+            }
             guard let opening = paragraphs.first(where: { $0.count >= 80 }) else {
                 describe(page)
                 return
             }
-            say(why)
+            say(offline
+                ? "Sin conexión no puedo resumirla, pero te cuento cómo empieza:"
+                : "Te cuento cómo empieza:")
             say(String(opening.prefix(400)))
         }
 
         guard let answerer else {
-            readTheOpening("Te cuento cómo empieza:")
+            readTheOpening()
             return
         }
         let text = Self.saying(page)
@@ -946,14 +961,14 @@ final class Assistant {
             guard let answer = try await answerer.answer(
                 "Resumí de qué trata esta página en dos o tres frases.", about: text
             ) else {
-                readTheOpening("Te cuento cómo empieza:")
+                readTheOpening()
                 return
             }
             say(answer.text)
         } catch Answerer.AnswerError.transport {
-            readTheOpening("Sin conexión no puedo resumirla, pero te cuento cómo empieza:")
+            readTheOpening(offline: true)
         } catch {
-            readTheOpening("Te cuento cómo empieza:")
+            readTheOpening()
         }
     }
 
