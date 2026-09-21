@@ -916,7 +916,11 @@ final class Assistant {
 
     /// Un título que entra en un botón, cortado en una palabra y no en la
     /// mitad: "…su evolución patrimo" era un botón que nadie entendía.
-    static func short(_ text: String, _ limit: Int = 70) -> String {
+    static func short(_ raw: String, _ limit: Int = 70) -> String {
+        // Sin las comas de celdas vacías: "Solicitud de Jubilación, , ver
+        // sub-trámites".
+        let text = raw.replacingOccurrences(of: "(,\\s*)+,", with: ",", options: .regularExpression)
+            .replacingOccurrences(of: "\\s{2,}", with: " ", options: .regularExpression)
         guard text.count > limit else { return text }
         let cut = text.prefix(limit)
         let clean = cut.lastIndex(of: " ").map { cut[..<$0] } ?? cut
@@ -2130,7 +2134,14 @@ final class Assistant {
                 guard let href = Self.href(ofHeadline: title, in: page) else { return nil }
                 return .link(id: "sug-titular-\(index)", label: "Abrir «\(Self.short(title))»", href: href, region: "main")
             }
-            ordered = named + ordered.filter { !$0.id.hasPrefix("sug-") }
+            // Lo que el modelo propuso para lo que la persona vino a hacer va
+            // primero, si no es uno de los titulares. En la portada de ANSES
+            // dijo "para sacar un turno, tenés que ir a la sección Turnos", y
+            // los botones eran sólo los primeros titulares: el de Turnos no
+            // estaba.
+            let hrefs = Set(named.compactMap(\.href))
+            let forGoal = ordered.filter { $0.id.hasPrefix("sug-") && !hrefs.contains($0.href ?? "") }.prefix(1)
+            ordered = Array(forGoal) + named + ordered.filter { !$0.id.hasPrefix("sug-") }
         }
         // Una opción por id: dos "leer" con el mismo id eran, para VoiceOver,
         // el mismo botón dos veces con nombres distintos.
