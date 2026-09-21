@@ -239,6 +239,8 @@ struct DoorCard: View {
         case .feed, .section: return "newspaper"
         case .list: return "list.bullet"
         case .arrivals: return "sparkles"
+        case .header: return "rectangle.topthird.inset.filled"
+        case .menu: return "line.3.horizontal"
         case .footer, .noise: return "ellipsis"
         }
     }
@@ -247,7 +249,8 @@ struct DoorCard: View {
         switch door.kind {
         case .feed, .section: return .blue
         case .arrivals: return .orange
-        case .list, .footer, .noise: return .gray
+        case .menu: return .indigo
+        case .list, .header, .footer, .noise: return .gray
         }
     }
 

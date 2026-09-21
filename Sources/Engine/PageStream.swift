@@ -87,6 +87,9 @@ struct StreamDoor: Identifiable, Sendable, Hashable {
         case list
         /// Lo que el último toque hizo aparecer.
         case arrivals
+        /// El cromo del sitio: encabezado, menú, pie.
+        case header
+        case menu
         case footer
         case noise
     }
@@ -129,6 +132,16 @@ enum StreamSegment: Identifiable, Sendable {
 extension ExtractedPage {
     private static let chrome: Set<String> = ["header", "banner", "nav", "navigation", "search", "footer", "contentinfo"]
 
+    /// Las tres partes del cromo de un sitio, cada una con su puerta.
+    private static let chromeZones: [(id: String, zones: Set<String>, kind: StreamDoor.Kind, title: String, hint: String)] = [
+        ("jef-header", ["header", "banner"], .header, "Encabezado del sitio",
+         "Abre lo que el sitio pone arriba de todo, en otra pantalla"),
+        ("jef-menu", ["nav", "navigation"], .menu, "Menú del sitio",
+         "Abre el menú del sitio en otra pantalla"),
+        ("jef-footer", ["footer", "contentinfo"], .footer, "Resto del sitio",
+         "Abre el pie del sitio en otra pantalla"),
+    ]
+
     /// Si esta página se muestra en su propio orden.
     ///
     /// Una portada sí, tenga el tamaño que tenga. Un artículo todavía no: su
@@ -161,14 +174,43 @@ extension ExtractedPage {
     }
 
     private func headlineCount(in entries: [StreamEntry]) -> Int {
-        let sizes = Dictionary(listings.map { ($0.id, $0.items.count) }, uniquingKeysWith: { first, _ in first })
+        // Un titular que no se puede abrir no es un titular.
+        //
+        // Contando todo ítem de todo listado, el buscador de vuelos de una
+        // aerolínea daba 22 "titulares" —dos listados llamados "Clase"— y la
+        // app anunciaba "Portada, 22 titulares" sobre una página que no es
+        // una portada, con "Elegí tu asiento" como primera noticia. A quien
+        // no ve no le estábamos agregando ruido: le estábamos escondiendo la
+        // página entera detrás de una puerta con el nombre equivocado, sin
+        // que tuviera cómo sospecharlo. Medido con esta regla: aerolíneas
+        // pasa de 22 a 4 y deja de ser portada; La Nación (153), Clarín (131)
+        // y Foodit (36) no se mueven.
+        let opening = Dictionary(
+            listings.map { listing in
+                (listing.id, listing.items.filter { item in
+                    item.href.map { isOpeningAnotherPage($0) } ?? false
+                }.count)
+            },
+            uniquingKeysWith: { first, _ in first }
+        )
         return entries.reduce(0) { total, entry in
             switch entry.kind {
             case "link": return total + (entry.level != nil ? 1 : 0)
-            case "listing": return total + (entry.ref.flatMap { sizes[$0] } ?? 0)
+            case "listing": return total + (entry.ref.flatMap { opening[$0] } ?? 0)
             default: return total
             }
         }
+    }
+
+    /// Si esa dirección lleva a otro documento, y no a un lugar de éste.
+    private func isOpeningAnotherPage(_ href: String) -> Bool {
+        guard href.hasPrefix("http") else { return false }
+        func bare(_ address: String) -> String {
+            var text = address.components(separatedBy: "#")[0]
+            while text.hasSuffix("/") { text.removeLast() }
+            return text
+        }
+        return bare(href) != bare(url)
     }
 
     /// Un link a la página en la que ya se está: "Inicio", en la portada. No
@@ -251,22 +293,38 @@ extension ExtractedPage {
                 }
             }
 
-            // El pie: legales, redes, el mapa del sitio. Corto, se lee donde
-            // está; largo, es una parada y no quince. Un formulario o un
-            // listado que viva ahí se queda en la página.
-            let foot = flow.filter { entry in
-                ["footer", "contentinfo"].contains(entry.zone)
-                    && entry.noise != true && entry.kind != "listing" && !isForm(entry)
-            }
-            if foot.count > StopBudget.openList {
-                let taken = Set(foot.map(\.id))
+            // El cromo del sitio: el encabezado, el menú y el pie. Lo mismo
+            // en los tres casos — corto se lee donde está, largo es una
+            // parada y no cincuenta.
+            //
+            // La regla ya existía para el pie y no para la cabecera, y eso
+            // era la mitad del problema medido: de las paradas que Clarín
+            // pone ANTES de su primer titular, casi todas son un solo menú
+            // de encabezado desplegado en el DOM. El pie estaba plegado y la
+            // cabecera, que es la que se cruza SÍ o SÍ para llegar al
+            // contenido, no.
+            //
+            // Un formulario no se pliega nunca: el buscador del sitio vive en
+            // la cabecera y es una herramienta, no un adorno. Un listado
+            // tampoco: es contenido esté donde esté.
+            for zone in Self.chromeZones {
+                let inZone = flow.filter { entry in
+                    zone.zones.contains(entry.zone)
+                        && entry.noise != true && entry.kind != "listing" && !isForm(entry)
+                }
+                guard inZone.count > StopBudget.openList else { continue }
+                let taken = Set(inZone.map(\.id))
                 flow.removeAll { taken.contains($0.id) }
-                trailing.append(.door(StreamDoor(
-                    id: "jef-footer", kind: .footer, title: "Resto del sitio",
-                    amount: Self.amount(foot.count, "elemento", "elementos"), preview: "",
-                    hint: "Abre el pie del sitio en otra pantalla",
-                    entries: foot.map(\.id)
-                )))
+                let door = StreamDoor(
+                    id: zone.id, kind: zone.kind, title: zone.title,
+                    amount: Self.amount(inZone.count, "elemento", "elementos"),
+                    preview: inZone.prefix(3).compactMap(\.label).joined(separator: ", "),
+                    hint: zone.hint, entries: inZone.map(\.id)
+                )
+                // La cabecera y el menú van arriba, donde estaban. El pie, al
+                // final: el orden de la página se respeta también al plegar.
+                if zone.kind == .footer { trailing.append(.door(door)) }
+                else { leading.append(.door(door)) }
             }
 
             let noise = flow.filter { $0.noise == true }
