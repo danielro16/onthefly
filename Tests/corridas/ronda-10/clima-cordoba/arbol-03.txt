@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [H] Vos: ¿cómo va a estar el tiempo mañana en córdoba?
+  3 [txt] Buscando: tiempo mañana córdoba.
+  4 [txt] Estás en los resultados de «tiempo mañana córdoba». Los 3 más probables:
+  5 [H] Vos: Clima mañana en Córdoba | Hora a hora - eltiempoen.com — eltiempoen.com
+  6 [txt] Abriendo eltiempoen.com.
+  7 [txt] En eltiempoen.com.
+  8 [txt] Mañana en Córdoba se espera un clima nublado con una probabilidad de lluvia del 0%. La temperatura máxima será de 17 °C y la mínima de 4 °C. El viento soplará desde el noreste a una velocidad media de 21 km/h.
+  9 [H] Vos: ¿va a llover?
+ 10 [txt] No, la probabilidad de lluvia para mañana en Córdoba es del 0%.
+ 11 [btn] ¿Qué clima hará?  (Primera de 6 opciones.)
+ 12 [btn] ¿Y cómo es el viento?
+ 13 [btn] Completar «Selecionar localidad»
+ 14 [btn] Leer la página
+ 15 [btn] Volver a la página anterior
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar

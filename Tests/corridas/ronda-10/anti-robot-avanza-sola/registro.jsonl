@@ -1,0 +1,23 @@
+{"t": 1790033226.567075, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones"}
+{"texto": "http://localhost:50241/captcha.html", "quien": "persona", "tipo": "turno", "t": 1790033233.1131392}
+{"opciones": [], "t": 1790033233.114064, "tipo": "botones"}
+{"texto": "Abriendo localhost.", "quien": "jef", "tipo": "turno", "t": 1790033233.114287}
+{"texto": "Abriendo localhost.", "tipo": "voz", "cola": false, "t": 1790033233.114505}
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790033233.158339}
+{"tipo": "pagina", "texto": "PÁGINA: localhost — Verificación de seguridad\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.\nContinuar\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.", "t": 1790033235.541321, "titulo": "Verificación de seguridad", "url": "http://localhost:50241/captcha.html"}
+{"t": 1790033235.542148, "opciones": [], "tipo": "botones"}
+{"texto": "El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, seguimos.", "quien": "jef", "t": 1790033235.542392, "tipo": "turno"}
+{"texto": "El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, seguimos.", "cola": false, "t": 1790033235.542747, "tipo": "voz"}
+{"opciones": ["Ir a la prueba", "Ya la resolví", "Otra cosa"], "tipo": "botones", "t": 1790033235.542921}
+{"titulo": "Auriculares bluetooth", "url": "http://localhost:50241/resuelto.html", "t": 1790033246.415065, "texto": "PÁGINA: localhost — Auriculares bluetooth\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nAuriculares bluetooth\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499\nAuriculares Vincha Bluetooth con Micrófono $24.990\nAuriculares con Cancelación de Ruido $89.900\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499, Auriculares Vincha Bluetooth con Micrófono $24.990, Auriculares con Cancelación de Ruido $89.900", "tipo": "pagina"}
+{"quien": "jef", "t": 1790033246.417958, "texto": "Listo, ya pasamos la verificación.", "tipo": "turno"}
+{"cola": false, "t": 1790033246.4185739, "texto": "Listo, ya pasamos la verificación.", "tipo": "voz"}
+{"opciones": [], "t": 1790033246.4187, "tipo": "botones"}
+{"tipo": "turno", "texto": "Estás en localhost, en una página con tres modelos de auriculares bluetooth. Son Auriculares In Ear Bluetooth Básicos a $12.499, Auriculares Vincha Bluetooth con Micrófono a $24.990, y Auriculares con Cancelación de Ruido a $89.900.", "quien": "jef", "t": 1790033247.719583}
+{"tipo": "voz", "texto": "Estás en localhost, en una página con tres modelos de auriculares bluetooth. Son Auriculares In Ear Bluetooth Básicos a $12.499, Auriculares Vincha Bluetooth con Micrófono a $24.990, y Auriculares con Cancelación de Ruido a $89.900.", "cola": true, "t": 1790033247.7204509}
+{"t": 1790033247.7208838, "opciones": ["Leer la página", "Resumir la página", "Volver a la página anterior", "Otra cosa"], "tipo": "botones"}
+{"tipo": "turno", "quien": "persona", "texto": "¿cuánto sale el más barato?", "t": 1790033264.003691}
+{"tipo": "botones", "t": 1790033264.00406, "opciones": []}
+{"tipo": "turno", "quien": "jef", "texto": "El más barato es el Auricular In Ear Bluetooth Básico y sale 12.499 pesos.", "t": 1790033265.782526}
+{"cola": false, "tipo": "voz", "texto": "El más barato es el Auricular In Ear Bluetooth Básico y sale 12.499 pesos.", "t": 1790033265.78357}
+{"opciones": ["¿Y el de vincha?", "Leer la página", "Resumir la página", "Volver a la página anterior", "Otra cosa"], "t": 1790033265.784214, "tipo": "botones"}

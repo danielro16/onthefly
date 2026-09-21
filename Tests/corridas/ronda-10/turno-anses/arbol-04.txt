@@ -1,0 +1,21 @@
+  1 [H] Asistente
+  2 [H] Vos: quiero sacar un turno en anses
+  3 [txt] Buscando: anses.
+  4 [txt] Estás en los resultados de «anses». Los 3 más probables:
+  5 [H] Vos: ANSES - Argentina.gob.ar — www.argentina.gob.ar
+  6 [txt] Abriendo argentina.gob.ar.
+  7 [txt] Estás en la página de ANSES. Para sacar un turno, tenés la opción de ir a Turnos.
+  8 [H] Vos: Abrir «Turnos»
+  9 [txt] Abriendo «Turnos»
+ 10 [txt] Estás en la página de Argentina.gob.ar para sacar turnos en ANSES, donde te explican cómo solicitar uno por internet, qué necesitás y cómo hacerlo.
+ 11 [H] Vos: Abrir «Pedir turno»
+ 12 [txt] Abriendo «Pedir turno»
+ 13 [txt] Estás en el sitio de Anses para sacar turnos. Tenés la opción de buscar un trámite, como el Plan de Pago de Deuda Previsional o la Solicitud de Jubilación. También podés consultar o reprogramar un turno ya existente.
+ 14 [btn] Abrir «CONSULTAR TURNO»  (Primera de 6 opciones.)
+ 15 [btn] Abrir «Reprogramación»
+ 16 [btn] Abrir «Solicitud de Jubilación, ver sub-trámites»
+ 17 [btn] Abrir «Solicitud de Pensión, ver sub-trámites»
+ 18 [btn] Volver a la página anterior
+ 19 [btn] Otra cosa
+ 20 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 21 [btn] Enviar

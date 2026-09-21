@@ -1,0 +1,9 @@
+  1 [H] Asistente
+  2 [H] Vos: http://localhost:50320/misma-pagina.html
+  3 [txt] Abriendo localhost.
+  4 [txt] El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, seguimos.
+  5 [btn] Ir a la prueba  (Primera de 3 opciones.)
+  6 [btn] Ya la resolví
+  7 [btn] Otra cosa
+  8 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+  9 [btn] Enviar

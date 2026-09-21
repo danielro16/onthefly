@@ -1,0 +1,19 @@
+  1 [H] Asistente
+  2 [H] Vos: buscá mar del plata en wikipedia
+  3 [txt] Buscando: mar del plata en wikipedia.
+  4 [txt] Estás en los resultados de «mar del plata en wikipedia». Los 3 más probables:
+  5 [H] Vos: Mar del Plata - Wikipedia, la enciclopedia libre — es.wikipedia.org
+  6 [txt] Abriendo es.wikipedia.org.
+  7 [txt] Estás en la página de Wikipedia de Mar del Plata. Es una ciudad ubicada en la provincia de Buenos Aires, Argentina, sobre la costa del mar argentino. Es la cabecera del partido de General Pueyrredón, un importante puerto y la localidad balnearia más importante del país.
+  8 [H] Vos: ¿cuándo se fundó?
+  9 [txt] Mar del Plata se fundó el 10 de febrero de 1874.
+ 10 [H] Vos: leeme la nota
+ 11 [txt] Párrafos 1 a 2 de 5:
+ 12 [txt] ciudad de la provincia de Buenos Aires, Argentina
+ 13 [txt] Mar del Plata es una ciudad ubicada en el sudeste de la provincia de Buenos Aires, Argentina, sobre la costa del mar argentino. Es la cabecera del partido de General Pueyrredón, un importante puerto, la localidad balnearia más importante del país y el segundo destino turístico después de Buenos Aires. En época estival su población puede aumentar en alrededor de un 301 %, por lo que cuenta con una gran oferta de infraestructura de hoteles y otros servicios. La autovía 2 la enlaza tras 404 km con Buenos Aires y se encuentra a 368 km de La Plata.
+ 14 [btn] Seguir leyendo  (Primera de 4 opciones.)
+ 15 [btn] Resumir la nota
+ 16 [btn] Volver a la página anterior
+ 17 [btn] Otra cosa
+ 18 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 19 [btn] Enviar
