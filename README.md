@@ -24,8 +24,9 @@ quedó en la rama `ui-cromo-y-tramos` y en el historial.
 ┌─────────────────────────────────────────────┐
 │  Router   ¿qué pide? verbo + casilleros     │  Gemini Flash-Lite, tipado
 │  Jev      ¿a cuál de estas opciones voy?    │  ~500 ms, elige, no redacta
-│  Answerer contesta, con cita verificada     │  Gemini Flash, sólo si pregunta
-│  Swift    cuenta, cita, decide qué es seguro│  instantáneo
+│  Answerer orienta, contesta, resume         │  Gemini Flash, sólo la página
+│  Swift    verifica cifras, decide qué es    │  instantáneo
+│           seguro, navega                    │
 └──────────────────┬──────────────────────────┘
                    ▼
 ┌─────────────────────────────────────────────┐
@@ -37,12 +38,14 @@ quedó en la rama `ui-cromo-y-tramos` y en el historial.
 
 ## Las reglas
 
-- **Ni una palabra la escribe un modelo, salvo la respuesta a una pregunta.**
-  "Abriendo…", "Hay 42 notas", los titulares: plantilla, texto literal de la
-  página y cuentas del código.
-- **Toda afirmación del modelo termina en una cita que el código verifica**
-  contra la página (`Answerer.appears`). Si no aparece, no se dice: para quien
-  no ve, una invención es invisible.
+- **El modelo habla como una persona, pero sólo con el texto de la página.**
+  Nada que sepa por fuera. Al llegar dice dónde se está, los titulares y qué
+  se puede hacer, con las opciones como botones.
+- **Toda cifra que dice tiene que estar en la página** —monto, precio,
+  porcentaje, fecha— o no se dice nada (`Answerer.appears`). Es el invento que
+  lastima y el único que no se detecta de oído.
+- **El modelo nombra los botones, no sus destinos.** Una sugerencia apunta por
+  número a una lista que arma el código con lo que la página ofrece.
 - **Lo que se escribe en un campo sale sólo de la frase de la persona.** La
   página no participa ni como contexto.
 - **Se envía sólo lo que se puede probar que es una búsqueda.** Todo lo demás
@@ -57,6 +60,8 @@ quedó en la rama `ui-cromo-y-tramos` y en el historial.
   producto y te leo los precios."
 - **Terminología neutra de asistente:** gerundio e infinitivo, nunca
   imperativo conjugado.
+- **Habla el idioma del teléfono.** El de `Locale.preferredLanguages`, no el
+  de la app: la app no tiene traducciones y iOS le asigna inglés.
 
 ## Correr
 
@@ -84,7 +89,7 @@ Sources/
 │   ├── Assistant.swift         el lazo: rutear, llegar, leer, contestar, escribir
 │   ├── Router.swift            qué pide la persona
 │   ├── PageAnalyzer.swift      a dónde ir dentro de la página (Jev)
-│   ├── Answerer.swift          contestar y resumir, con cita
+│   ├── Answerer.swift          orientar, contestar y resumir
 │   └── JevClient.swift
 └── UI/
     ├── ReaderView.swift        la sesión y la pantalla
@@ -113,8 +118,10 @@ llamadas tienen que pasar por un backend propio.
 **La frase cruda viaja al ruteador en la nube**, y una clave dictada va con
 ella. Hay que enmascarar el valor en el teléfono antes de mandarla.
 
-**El asistente habla en castellano** aunque el teléfono esté en otro idioma:
-las frases están escritas en el código y tienen que pasar a un String Catalog.
+**Las frases fijas están sólo en castellano.** Lo que redacta el modelo sale en
+el idioma del teléfono, pero "Abriendo…", "Buscando…" y el resto están en el
+código: en un teléfono en inglés la conversación mezcla los dos. Tienen que
+pasar a un String Catalog.
 
 **El buscador es DuckDuckGo lite** porque Google bloquea esta máquina. Google
 es el objetivo; `results(of:)` nunca se probó sobre sus resultados.

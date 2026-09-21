@@ -13,11 +13,12 @@ Para cada pedido, dos preguntas:
 1. **¿Llegó a donde se pidió, o dijo por qué no?** Un silencio, o una página
    que cambió sin que nadie lo pidiera, es un bug.
 2. **¿Lo que dijo es cierto?** Contrastarlo con la página, que está a la vista
-   arriba. Una respuesta sin cita verificada, un titular que no está, un
-   número que no coincide: bug.
+   arriba. Un titular que no está, un número que no coincide, algo que la
+   página no dice: bug.
 
 Pedidos que ya encontraron algo: «llevame a la nación», «dame los titulares»,
-«volvé», «¿a cuánto está el dólar?», «quiero entrar a anses y pedir un turno»,
+«dame un resumen de los titulares», «volvé», «¿a cuánto está el dólar?»,
+«quiero entrar a anses y pedir un turno»,
 «entrá a mercado libre y comprame pilas», «busca Buenos Aires» parado en
 Wikipedia. Las 60 de `Tests/intenciones.json` se corren contra el ruteador
 con `./Scripts/probar-ruteo.py`.
