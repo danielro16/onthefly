@@ -292,15 +292,26 @@ actor Answerer {
         return value
     }
 
+    /// El idioma del teléfono, para que el asistente hable el de la persona.
+    ///
+    /// El primero de la lista del sistema, y no `Locale.current`: la app no
+    /// tiene traducciones, así que iOS le asigna inglés aunque el teléfono
+    /// esté en castellano. Con el simulador en es_AR, el asistente llegaba a
+    /// La Nación diciendo "You are on LA NACION".
+    static var language: String {
+        let code = phoneLanguage
+        return Locale(identifier: code).localizedString(forLanguageCode: code) ?? code
+    }
+
+    /// El código del idioma del teléfono: "es", "en".
+    static var phoneLanguage: String {
+        Locale.preferredLanguages.first
+            .flatMap { Locale(identifier: $0).language.languageCode?.identifier } ?? "es"
+    }
+
     /// Si ese texto está de verdad en la página. Se comparan los espacios y
     /// las mayúsculas con manga ancha —el modelo reacomoda el espaciado al
     /// copiar— y nada más: las palabras tienen que ser las de la página.
-    /// El idioma del teléfono, para que el asistente hable el de la persona.
-    static var language: String {
-        let code = Locale.current.language.languageCode?.identifier ?? "es"
-        return Locale.current.localizedString(forLanguageCode: code) ?? code
-    }
-
     static func appears(_ quote: String, in page: String, minimum: Int = 8) -> Bool {
         func flat(_ text: String) -> String {
             text.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)

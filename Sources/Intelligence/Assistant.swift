@@ -574,7 +574,10 @@ final class Assistant {
         func url(for query: String) -> String {
             let escaped = query.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? query
             let country = (Locale.current.region?.identifier ?? "AR").lowercased()
-            let language = Locale.current.language.languageCode?.identifier ?? "es"
+            // El idioma del teléfono, no el de la app: ver `Answerer.language`.
+            // Con el de la app salía kl=ar-en, que DuckDuckGo no conoce, y la
+            // búsqueda quedaba en "All Regions".
+            let language = Answerer.phoneLanguage
             switch self {
             case .google:
                 return "https://www.google.com/search?q=\(escaped)&gl=\(country)&hl=\(language)"
