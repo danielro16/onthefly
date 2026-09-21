@@ -958,9 +958,10 @@ struct ArticleView: View {
     /// impressive.
     @ViewBuilder
     private var savingsNote: some View {
-        let stops = isSimple ? 0 : page.stats.originalStops
-        let now = (groups.isEmpty ? page.groups.count : groups.count)
-            + page.listings.count + visibleBlocks.count
+        // Sólo donde se puede contar de verdad. El layout por intención no
+        // sabe cuántas filas va a dibujar, y antes inventaba el número.
+        let stops = page.readsInOrder && !isSimple ? page.stats.originalStops : 0
+        let now = page.stopCount(of: orderedSegments)
         if stops > 0, now < stops {
             Text("Esta página tenía \(stops) elementos para recorrer. Quedaron \(now).")
                 .font(.footnote)

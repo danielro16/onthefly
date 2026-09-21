@@ -516,6 +516,31 @@ extension ExtractedPage {
         }
     }
 
+    /// Cuántas paradas es de verdad este recorrido, contadas como las cuenta
+    /// VoiceOver: una por fila, no una por tramo.
+    ///
+    /// Existe porque el número que la app venía diciendo estaba mal. Sumaba
+    /// grupos más listados más bloques —cosas que no son paradas— y en
+    /// Wikipedia anunciaba "quedaron 20" cuando el recorrido real eran 52.
+    /// Decirle a alguien que no puede contar por sí mismo un número inventado
+    /// es peor que no decirle nada.
+    func stopCount(of segments: [StreamSegment]) -> Int {
+        segments.reduce(0) { total, segment in
+            switch segment {
+            case .block, .door:
+                return total + 1
+            case .form(let action):
+                // El título, un campo por fila, y el botón de enviar.
+                return total + 2 + (action.fields ?? []).count
+            case .options(_, let options):
+                return total + options.count
+            case .listing(let listing):
+                let open = listing.items.count <= StopBudget.openList
+                return total + 1 + (open ? listing.items.count : 0)
+            }
+        }
+    }
+
     /// El id de lo que el último toque hizo aparecer, para llevar ahí el
     /// cursor de VoiceOver.
     static let arrivalsID = "jef.arrivals"
