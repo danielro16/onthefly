@@ -1,0 +1,13 @@
+  1 [H] Asistente
+  2 [H] Vos: hola, ¿qué podés hacer?
+  3 [txt] Puedo abrir sitios, buscar, leerte páginas, resumirlas y contestar lo que dicen. Para empezar, un sitio o algo para buscar; o una de estas opciones.
+  4 [H] Vos: Llevame a La Nación
+  5 [txt] Abriendo lanacion.com.ar.
+  6 [txt] Estás en la portada de LA NACION. Los titulares principales son: Adorni explicó sobre bitcoins en negro y vivir como si el dinero no existiera. Una jueza declaró inconstitucional la ley que bajó la punibilidad a 14 años. Hubo filtraciones y desconfianza en la Quinta de Olivos sobre una ex colaboradora de Karina. Renunció el secretario de Discapacidad por recortes.
+  7 [btn] Abrir «Bitcoins en negro, ventas a escondidas y la decisión de vivir como si…»  (Primera de 5 opciones.)
+  8 [btn] Abrir «Una jueza declaró la inconstitucionalidad de la ley que bajó la…»
+  9 [btn] Abrir «Filtraciones, desconfianza y una denuncia judicial: la trastienda de…»
+ 10 [btn] Abrir «Renunció el secretario de Discapacidad en medio de la interna del…»
+ 11 [btn] Otra cosa
+ 12 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 13 [btn] Enviar

@@ -5,9 +5,15 @@
     "objetivo": "Llegar a una lista de auriculares que está detrás de una prueba anti-robot: resolverla cuando el asistente lo pida, y que el asistente siga solo.",
     "servir": "Tests/fixtures/anti-robot",
     "pasos": [
-      {"escribir": "{servidor}/captcha.html"},
-      {"esperar": 15},
-      {"escribir": "¿cuánto sale el más barato?"}
+      {
+        "escribir": "{servidor}/captcha.html"
+      },
+      {
+        "esperar": 15
+      },
+      {
+        "escribir": "¿cuánto sale el más barato?"
+      }
     ]
   },
   {
@@ -16,9 +22,18 @@
     "objetivo": "Resolver la prueba anti-robot que aparece en la misma página y seguir con la tarea.",
     "servir": "Tests/fixtures/anti-robot",
     "pasos": [
-      {"escribir": "{servidor}/misma-pagina.html"},
-      {"esperar": 15},
-      {"tocar": "Ya la resolví"}
+      {
+        "escribir": "{servidor}/misma-pagina.html"
+      },
+      {
+        "tocar": "Ir a la prueba"
+      },
+      {
+        "esperar": 12
+      },
+      {
+        "tocar": "Ya la resolví"
+      }
     ]
   }
 ]

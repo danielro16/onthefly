@@ -240,6 +240,19 @@ final class HeadlessWebView: NSObject {
         scroll.setContentOffset(CGPoint(x: 0, y: -scroll.adjustedContentInset.top), animated: false)
     }
 
+    /// Brings a challenge into view — reCAPTCHA, hCaptcha, Turnstile — so the
+    /// person finds it where they land.
+    func scrollToChallenge() async {
+        _ = try? await webView?.evaluateJavaScript("""
+            (function () {
+              var f = Array.prototype.find.call(document.querySelectorAll('iframe'), function (x) {
+                return /recaptcha|hcaptcha|turnstile|challenges\\.cloudflare/i.test((x.src || '') + ' ' + (x.title || ''));
+              });
+              (f || document.body).scrollIntoView({ block: 'center' });
+            })()
+            """)
+    }
+
     /// Whether there is a page to go back to.
     var canGoBack: Bool { webView?.canGoBack ?? false }
 

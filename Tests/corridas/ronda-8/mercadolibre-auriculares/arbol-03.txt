@@ -1,0 +1,19 @@
+  1 [H] Asistente
+  2 [H] Vos: entrá a mercado libre y buscame auriculares bluetooth
+  3 [txt] Buscando: mercado libre.
+  4 [txt] Estás en los resultados de «mercado libre». Los 3 más probables:
+  5 [txt] Cuando elijas, sigo con: buscame auriculares bluetooth.
+  6 [H] Vos: Mercado Libre Argentina - Envíos Gratis en el día — www.mercadolibre.com.ar
+  7 [txt] Abriendo mercadolibre.com.ar.
+  8 [txt] Estás en Mercado Libre Argentina, la página de inicio. Para buscar auriculares bluetooth, tenés un campo que dice "Ingresá lo que quieras encontrar".
+  9 [txt] Sigo con: buscame auriculares bluetooth.
+ 10 [txt] Buscando auriculares bluetooth en mercadolibre.com.ar.
+ 11 [txt] El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba; con VoiceOver, antes de esta conversación. Cuando esté resuelta, continuamos.
+ 12 [txt] Tiene una opción de audio, dentro del recuadro de la prueba.
+ 13 [H] Vos: ¿cuánto sale el más barato?
+ 14 [txt] La página actual no muestra auriculares, solo me pide completar un paso de seguridad y no puedo ver el contenido. Por lo tanto, no puedo decirte el precio del más barato.
+ 15 [btn] Ya la resolví  (Primera de 3 opciones.)
+ 16 [btn] Volver a la página anterior
+ 17 [btn] Otra cosa
+ 18 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 19 [btn] Enviar

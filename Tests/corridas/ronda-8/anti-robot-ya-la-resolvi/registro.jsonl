@@ -1,0 +1,20 @@
+{"tipo": "botones", "t": 1790028196.264886, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"quien": "persona", "t": 1790028202.814505, "texto": "http://localhost:56910/misma-pagina.html", "tipo": "turno"}
+{"t": 1790028202.815359, "opciones": [], "tipo": "botones"}
+{"quien": "jef", "t": 1790028202.81558, "texto": "Abriendo localhost.", "tipo": "turno"}
+{"cola": false, "t": 1790028202.815799, "texto": "Abriendo localhost.", "tipo": "voz"}
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790028202.850832}
+{"t": 1790028205.213726, "titulo": "Auriculares bluetooth", "url": "http://localhost:56910/misma-pagina.html", "tipo": "pagina", "texto": "PÁGINA: localhost — Auriculares bluetooth\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados."}
+{"t": 1790028205.2148762, "opciones": [], "tipo": "botones"}
+{"t": 1790028205.215059, "quien": "jef", "tipo": "turno", "texto": "El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba; con VoiceOver, antes de esta conversación. Cuando esté resuelta, continuamos."}
+{"t": 1790028205.2154632, "cola": false, "texto": "El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba; con VoiceOver, antes de esta conversación. Cuando esté resuelta, continuamos.", "tipo": "voz"}
+{"opciones": ["Ya la resolví", "Otra cosa"], "t": 1790028205.215605, "tipo": "botones"}
+{"tipo": "botones", "t": 1790028232.137867, "opciones": []}
+{"tipo": "turno", "quien": "persona", "t": 1790028232.140749, "texto": "Ya la resolví"}
+{"url": "http://localhost:56910/misma-pagina.html", "tipo": "pagina", "texto": "PÁGINA: localhost — Auriculares bluetooth\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nAuriculares bluetooth\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499\nAuriculares Vincha Bluetooth con Micrófono $24.990\nAuriculares con Cancelación de Ruido $89.900\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499, Auriculares Vincha Bluetooth con Micrófono $24.990, Auriculares con Cancelación de Ruido $89.900", "titulo": "Auriculares bluetooth", "t": 1790028232.753456}
+{"quien": "jef", "tipo": "turno", "texto": "Listo, ya pasamos la verificación.", "t": 1790028232.753936}
+{"tipo": "voz", "texto": "Listo, ya pasamos la verificación.", "cola": false, "t": 1790028232.754547}
+{"opciones": [], "tipo": "botones", "t": 1790028232.754755}
+{"texto": "Estás en una página de auriculares bluetooth. Te muestro los tres modelos disponibles con envío gratis, de menor a mayor precio. Los Auriculares In Ear Bluetooth Básicos cuestan $12.499, los Auriculares Vincha Bluetooth con Micrófono valen $24.990, y los Auriculares con Cancelación de Ruido cuestan $89.900.", "t": 1790028234.7102818, "tipo": "turno", "quien": "jef"}
+{"texto": "Estás en una página de auriculares bluetooth. Te muestro los tres modelos disponibles con envío gratis, de menor a mayor precio. Los Auriculares In Ear Bluetooth Básicos cuestan $12.499, los Auriculares Vincha Bluetooth con Micrófono valen $24.990, y los Auriculares con Cancelación de Ruido cuestan $89.900.", "cola": true, "t": 1790028234.710794, "tipo": "voz"}
+{"t": 1790028234.711036, "opciones": ["Leer la página", "Resumir la página", "Otra cosa"], "tipo": "botones"}

@@ -1,0 +1,22 @@
+  1 [H] Asistente
+  2 [H] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Los titulares principales son: La explicación de Adorni sobre bitcoins en negro y ventas a escondidas. Una jueza declaró inconstitucional la ley que bajó la punibilidad a 14 años y sobreseyó. Filtraciones y desconfianza en la Quinta de Olivos sobre la salida de una ladera de Karina. Renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes.
+  8 [H] Vos: dame los titulares
+  9 [txt] Titulares 1 a 3 de 144:
+ 10 [txt] 1. Bitcoins en negro, ventas a escondidas y la decisión de vivir como si el dinero “no existiera”
+ 11 [txt] 2. Una jueza declaró la inconstitucionalidad de la ley que bajó la punibilidad a 14 años y sobreseyó
+ 12 [txt] 3. Filtraciones, desconfianza y una denuncia judicial: la trastienda de la salida de una ladera de Karina
+ 13 [H] Vos: Abrir «Bitcoins en negro, ventas a escondidas y la decisión de vivir como si…»
+ 14 [txt] Abriendo «Bitcoins en negro, ventas a escondidas y la decisión de vivir como si…»
+ 15 [txt] Estás en la nota de LA NACION sobre la explicación de Manuel Adorni sobre bitcoins en negro, ventas a escondidas y su decisión de vivir como si el dinero no existiera. Se detalla cómo el exjefe de Gabinete justificó su patrimonio con operaciones cripto ocultas, y las inconsistencias en su historia.
+ 16 [btn] Leer la nota  (Primera de 5 opciones.)
+ 17 [btn] Resumir la nota
+ 18 [btn] Abrir «Guardar nota»
+ 19 [btn] Volver a la página anterior
+ 20 [btn] Otra cosa
+ 21 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 22 [btn] Enviar

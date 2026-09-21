@@ -1,0 +1,32 @@
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790027982.977282}
+{"tipo": "turno", "quien": "persona", "t": 1790027989.5454059, "texto": "quiero entrar al home banking del banco nación"}
+{"opciones": [], "tipo": "botones", "t": 1790027989.546335}
+{"t": 1790027989.547262, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"quien": "jef", "tipo": "turno", "t": 1790027990.2194471, "texto": "Buscando: home banking banco nacion."}
+{"tipo": "voz", "t": 1790027990.2207131, "cola": false, "texto": "Buscando: home banking banco nacion."}
+{"t": 1790027993.159796, "texto": "PÁGINA: lite.duckduckgo.com — home banking banco nacion at DuckDuckGo\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nDuckDuckGo\nNext Page >\nBanco de la Nación Argentina - Home banking, 1.\nAccedé a BNA Digital Empresas para realizar operaciones bancarias de manera ágil y segura desde tu computadora o celular\ndigital.bna.com.ar\n\nBanco de la Nación Argentina, 2.\nProductos, servicios y promociones diseñados para atender las necesidades de personas y empresas de los distintos sector\nwww.bna.com.ar/Home/\n\nBanco de la Nación Argentina, 3.\n¿Cómo lo usás? Muy fácil: Ingresá a la app con tus datos de acceso. Ingresá a \"Tu banco\" y seleccioná la opción \"Token\" \nwww.bna.com.ar/personas/bnamas\n\nBienvenido a la plataforma Web del Banco de la Nación Argentina, 4.\nAcceda a la plataforma web del Banco de la Nación Argentina para realizar operaciones bancarias online. Ingrese su nombr\nbnanet.bna.com.ar/MENU/menuweb\n\nHome Banking, 5.\n¡Acceso a Home Banking! A partir de ahora, el acceso a Home Banking es diferente. Deberá iniciar sesión utilizando su Do\nhomebanking.bna.com.es\n\nBienvenido a la plataforma Web del Banco de la Nación Argentina, 6.\nBienvenido a la plataforma Web del Banco de la Nación Argentina Ingreso al sistema - Operar Cambiar Contraseña Restaurar\nbnanet.bna.com.ar/indexMENU.html\n\nBanco de la Nación Argentina, 7.\nIngresá al sitio del banco siempre escribiendo la dirección en tu navegador para mayor seguridad. En la barra de direcci\nwww.bna.com.ar/Home/home/InformacionDeSeguridad\n\nAdiós al home banking del Banco Nación: cómo operar ahora desde la app ..., 8.\nEl principal cambio es que el Home Banking dejará de funcionar y todas las operaciones pasarán a realizarse desde BNA+, \nSearch\nNext Page >\nFORMULARIO que pide: q, kl, df — botón «Search»", "tipo": "pagina", "titulo": "home banking banco nacion at DuckDuckGo", "url": "https://lite.duckduckgo.com/lite/?q=home%20banking%20banco%20nacion&kl=ar-es"}
+{"texto": "Estás en los resultados de «home banking banco nacion». Los 3 más probables:", "tipo": "turno", "quien": "jef", "t": 1790027993.165162}
+{"cola": true, "tipo": "voz", "texto": "Estás en los resultados de «home banking banco nacion». Los 3 más probables: 1. Banco de la Nación Argentina - Home banking, digital.bna.com.ar. 2. Banco de la Nación Argentina, bna.com.ar. 3. Bienvenido a la plataforma Web del Banco de la Nación…, bnanet.bna.com.ar", "t": 1790027993.165556}
+{"opciones": ["Banco de la Nación Argentina - Home banking — digital.bna.com.ar", "Banco de la Nación Argentina — www.bna.com.ar", "Bienvenido a la plataforma Web del Banco de la Nación Argentina — bnanet.bna.com.ar", "Ver más opciones (2)"], "tipo": "botones", "t": 1790027993.165678}
+{"opciones": ["Banco de la Nación Argentina - Home banking — digital.bna.com.ar", "Banco de la Nación Argentina — www.bna.com.ar", "Bienvenido a la plataforma Web del Banco de la Nación Argentina — bnanet.bna.com.ar", "Ver más opciones (2)", "Otra cosa"], "t": 1790027993.166471, "tipo": "botones"}
+{"tipo": "botones", "opciones": [], "t": 1790027999.23365}
+{"tipo": "turno", "texto": "Banco de la Nación Argentina - Home banking — digital.bna.com.ar", "quien": "persona", "t": 1790027999.236856}
+{"tipo": "turno", "texto": "Abriendo digital.bna.com.ar.", "quien": "jef", "t": 1790027999.2372398}
+{"tipo": "voz", "texto": "Abriendo digital.bna.com.ar.", "t": 1790027999.237845, "cola": false}
+{"titulo": "Home banking", "tipo": "pagina", "t": 1790028003.716352, "url": "https://digital.bna.com.ar/loginStep1", "texto": "PÁGINA: digital.bna.com.ar — Home banking\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nSaltar al contenido principal\nSaltar al contenido principal\nRecordá tu DNI\nRecuperar usuario y contraseña\nFORMULARIO que pide: DNI, Usuario — botón «Continuar»\n\nMENÚ, AVISOS Y DATOS AL PASO DEL SITIO (no es el contenido, pero se puede preguntar por esto):\npie de página\nContáctenos\nTérminos y Condiciones"}
+{"tipo": "botones", "opciones": [], "t": 1790028003.716796}
+{"tipo": "turno", "quien": "jef", "t": 1790028004.830049, "texto": "Estás en el Home Banking del Banco Nación. Te pide tu DNI y tu usuario para ingresar."}
+{"tipo": "voz", "t": 1790028004.8311958, "cola": true, "texto": "Estás en el Home Banking del Banco Nación. Te pide tu DNI y tu usuario para ingresar."}
+{"opciones": ["Abrir «Recuperar usuario y contraseña»"], "tipo": "botones", "t": 1790028004.831719}
+{"opciones": ["Completar «DNI»", "Completar «Usuario»", "Abrir «Recuperar usuario y contraseña»", "Volver a la página anterior", "Otra cosa"], "tipo": "botones", "t": 1790028004.832088}
+{"t": 1790028010.638894, "opciones": [], "tipo": "botones"}
+{"quien": "persona", "texto": "Completar «DNI»", "tipo": "turno", "t": 1790028010.6395679}
+{"opciones": [], "t": 1790028010.639853, "tipo": "botones"}
+{"quien": "jef", "tipo": "turno", "texto": "¿Qué pongo en DNI? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.", "t": 1790028011.220638}
+{"tipo": "voz", "texto": "¿Qué pongo en DNI? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.", "cola": false, "t": 1790028011.2216182}
+{"t": 1790028011.2222009, "opciones": ["Completar «Usuario»", "Volver a la página anterior", "Otra cosa"], "tipo": "botones"}
+{"quien": "persona", "tipo": "turno", "t": 1790028020.107266, "texto": "•••••456"}
+{"tipo": "botones", "opciones": [], "t": 1790028020.1076531}
+{"tipo": "turno", "quien": "jef", "t": 1790028020.830411, "texto": "Listo, escrito en DNI."}
+{"tipo": "voz", "cola": false, "t": 1790028020.8316278, "texto": "Listo, escrito en DNI."}
+{"t": 1790028020.832172, "tipo": "botones", "opciones": ["Completar «Usuario»", "Volver a la página anterior", "Otra cosa"]}

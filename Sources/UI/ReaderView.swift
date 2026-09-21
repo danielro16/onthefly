@@ -148,6 +148,17 @@ final class ReaderModel {
         }
     }
 
+    /// Lleva a la prueba anti-robot: la página se desplaza hasta ella y el
+    /// cursor de VoiceOver pasa a la página.
+    func showChallenge() {
+        Task {
+            await engine.scrollToChallenge()
+            if let web = engine.webView {
+                UIAccessibility.post(notification: .layoutChanged, argument: web)
+            }
+        }
+    }
+
     /// Vuelve a leer la página tal como está ahora.
     func reread() async {
         guard let page = try? await engine.reread() else { return }

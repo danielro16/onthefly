@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Los titulares principales son: La explicación de Adorni sobre bitcoins en negro y ventas a escondidas. Una jueza declaró inconstitucional la ley que bajó la punibilidad a 14 años y sobreseyó. Filtraciones y desconfianza en la Quinta de Olivos sobre la salida de una ladera de Karina. Renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes.
+  8 [btn] Abrir «Bitcoins en negro, ventas a escondidas y la decisión de vivir como si…»  (Primera de 6 opciones.)
+  9 [btn] Abrir «Una jueza declaró la inconstitucionalidad de la ley que bajó la…»
+ 10 [btn] Abrir «Filtraciones, desconfianza y una denuncia judicial: la trastienda de…»
+ 11 [btn] Abrir «Renunció el secretario de Discapacidad en medio de la interna del…»
+ 12 [btn] Volver a la página anterior
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar

@@ -117,6 +117,7 @@ final class Assistant {
         let resume: Resume
     }
     static let solvedID = "jef-ya-resuelta"
+    static let toTestID = "jef-ir-a-la-prueba"
 
     /// La dirección de la última página que se contó. Si la página cambia
     /// sola y queda en otra, hay que decirlo.
@@ -262,7 +263,8 @@ final class Assistant {
         // destino falló, y "dame los titulares" terminó en "no pude decidir".
         if let page = reader.page, readsHeadlines(page), !Self.isQuestion(goal),
            goal.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil).contains("titulares") {
-            readingFrom = 0
+            // Sin volver a empezar: si al llegar ya se dijeron cuatro, sigue
+            // desde el quinto. Repetir los mismos era lo que molestaba.
             readAloud(page)
             return
         }
@@ -394,7 +396,7 @@ final class Assistant {
             if let page = reader.page, Self.isQuestion(goal), let answerer,
                let answer = try? await answerer.answer(goal, about: Self.saying(page), previous: previousRequest) {
                 say(answer.text)
-                nextQuestions = answer.questions
+                nextQuestions = Self.fresh(answer.questions, after: goal)
                 return
             }
             // Buscar estando parado en un sitio es buscar EN ese sitio.
@@ -1112,8 +1114,8 @@ final class Assistant {
         if image {
             say("El sitio web me pide copiar un código que está dibujado en una imagen, y ésa no la puedo leer. Hay que resolverla en la página, arriba. Cuando esté resuelta, continuamos.")
         } else {
-            // Dónde está, siempre: los jueces no sabían cómo llegar a la prueba.
-            say("El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba; con VoiceOver, antes de esta conversación. Cuando esté resuelta, continuamos.")
+            // Y cómo llegar: el botón "Ir a la prueba" lleva hasta ella.
+            say("El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba: «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, continuamos.")
             if page.overlay?.audioChallenge == true {
                 say("Tiene una opción de audio, dentro del recuadro de la prueba.")
             }
@@ -1150,12 +1152,30 @@ final class Assistant {
         return text.range(of: "suscri|subscri|registr|login|signin|sign-in|iniciar sesion|/ingresar", options: .regularExpression) != nil
     }
 
+    /// Las preguntas sugeridas que no son la que se acaba de contestar: después
+    /// de "¿y el oficial?", ofrecer "¿Y el dólar oficial?" era repetirla.
+    static func fresh(_ questions: [String], after asked: String) -> [String] {
+        let done = stems(asked)
+        return questions.filter { !stems($0).subtracting(done).isEmpty }
+    }
+
     /// Una dirección sin consulta ni fragmento: el lugar, no el estado.
     static func place(_ address: String) -> String {
         guard var parts = URLComponents(string: address) else { return address }
         parts.query = nil
         parts.fragment = nil
         return parts.string ?? address
+    }
+
+    /// La opción que se llama exactamente como lo pedido, sin artículos ni
+    /// verbos de ir: "llevame a deportes" → "Deportes".
+    static func exactOption(for goal: String, among options: [Action]) -> Action? {
+        let filler = "^(llevame|lleva|abri|abrime|abrir|anda|ir|quiero ir|mostrame|ver|entra)( a| al| a la| a los| a las)?\\s+"
+        let asked = flatten(goal.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+            .replacingOccurrences(of: filler, with: "", options: .regularExpression)
+            .replacingOccurrences(of: "^(la|el|los|las)\\s+", with: "", options: .regularExpression))
+        guard asked.count >= 4 else { return nil }
+        return options.first { flatten($0.label) == asked && $0.kind != .form }
     }
 
     /// Un dato tapado salvo sus tres últimos caracteres: "•••••456".
@@ -1479,6 +1499,15 @@ final class Assistant {
             await goBack(on: reader)
             return
         }
+        // Hasta la prueba: la página se desplaza hasta ella y el cursor de
+        // VoiceOver pasa a la página. Decir "está arriba" no alcanzaba: los
+        // jueces no encontraban cómo llegar.
+        if action.id == Self.toTestID {
+            working = false
+            reader.showChallenge()
+            say("Listo: la prueba está en la página. Cuando esté resuelta, continuamos.")
+            return
+        }
         // La persona dice que ya resolvió la prueba: se vuelve a mirar la
         // página, y se sigue o se dice que todavía está.
         if action.id == Self.solvedID {
@@ -1592,6 +1621,17 @@ final class Assistant {
             guard !options.isEmpty else {
                 say("Esta página no ofrece nada que pueda abrir.")
                 return
+            }
+
+            // Si lo pedido ES el nombre de una opción —"deportes" y el link
+            // "Deportes"—, no hay nada que decidir. Preguntárselo a Jev era un
+            // viaje de más, y una vez falló y "llevame a deportes" terminó en
+            // "no pude decidir a dónde ir".
+            if first, let exact = Self.exactOption(for: goal, among: options), touched.insert(exact.id).inserted {
+                say("Abriendo «\(exact.label)».")
+                await reader.activate(exact)
+                first = false
+                continue
             }
 
             let decision: PageAnalyzer.Step
@@ -1781,7 +1821,7 @@ final class Assistant {
                 return
             }
             say(answer.text)
-            nextQuestions = answer.questions
+            nextQuestions = Self.fresh(answer.questions, after: question)
         } catch Answerer.AnswerError.transport {
             say("Sin conexión. Puedo leer la página, pero no contestar preguntas.")
         } catch {
@@ -1969,7 +2009,9 @@ final class Assistant {
         }
         // Volver no se cae al recortar: era lo primero que desaparecía.
         let back = options.first { $0.id == Self.backID }
-        var kept = Array(options.filter { $0.id != Self.backID }.prefix(back == nil ? 4 : 3))
+        // Cinco como tope: tres titulares, "Seguir con los titulares" y
+        // "Volver". Con cuatro, "Seguir" era el que se caía.
+        var kept = Array(options.filter { $0.id != Self.backID }.prefix(back == nil ? 5 : 4))
         if let back { kept.append(back) }
         offer = Offer(goal: "", options: kept + [other])
     }
@@ -1985,8 +2027,9 @@ final class Assistant {
         var out: [Action] = []
 
         if challenge != nil || Self.hasChallenge(page) {
-            // Por si el sitio no avisa cuando se resuelve: la persona lo dice.
-            return [option(Self.solvedID, "Ya la resolví")]
+            // Llevar hasta la prueba, y por si el sitio no avisa cuando se
+            // resuelve, que la persona lo diga.
+            return [option(Self.toTestID, "Ir a la prueba"), option(Self.solvedID, "Ya la resolví")]
                 + (canGoBack ? [option(Self.backID, "Volver a la página anterior")] : [])
         }
 
@@ -2271,6 +2314,10 @@ final class Assistant {
             // dijo "para sacar un turno, tenés que ir a la sección Turnos", y
             // los botones eran sólo los primeros titulares: el de Turnos no
             // estaba.
+            // Los cuatro ya se dijeron: "dame los titulares" sigue desde el
+            // quinto en vez de repetirlos.
+            readingURL = page.url
+            readingFrom = lead.count
             let hrefs = Set(named.compactMap(\.href))
             // Y sólo si tiene que ver con lo pedido: en Clarín, con "clarín"
             // como pedido, ese lugar lo ocupaba una nota que nadie nombró.

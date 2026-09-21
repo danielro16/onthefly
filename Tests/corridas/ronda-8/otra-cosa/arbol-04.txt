@@ -1,0 +1,22 @@
+  1 [H] Asistente
+  2 [H] Vos: la nación
+  3 [txt] Buscando: la nacion.
+  4 [txt] Estás en los resultados de «la nacion». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Estos son los titulares principales:
+1. Adorni explicó su postura sobre los bitcoins en negro y las ventas a escondidas.
+2. Una jueza declaró inconstitucional la ley que baja la punibilidad a 14 años y sobreseyó un caso.
+3. Hubo filtraciones y desconfianza en la trastienda de la salida de una colaboradora de Karina Milei, que generó una denuncia judicial.
+4. El secretario de Discapacidad renunció en medio de la interna del Gobierno por los recortes.
+  8 [H] Vos: Otra cosa
+  9 [txt] ¿Qué otra cosa hacemos? Se puede escribir, o dictar con el micrófono del teclado.
+ 10 [H] Vos: llevame a deportes
+ 11 [txt] No pude decidir a dónde ir desde acá. Se puede pedir de otra forma, o tocar una opción.
+ 12 [btn] Intentar de nuevo  (Primera de 5 opciones.)
+ 13 [btn] Leer los titulares
+ 14 [btn] Resumir la portada
+ 15 [btn] Volver a la página anterior
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 18 [btn] Enviar
