@@ -1,18 +1,15 @@
 import SwiftUI
 import WebKit
 
-/// The live page, shown as-is.
+/// La página, tal como es.
 ///
-/// The fallback. Whatever the native rebuild cannot handle — a captcha, an
-/// anti-bot wall, a payment iframe, a page that did not extract — the user
-/// must still be able to get through it, with VoiceOver reading the web the
-/// ordinary way. Worse than the native view; incomparably better than "could
-/// not read this page" and nowhere to go.
+/// No se reconstruye ni se reordena: VoiceOver la lee como lee cualquier web,
+/// y la persona puede no tocarla nunca y hacer todo hablando con el
+/// asistente. Queda a la vista para quien ve, y para lo que sólo la persona
+/// puede hacer: una contraseña, un captcha, el botón de pagar.
 ///
-/// This is the engine's own WKWebView, not a copy. The session, the form the
-/// user half filled, the captcha they just solved: all of it is still there
-/// when they switch back, and anything they navigate to here is extracted
-/// and waiting on the native side.
+/// Es el WKWebView del motor, no una copia. Lo que se haga acá —iniciar
+/// sesión, resolver un captcha, navegar— es lo mismo que el asistente ve.
 struct WebPageView: UIViewRepresentable {
     let webView: WKWebView
 

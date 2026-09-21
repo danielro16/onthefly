@@ -33,10 +33,8 @@ struct ExtractedPage: Codable, Sendable {
     /// Whether a re-extraction produced the same page.
     ///
     /// Pressing a control that turns out to change nothing is common: a tab
-    /// that was already selected, a menu that reopens the same items. Swapping
-    /// the state for an identical page rebuilds the view and throws VoiceOver
-    /// focus back to the top, so the user is punished for a tap that did
-    /// nothing. Better to say it did nothing and leave them where they are.
+    /// that was already selected, a menu that reopens the same items. Better
+    /// to say it did nothing than to report the same page as a new one.
     func isEquivalent(to other: ExtractedPage?) -> Bool {
         guard let other else { return false }
         return title == other.title
@@ -50,17 +48,15 @@ struct ExtractedPage: Codable, Sendable {
 
     /// La FORMA del recorrido, para distinguir dos lecturas.
     ///
-    /// En una página que se lee en su orden, el recorrido es lo que se dibuja.
     /// Sin mirarlo, un toque que abrió un panel sin traer controles nuevos —o
     /// que expandió una sección— se leía como "la página no cambió", y la app
-    /// se lo decía al usuario en voz alta.
+    /// se lo decía a la persona en voz alta.
     ///
     /// La forma, y no el texto: un reloj, un ticker o un aviso que rota
-    /// cambian el texto solos, y si eso contara como página nueva la vista se
-    /// reconstruiría sin que nadie tocara nada — que es exactamente lo que
-    /// `isEquivalent` existe para evitar, porque reconstruir tira el cursor de
-    /// VoiceOver al principio. Un bloque cuenta por estar, no por lo que diga;
-    /// un link, por su dirección, que es lo que hace que sea otro link.
+    /// cambian el texto solos, y si eso contara como página nueva la página
+    /// cambiaría sin que nadie tocara nada. Un bloque cuenta por estar, no por
+    /// lo que diga; un link, por su dirección, que es lo que hace que sea otro
+    /// link.
     private var streamShape: [String] {
         (stream ?? []).map { entry in
             entry.kind + "|" + (entry.ref ?? entry.href ?? "")
@@ -69,10 +65,6 @@ struct ExtractedPage: Codable, Sendable {
 
     /// Every field on the page, in order.
     var fields: [Action.Field] { actions.flatMap { $0.fields ?? [] } }
-
-    /// What to call this page on screen. Some pages ship an empty `<title>`;
-    /// the host is a worse name, but it is never blank.
-    var displayTitle: String { title.isEmpty ? siteName : title }
 
     /// El nombre del sitio, o el dominio cuando la página no lo declara.
     ///
@@ -130,48 +122,6 @@ struct ExtractedPage: Codable, Sendable {
         return kept.first ?? "Inicio"
     }
 
-    /// La línea de qué es esto: la descripción del sitio, o la primera frase
-    /// del contenido.
-    ///
-    /// Vacía cuando repetiría lo que ya está abajo. Readability usa el primer
-    /// párrafo como excerpt si la página no declaró descripción, y decir dos
-    /// veces el mismo párrafo es una parada que roba.
-    var summary: String {
-        let text = excerpt.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard text.count > 20 else { return "" }
-
-        if let first = blocks.first(where: { if case .paragraph = $0 { return true }; return false })?
-            .plainText.trimmingCharacters(in: .whitespacesAndNewlines),
-            first.hasPrefix(String(text.prefix(40))) {
-            return ""
-        }
-
-        guard text.count > 180 else { return text }
-        // Una frase. Cortar a la mitad de la segunda es peor que no decirla.
-        if let end = text.prefix(180).lastIndex(of: ".") {
-            return String(text[...end])
-        }
-        return String(text.prefix(180)) + "…"
-    }
-
-    /// The control set that IS the page, when there is one.
-    ///
-    /// A flight calendar is 34 sibling day buttons and little else. Asking
-    /// what the page is for, or filing those days under a goal, can only
-    /// lose: one run put them under "Comparar", the next under "Gestionar",
-    /// collapsed behind a question. When one cluster holds most of the
-    /// page's actions, it leads as itself — no model needed to see that a
-    /// page made of one grid is that grid.
-    var dominantCluster: [Action] {
-        var byCluster: [String: [Action]] = [:]
-        for action in actions {
-            if let cluster = action.cluster { byCluster[cluster, default: []].append(action) }
-        }
-        guard let largest = byCluster.values.max(by: { $0.count < $1.count }) else { return [] }
-        let share = Double(largest.count) / Double(max(actions.count, 1))
-        return largest.count >= 6 && share >= 0.6 ? largest : []
-    }
-
     struct Stats: Codable, Sendable {
         let blockCount: Int
         let actionCount: Int
@@ -192,12 +142,7 @@ struct ExtractedPage: Codable, Sendable {
     }
 }
 
-/// A cluster of related actions.
-///
-/// The point of the whole project in one type. On a real airline home page
-/// this turns 199 VoiceOver stops into 6 — and, because every group carries a
-/// title, it hands the headings rotor the destinations the page never
-/// declared. That page ships exactly one heading of its own.
+/// A cluster of related actions, as the extractor groups them.
 struct ActionGroup: Codable, Sendable, Identifiable {
     let id: String
     let region: String
@@ -207,27 +152,6 @@ struct ActionGroup: Codable, Sendable, Identifiable {
     let candidates: [String]
     let actionIds: [String]
     let size: Int
-
-    /// Title used until Jev picks one — and whenever Jev is unavailable.
-    ///
-    /// Deliberately generic: a wrong specific title is worse than a vague
-    /// accurate one, because a screen-reader user navigates by these.
-    var fallbackTitle: String {
-        switch (region, kind) {
-        case ("footer", _), ("contentinfo", _): return "Pie de página"
-        case ("header", _), ("banner", _):      return "Encabezado del sitio"
-        case ("nav", "link"), ("navigation", "link"): return "Enlaces de navegación"
-        case ("nav", _), ("navigation", _):     return "Menú"
-        case ("main", "form"), ("main", _):      return "Contenido principal"
-        case (_, "form"):                        return "Formulario"
-        default:                                 return "Otras acciones"
-        }
-    }
-
-    /// What VoiceOver announces for the collapsed group.
-    func accessibilityLabel(title: String) -> String {
-        "\(title), \(size) \(size == 1 ? "elemento" : "elementos")"
-    }
 }
 
 /// Something covering the page that has to be dealt with first.
@@ -366,14 +290,6 @@ struct Listing: Codable, Sendable, Identifiable {
             return parts.joined(separator: ", ")
         }
     }
-
-    /// What the group announces. Falls back to the count rather than to a
-    /// generic word: four boxes reading "Listado" are four identical stops.
-    var label: String {
-        title.isEmpty ? "Listado de \(count) elementos" : title
-    }
-
-    var subtitle: String { "\(count) elementos" }
 }
 
 /// Something the user can do on the page.
@@ -440,9 +356,8 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
             let label: String
         }
 
-        /// Passwords get a secure field and are never kept in app state.
-        /// Nothing here is stored, logged, or sent anywhere but the page the
-        /// user is already on.
+        /// A password is the person's to type: the assistant never writes
+        /// one, and nothing here is stored, logged, or sent anywhere.
         var isSecure: Bool { type == "password" }
 
         /// A search box, by type or by what it calls itself. Typed as-is: no
@@ -450,24 +365,8 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
         var isSearch: Bool {
             type == "search" || name.range(of: "busc|search|query|consult", options: [.regularExpression, .caseInsensitive]) != nil
         }
-
-        /// Maps the HTML type to the right keyboard, so a date field does not
-        /// open a QWERTY.
-        var contentHint: String { type }
     }
 
-    /// Compact description for Jev's state. Keeping this short matters: every
-    /// action competes for the same 32k context as the page text.
-    var summary: String {
-        var parts = ["\(kind.rawValue) in \(region): \(label)"]
-        if let fields, !fields.isEmpty {
-            parts.append("fields: " + fields.map(\.name).joined(separator: ", "))
-        }
-        if let submit, !submit.isEmpty {
-            parts.append("submit: \(submit)")
-        }
-        return parts.joined(separator: " — ")
-    }
 }
 
 /// A failed extraction. Kept separate so callers must handle it explicitly
@@ -522,18 +421,6 @@ enum Block: Codable, Sendable, Identifiable {
                 : "\(caption). \(rows.count) filas"
         case .separator:
             return ""
-        }
-    }
-
-    /// Every inline link the block carries, in reading order.
-    var links: [Link] {
-        switch self {
-        case .paragraph(_, _, let links), .quote(_, _, let links):
-            return links
-        case .list(_, _, let items):
-            return items.flatMap(\.links)
-        default:
-            return []
         }
     }
 
@@ -651,22 +538,10 @@ enum Block: Codable, Sendable, Identifiable {
 ///
 /// `start` and `end` are UTF-16 code-unit offsets into the block's text —
 /// the same units `NSRange` uses, so they convert without re-measuring.
-/// This is what lets VoiceOver focus each link inside a paragraph
-/// individually, which is the whole reason this app is native.
 struct Link: Codable, Sendable, Hashable {
     let start: Int
     let end: Int
     let href: String
-
-    /// Converts to an `NSRange`, clamped to the given text so malformed
-    /// offsets from a hostile page cannot crash the renderer.
-    func range(in text: String) -> NSRange? {
-        let total = text.utf16.count
-        let lower = max(0, min(start, total))
-        let upper = max(lower, min(end, total))
-        guard upper > lower else { return nil }
-        return NSRange(location: lower, length: upper - lower)
-    }
 }
 
 struct ListItem: Codable, Sendable {

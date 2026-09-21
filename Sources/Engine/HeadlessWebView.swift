@@ -4,11 +4,9 @@ import WebKit
 /// The browsing engine.
 ///
 /// One `WKWebView` for the life of the app. It loads the real page, runs the
-/// shared `extract.js` inside it, and hands back a typed `ExtractedPage`; the
-/// app renders native SwiftUI from that output and the WebView stays off
-/// screen. That split is the whole architecture: the web engine parses,
-/// native code renders, and VoiceOver behaves like a native app rather than
-/// like a web page in a wrapper.
+/// shared `extract.js` inside it, and hands back a typed `ExtractedPage`. The
+/// page is shown as it is; what the extractor reads is only what the
+/// assistant sees, and the controls it can press on the person's behalf.
 ///
 /// Two things follow from it being ONE WebView rather than one per load:
 ///
@@ -16,10 +14,9 @@ import WebKit
 ///   pages survive navigation, which is what puts banks, government portals
 ///   and anything behind a sign-in within reach. With a fresh WebView per URL
 ///   none of those could ever work, whatever the extractor learned to read.
-/// - It can be shown. When the native rebuild fails — a captcha, an anti-bot
-///   wall, a payment iframe, a page that simply did not extract — the user is
-///   handed the live page itself instead of a dead end, and whatever they do
-///   there (solve the captcha, sign in) is still there when they switch back.
+/// - What the person does on the page and what the assistant does are the
+///   same thing. Solving a captcha or signing in by hand leaves the assistant
+///   standing on the result.
 @MainActor
 final class HeadlessWebView: NSObject {
 
@@ -53,13 +50,13 @@ final class HeadlessWebView: NSObject {
     }
 
     /// The live page. Nil until the first load. Exposed so the UI can put it
-    /// on screen as the fallback; nothing else should reach into it.
+    /// on screen; nothing else should reach into it.
     private(set) var webView: WKWebView?
 
     /// Called when the page changed without anyone awaiting it: the user
     /// navigated inside the visible WebView, a site redirected, a form the
     /// engine submitted came back after its own re-extraction. Failures are
-    /// reported too, so the native view never keeps showing a page that is
+    /// reported too, so the assistant never keeps describing a page that is
     /// no longer the one loaded.
     var onPageChanged: ((Result<ExtractedPage, Error>) -> Void)?
 
@@ -106,9 +103,9 @@ final class HeadlessWebView: NSObject {
         let web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = self
         web.uiDelegate = self
-        // Off screen most of the time, but a real size makes layout-dependent
-        // sites (lazy images, responsive templates) resolve as they would on
-        // screen. When shown, SwiftUI gives it the screen's frame instead.
+        // Off screen until the first page arrives, but a real size makes
+        // layout-dependent sites (lazy images, responsive templates) resolve
+        // as they would on screen. Once shown, SwiftUI gives it its frame.
         web.frame = CGRect(x: 0, y: 0, width: 390, height: 844)
         webView = web
         return web
@@ -133,13 +130,13 @@ final class HeadlessWebView: NSObject {
     /// every navigation that was going to happen had started well inside this.
     private static let navigationGrace = Duration.milliseconds(450)
 
-    /// Presses a control the UI rebuilt, then re-extracts.
+    /// Presses a control the extractor found, then re-extracts.
     ///
-    /// A `<button>`'s behaviour lives in the page's own JavaScript, so a native
-    /// view cannot reproduce it — the only honest way to offer that button is
-    /// to ask the real element to click itself. On an airline home page the
-    /// three main actions (VUELOS, CHECK IN, ESTADO DE VUELO) are all buttons,
-    /// so without this the reader is read-only exactly where it matters most.
+    /// A `<button>`'s behaviour lives in the page's own JavaScript, so the
+    /// only honest way to press it is to ask the real element to click
+    /// itself. On an airline home page the three main actions (VUELOS, CHECK
+    /// IN, ESTADO DE VUELO) are all buttons, so without this the assistant
+    /// could not move exactly where it matters most.
     ///
     /// The hard part is not the press: it is knowing what the press DID.
     /// Asking the page — which is what this used to do — cannot work, because
@@ -198,16 +195,14 @@ final class HeadlessWebView: NSObject {
         }
 
         // Same document, changed DOM: a menu opened, a tab switched, a panel
-        // appeared. Re-extract so the native view matches what the page now is.
+        // appeared. Re-extract so what the assistant sees matches the page.
         return .updated(try await reextract(web))
     }
 
     /// Writes a value into a form control inside the live page.
     ///
-    /// The user types into a native `TextField`; this carries what they typed
-    /// to the real control. Nothing is stored, logged, or sent anywhere except
-    /// the page they are already on — including passwords, which the UI keeps
-    /// in a secure field and never holds in app state.
+    /// Nothing is stored, logged, or sent anywhere except the page the person
+    /// is already on.
     @discardableResult
     func fill(fieldID: String, value: String) async throws -> Bool {
         guard let web = webView else { throw ExtractionError.noSession }
@@ -252,44 +247,6 @@ final class HeadlessWebView: NSObject {
         unconsumed = nil
         web.goBack()
         return try await nextPage()
-    }
-
-    /// Reads the live page again, on request. The safety valve: every
-    /// heuristic about when a page has finished changing is a guess, and
-    /// the person can always ask.
-    func reread() async throws -> ExtractedPage {
-        guard let web = webView else { throw ExtractionError.noSession }
-        return try await reextract(web)
-    }
-
-    /// Opens a combobox's list without typing into it, so `suggestions`
-    /// can read everything it offers.
-    func open(fieldID: String) async throws {
-        guard let web = webView else { throw ExtractionError.noSession }
-        let safeID = fieldID.filter { $0.isLetter || $0.isNumber }
-        _ = try await web.evaluateJavaScript("window.__jefOpen('\(safeID)')")
-    }
-
-    /// What an autocomplete under `fieldID` is offering right now.
-    func suggestions(fieldID: String) async throws -> [String] {
-        guard let web = webView else { throw ExtractionError.noSession }
-        let safeID = fieldID.filter { $0.isLetter || $0.isNumber }
-        let result = try await web.evaluateJavaScript("window.__jefSuggestions('\(safeID)')")
-        let list = (result as? [String: Any])?["suggestions"] as? [[String: Any]] ?? []
-        return list.compactMap { $0["label"] as? String }
-    }
-
-    /// Picks one of them, and returns what the page put in the field.
-    func choose(fieldID: String, index: Int) async throws -> String {
-        guard let web = webView else { throw ExtractionError.noSession }
-        let safeID = fieldID.filter { $0.isLetter || $0.isNumber }
-        let result = try await web.evaluateJavaScript("window.__jefChoose('\(safeID)', \(index))")
-        guard let dict = result as? [String: Any], dict["ok"] as? Bool == true else {
-            throw ExtractionError.activationFailed(
-                (result as? [String: Any])?["message"] as? String ?? "gone"
-            )
-        }
-        return dict["value"] as? String ?? ""
     }
 
     /// Submits the form an action belongs to, then reports what happened.

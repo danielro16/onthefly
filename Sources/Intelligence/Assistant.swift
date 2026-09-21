@@ -350,7 +350,7 @@ final class Assistant {
     static func cannot(_ limit: Router.Limit?) -> String {
         switch limit {
         case .historial:  return "El historial y las pestañas no los manejo yo."
-        case .ajustes:    return "El tamaño de la letra se cambia en los ajustes de la app, no desde acá."
+        case .ajustes:    return "El tamaño de la letra se cambia en los ajustes del teléfono, en Accesibilidad. Desde acá no lo cambio."
         case .compartir:  return "Todavía no sé compartir ni copiar enlaces."
         case .otroSitio:  return "Eso está en otro sitio."
         case .comprar:    return "La compra la hacés vos: confirmar un pago no es algo que yo vaya a hacer en tu nombre."

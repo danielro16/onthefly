@@ -1,16 +1,15 @@
 import SwiftUI
 
-/// La conversación, abajo de la página.
+/// La conversación. Es la app: al abrirla ocupa la pantalla entera, y con
+/// una página cargada queda abajo de ella.
 ///
 /// Es la superficie más simple que existe para VoiceOver: una lista de lo
-/// dicho y un campo para escribir. Sin rotores, sin grupos, sin puertas —
-/// nada de lo que una página reconstruida necesita. La página se carga tal
-/// como es; esto es lo único que se le agrega.
+/// dicho y un campo para escribir. La página se carga tal como es; esto es
+/// lo único que se le agrega.
 struct AssistantPanel: View {
     @Bindable var assistant: Assistant
     var onAsk: (String) -> Void
     var onAccept: (Action) -> Void
-    var onClose: () -> Void
 
     @State private var text = ""
     @FocusState private var writing: Bool
@@ -40,9 +39,6 @@ struct AssistantPanel: View {
                     .controlSize(.small)
                     .accessibilityLabel("Buscando")
             }
-            Button("Cerrar", action: onClose)
-                .font(.subheadline)
-                .accessibilityHint("Vuelve a la página")
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
@@ -54,7 +50,7 @@ struct AssistantPanel: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     if assistant.turns.isEmpty {
-                        Text("Decime a dónde querés ir, o preguntame sobre esta página. Por ejemplo: «llevame a deportes», «¿a cuánto está el dólar?».")
+                        Text("Escribir a dónde ir o qué buscar. Con una página abierta, también se le puede preguntar qué dice. Por ejemplo: «llevame a La Nación», «¿a cuánto está el dólar?».")
                             .font(.callout)
                             .foregroundStyle(.secondary)
                     }
