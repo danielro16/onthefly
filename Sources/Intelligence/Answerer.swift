@@ -176,7 +176,7 @@ actor Answerer {
         // Si una no aparece, no se dice nada: mejor callar que inventar un
         // saldo.
         let figures = (parsed["cifras"] as? [String]) ?? []
-        guard figures.allSatisfy({ Self.appears($0, in: page, minimum: 1) }) else { return nil }
+        guard figures.allSatisfy({ Self.figureAppears($0, in: page) }) else { return nil }
         let questions = ((parsed["preguntas"] as? [String]) ?? [])
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty && $0.count <= 60 }
@@ -302,7 +302,7 @@ actor Answerer {
               let text = parsed["respuesta"] as? String, !text.isEmpty
         else { throw AnswerError.unusable }
         let figures = (parsed["cifras"] as? [String]) ?? []
-        let missing = figures.filter { !Self.appears($0, in: page + "\n" + list, minimum: 1) }
+        let missing = figures.filter { !Self.figureAppears($0, in: page + "\n" + list) }
         guard missing.isEmpty else { throw AnswerError.unverified(missing) }
 
         let raw = (parsed["sugerencias"] as? [[String: Any]]) ?? []
@@ -370,6 +370,19 @@ actor Answerer {
     static var phoneLanguage: String {
         Locale.preferredLanguages.first
             .flatMap { Locale(identifier: $0).language.languageCode?.identifier } ?? "es"
+    }
+
+    /// Una cifra que está en la página, aunque el separador de miles sea
+    /// otro: Wikipedia escribe "644 234" con un espacio fino y el modelo lo
+    /// copió "644.234" — la misma cifra, y por eso se descartaba la
+    /// orientación entera.
+    static func figureAppears(_ figure: String, in page: String) -> Bool {
+        if appears(figure, in: page, minimum: 1) { return true }
+        func grouped(_ text: String) -> String {
+            text.replacingOccurrences(of: "(?<=\\d)[.\\s\u{00A0}\u{202F}\u{2009}](?=\\d{3}(?!\\d))", with: "",
+                                      options: .regularExpression)
+        }
+        return appears(grouped(figure), in: grouped(page), minimum: 1)
     }
 
     /// Si ese texto está de verdad en la página. Se comparan los espacios y

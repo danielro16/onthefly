@@ -271,7 +271,7 @@ final class Assistant {
         // es lo que hacía— termina ofreciendo "¿querés que vaya a Inicio?"
         // cuando lo que se pidió fue google.com.
         if let url = ReaderModel.normalize(goal), goal.contains(".") , !goal.contains(" ") {
-            say("Abriendo \(Self.bare(url.host() ?? "") ?? goal).")
+            say("Abriendo \(Self.bare(Self.unicode(url.host() ?? "")) ?? goal).")
             working = true
             reader.address = goal
             await reader.go()
@@ -675,7 +675,66 @@ final class Assistant {
     struct Result: Sendable {
         let title: String
         let href: String
-        var host: String { URL(string: href)?.host()?.lowercased() ?? "" }
+        /// Como se escribe, no como viaja: "tiempomañana.net" y no
+        /// "xn--tiempomaana-8db.net", que es lo que se leía en voz alta.
+        var host: String { Assistant.unicode(URL(string: href)?.host()?.lowercased() ?? "") }
+    }
+
+    /// Un dominio internacional con sus letras: cada parte "xn--…" se
+    /// decodifica (Punycode, RFC 3492). Si algo no cierra, queda como vino.
+    nonisolated static func unicode(_ host: String) -> String {
+        host.split(separator: ".", omittingEmptySubsequences: false).map { part in
+            guard part.hasPrefix("xn--"), let decoded = punycode(String(part.dropFirst(4))) else { return String(part) }
+            return decoded
+        }.joined(separator: ".")
+    }
+
+    nonisolated private static func punycode(_ input: String) -> String? {
+        let base = 36, tmin = 1, tmax = 26, skew = 38, damp = 700
+        func adapt(_ delta: Int, _ points: Int, _ first: Bool) -> Int {
+            var delta = first ? delta / damp : delta / 2
+            delta += delta / points
+            var k = 0
+            while delta > ((base - tmin) * tmax) / 2 { delta /= base - tmin; k += base }
+            return k + ((base - tmin + 1) * delta) / (delta + skew)
+        }
+        func digit(_ c: Character) -> Int? {
+            guard let v = c.asciiValue else { return nil }
+            switch v {
+            case 48...57: return Int(v) - 22     // 0-9 → 26-35
+            case 97...122: return Int(v) - 97    // a-z → 0-25
+            case 65...90: return Int(v) - 65
+            default: return nil
+            }
+        }
+        let chars = Array(input)
+        var output: [Unicode.Scalar] = []
+        var start = 0
+        if let dash = chars.lastIndex(of: "-") {
+            for c in chars[..<dash] { guard let s = c.unicodeScalars.first, s.isASCII else { return nil }; output.append(s) }
+            start = dash + 1
+        }
+        var n = 128, i = 0, bias = 72, pos = start
+        while pos < chars.count {
+            let old = i
+            var w = 1, k = base
+            while true {
+                guard pos < chars.count, let d = digit(chars[pos]) else { return nil }
+                pos += 1
+                i += d * w
+                let t = k <= bias ? tmin : (k >= bias + tmax ? tmax : k - bias)
+                if d < t { break }
+                w *= base - t
+                k += base
+            }
+            bias = adapt(i - old, output.count + 1, old == 0)
+            n += i / (output.count + 1)
+            i %= output.count + 1
+            guard let scalar = Unicode.Scalar(n) else { return nil }
+            output.insert(scalar, at: i)
+            i += 1
+        }
+        return String(String.UnicodeScalarView(output))
     }
 
     /// Adónde ir cuando todavía no hay página.
@@ -702,7 +761,7 @@ final class Assistant {
         // portal en inglés con un pedido de donaciones.
         let typed = (lastRequest ?? "").lowercased().contains(goal.lowercased().replacingOccurrences(of: "www.", with: ""))
         if typed, let url = ReaderModel.normalize(goal), goal.contains("."), !goal.contains(" ") {
-            say("Abriendo \(Self.bare(url.host() ?? "") ?? goal).")
+            say("Abriendo \(Self.bare(Self.unicode(url.host() ?? "")) ?? goal).")
             reader.address = goal
             await reader.go()
             await landed(reader)
@@ -1674,7 +1733,7 @@ final class Assistant {
             if action.label.hasPrefix("Abrir «") {
                 say("Abriendo «" + action.label.dropFirst("Abrir «".count))
             } else {
-                say("Abriendo \(Self.bare(URL(string: href)?.host() ?? "") ?? action.label).")
+                say("Abriendo \(Self.bare(Self.unicode(URL(string: href)?.host() ?? "")) ?? action.label).")
             }
             reader.address = href
             await reader.go()

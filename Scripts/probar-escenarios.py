@@ -291,8 +291,10 @@ def transcribir(escenario, pasos, registro, destino):
             elif r["tipo"] == "pagina":
                 num_pagina += 1
                 out.append(f"- [+{rel:5.1f}s] 📄 Cargó {r['url']} — «{r['titulo']}» (paginas/{num_pagina:02d}.txt)")
+            elif r["tipo"] == "error" and "orientar" in r:
+                out.append(f"- [+{rel:5.1f}s] ⚠️ La orientación del modelo se descartó ({r['orientar']}): JEF usa la descripción de plantilla")
             elif r["tipo"] == "error":
-                out.append(f"- [+{rel:5.1f}s] ❌ Error de carga: {r['mensaje']}")
+                out.append(f"- [+{rel:5.1f}s] ❌ Error de carga: {r.get('mensaje', r)}")
         out.append("")
         out.append(f"Al terminar el paso ({paso['segundos']:.0f} s), lo que VoiceOver puede recorrer en la conversación "
                    f"(árbol completo en arbol-{i:02d}.txt, captura en paso-{i:02d}.jpg):")
