@@ -1,0 +1,111 @@
+[
+  {
+    "id": "noticias-la-nacion",
+    "persona": "Ciega hace veinte años, usa VoiceOver todos los días y lee La Nación cada mañana.",
+    "objetivo": "Enterarse de lo principal del día en La Nación, abrir una noticia, que se la resuman y volver.",
+    "pasos": [
+      {"escribir": "llevame a la nación"},
+      {"boton": 1},
+      {"escribir": "dame los titulares"},
+      {"boton": 1},
+      {"escribir": "resumime la nota"},
+      {"escribir": "volvé"}
+    ]
+  },
+  {
+    "id": "solo-botones-clarin",
+    "persona": "72 años, perdió la vista hace tres. Escribir le cuesta: prefiere tocar lo que le ofrecen.",
+    "objetivo": "Leer alguna noticia de Clarín escribiendo sólo el nombre del sitio y después tocando siempre la primera opción.",
+    "pasos": [
+      {"escribir": "clarín"},
+      {"boton": 1},
+      {"boton": 1},
+      {"boton": 1},
+      {"boton": 1}
+    ]
+  },
+  {
+    "id": "dolar-desde-cero",
+    "persona": "Ciega, usa VoiceOver en el trabajo. Quiere datos rápido y sin vueltas.",
+    "objetivo": "Saber a cuánto está hoy el dólar blue, y después el oficial.",
+    "pasos": [
+      {"escribir": "¿a cuánto está el dólar blue hoy?"},
+      {"boton": 1},
+      {"escribir": "¿y el oficial?"}
+    ]
+  },
+  {
+    "id": "wikipedia-mar-del-plata",
+    "persona": "Ciega de nacimiento, estudiante. Exigente con la precisión.",
+    "objetivo": "Averiguar en Wikipedia cuándo se fundó Mar del Plata y escuchar el comienzo del artículo.",
+    "pasos": [
+      {"escribir": "buscá mar del plata en wikipedia"},
+      {"boton": 1},
+      {"escribir": "¿cuándo se fundó?"},
+      {"escribir": "leeme la nota"},
+      {"tocar": "Seguir"}
+    ]
+  },
+  {
+    "id": "turno-anses",
+    "persona": "72 años, baja visión severa. Nunca sacó un turno por internet.",
+    "objetivo": "Sacar un turno en ANSES.",
+    "pasos": [
+      {"escribir": "quiero sacar un turno en anses"},
+      {"boton": 1},
+      {"boton": 1},
+      {"boton": 1}
+    ]
+  },
+  {
+    "id": "mercadolibre-auriculares",
+    "persona": "Ciega, compra seguido por internet con ayuda de un familiar y quiere hacerlo sola.",
+    "objetivo": "Buscar auriculares bluetooth en Mercado Libre y saber cuánto sale el más barato.",
+    "pasos": [
+      {"escribir": "entrá a mercado libre y buscame auriculares bluetooth"},
+      {"boton": 1},
+      {"escribir": "¿cuánto sale el más barato?"}
+    ]
+  },
+  {
+    "id": "banco-nacion",
+    "persona": "Ciega hace veinte años. Hace sus trámites del banco sola.",
+    "objetivo": "Entrar al home banking del Banco Nación.",
+    "pasos": [
+      {"escribir": "quiero entrar al home banking del banco nación"},
+      {"boton": 1},
+      {"boton": 1}
+    ]
+  },
+  {
+    "id": "primera-vez",
+    "persona": "72 años, es la primera vez que abre la app. No sabe qué se puede hacer.",
+    "objetivo": "Entender qué hace la app y llegar a algo útil.",
+    "pasos": [
+      {"escribir": "hola, ¿qué podés hacer?"},
+      {"boton": 1},
+      {"escribir": "no entiendo, ¿dónde estoy?"}
+    ]
+  },
+  {
+    "id": "clima-cordoba",
+    "persona": "Ciega, usa VoiceOver todos los días.",
+    "objetivo": "Saber cómo va a estar el tiempo mañana en Córdoba y si va a llover.",
+    "pasos": [
+      {"escribir": "¿cómo va a estar el tiempo mañana en córdoba?"},
+      {"boton": 1},
+      {"escribir": "¿va a llover?"}
+    ]
+  },
+  {
+    "id": "otra-cosa",
+    "persona": "Ciega, usa VoiceOver todos los días. Cambia de idea a mitad de camino.",
+    "objetivo": "Entrar a La Nación, no querer ninguna de las opciones, y pedir la sección de deportes.",
+    "pasos": [
+      {"escribir": "la nación"},
+      {"boton": 1},
+      {"tocar": "Otra cosa"},
+      {"escribir": "llevame a deportes"}
+    ]
+  }
+]

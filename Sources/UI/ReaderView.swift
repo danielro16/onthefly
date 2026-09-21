@@ -16,7 +16,21 @@ final class ReaderModel {
     private(set) var state: State = .idle {
         // La pila del WebView no es observable, así que se copia acá cada vez
         // que la página cambia: es lo que decide si hay a dónde volver.
-        didSet { canGoBack = engine.canGoBack }
+        didSet {
+            canGoBack = engine.canGoBack
+            #if DEBUG
+            // Lo que el asistente tiene delante, tal cual se lo pasa al
+            // modelo: es contra esto que una prueba verifica lo que dijo.
+            switch state {
+            case .loaded(let page):
+                Registro.anotar("pagina", ["url": page.url, "titulo": page.title, "texto": Assistant.saying(page)])
+            case .failed(let why):
+                Registro.anotar("error", ["mensaje": why])
+            case .idle, .loading:
+                break
+            }
+            #endif
+        }
     }
     private(set) var canGoBack = false
 
@@ -71,7 +85,7 @@ final class ReaderModel {
         }
 
         state = .loading(url)
-        UIAccessibility.post(notification: .announcement, argument: "Cargando página")
+        Voz.decir("Cargando página")
 
         do {
             let page = try await engine.extract(url: url)
@@ -80,7 +94,7 @@ final class ReaderModel {
         } catch {
             guard !Self.wasSuperseded(error) else { return }
             state = .failed(error.localizedDescription)
-            UIAccessibility.post(notification: .announcement, argument: "No se pudo leer esta página")
+            Voz.decir("No se pudo leer esta página")
         }
     }
 
@@ -106,7 +120,7 @@ final class ReaderModel {
             return
         }
 
-        UIAccessibility.post(notification: .announcement, argument: "Activando \(action.label)")
+        Voz.decir("Activando \(action.label)")
 
         do {
             switch try await engine.activate(actionID: action.id, expecting: action.label) {
@@ -114,33 +128,29 @@ final class ReaderModel {
                 // A control that changed nothing is not an error and must not
                 // look like one.
                 guard !page.isEquivalent(to: self.page) else {
-                    UIAccessibility.post(
-                        notification: .announcement,
-                        argument: "\(action.label) no cambió la página."
+                    Voz.decir(
+                        "\(action.label) no cambió la página."
                     )
                     return
                 }
                 address = page.url
                 state = .loaded(page)
-                UIAccessibility.post(
-                    notification: .announcement,
-                    argument: "\(action.label) activado. La página cambió."
+                Voz.decir(
+                    "\(action.label) activado. La página cambió."
                 )
 
             case .stale:
                 // The node vanished between extraction and the tap — a SPA
                 // re-rendered underneath us. Reloading re-stamps everything.
-                UIAccessibility.post(
-                    notification: .announcement,
-                    argument: "Ese control ya no está. Recargando."
+                Voz.decir(
+                    "Ese control ya no está. Recargando."
                 )
                 await go()
             }
         } catch {
             guard !Self.wasSuperseded(error) else { return }
-            UIAccessibility.post(
-                notification: .announcement,
-                argument: "No se pudo activar \(action.label)"
+            Voz.decir(
+                "No se pudo activar \(action.label)"
             )
         }
     }
@@ -153,7 +163,7 @@ final class ReaderModel {
 
     /// Submits a form and reads whatever the page became.
     func submit(_ action: Action) async {
-        UIAccessibility.post(notification: .announcement, argument: "Enviando formulario")
+        Voz.decir("Enviando formulario")
         do {
             switch try await engine.submit(actionID: action.id) {
             case .updated(let page):
@@ -165,37 +175,34 @@ final class ReaderModel {
                 let detail = complaints.first.map { "\($0.name): \($0.error ?? "")" } ?? notices.first
                 if page.url == self.page?.url, let detail {
                     state = .loaded(page)
-                    UIAccessibility.post(
-                        notification: .announcement,
-                        argument: complaints.count > 1
+                    Voz.decir(
+                        complaints.count > 1
                             ? "No se envió. \(complaints.count) campos con errores. \(detail)"
                             : "No se envió. \(detail)"
                     )
                     return
                 }
                 guard !page.isEquivalent(to: self.page) else {
-                    UIAccessibility.post(
-                        notification: .announcement,
-                        argument: "Formulario enviado. La página no cambió."
+                    Voz.decir(
+                        "Formulario enviado. La página no cambió."
                     )
                     return
                 }
                 address = page.url
                 state = .loaded(page)
-                UIAccessibility.post(
-                    notification: .announcement, argument: "Formulario enviado."
+                Voz.decir(
+                    "Formulario enviado."
                 )
             case .stale:
-                UIAccessibility.post(
-                    notification: .announcement,
-                    argument: "El formulario ya no está. Recargando."
+                Voz.decir(
+                    "El formulario ya no está. Recargando."
                 )
                 await go()
             }
         } catch {
             guard !Self.wasSuperseded(error) else { return }
-            UIAccessibility.post(
-                notification: .announcement, argument: "No se pudo enviar el formulario"
+            Voz.decir(
+                "No se pudo enviar el formulario"
             )
         }
     }
@@ -215,10 +222,10 @@ final class ReaderModel {
     /// VoiceOver —dos dedos, Z—, que es como se sale de todo lo demás en iOS.
     func back() async {
         guard engine.canGoBack else {
-            UIAccessibility.post(notification: .announcement, argument: "No hay página anterior")
+            Voz.decir("No hay página anterior")
             return
         }
-        UIAccessibility.post(notification: .announcement, argument: "Volviendo")
+        Voz.decir("Volviendo")
         // Volver es una carga como cualquier otra y se tiene que ver como
         // una: sin esto el toque parecía no haber hecho nada, y el segundo
         // cancelaba al primero.

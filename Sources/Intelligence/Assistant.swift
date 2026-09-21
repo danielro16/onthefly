@@ -38,7 +38,9 @@ final class Assistant {
 
     private(set) var turns: [Turn] = []
     private(set) var working = false
-    private(set) var offer: Offer?
+    private(set) var offer: Offer? {
+        didSet { Registro.anotar("botones", ["opciones": offer?.options.map(\.label) ?? []]) }
+    }
     /// Lo último que dijo, para anunciarlo y para que la pantalla lo muestre
     /// aunque VoiceOver se haya comido el anuncio.
     private(set) var latest = ""
@@ -106,14 +108,16 @@ final class Assistant {
         counter += 1
         turns.append(Turn(id: "t\(counter)", who: .jef, text: text))
         latest = text
+        Registro.anotar("turno", ["quien": "jef", "texto": text])
         // Dicho en voz alta. Es la única manera de que alguien que no ve se
         // entere de lo que el asistente hizo mientras lo hace.
-        UIAccessibility.post(notification: .announcement, argument: aloud ?? text)
+        Voz.decir(aloud ?? text)
     }
 
     private func heard(_ text: String) {
         counter += 1
         turns.append(Turn(id: "t\(counter)", who: .person, text: text))
+        Registro.anotar("turno", ["quien": "persona", "texto": text])
     }
 
     func clear() {
