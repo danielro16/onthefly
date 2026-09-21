@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [H] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Estás en los resultados de «clarin». Los 2 más probables:
+  5 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en Clarin.com, la portada de noticias. Los titulares principales son: renunció el secretario de Discapacidad en medio de la interna por recortes; Adorni intentó justificar su patrimonio diciendo que ganó casi 600 mil dólares con criptomonedas; el Gobierno espera que por la visita del Papa se movilicen 7 millones de personas y evalúa declarar asueto; Messi hizo otro gol de tiro libre y se acerca a un nuevo récord; y murió a los 97 años Carlos Alonso, uno de los máximos pintores argentinos contemporáneos.
+  8 [H] Vos: Abrir «Renunció el secretario de Discapacidad en medio de la interna por los…»
+  9 [txt] Abriendo «Renunció el secretario de Discapacidad en medio de la interna por los…»
+ 10 [txt] Estás en Clarín, en una nota sobre la renuncia del secretario de Discapacidad en medio de las discusiones por los recortes incluidos en el Presupuesto 2027.
+ 11 [btn] Leer la nota completa  (Primera de 6 opciones.)
+ 12 [btn] Abrir «Últimas Noticias»
+ 13 [btn] Abrir «Marcha del Orgullo Gay: Los organizadores se niegan a postergarla por…»
+ 14 [btn] Abrir «Día Mundial del Alzheimer: cuáles son los primeros síntomas que tenés…»
+ 15 [btn] Volver a la página anterior
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 18 [btn] Enviar

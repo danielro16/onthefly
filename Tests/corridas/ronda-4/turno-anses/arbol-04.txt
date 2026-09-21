@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [H] Vos: quiero sacar un turno en anses
+  3 [txt] Buscando: turnos anses.
+  4 [txt] Estás en los resultados de «turnos anses». Los 3 más probables:
+  5 [H] Vos: Solicitar turnos en ANSES - Argentina.gob.ar — www.argentina.gob.ar
+  6 [txt] Abriendo argentina.gob.ar.
+  7 [txt] Estás en Argentina.gob.ar, en la página para solicitar turnos en ANSES. Puedes pedir un turno por internet para que te atiendan en una oficina de ANSES. Es gratuito y se hace en línea.
+  8 [H] Vos: Leer más sobre cómo pedir el turno
+  9 [txt] Inicio. Ministerio de Capital Humano. ANSES. Solicitar turnos en ANSES
+ 10 [txt] Podés solicitar un turno por internet para ser atendido en una oficina de ANSES.
+ 11 [txt] Te explicamos cómo solicitar un turno si tenés que realizar un trámite en ANSES. También podés hacer trámites desde tu celular o computadora sin salir de tu casa, consultá cuáles en ANSES
+ 12 [txt] Párrafo 3 de 17.
+ 13 [btn] Seguir leyendo  (Primera de 4 opciones.)
+ 14 [btn] Resumir la página
+ 15 [btn] Volver a la página anterior
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 18 [btn] Enviar

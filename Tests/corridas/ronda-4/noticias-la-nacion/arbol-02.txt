@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Los titulares principales son: el secretario de Discapacidad renunció por carta, en medio de la puja por el rumbo del área; las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele; un gas contaminado sería la causa del apagón que dejó a oscuras a más de 2 millones de personas; y Marcos Galperin dijo que aprendió para Mercado Libre en el rugby. El dólar oficial está a $1535,00, el dólar blue a $1550,00, el dólar tarjeta a $1995,50 y el dólar MEP a $1533,80.
+  8 [btn] Abrir «Por carta. El secretario de Discapacidad presentó su renuncia en…»  (Primera de 6 opciones.)
+  9 [btn] Abrir «Escalada. Las grandes cadenas de TV reaccionan al veto de Trump y…»
+ 10 [btn] Abrir «Interruptor L46. Un gas contaminado sería la causa del apagón que…»
+ 11 [btn] Abrir «Lecciones de fundador. Marcos Galperin: “Donde más aprendí para…»
+ 12 [btn] Volver a la página anterior
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar

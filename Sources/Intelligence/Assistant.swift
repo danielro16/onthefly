@@ -340,6 +340,16 @@ final class Assistant {
             await arrive(decision.target ?? goal, on: reader, naming: true)
 
         case .buscar:
+            // Una pregunta con una página abierta se contesta primero con esa
+            // página, y recién si no está ahí se busca. "¿Y el oficial?"
+            // estando en la página del blue armó una búsqueda nueva que
+            // mezclaba los dos, y la página lo tenía.
+            if let page = reader.page, Self.isQuestion(goal), let answerer,
+               let answer = try? await answerer.answer(goal, about: Self.saying(page), previous: previousRequest) {
+                say(answer.text)
+                nextQuestions = answer.questions
+                return
+            }
             // Buscar estando parado en un sitio es buscar EN ese sitio.
             // Mandarlo al buscador de internet lo saca de donde acaba de
             // llegar, que es justo lo que no pidió.
@@ -387,6 +397,15 @@ final class Assistant {
 
         case .resumir:
             guard let page = reader.page else { return }
+            // "La nota" en una portada: no hay nota abierta. Resumir la portada
+            // sin decirlo hacía creer que se había abierto.
+            let flat = goal.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+            if flat.contains("nota"), readsHeadlines(page) {
+                say("Todavía no hay una nota abierta: estás en la portada de \(page.displaySite). ¿Cuál abro?")
+                lastDone = Self.readID
+                lastChunk = 0..<min(3, Self.headlines(of: page).count)
+                return
+            }
             working = true
             await summarize(page)
             working = false
@@ -432,7 +451,9 @@ final class Assistant {
                 offer = Offer(goal: "", options: Self.starters)
                 return
             }
-            await arrived(page)
+            // Corto: dónde, y qué es esto. Contar la portada entera otra vez
+            // no contestaba "no entiendo, ¿dónde estoy?".
+            say("Estás en «\(page.sectionTitle)», \(page.displaySite). Arriba está la página; acá abajo, la conversación con JEF: se le pide algo escribiendo, o se toca una opción.")
 
         case .noPuedo:
             // Un límite no es el final del camino: es un traspaso. Se dice
@@ -1030,6 +1051,9 @@ final class Assistant {
             say("El sitio web me pide copiar un código que está dibujado en una imagen, y ésa no la puedo leer. Hay que resolverla en la página, arriba. Cuando esté resuelta, continuamos.")
         } else {
             say("El sitio web me pide resolver una prueba anti-robot. Hay que resolverla en la página, arriba. Cuando esté resuelta, continuamos.")
+            if UIAccessibility.isVoiceOverRunning {
+                say("Con VoiceOver, la página está antes de esta conversación: deslizando hacia atrás desde «Asistente».")
+            }
             if page.overlay?.audioChallenge == true {
                 say("Tiene una opción de audio, dentro del recuadro de la prueba.")
             }
@@ -1301,7 +1325,13 @@ final class Assistant {
 
     /// La persona aceptó lo que el asistente propuso.
     func accept(_ action: Action, on reader: ReaderModel) async {
-        guard let chosen = offer, !working else { return }
+        guard let chosen = offer else { return }
+        // Un toque mientras todavía trabaja no se traga en silencio: los
+        // jueces lo marcaron como "toqué y no pasó nada".
+        guard !working else {
+            Voz.decir("Un momento: estoy terminando lo anterior.", interrumpir: true)
+            return
+        }
         // Un ejemplo de pedido se pide, tal cual: pasa por el mismo camino que
         // si la persona lo hubiera escrito.
         if action.id.hasPrefix(Self.askPrefix) {
@@ -2046,6 +2076,15 @@ final class Assistant {
             text = "HAY UN AVISO ENCIMA DE LA PÁGINA (\(overlay.kind.title)): \(overlay.text)\n\n" + text
         }
         let candidates = Self.candidates(of: page)
+        // En una portada, los titulares que se nombran y los botones son los
+        // mismos porque los elige el código: los primeros de la página. Dejando
+        // que el modelo eligiera los botones por número, nombraba unos y
+        // ofrecía otros.
+        let lead = readsHeadlines(page) ? Array(Self.headlines(of: page).prefix(4)) : []
+        if !lead.isEmpty {
+            text = "TITULARES PRINCIPALES, EN ORDEN (nombrá estos y en este orden, nada más de la portada): "
+                + lead.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: " / ") + "\n\n" + text
+        }
         working = true
         let orientation = try? await answerer.orient(
             page: text, candidates: candidates.map(\.label), goal: lastRequest
@@ -2086,6 +2125,17 @@ final class Assistant {
         if Self.isArticle(page), !ordered.contains(where: { $0.id == Self.readID }) {
             ordered.insert(.link(id: Self.readID, label: "Leer la nota", href: "", region: "main"), at: 0)
         }
+        if !lead.isEmpty {
+            let named: [Action] = lead.enumerated().compactMap { index, title in
+                guard let href = Self.href(ofHeadline: title, in: page) else { return nil }
+                return .link(id: "sug-titular-\(index)", label: "Abrir «\(Self.short(title))»", href: href, region: "main")
+            }
+            ordered = named + ordered.filter { !$0.id.hasPrefix("sug-") }
+        }
+        // Una opción por id: dos "leer" con el mismo id eran, para VoiceOver,
+        // el mismo botón dos veces con nombres distintos.
+        var ids = Set<String>()
+        ordered = ordered.filter { ids.insert($0.id).inserted }
         if !ordered.isEmpty { offer = Offer(goal: "", options: ordered) }
     }
 

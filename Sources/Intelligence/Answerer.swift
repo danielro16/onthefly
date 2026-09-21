@@ -224,6 +224,8 @@ actor Answerer {
             Como mucho tres frases, o la lista de titulares. Quien escucha tiene que esperar a que
             termines para hacer cualquier cosa.
             Publicidad, promociones y ofertas de suscripción que no tapan nada: no las menciones.
+            En una portada, sólo los titulares: las cotizaciones, el clima y otros recuadros, no,
+            salvo que la persona haya venido por eso.
             Si el texto dice que hay un aviso encima que SÍ tapa la página (cookies que hay que
             aceptar, un muro), decilo en media frase al final.
             No termines preguntando qué quiere hacer ni ofreciendo ayuda: las opciones van como

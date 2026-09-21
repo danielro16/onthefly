@@ -188,6 +188,13 @@ class Panel:
             marco = elegido["frame"]
             y = marco["y"] + marco["height"] / 2
             if arriba + 4 <= y <= abajo - 4:
+                # Quieto antes de tocar: un toque sobre un panel que todavía
+                # frena sólo lo frena, y los jueces lo oyeron como "toqué y no
+                # pasó nada".
+                time.sleep(0.8)
+                otra = next((n for n in self.opciones(self.sim.nodos()) if n.get("AXLabel") == elegido.get("AXLabel")), None)
+                if otra and abs(otra["frame"]["y"] - marco["y"]) > 1:
+                    continue
                 self.sim.tocar_punto(marco["x"] + marco["width"] / 2, y)
                 return elegido.get("AXLabel")
             # Se scrollea el panel, no la página: arrastrando adentro de él, y

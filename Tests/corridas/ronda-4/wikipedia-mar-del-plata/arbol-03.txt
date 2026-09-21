@@ -1,0 +1,16 @@
+  1 [H] Asistente
+  2 [H] Vos: buscá mar del plata en wikipedia
+  3 [txt] Buscando: mar del plata wikipedia.
+  4 [txt] Estás en los resultados de «mar del plata wikipedia». Los 3 más probables:
+  5 [H] Vos: Mar del Plata | Sitio Oficial del Municipio de General Pueyrredon — www.mardelplata.gob.ar
+  6 [txt] Abriendo mardelplata.gob.ar.
+  7 [txt] No encontré Wikipedia. Estás en la página oficial de la Municipalidad de General Pueyrredon, en la sección de información sobre Mar del Plata. Te cuenta que es el principal centro turístico de Argentina, con 47 km de costa, una población estable de 650.000 habitantes y más de 8.000.000 de turistas anuales. También detalla su economía basada en el turismo, la pesca y la actividad frutihortícola, y repasa su historia desde 1581 hasta la fundación de la ciudad el 10 de febrero de 1874.
+  8 [H] Vos: ¿cuándo se fundó?
+  9 [txt] Mar del Plata se fundó el 10 de febrero de 1874, fecha que quedó establecida por un decreto del Gobernador de la Provincia de Buenos Aires.
+ 10 [btn] ¿Quién fundó Mar del Plata?  (Primera de 5 opciones.)
+ 11 [btn] ¿Cuál fue el primer nombre de Mar del Plata?
+ 12 [btn] Leer la nota
+ 13 [btn] Resumir la nota
+ 14 [btn] Otra cosa
+ 15 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 16 [btn] Enviar

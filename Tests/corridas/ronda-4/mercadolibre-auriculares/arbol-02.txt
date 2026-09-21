@@ -1,0 +1,13 @@
+  1 [H] Asistente
+  2 [H] Vos: entrá a mercado libre y buscame auriculares bluetooth
+  3 [txt] Buscando: auriculares bluetooth mercado libre.
+  4 [txt] Estás en los resultados de «auriculares bluetooth mercado libre». Los 2 más probables:
+  5 [H] Vos: Auriculares bluetooth - MercadoLibre — listado.mercadolibre.com.ar
+  6 [txt] Abriendo listado.mercadolibre.com.ar.
+  7 [txt] El sitio me puso una verificación de «no soy un robot». Eso no lo puedo resolver yo.
+  8 [txt] Suele tener una opción de audio, pero está dentro del recuadro de la verificación y no la puedo tocar: hay que hacerlo en la pantalla.
+  9 [txt] Si preferís, te llevo a otro lado o volvemos a la página anterior.
+ 10 [btn] Volver a la página anterior  (Primera de 2 opciones.)
+ 11 [btn] Otra cosa
+ 12 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 13 [btn] Enviar

@@ -1,0 +1,24 @@
+  1 [H] Asistente
+  2 [H] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Los titulares principales son: el secretario de Discapacidad renunció por carta, en medio de la puja por el rumbo del área; las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele; un gas contaminado sería la causa del apagón que dejó a oscuras a más de 2 millones de personas; y Marcos Galperin dijo que aprendió para Mercado Libre en el rugby. El dólar oficial está a $1535,00, el dólar blue a $1550,00, el dólar tarjeta a $1995,50 y el dólar MEP a $1533,80.
+  8 [H] Vos: dame los titulares
+  9 [txt] 1. Por carta. El secretario de Discapacidad presentó su renuncia en medio de la puja por el rumbo del área
+ 10 [txt] 2. Escalada. Las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele
+ 11 [txt] 3. Interruptor L46. Un gas contaminado sería la causa del apagón que dejó a oscuras a más de 2 millones de personas
+ 12 [txt] Titular 3 de 137.
+ 13 [H] Vos: resumime la nota
+ 14 [txt] De «Últimas noticias de Argentina y el mundo»: La página de La Nación informa que el secretario de Discapacidad renunció, y las grandes cadenas de TV reaccionan al veto de Trump. También, un gas contaminado podría ser la causa del apagón que afectó a más de 2 millones de personas.
+ 15 [H] Vos: volvé
+ 16 [txt] Volviendo.
+ 17 [txt] De vuelta en los resultados de «la nación».
+ 18 [btn] Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar  (Primera de 5 opciones.)
+ 19 [btn] LN+ EN VIVO | Últimas noticias de Argentina y el mundo — www.youtube.com
+ 20 [btn] Kiosco LA NACION — edicionimpresa.lanacion.com.ar
+ 21 [btn] Ver más opciones (1)
+ 22 [btn] Otra cosa
+ 23 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 24 [btn] Enviar
