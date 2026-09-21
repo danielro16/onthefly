@@ -9,17 +9,19 @@ import UIKit
 /// anuncio le cortó la palabra a otro.
 @MainActor
 enum Voz {
-    static func decir(_ text: String) {
+    /// `interrumpir`: corta lo que se esté diciendo en vez de esperar. Para lo
+    /// primero que responde a un pedido nuevo: lo anterior ya no importa.
+    static func decir(_ text: String, interrumpir: Bool = false) {
         // En cola, no encima. Un anuncio nuevo corta al que se está diciendo,
         // y el asistente dice varias cosas seguidas: medido con el registro,
         // al leer una nota los tres pedazos y "Titular 3 de 4" salían en el
         // mismo instante, y de todo eso sólo se escuchaba el final.
         let queued = NSAttributedString(
-            string: text, attributes: [.accessibilitySpeechQueueAnnouncement: true]
+            string: text, attributes: [.accessibilitySpeechQueueAnnouncement: !interrumpir]
         )
         if UIAccessibility.isVoiceOverRunning { Habla.shared.empezo() }
         UIAccessibility.post(notification: .announcement, argument: queued)
-        Registro.anotar("voz", ["texto": text, "cola": true])
+        Registro.anotar("voz", ["texto": text, "cola": !interrumpir])
     }
 }
 

@@ -230,16 +230,23 @@ def transcribir(escenario, pasos, registro, destino):
            f"**Quién:** {escenario['persona']}", "",
            f"**Qué quiere:** {escenario['objetivo']}", "",
            "Convenciones: 🔊 lo que VoiceOver anuncia solo, con la hora desde el inicio. "
-           "Un anuncio sin cola corta al que se está diciendo; uno en cola espera a que "
-           "termine el anterior. La duración se estima a "
+           "Un anuncio sin cola corta al que se está diciendo y descarta los que esperaban; uno "
+           "en cola espera a que termine el anterior. La duración se estima a "
            f"{CARACTERES_POR_SEGUNDO:.0f} caracteres por segundo. 💬 lo que queda escrito en la "
            "conversación. 🔘 los botones ofrecidos, en el orden en que VoiceOver los recorre. "
            "📄 la página que cargó (su texto, el que ve el asistente, está en paginas/).", ""]
     # Cuándo empieza a sonar cada anuncio: uno en cola espera al anterior.
-    suena, fin_anterior = {}, 0.0
+    # Uno que interrumpe corta al que suena y descarta los que esperaban.
+    suena, descartado, fin_anterior = {}, set(), 0.0
     for v in voces:
         dura = max(0.6, len(v["texto"]) / CARACTERES_POR_SEGUNDO)
-        inicio = max(v["t"], fin_anterior) if v.get("cola") else v["t"]
+        if v.get("cola"):
+            inicio = max(v["t"], fin_anterior)
+        else:
+            inicio = v["t"]
+            for otro, empieza in suena.items():
+                if empieza >= v["t"]:
+                    descartado.add(otro)
         suena[id(v)] = inicio
         fin_anterior = inicio + dura
     num_pagina = 0
@@ -260,7 +267,9 @@ def transcribir(escenario, pasos, registro, destino):
                 dura = max(0.6, len(r["texto"]) / CARACTERES_POR_SEGUNDO)
                 nota = ""
                 demora = suena[id(r)] - r["t"]
-                if r.get("cola"):
+                if id(r) in descartado:
+                    nota = "  ⟶ DESCARTADO: lo cortó un pedido nuevo antes de que sonara"
+                elif r.get("cola"):
                     if demora > 1.5:
                         nota = f"  ⟶ en cola: empieza a sonar a los +{suena[id(r)] - t0:.1f}s"
                 elif siguiente and not siguiente.get("cola") and siguiente["t"] - r["t"] < dura:

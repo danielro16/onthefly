@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [txt] Vos: ¿cómo va a estar el tiempo mañana en córdoba?
+  3 [txt] Buscando: tiempo mañana córdoba.
+  4 [txt] Resultados para «tiempo mañana córdoba». Los 3 más probables:
+  5 [txt] Vos: Clima mañana en Córdoba | Hora a hora - eltiempoen.com — eltiempoen.com
+  6 [txt] Abriendo eltiempoen.com.
+  7 [txt] En Clima mañana en Córdoba, Cordoba — eltiempoen.com.
+  8 [txt] Hay 11 resultados. Los tres primeros:
+  9 [txt] Buenos Aires
+ 10 [txt] Córdoba
+ 11 [txt] Rosario
+ 12 [txt] Puedo abrir uno, leer más, o buscar otra cosa.
+ 13 [btn] Leer la página  (Primera de 4 opciones.)
+ 14 [btn] Resumir la página
+ 15 [btn] Volver a la página anterior
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 18 [btn] Enviar

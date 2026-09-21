@@ -75,8 +75,10 @@ actor Answerer {
         página no dice algo, decilo con naturalidad ("la página no lo dice") en vez de completar.
 
         Hablá como una persona, no como un sistema: natural, claro y breve — dos o tres frases.
-        Sin saludo. No tutees ni voseés: evitá "puedes/podés", "quieres/querés" y parecidas; usá
-        la primera persona o formas que valen igual para todos.
+        Sin saludo. Nada de usted. Evitá las formas que cambian entre tú y vos ("puedes/podés",
+        "quieres/querés"): usá las que valen igual ("estás", "te leo").
+        Las horas de actualización de una cobertura en vivo ("12:30", "Hace 5 min") no son parte
+        de los hechos: nunca las pegues a una noticia.
         Respondé en este idioma: \(language). Si la página está en otro idioma, contala igual en
         \(language).
 
@@ -215,8 +217,11 @@ actor Answerer {
             aceptar, un muro), decilo en media frase al final.
             No termines preguntando qué quiere hacer ni ofreciendo ayuda: las opciones van como
             botones, y ya hay uno para pedir otra cosa.
-            No tutees ni voseés: evitá "puedes/podés", "quieres/querés" y parecidas. Usá la primera
-            persona ("te puedo leer…") o formas que valen igual para todos ("estás en…").
+            Nada de usted ("Está en…"): suena a trámite. Y evitá las formas que cambian entre tú
+            y vos ("puedes/podés", "quieres/querés"): usá las que valen igual ("estás en…", "te
+            leo…").
+            Las horas de actualización de una cobertura en vivo ("12:30", "Hace 5 min") no son
+            parte de los hechos: nunca las pegues a una noticia.
 
             Usá SÓLO el texto de la página. No agregues nada que sepas por fuera.
             Hablá en: \(language).

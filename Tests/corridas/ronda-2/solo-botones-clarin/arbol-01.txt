@@ -1,0 +1,11 @@
+  1 [H] Asistente
+  2 [txt] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Resultados para «clarin». Los 3 más probables:
+  5 [btn] Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com  (Primera de 5 opciones.)
+  6 [btn] Clarín - septiembre 21, 2026 — www.kiosco.clarin.com
+  7 [btn] Último Momento - Clarín.com — web-clarinsandbox.lilax.io
+  8 [btn] Ver más opciones (1)
+  9 [btn] Otra cosa
+ 10 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 11 [btn] Enviar

@@ -1,0 +1,16 @@
+  1 [H] Asistente
+  2 [txt] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Resultados para «clarin». Los 3 más probables:
+  5 [txt] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Está en Clarin.com, una portada de noticias. Los titulares principales son: el Gobierno estima que 7 millones de personas se movilizarán por la visita de León XIV; Adorni justificó su patrimonio diciendo que ganó casi 600 mil dólares con criptomonedas; y murió a los 97 años Carlos Alonso, uno de los máximos pintores argentinos contemporáneos.
+  8 [txt] Vos: Abrir «Quiénes son los ganadores y los perdedores tras la definición de la…»
+  9 [txt] Abriendo «Quiénes son los ganadores y los perdedores tras la definición de la…»
+ 10 [txt] Está en la página de suscripciones de Clarín. Ofrece distintas opciones: el plan Digital por $930 al mes, el Digital 365 por $1.090 al mes y el Digital 365 Plus por $1.230 al mes. También hay opciones para asociar una tarjeta 365, recibir Clarín en papel o solicitar una suscripción corporativa.
+ 11 [btn] Abrir «Ya tenés tu tarjeta 365?, Ingresá los datos de tu tarjeta 365 o 365…»  (Primera de 4 opciones.)
+ 12 [btn] Abrir «¿Querés recibir Clarín en papel en tu casa?, Saber más»
+ 13 [btn] Abrir «¿Necesitás una suscripción corporativa?, Ver planes»
+ 14 [btn] Otra cosa
+ 15 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 16 [btn] Enviar

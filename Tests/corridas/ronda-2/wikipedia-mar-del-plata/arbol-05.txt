@@ -1,0 +1,24 @@
+  1 [H] Asistente
+  2 [txt] Vos: buscá mar del plata en wikipedia
+  3 [txt] Buscando: mar del plata wikipedia.
+  4 [txt] Resultados para «mar del plata wikipedia». Los 3 más probables:
+  5 [txt] Vos: Mar del Plata - Wikipedia, la enciclopedia libre — es.wikipedia.org
+  6 [txt] Abriendo es.wikipedia.org.
+  7 [txt] Está en la página de Wikipedia sobre Mar del Plata. Es una ciudad ubicada en el sudeste de la provincia de Buenos Aires, Argentina, y es la cabecera del partido de General Pueyrredón. Es un importante puerto y la localidad balnearia más importante del país.
+  8 [txt] Vos: ¿cuándo se fundó?
+  9 [txt] Mar del Plata fue fundada el 10 de febrero de 1874 por Patricio Peralta Ramos.
+ 10 [txt] Vos: leeme la nota
+ 11 [txt] ciudad de la provincia de Buenos Aires, Argentina
+ 12 [txt] «Marplatense»  redirige aquí. Para la capa estratigráfica, véase Marplatense (edad).
+ 13 [txt] Mar del Plata es una ciudad ubicada en el sudeste de la provincia de Buenos Aires, Argentina, sobre la costa del mar argentino. Es la cabecera del partido de General Pueyrredón, un importante puerto, la localidad balnearia más importante del país y el segundo destino turístico después de Buenos Aires. En época estival su población puede aumentar en alrededor de un 301  %, por lo que cuenta con una gran oferta de infraestructura de hoteles y otros servicios. La autovía 2 la enlaza tras 404  km con Buenos Aires y se encuentra a 368  km de La Plata.
+ 14 [txt] Párrafo 3 de 6.
+ 15 [txt] Vos: Seguir leyendo
+ 16 [txt] Fue fundada con su nombre actual el 10 de febrero de 1874 por Patricio Peralta Ramos, en una estancia de su propiedad, sobre la base de la segunda de las tres extintas misiones jesuíticas de la Pampa, fundadas en la segunda mitad del siglo  XVIII, denominada Nuestra Señora del Pilar de Puelches, que más tarde recibió el nombre de «Puerto de la Laguna de los Padres». [2 ]
+ 17 [txt] Las principales industrias son la pesquera, la turística y la textil. La pesca, actividad principal del puerto, se complementa también con barcos petroleros y cerealeros. La ciudad cuenta también con una base naval de submarinos. Entre la gran variedad de industrias, se destacan también las derivadas de la horticultura, la construcción, la metalúrgica y la mecánica.
+ 18 [txt] La ciudad cuenta con un complejo deportivo que fue subsede del Mundial de Fútbol 1978, [3 ] sede de los Juegos Panamericanos de 1995 y donde se jugó la final de la Copa Davis 2008. El Club Atlético Aldosivi es el equipo de fútbol más popular que representa a la ciudad. Además, es conocida por su calidad en el básquetbol, donde el Club Atlético Peñarol y el Club Atlético Quilmes representan a este deporte a nivel nacional. [4 ] [5 ]
+ 19 [txt] Fin de la nota.
+ 20 [btn] Resumir la nota  (Primera de 3 opciones.)
+ 21 [btn] Volver a la página anterior
+ 22 [btn] Otra cosa
+ 23 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 24 [btn] Enviar

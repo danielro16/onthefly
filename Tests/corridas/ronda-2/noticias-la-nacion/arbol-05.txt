@@ -1,0 +1,22 @@
+  1 [H] Asistente
+  2 [txt] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Resultados para «la nación». Los 3 más probables:
+  5 [txt] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en La Nación, la portada de noticias. Los titulares principales son: se cumplen 34 minutos de las Medidas de Milei, el dólar hoy está actualizado hace 28 minutos, y las grandes cadenas de TV reaccionan al veto de Trump. También, Adorni dijo ante la Justicia que su evolución patrimonial tiene “sustento razonable y verificable”, y se preparan 70 horas de frenesí para evitar que la visita del Papa se politice.
+  8 [txt] Vos: dame los titulares
+  9 [txt] 1. Medidas de Milei, Hace 34 min
+ 10 [txt] 2. Dólar hoy, Hace 28 min
+ 11 [txt] 3. Escalada. Las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele
+ 12 [txt] Titular 3 de 154.
+ 13 [txt] Vos: Abrir «Medidas de Milei, Hace 34 min»
+ 14 [txt] Abriendo «Medidas de Milei, Hace 34 min»
+ 15 [txt] Está en la página de LA NACION, en una cobertura en vivo sobre Javier Milei y sus medidas. El Presidente consideró como 'matices de opinión' las internas en el Ejecutivo. Los titulares principales son: La Justicia Federal ordenó investigar al ministro Lugones y al jefe del PAMI. El Gobierno prepara el operativo de seguridad más grande de la historia por la visita del Papa León XIV. El Gobierno pidió información por el caso de adoctrinamiento en Formosa. Procesaron a siete iraníes y un libanés como responsables del ataque y avanza el juicio en ausencia. El Gobierno continúa el análisis sobre un feriado o asueto por la visita del papa León XIV. Una auditoría detectó un desfasaje de $158.000 millones por deuda no registrada en el área de Discapacidad.
+ 16 [txt] Vos: resumime la nota
+ 17 [txt] El presidente Javier Milei calificó como "matices de opinión" las internas en el Ejecutivo el 21 de septiembre de 2026 a las 00:00. Otras noticias incluyen la orden de la Justicia Federal de Córdoba de investigar al ministro de Salud de la Nación, Mario Lugones, y al titular del PAMI, Esteban Leguizamo, hace 3 minutos. El Gobierno también prepara un operativo de seguridad por la visita del Papa León XIV, y se procesó a siete iraníes y un libanés por el atentado a la AMIA a las 12:30.
+ 18 [btn] Leer la nota  (Primera de 3 opciones.)
+ 19 [btn] Volver a la página anterior
+ 20 [btn] Otra cosa
+ 21 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 22 [btn] Enviar

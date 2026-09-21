@@ -41,6 +41,8 @@ final class Assistant {
     /// Un turno en curso, de punta a punta: desde el pedido hasta que las
     /// opciones quedaron puestas. `working` baja y sube entre pasos.
     private(set) var inTurn = false
+    /// El próximo anuncio corta lo que se esté diciendo. Ver `heard`.
+    private var interruptNext = false
     private(set) var offer: Offer? {
         didSet { Registro.anotar("botones", ["opciones": offer?.options.map(\.label) ?? []]) }
     }
@@ -95,6 +97,16 @@ final class Assistant {
     private var previousRequest: String?
     /// Algo de este turno salió mal: el camino sigue con "Intentar de nuevo".
     private var failedTurn = false
+    /// Lo que hay de verdad detrás de cada sugerencia. El botón dice
+    /// "Abrir «…»"; lo que se toca es el control real de la página, con su id
+    /// y su nombre. Rearmarlo con otro id lo rompía: el motor buscaba en la
+    /// página un control que no existía, y se oía "Abriendo Abrir «…»" y "ya
+    /// no está".
+    private var targets: [String: Action] = [:]
+    /// Una pregunta que se buscó en internet y espera a que la persona elija
+    /// un resultado: "¿a cuánto está el blue?" se contesta en el sitio que
+    /// elija, en vez de describir el sitio.
+    private var pendingQuestion: String?
 
     init(
         analyzer: PageAnalyzer?,
@@ -115,7 +127,11 @@ final class Assistant {
     /// Son los mismos del texto de bienvenida. Además de servir, enseñan qué
     /// se le puede pedir al asistente, que es lo que no sabe quien llega.
     static let starters: [Action] = [
-        "Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?",
+        // Directo, sin lista de resultados: el sitio de un ejemplo propio no
+        // hay que adivinarlo.
+        .link(id: "res-inicio-lanacion", label: "Llevame a La Nación", href: "https://www.lanacion.com.ar", region: "main"),
+    ] + [
+        "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?",
     ].map { .link(id: askPrefix + $0, label: $0, href: "", region: "main") }
 
     /// Un botón cuyo id empieza así es un pedido ya escrito.
@@ -135,10 +151,15 @@ final class Assistant {
         Registro.anotar("turno", ["quien": "jef", "texto": text])
         // Dicho en voz alta. Es la única manera de que alguien que no ve se
         // entere de lo que el asistente hizo mientras lo hace.
-        Voz.decir(aloud ?? text)
+        Voz.decir(aloud ?? text, interrumpir: interruptNext)
+        interruptNext = false
     }
 
     private func heard(_ text: String) {
+        // Lo primero que se diga después de un pedido corta lo que quedaba
+        // sonando del anterior. En cola, "Volviendo" llegó a sonar dos minutos
+        // después de pedirlo, detrás de un resumen que ya no importaba.
+        interruptNext = true
         counter += 1
         turns.append(Turn(id: "t\(counter)", who: .person, text: text))
         Registro.anotar("turno", ["quien": "persona", "texto": text])
@@ -161,6 +182,7 @@ final class Assistant {
         touched = []
         lastDone = nil
         failedTurn = false
+        pendingQuestion = nil
         previousRequest = lastRequest
         lastRequest = goal
         defer { closeTurn(on: reader) }
@@ -314,6 +336,7 @@ final class Assistant {
                 await landed(reader)
                 return
             }
+            if Self.isQuestion(goal) { pendingQuestion = goal }
             await arrive(decision.target ?? goal, on: reader, naming: false)
 
         case .abrir:
@@ -564,7 +587,12 @@ final class Assistant {
     /// primera la Córdoba de España para "el tiempo mañana en Córdoba". Pero
     /// ordenar todo por país pasaba cualquier .ar por delante de Wikipedia.
     static func ranked(_ request: String, among results: [Result], naming: Bool) -> [Result] {
-        let byCountry = results.filter { closer($0) > 0 } + results.filter { closer($0) == 0 }
+        // Lo oficial del país, primero. Para "sacar un turno en ANSES" el
+        // primer resultado era turnosanses.net, que no es ANSES: a alguien que
+        // toca siempre la primera opción, un sitio así le puede pedir datos.
+        let official = results.filter(isOfficial)
+        let rest = results.filter { !isOfficial($0) }
+        let byCountry = official + rest.filter { closer($0) > 0 } + rest.filter { closer($0) == 0 }
         guard naming, let best = named(request, among: results) else { return byCountry }
         return [best] + byCountry.filter { $0.href != best.href }
     }
@@ -585,9 +613,13 @@ final class Assistant {
         // vista.
         // Sin contar el total: contaba sitios y no resultados, y no
         // coincidía con lo que se ve en la página.
-        let found = "Resultados para «\(goal)»."
+        let found = "Estás en los resultados de «\(goal)»."
         let intro = results.count == 1 ? "Es éste:" : "Los \(shown.count) más probables:"
-        let list = shown.enumerated().map { "\($0.offset + 1). \($0.element.title) — \($0.element.host)" }
+        // Corta: con los anuncios en cola, una lista larga demora todo lo que
+        // viene después. El título recortado y el dominio sin "www.".
+        let list = shown.enumerated().map {
+            "\($0.offset + 1). \(Self.short($0.element.title, 60)), \(Self.bare($0.element.host) ?? $0.element.host)"
+        }
         say("\(found) \(intro)", aloud: "\(found) \(intro) " + list.joined(separator: ". "))
         var options: [Action] = shown.enumerated().map { index, result in
             .link(id: "res-\(index)-\(result.host)", label: "\(result.title) — \(result.host)",
@@ -686,6 +718,9 @@ final class Assistant {
             // El buscador no es un resultado de sí mismo.
             let engine = "google\\.|gstatic|googleusercontent|bing\\.|microsoft\\.|duckduckgo\\.|brave\\.|startpage\\."
             guard host.range(of: engine, options: [.regularExpression]) == nil else { return }
+            // Ni las copias de prueba de un sitio: web-clarinsandbox.lilax.io
+            // salía entre "los 3 más probables" para Clarín.
+            guard host.range(of: "sandbox|staging|preprod|cdnedge", options: [.regularExpression]) == nil else { return }
             // Un piso bajo, y el porqué importa. Pedía quince letras para
             // descartar la basura de navegación de Bing —"Deportes",
             // "Economía"— y con eso tiraba el resultado correcto: la ANSES
@@ -904,6 +939,29 @@ final class Assistant {
             return mentionsOtherCountry(result.title, home: home) ? 0 : 1
         }
         return 0
+    }
+
+    /// Una página que tapa la nota que se quería leer: pedir suscripción,
+    /// iniciar sesión, o un captcha.
+    static func isWall(_ page: ExtractedPage) -> Bool {
+        if let kind = page.overlay?.kind, [.paywall, .login, .captcha].contains(kind) { return true }
+        let text = (page.url + " " + page.title).folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        return text.range(of: "suscri|subscri|registr|login|signin|sign-in|iniciar sesion|/ingresar", options: .regularExpression) != nil
+    }
+
+    /// Si el pedido pregunta un dato, en vez de pedir ir a algún lado.
+    static func isQuestion(_ text: String) -> Bool {
+        let flat = text.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+            .trimmingCharacters(in: .whitespaces)
+        return text.contains("?") || flat.range(
+            of: "^(a )?(que|cual|cuanto|cuanta|como|donde|cuando|quien)\\b", options: .regularExpression
+        ) != nil
+    }
+
+    /// Un sitio del Estado del país de la persona: .gob.ar, .gov.ar.
+    static func isOfficial(_ result: Result) -> Bool {
+        let home = (Locale.current.region?.identifier ?? "AR").lowercased()
+        return result.host.hasSuffix(".gob.\(home)") || result.host.hasSuffix(".gov.\(home)")
     }
 
     /// Si un título nombra un país que no es el de la persona.
@@ -1174,12 +1232,16 @@ final class Assistant {
             return
         }
 
+        // Lo que hay detrás de una sugerencia: el control real de la página.
+        let target = targets[action.id] ?? action
+        let opensNote = action.id.hasPrefix("sug-")
+
         // Un resultado de búsqueda es una dirección, no un control de esta
         // página: se carga, no se toca. Tocarlo sería buscar ese elemento
         // adentro de la página de resultados, que es otra cosa.
-        if action.href?.isEmpty == false, let href = action.href,
+        if target.href?.isEmpty == false, let href = target.href,
            ReaderModel.normalize(href) != nil,
-           action.id.hasPrefix("res-") || action.id.hasPrefix("sug-") {
+           action.id.hasPrefix("res-") || opensNote {
             if action.label.hasPrefix("Abrir «") {
                 say("Abriendo «" + action.label.dropFirst("Abrir «".count))
             } else {
@@ -1188,6 +1250,26 @@ final class Assistant {
             reader.address = href
             await reader.go()
             working = false
+            // Se abrió una nota y se llegó a un muro: decirlo, no presentarlo
+            // como el destino. En Clarín el titular llevó a la página de
+            // suscripción, de ahí a iniciar sesión, y cada una se describía
+            // como si la persona hubiera querido ir ahí.
+            if opensNote, let page = reader.page, Self.isWall(page) {
+                say("Esa nota no se puede leer sin suscribirse o iniciar sesión: el sitio me llevó a «\(page.sectionTitle)».")
+                offer = reader.canGoBack
+                    ? Offer(goal: "", options: [.link(id: Self.backID, label: "Volver a la página anterior", href: "", region: "main")])
+                    : nil
+                return
+            }
+            // Una pregunta que esperaba sitio: se contesta acá, sin describir.
+            if let question = pendingQuestion, let page = reader.page {
+                pendingQuestion = nil
+                say("En \(page.displaySite).")
+                working = true
+                await reply(question, about: page)
+                working = false
+                return
+            }
             await landed(reader)
             // Y recién ahora sigue la tarea que estaba esperando que la
             // persona eligiera: "…y pedir un turno".
@@ -1201,13 +1283,13 @@ final class Assistant {
         // Un campo se llena, no se toca. Sin esto, aceptar "Buscar en
         // Wikipedia" volvía a apretar la lupa y a preguntar de nuevo: la
         // persona confirmaba una y otra vez sin que nada se escribiera.
-        if let page = reader.page, let field = Self.field(named: action, in: page) {
-            await write(field, of: action, goal: chosen.goal, on: reader)
+        if let page = reader.page, let field = Self.field(named: target, in: page) {
+            await write(field, of: target, goal: chosen.goal, on: reader)
             return
         }
 
-        say("Abriendo \(action.label).")
-        await reader.activate(action)
+        say(target.kind == .link ? "Abriendo «\(target.label)»." : "Tocando «\(target.label)».")
+        await reader.activate(target)
         working = false
         guard !chosen.goal.isEmpty else {
             await landed(reader)
@@ -1476,6 +1558,15 @@ final class Assistant {
         where action.kind != .form && action.unnamed != true && !placed.contains(action.id) {
             chrome.append(action.label)
         }
+        // Los formularios, con lo que piden. No estaban: en la página de
+        // ingreso del banco el asistente no podía decir qué campos había.
+        for form in page.actions where form.kind == .form && !(form.fields ?? []).isEmpty {
+            let fields = (form.fields ?? []).filter { $0.type != "hidden" }
+                .map { $0.isSecure ? "\(spoken($0)) (contraseña)" : spoken($0) }
+            guard !fields.isEmpty else { continue }
+            let button = form.submit.map { " — botón «\($0)»" } ?? ""
+            content.append("FORMULARIO que pide: \(fields.joined(separator: ", "))\(button)")
+        }
         // Un artículo no pasa por el recorrido: su texto vive en los bloques.
         if content.count < 8 {
             for block in page.blocks where !block.plainText.isEmpty { content.append(block.plainText) }
@@ -1497,8 +1588,11 @@ final class Assistant {
     static func candidates(of page: ExtractedPage) -> [Action] {
         let all = options(of: page)
         let headlines = Set(headlines(of: page))
-        let first = all.filter { headlines.contains($0.label) }
-        let rest = all.filter { !headlines.contains($0.label) && $0.label.count >= 12 }
+        let first = all.filter { headlines.contains(tidy($0.label)) }
+        // Del resto, sólo lo que está en el contenido: "Ya tenés tu tarjeta
+        // 365?" y "Correo electrónico" salían como opciones de una nota.
+        let chrome: Set<String> = ["header", "banner", "nav", "navigation", "footer", "contentinfo"]
+        let rest = all.filter { !headlines.contains(tidy($0.label)) && $0.label.count >= 12 && !chrome.contains($0.region) }
         return Array((first + rest).prefix(30))
     }
 
@@ -1527,7 +1621,14 @@ final class Assistant {
         let other = Action.link(id: Self.otherID, label: "Otra cosa", href: "", region: "main")
         if let current = offer {
             guard !current.options.contains(where: { $0.id == Self.otherID }) else { return }
-            offer = Offer(goal: current.goal, options: current.options + [other])
+            var options = current.options
+            // Volver, aunque las opciones las haya armado el modelo: sin él,
+            // salir de una página equivocada obligaba a escribir.
+            let isResults = options.contains { $0.id.hasPrefix("res-") }
+            if reader.canGoBack, !isResults, !options.contains(where: { $0.id == Self.backID }) {
+                options.append(.link(id: Self.backID, label: "Volver a la página anterior", href: "", region: "main"))
+            }
+            offer = Offer(goal: current.goal, options: options + [other])
             return
         }
         // Después de una falla, lo primero es poder intentarlo otra vez sin
@@ -1597,14 +1698,24 @@ final class Assistant {
         return Array(out.prefix(3))
     }
 
+    /// Un titular sin la hora de publicación que algunos sitios le pegan:
+    /// "Medidas de Milei, Hace 34 min". Leída en voz alta, la hora sonaba a
+    /// parte de la noticia.
+    static func tidy(_ title: String) -> String {
+        title.replacingOccurrences(
+            of: "[,.·|-]?\\s*[Hh]ace \\d+\\s*(min|minutos|h|hs|horas|d|días)\\.?\\s*$",
+            with: "", options: .regularExpression
+        ).trimmingCharacters(in: .whitespaces)
+    }
+
     /// A dónde lleva un titular: el mismo recorrido del que sale
     /// `headlines(of:)`, así que el texto coincide letra por letra.
     static func href(ofHeadline title: String, in page: ExtractedPage) -> String? {
         let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for entry in page.stream ?? [] {
-            if entry.kind == "link", entry.label == title, let href = entry.href { return href }
+            if entry.kind == "link", entry.label.map(tidy) == title, let href = entry.href { return href }
             if entry.kind == "listing", let listing = entry.ref.flatMap({ byID[$0] }),
-               let href = listing.items.first(where: { $0.title == title })?.href {
+               let href = listing.items.first(where: { tidy($0.title) == title })?.href {
                 return href
             }
         }
@@ -1703,6 +1814,7 @@ final class Assistant {
             case .abrir:
                 guard let number = suggestion.number, candidates.indices.contains(number - 1) else { return nil }
                 let target = candidates[number - 1]
+                targets["sug-\(target.id)"] = target
                 return Action(
                     // El título de lo que abre, no el del modelo: en Clarín
                     // un botón que decía "Abrir noticia de la visita de León
@@ -1721,10 +1833,14 @@ final class Assistant {
         // En una nota, primero lo de esta nota: leerla, resumirla. Si no, el
         // primer botón —el que toca quien toca siempre el primero— la sacaba
         // a otra nota antes de haberla escuchado.
-        let ordered = Self.isArticle(page)
+        var ordered = Self.isArticle(page)
             ? options.filter { $0.id == Self.readID } + options.filter { $0.id == Self.summaryID }
                 + options.filter { $0.id != Self.readID && $0.id != Self.summaryID }
             : options
+        // En una nota, leerla siempre está: el modelo a veces no lo ofrecía.
+        if Self.isArticle(page), !ordered.contains(where: { $0.id == Self.readID }) {
+            ordered.insert(.link(id: Self.readID, label: "Leer la nota", href: "", region: "main"), at: 0)
+        }
         if !ordered.isEmpty { offer = Offer(goal: "", options: ordered) }
     }
 
@@ -1781,7 +1897,6 @@ final class Assistant {
         if !headlines.isEmpty, !Self.isArticle(page) {
             say("Hay \(headlines.count) \(headlines.count == 1 ? "nota" : "notas"). \(headlines.count == 1 ? "Dice" : "Las tres primeras"):")
             for title in headlines.prefix(3) { say(String(title.prefix(120))) }
-            say("Puedo leer una, resumir la página, o buscar otra cosa.")
             return
         }
 
@@ -1794,7 +1909,6 @@ final class Assistant {
         if Self.isArticle(page), let opening = paragraphs.first(where: { $0.count >= 160 }) {
             say("Es una nota de \(paragraphs.count) párrafos. Empieza así:")
             say(String(opening.prefix(220)))
-            say("Puedo leerla entera, resumirla, o contestar algo puntual.")
             return
         }
 
@@ -1808,7 +1922,6 @@ final class Assistant {
                 ? "Hay \(items.count) resultados. Los tres primeros:"
                 : "\(named): \(items.count). Los tres primeros:")
             for item in items.prefix(3) { say(String(item.title.prefix(120))) }
-            say("Puedo abrir uno, leer más, o buscar otra cosa.")
             return
         }
 
@@ -1889,12 +2002,16 @@ final class Assistant {
         var seen = Set<String>()
         let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for entry in page.stream ?? [] {
-            if entry.kind == "link", entry.level != nil, entry.href != nil, let label = entry.label {
+            // Veinte letras como piso: "Medidas de Milei" y "Dólar hoy" son
+            // etiquetas de sección del ticker, no notas.
+            if entry.kind == "link", entry.level != nil, entry.href != nil, let label = entry.label.map(tidy),
+               label.count >= 20 {
                 if seen.insert(label).inserted { out.append(label) }
             }
             if entry.kind == "listing", let listing = entry.ref.flatMap({ byID[$0] }) {
                 for item in listing.items where item.href != nil && item.title.count >= 25 {
-                    if seen.insert(item.title).inserted { out.append(item.title) }
+                    let title = tidy(item.title)
+                    if seen.insert(title).inserted { out.append(title) }
                 }
             }
         }

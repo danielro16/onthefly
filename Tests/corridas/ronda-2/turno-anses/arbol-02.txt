@@ -1,0 +1,14 @@
+  1 [H] Asistente
+  2 [txt] Vos: quiero sacar un turno en anses
+  3 [txt] Buscando: turnos anses.
+  4 [txt] Resultados para «turnos anses». Los 3 más probables:
+  5 [txt] Vos: Turnos ANSES - ️ Sacar turno en ANSES — turnosanses.net
+  6 [txt] Abriendo turnosanses.net.
+  7 [txt] Está en la página de Turnos ANSES, donde se explica cómo solicitar un turno en línea o por teléfono. Incluye un paso a paso para el trámite en línea y una lista de trámites que requieren turno. El número de teléfono para solicitar turno es el 130.
+  8 [btn] Abrir «Solicitar turno EN LÍNEA»  (Primera de 5 opciones.)
+  9 [btn] Abrir «LLAMAR para solicitar turno»
+ 10 [btn] Abrir «Política de Privacidad»
+ 11 [btn] Abrir «Política de Cookies»
+ 12 [btn] Otra cosa
+ 13 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 14 [btn] Enviar

@@ -55,7 +55,7 @@ struct AssistantPanel: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     if assistant.turns.isEmpty {
-                        Text("Escribir a dónde ir o qué buscar. Con una página abierta, también se le puede preguntar qué dice. Por ejemplo: «llevame a La Nación», «¿a cuánto está el dólar?».")
+                        Text("JEF es un asistente para usar internet sin ver la pantalla: abre sitios, busca, lee, resume y contesta lo que dicen. Se le puede escribir o dictar un pedido, o tocar uno de estos ejemplos.")
                             .font(.callout)
                             .foregroundStyle(.secondary)
                     }

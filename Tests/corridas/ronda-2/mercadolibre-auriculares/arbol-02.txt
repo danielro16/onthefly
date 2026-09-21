@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [txt] Vos: entrá a mercado libre y buscame auriculares bluetooth
+  3 [txt] Buscando: mercado libre.
+  4 [txt] Resultados para «mercado libre». Los 3 más probables:
+  5 [txt] Cuando elijas, sigo con: buscame auriculares bluetooth.
+  6 [txt] Vos: Mercado Libre Argentina - Envíos Gratis en el día — www.mercadolibre.com.ar
+  7 [txt] Abriendo mercadolibre.com.ar.
+  8 [txt] Está en la portada de Mercado Libre Argentina. Se muestran ofertas con hasta 45% de descuento y hasta 18 cuotas sin interés en electrobeauty, accesorios y moda. También hay beneficios exclusivos desde 5490 pesos por mes y envíos gratis desde 15000 pesos en productos.
+  9 [txt] Sigo con: buscame auriculares bluetooth.
+ 10 [txt] Buscando auriculares bluetooth en www.mercadolibre.com.ar.
+ 11 [txt] El sitio me puso una verificación de «no soy un robot». Eso no lo puedo resolver yo.
+ 12 [txt] Suele tener una opción de audio, pero está dentro del recuadro de la verificación y no la puedo tocar: hay que hacerlo en la pantalla.
+ 13 [txt] Si preferís, te llevo a otro lado o volvemos a la página anterior.
+ 14 [btn] Volver a la página anterior  (Primera de 2 opciones.)
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 17 [btn] Enviar

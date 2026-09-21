@@ -1,0 +1,23 @@
+  1 [H] Asistente
+  2 [txt] Vos: la nación
+  3 [txt] Buscando: la nacion.
+  4 [txt] Resultados para «la nacion». Los 3 más probables:
+  5 [txt] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de LA NACION. Los titulares principales son: Las medidas de Milei, el dólar hoy, la reacción de las cadenas de TV al veto de Trump, y la declaración de Adorni ante la Justicia sobre su patrimonio. El dólar oficial está a $1535,00, el dólar blue a $1550,00, el dólar tarjeta a $1995,50 y el dólar MEP a $1534,61.
+  8 [txt] Vos: Otra cosa
+  9 [txt] ¿Qué otra cosa hacemos? Se puede escribir o dictar.
+ 10 [txt] Vos: llevame a deportes
+ 11 [txt] Abriendo Deportes.
+ 12 [txt] En Noticias de Deportes — LA NACION.
+ 13 [txt] Hay 35 notas. Las tres primeras:
+ 14 [txt] Las posiciones del Clausura. Faltan seis fechas: así está la tabla anual, el camino a los playoffs y las copas, y el des
+ 15 [txt] Además, cómo está la tabla anual y el ingreso a las copas, los playoffs y el descenso
+ 16 [txt] Examen en Uzbekistán. Faustino Oro hace honor al primer tablero en las Olimpiadas de ajedrez: cómo le fue hasta ahora
+ 17 [txt] Puedo leer una, resumir la página, o buscar otra cosa.
+ 18 [btn] Leer los titulares  (Primera de 4 opciones.)
+ 19 [btn] Resumir la portada
+ 20 [btn] Volver a la página anterior
+ 21 [btn] Otra cosa
+ 22 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 23 [btn] Enviar

@@ -1,0 +1,13 @@
+  1 [H] Asistente
+  2 [txt] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Resultados para «clarin». Los 3 más probables:
+  5 [txt] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Está en Clarin.com, una portada de noticias. Los titulares principales son: el Gobierno estima que 7 millones de personas se movilizarán por la visita de León XIV; Adorni justificó su patrimonio diciendo que ganó casi 600 mil dólares con criptomonedas; y murió a los 97 años Carlos Alonso, uno de los máximos pintores argentinos contemporáneos.
+  8 [btn] Abrir «Quiénes son los ganadores y los perdedores tras la definición de la…»  (Primera de 4 opciones.)
+  9 [btn] Abrir «Murió a los 97 años Carlos Alonso, uno de los máximos pintores…»
+ 10 [btn] Abrir «El juez Rafecas procesó a los iraníes y libaneses acusados del…»
+ 11 [btn] Otra cosa
+ 12 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 13 [btn] Enviar

@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [txt] Vos: quiero sacar un turno en anses
+  3 [txt] Buscando: turnos anses.
+  4 [txt] Resultados para «turnos anses». Los 3 más probables:
+  5 [txt] Vos: Turnos ANSES - ️ Sacar turno en ANSES — turnosanses.net
+  6 [txt] Abriendo turnosanses.net.
+  7 [txt] Está en la página de Turnos ANSES, donde se explica cómo solicitar un turno en línea o por teléfono. Incluye un paso a paso para el trámite en línea y una lista de trámites que requieren turno. El número de teléfono para solicitar turno es el 130.
+  8 [txt] Vos: Abrir «Solicitar turno EN LÍNEA»
+  9 [txt] Abriendo «Solicitar turno EN LÍNEA»
+ 10 [txt] Está en la sección de turnos de ANSES. La página permite buscar turnos para trámites. Hay una lista de trámites disponibles que incluyen el Plan de Pago de Deuda Previsional, Solicitud de Jubilación, Solicitud de Pensión, Pensión no Contributiva por Invalidez Laboral, y Asignación Universal por Hijo. También se puede consultar o reprogramar un turno ya sacado.
+ 11 [btn] Abrir «Plan de Pago de Deuda Previsional para trabajadores en actividad…»  (Primera de 5 opciones.)
+ 12 [btn] Abrir «Solicitud de Jubilación, , ver sub-trámites»
+ 13 [btn] Abrir «CONSULTAR TURNO»
+ 14 [btn] Abrir «Reprogramación»
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 17 [btn] Enviar
