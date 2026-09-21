@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: ¿a cuánto está el dólar blue hoy?
+  3 [txt] Buscando: dólar blue hoy.
+  4 [txt] Estás en los resultados de «dólar blue hoy». Los 3 más probables:
+  5 [H] Vos: Dólar Blue Hoy $1550 | Cotización en tiempo real — dolarinfohoy.com.ar
+  6 [txt] Abriendo dolarinfohoy.com.ar.
+  7 [txt] En DolarInfoHoy.
+  8 [txt] El dólar blue hoy se compra a $1.530 y se vende a $1.550.
+  9 [btn] ¿Y el dólar oficial?  (Primera de 5 opciones.)
+ 10 [btn] ¿Y el MEP?
+ 11 [btn] Leer la página
+ 12 [btn] Resumir la página
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar

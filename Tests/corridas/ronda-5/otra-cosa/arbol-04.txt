@@ -1,0 +1,22 @@
+  1 [H] Asistente
+  2 [H] Vos: la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de LA NACION, un portal de noticias. Los titulares principales son: El secretario de Discapacidad renunció en medio de la puja por el rumbo del área. Las grandes cadenas de TV reaccionan al veto de Trump. Un gas contaminado sería la causa del apagón que dejó a oscuras a más de 2 millones de personas. Tres misas y mucha orfebrería diplomática para evitar que la visita del Papa se politice.
+  8 [H] Vos: Otra cosa
+  9 [txt] ¿Qué otra cosa hacemos? Se puede escribir, o dictar con el micrófono del teclado.
+ 10 [H] Vos: llevame a deportes
+ 11 [txt] Abriendo Deportes.
+ 12 [txt] En Noticias de Deportes — LA NACION.
+ 13 [txt] Hay 35 notas. Las tres primeras:
+ 14 [txt] Las posiciones del Clausura. Faltan seis fechas: así está la tabla anual, el camino a los playoffs y las copas, y el descenso
+ 15 [txt] Además, cómo está la tabla anual y el ingreso a las copas, los playoffs y el descenso
+ 16 [txt] El crimen de Martín Aramburú. La aterradora frase de un acusado a la familia del asesinado: "Los dinosaurios que se comieron a su padre soy…
+ 17 [btn] Leer los titulares  (Primera de 4 opciones.)
+ 18 [btn] Resumir la portada
+ 19 [btn] Volver a la página anterior
+ 20 [btn] Otra cosa
+ 21 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 22 [btn] Enviar

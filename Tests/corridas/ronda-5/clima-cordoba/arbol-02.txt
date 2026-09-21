@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: ¿cómo va a estar el tiempo mañana en córdoba?
+  3 [txt] Buscando: tiempo mañana córdoba.
+  4 [txt] Estás en los resultados de «tiempo mañana córdoba». Los 3 más probables:
+  5 [H] Vos: Tiempo en Córdoba mañana - Meteored Argentina — www.meteored.com.ar
+  6 [txt] Abriendo meteored.com.ar.
+  7 [txt] En meteored.com.ar.
+  8 [txt] Mañana, martes 22 de septiembre, en Córdoba va a haber cielos despejados, aunque con algunas nubes de madrugada. La temperatura va a ir de 7°C a 19°C, y la máxima se va a alcanzar alrededor de las 16:00. El viento va a ser moderado del norte, con rachas de hasta 35 km/h por la noche.
+  9 [btn] ¿A qué hora sale el sol?  (Primera de 5 opciones.)
+ 10 [btn] ¿Cómo estará la temperatura por la noche?
+ 11 [btn] Leer la nota
+ 12 [btn] Resumir la nota
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar

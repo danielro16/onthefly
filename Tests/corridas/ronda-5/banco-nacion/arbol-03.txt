@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: quiero entrar al home banking del banco nación
+  3 [txt] Buscando: home banking banco nacion.
+  4 [txt] Estás en los resultados de «home banking banco nacion». Los 3 más probables:
+  5 [H] Vos: Banco de la Nación Argentina - Home banking — digital.bna.com.ar
+  6 [txt] Abriendo digital.bna.com.ar.
+  7 [txt] Estás en el home banking del Banco Nación. Te pide tu DNI y tu usuario para ingresar.
+  8 [H] Vos: completá el campo DNI
+  9 [txt] ¿Qué pongo en DNI?
+ 10 [btn] Completar «DNI»  (Primera de 4 opciones.)
+ 11 [btn] Completar «Usuario»
+ 12 [btn] Volver a la página anterior
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar

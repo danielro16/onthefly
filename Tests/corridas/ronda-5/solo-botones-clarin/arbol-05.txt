@@ -1,0 +1,26 @@
+  1 [H] Asistente
+  2 [H] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Estás en los resultados de «clarin». Los 3 más probables:
+  5 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en la portada de Clarín.com. Los titulares principales son: Renunció el secretario de Discapacidad en medio de la interna por los recortes en el Presupuesto 2027. Adorni intentó justificar su patrimonio diciendo que ganó casi 600 mil dólares con la venta de criptomonedas. Quiénes son los ganadores y perdedores tras la definición de la agenda del papa León XIV en Argentina. El Gobierno espera que por la visita del Papa se movilicen 7 millones de personas y evalúa declarar asueto.
+  8 [H] Vos: Abrir «Renunció el secretario de Discapacidad en medio de la interna por los…»
+  9 [txt] Abriendo «Renunció el secretario de Discapacidad en medio de la interna por los…»
+ 10 [txt] Estás en Clarín, en una nota sobre la renuncia del secretario de Discapacidad, Alejandro Vilches, por la interna sobre los recortes en el Presupuesto 2027.
+ 11 [H] Vos: Leer la nota completa
+ 12 [txt] El secretario nacional de Discapacidad, Alejandro Vilches, renunció este lunes a su cargo en medio de las discusiones en el oficialismo por los recortes en el área incluidos en el proyecto de Presupuesto 2027 que presentó el Gobierno la semana pasada.
+ 13 [txt] El ahora exfuncionario formalizó su salida del Gobierno mediante una carta que dirigió al ministro de Salud, Mario Lugones. “Por medio de la presente le comunico mi renuncia al cargo de Secretario Nacional de Discapacidad, haciendo efectiva la misma a partir de este momento”, escribió Vilches.
+ 14 [txt] Había llegado a la Secretaría de Discapacidad en agosto del año pasado luego de que apartaran del cargo a Diego Spagnuolo, tras la difusión de audios que hablaban sobre un supuesto entramado de coimas entre prestadores de servicios y funcionarios.
+ 15 [txt] Párrafo 3 de 11.
+ 16 [H] Vos: Seguir leyendo
+ 17 [txt] Aunque desde el Gobierno también insistieron con que la renuncia de Vilches está motivada únicamente por motivos personales, la salida del funcionario se da en medio de la tensión interna por la derogación de artículos vinculados al  financiamiento en el área de discapacidad que ya habían negociado con la oposición aliada.
+ 18 [txt] El Presupuesto propone regresar a un esquema de pensión por invalidez que no llega a los $ 300 mil y que se le da de baja si el beneficiario tiene un empleo. También deja en manos de las obras sociales y de las prepagas el monto destinado a los prestadores, en un área tan sensible como la discapacidad, que afecta a casi 6 millones de personas y a sus respectivos familiares.
+ 19 [txt] La primera en manifestar su malestar por la falta de información interna respecto a las decisiones de cambiar elementos que ya habían sido acordados en el Presupuesto fue Patricia Bullrich.
+ 20 [txt] Párrafo 6 de 11.
+ 21 [btn] Seguir leyendo  (Primera de 4 opciones.)
+ 22 [btn] Resumir la nota
+ 23 [btn] Volver a la página anterior
+ 24 [btn] Otra cosa
+ 25 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 26 [btn] Enviar

@@ -1,0 +1,12 @@
+  1 [H] Asistente
+  2 [H] Vos: http://localhost:56703/misma-pagina.html
+  3 [txt] Abriendo localhost.
+  4 [txt] El sitio web me pide resolver una prueba anti-robot. Hay que resolverla en la página, arriba. Cuando esté resuelta, continuamos.
+  5 [H] Vos: Ya la resolví
+  6 [txt] Listo, ya pasamos la verificación.
+  7 [txt] Estás en localhost, en una página de auriculares bluetooth. Hay tres modelos disponibles con envío gratis, ordenados por precio: los Auriculares In Ear Bluetooth Básicos a $12.499, los Auriculares Vincha Bluetooth con Micrófono a $24.990 y los Auriculares con Cancelación de Ruido a $89.900.
+  8 [btn] Leer la página  (Primera de 3 opciones.)
+  9 [btn] Resumir la página
+ 10 [btn] Otra cosa
+ 11 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 12 [btn] Enviar

@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: quiero sacar un turno en anses
+  3 [txt] Buscando: anses.
+  4 [txt] Estás en los resultados de «anses». Los 3 más probables:
+  5 [H] Vos: ANSES - Argentina.gob.ar — www.argentina.gob.ar
+  6 [txt] Abriendo argentina.gob.ar.
+  7 [txt] Estás en la portada de ANSES. Para sacar un turno, tenés que ir a la sección Turnos.
+  8 [H] Vos: Abrir «Clave de la Seguridad Social»
+  9 [txt] Abriendo «Clave de la Seguridad Social»
+ 10 [txt] Estás en la página de Argentina.gob.ar para obtener la Clave de la Seguridad Social. Sirve para hacer trámites y consultas en ANSES por internet. Para sacar un turno, antes vas a necesitar esta clave.
+ 11 [btn] Abrir «Personas que se encuentren en el exterior (sin apoderado), Si residís…»  (Primera de 3 opciones.)
+ 12 [btn] Volver a la página anterior
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar

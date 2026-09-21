@@ -1,0 +1,23 @@
+  1 [H] Asistente
+  2 [H] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Estos son los titulares principales: El secretario de Discapacidad renunció por la puja en el área. Las cadenas de TV reaccionan al veto de Trump. Un gas contaminado habría causado el apagón que dejó sin luz a más de 2 millones de personas. Habrá tres misas y diplomacia para que la visita del Papa no se politice.
+  8 [H] Vos: dame los titulares
+  9 [txt] 1. Por carta. El secretario de Discapacidad presentó su renuncia en medio de la puja por el rumbo del área
+ 10 [txt] 2. Escalada. Las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele
+ 11 [txt] 3. Interruptor L46. Un gas contaminado sería la causa del apagón que dejó a oscuras a más de 2 millones de personas
+ 12 [txt] Titular 3 de 139.
+ 13 [H] Vos: Abrir «Por carta. El secretario de Discapacidad presentó su renuncia en…»
+ 14 [txt] Abriendo «Por carta. El secretario de Discapacidad presentó su renuncia en…»
+ 15 [txt] Estás en la sección de Política del diario LA NACION, en una nota sobre la renuncia de Alejandro Vilches, secretario de Discapacidad, en medio de la discusión por el rumbo del área. La Justicia Federal ordenó investigar al ministro de Salud y al titular del PAMI por el presunto incumplimiento de resoluciones que disponen regularizar los pagos a prestadores de servicios para personas con discapacidad.
+ 16 [btn] Leer la nota  (Primera de 6 opciones.)
+ 17 [btn] Abrir «Salud masculina. Qué le pasa al cuerpo de un hombre si deja de tener…»
+ 18 [btn] Abrir «Salva vidas”. El medicamento "estrella" para bajar el colesterol y…»
+ 19 [btn] Abrir «Tenía 27 años. Murió Presley Gerber, el hijo de la modelo…»
+ 20 [btn] Volver a la página anterior
+ 21 [btn] Otra cosa
+ 22 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 23 [btn] Enviar

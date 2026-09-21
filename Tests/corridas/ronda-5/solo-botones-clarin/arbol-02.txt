@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Estás en los resultados de «clarin». Los 3 más probables:
+  5 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en la portada de Clarín.com. Los titulares principales son: Renunció el secretario de Discapacidad en medio de la interna por los recortes en el Presupuesto 2027. Adorni intentó justificar su patrimonio diciendo que ganó casi 600 mil dólares con la venta de criptomonedas. Quiénes son los ganadores y perdedores tras la definición de la agenda del papa León XIV en Argentina. El Gobierno espera que por la visita del Papa se movilicen 7 millones de personas y evalúa declarar asueto.
+  8 [btn] Abrir «Renunció el secretario de Discapacidad en medio de la interna por los…»  (Primera de 6 opciones.)
+  9 [btn] Abrir «Adorni intentó justificar su patrimonio: dijo que ganó casi US$ 600…»
+ 10 [btn] Abrir «Quiénes son los ganadores y los perdedores tras la definición de la…»
+ 11 [btn] Abrir «El Gobierno espera que por la visita del Papa se movilicen 7 millones…»
+ 12 [btn] Volver a la página anterior
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar
