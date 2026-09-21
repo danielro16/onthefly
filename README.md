@@ -54,6 +54,8 @@ quedó en la rama `ui-cromo-y-tramos` y en el historial.
 - **Preguntar no mueve.** Enterarse de que se cambió de página sin pedirlo es
   lo más desorientador para alguien que no ve.
 - **Nunca se confirma por voz.** La voz pide; la mano confirma tocando.
+- **Todo turno termina con botones:** los próximos pasos probables y "Otra
+  cosa" al final. Se avanza tocando, sin tener que escribir.
 - **Los resultados de una búsqueda se presentan, no se eligen.** Tres, como
   botones, y "Ver más opciones".
 - **Un límite es un traspaso.** "No compro, pero te llevo, te busco el

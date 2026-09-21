@@ -100,6 +100,10 @@ struct AssistantPanel: View {
                 .padding(.vertical, 12)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
+            // "Otra cosa": el cursor va al campo, con el teclado abierto.
+            .onChange(of: assistant.inputRequests) { _, _ in
+                writing = true
+            }
             .onChange(of: assistant.turns.count) { _, _ in
                 guard let last = assistant.turns.last else { return }
                 withAnimation { scroll.scrollTo(last.id, anchor: .bottom) }

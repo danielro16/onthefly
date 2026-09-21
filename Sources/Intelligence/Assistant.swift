@@ -70,6 +70,16 @@ final class Assistant {
 
     /// Los resultados que no entraron en los tres primeros.
     private var pending: [Result] = []
+    /// Lo último que el asistente hizo en esta página, para que las opciones
+    /// que siguen no ofrezcan lo mismo otra vez.
+    private var lastDone: String?
+    /// Los titulares que se acaban de leer, por posición: son los que la
+    /// persona tiene en la cabeza, así que son los que se ofrecen abrir.
+    private var lastChunk: Range<Int>?
+    /// Sube cada vez que se toca "Otra cosa": el panel lleva el cursor al
+    /// campo de escribir.
+    private(set) var inputRequests = 0
+
     /// Lo que quedaba de la tarea cuando se frenó a preguntar. "Quiero entrar
     /// a ANSES y pedir un turno" muestra los resultados de ANSES y se guarda
     /// el turno: en cuanto la persona elige, sigue sola.
@@ -119,6 +129,8 @@ final class Assistant {
         heard(goal)
         offer = nil
         touched = []
+        lastDone = nil
+        defer { closeTurn(on: reader) }
 
         // Una dirección es una dirección. Buscarla adentro de la página —que
         // es lo que hacía— termina ofreciendo "¿querés que vaya a Inicio?"
@@ -317,13 +329,7 @@ final class Assistant {
             if let after = reader.page { await arrived(after) }
 
         case .volver:
-            guard reader.canGoBack else { say("No hay a dónde volver: esta es la primera página."); return }
-            working = true
-            say("Volviendo.")
-            await reader.back()
-            working = false
-            readingFrom = 0
-            if let page = reader.page { await arrived(page) }
+            await goBack(on: reader)
 
         case .orientar:
             guard let page = reader.page else {
@@ -900,12 +906,15 @@ final class Assistant {
 
         let chunk = pieces[readingFrom..<min(readingFrom + 3, pieces.count)]
         for piece in chunk { say(String(piece.prefix(600))) }
+        lastChunk = chunk.indices
+        lastDone = Self.readID
         readingFrom += chunk.count
 
         if readingFrom >= pieces.count {
             say(end)
         } else {
-            say("\(readingUnit(page)) \(readingFrom) de \(pieces.count). «Continuar» para seguir.")
+            // Sin "«Continuar» para seguir": para eso está el botón.
+            say("\(readingUnit(page)) \(readingFrom) de \(pieces.count).")
         }
     }
 
@@ -920,6 +929,7 @@ final class Assistant {
     /// puede verificar, se leen los primeros párrafos tal cual los escribió
     /// la página. Es peor resumen y es cierto al cien por ciento.
     private func summarize(_ page: ExtractedPage) async {
+        lastDone = Self.summaryID
         let paragraphs: [String] = page.blocks.compactMap {
             if case .paragraph(_, let text, _) = $0 { return text } else { return nil }
         }
@@ -977,14 +987,35 @@ final class Assistant {
         guard let chosen = offer, !working else { return }
         offer = nil
         heard(action.label)
+        lastDone = nil
         working = true
         defer { working = false }
+
+        // "Otra cosa": ninguna de las opciones era. Se pregunta y se deja a
+        // la persona escribiendo — sin más botones, que es justo lo que no
+        // servía.
+        if action.id == Self.otherID {
+            say("¿Qué otra cosa hacemos? Se puede escribir o dictar abajo.")
+            inputRequests += 1
+            return
+        }
+        defer { closeTurn(on: reader) }
 
         // Leer y resumir no llevan a ningún lado: actúan sobre esta página.
         if action.id == Self.readID, let page = reader.page {
             working = false
             readingFrom = 0
             readAloud(page)
+            return
+        }
+        if action.id == Self.continueID, let page = reader.page {
+            working = false
+            readAloud(page)
+            return
+        }
+        if action.id == Self.backID {
+            working = false
+            await goBack(on: reader)
             return
         }
         if action.id == Self.summaryID, let page = reader.page {
@@ -1324,6 +1355,110 @@ final class Assistant {
 
     static let readID = "jef-leer"
     static let summaryID = "jef-resumir"
+    static let continueID = "jef-seguir"
+    static let backID = "jef-volver"
+    static let otherID = "jef-otra-cosa"
+
+    // MARK: - El camino, armado
+
+    /// Todo turno termina con opciones.
+    ///
+    /// Las tres o cuatro cosas más probables desde donde la persona quedó, y
+    /// "Otra cosa" al final. Lo pidió Daniel: con VoiceOver se avanza
+    /// tocando, sin tener que escribir, y el asistente va armando el camino.
+    /// Escribir sigue estando siempre abajo; "Otra cosa" dice además que
+    /// ninguna de las opciones era.
+    ///
+    /// Si el turno ya dejó opciones —los resultados de una búsqueda, lo que
+    /// sugirió al llegar, "no es claro cuál"— se les suma "Otra cosa". Si
+    /// no, salen de la página y de lo que se acaba de hacer, no de un modelo:
+    /// tienen que estar aunque no haya red, y ser las mismas cada vez que se
+    /// llega al mismo lugar.
+    private func closeTurn(on reader: ReaderModel) {
+        let other = Action.link(id: Self.otherID, label: "Otra cosa", href: "", region: "main")
+        if let current = offer {
+            guard !current.options.contains(where: { $0.id == Self.otherID }) else { return }
+            offer = Offer(goal: current.goal, options: current.options + [other])
+            return
+        }
+        // Sin página no hay nada probable que ofrecer: el campo de escribir
+        // ya es la única opción.
+        guard let page = reader.page else { return }
+        offer = Offer(goal: "", options: followUps(page, canGoBack: reader.canGoBack) + [other])
+    }
+
+    /// Lo que sigue, según la página y lo último que se hizo en ella.
+    private func followUps(_ page: ExtractedPage, canGoBack: Bool) -> [Action] {
+        func option(_ id: String, _ label: String) -> Action {
+            .link(id: id, label: label, href: "", region: "main")
+        }
+        let reading = page.url == readingURL && readingFrom > 0
+        let more = reading && readingFrom < readablePieces(page).count
+        let summarized = lastDone == Self.summaryID
+        var out: [Action] = []
+
+        if let query = Self.searchQuery(of: page) {
+            // En la página del buscador lo probable es uno de los resultados.
+            let found = Self.ranked(query, among: Self.results(of: page))
+            for (index, result) in found.prefix(3).enumerated() {
+                out.append(.link(id: "res-\(index)-\(result.host)", label: "\(result.title) — \(result.host)",
+                                 href: result.href, region: "main"))
+            }
+            return out
+        }
+
+        if readsHeadlines(page) {
+            // Recién leídos, lo probable es abrir uno de ésos: son los que la
+            // persona tiene en la cabeza.
+            if lastDone == Self.readID, let chunk = lastChunk {
+                let all = Self.headlines(of: page)
+                for index in chunk where all.indices.contains(index) {
+                    guard let href = Self.href(ofHeadline: all[index], in: page) else { continue }
+                    out.append(.link(id: "sug-titular-\(index)", label: "Abrir «\(all[index].prefix(70))»",
+                                     href: href, region: "main"))
+                }
+                if more { out.append(option(Self.continueID, "Seguir con los titulares")) }
+                return out
+            }
+            out.append(option(Self.readID, "Leer los titulares"))
+            if !summarized { out.append(option(Self.summaryID, "Resumir la portada")) }
+        } else if Self.isArticle(page) {
+            if more { out.append(option(Self.continueID, "Seguir leyendo")) }
+            else if !reading { out.append(option(Self.readID, "Leer la nota")) }
+            if !summarized { out.append(option(Self.summaryID, "Resumir la nota")) }
+        } else if !readablePieces(page).isEmpty {
+            if more { out.append(option(Self.continueID, "Seguir leyendo")) }
+            else if !reading { out.append(option(Self.readID, "Leer la página")) }
+            if !summarized { out.append(option(Self.summaryID, "Resumir la página")) }
+        }
+        if canGoBack { out.append(option(Self.backID, "Volver a la página anterior")) }
+        return Array(out.prefix(3))
+    }
+
+    /// A dónde lleva un titular: el mismo recorrido del que sale
+    /// `headlines(of:)`, así que el texto coincide letra por letra.
+    static func href(ofHeadline title: String, in page: ExtractedPage) -> String? {
+        let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        for entry in page.stream ?? [] {
+            if entry.kind == "link", entry.label == title, let href = entry.href { return href }
+            if entry.kind == "listing", let listing = entry.ref.flatMap({ byID[$0] }),
+               let href = listing.items.first(where: { $0.title == title })?.href {
+                return href
+            }
+        }
+        return nil
+    }
+
+    /// Volver a la página anterior y decir dónde se quedó.
+    private func goBack(on reader: ReaderModel) async {
+        guard reader.canGoBack else { say("No hay a dónde volver: esta es la primera página."); return }
+        working = true
+        say("Volviendo.")
+        await reader.back()
+        working = false
+        readingFrom = 0
+        if let page = reader.page { await arrived(page) }
+    }
 
     /// Llegar a una página, dicho como lo diría una persona.
     ///
