@@ -1200,7 +1200,7 @@
     const buttons = Array.prototype.slice.call(document.querySelectorAll(
       "button, [role=button], input[type=submit], input[type=button]"
     )).filter(function (button) {
-      if (isHidden(button)) return false;
+      if (isHidden(button) || isUntouchable(button)) return false;
       // A disabled button is not an action; offering it reads as a control
       // that does nothing. When the page enables it, the next extraction
       // picks it up.
@@ -1313,10 +1313,39 @@
    */
   function isHidden(el) {
     if (el.hasAttribute("hidden") || el.getAttribute("aria-hidden") === "true") return true;
-    const style = window.getComputedStyle(el);
-    if (style.display === "none" || style.visibility === "hidden") return true;
+    if (el.closest("[inert]")) return true;
+    // The browser's own answer, which knows about content-visibility, an
+    // ancestor at opacity 0, and every other way a page can make something
+    // invisible while leaving its box in place. Our hand-rolled version read
+    // only the element's own display and size, so a control faded out to
+    // nothing was still offered as an action.
+    if (typeof el.checkVisibility === "function") {
+      if (!el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })) return true;
+    } else {
+      const style = window.getComputedStyle(el);
+      if (style.display === "none" || style.visibility === "hidden") return true;
+    }
     const rect = el.getBoundingClientRect();
     if (rect.width < 2 || rect.height < 2) return true;
+    return false;
+  }
+
+  /*
+   * A control nobody can touch, however visible it looks.
+   *
+   * Measured on fravega.com: 137 of its 141 visible buttons carry
+   * `pointer-events: none`. A finger cannot reach them and neither can a
+   * click — offering them means a person hears an option, activates it, and
+   * nothing happens. Asked of the element and its ancestors, because the
+   * property inherits and a page usually sets it on the wrapper.
+   */
+  function isUntouchable(el) {
+    for (let node = el; node && node !== document.documentElement; node = node.parentElement) {
+      const events = window.getComputedStyle(node).pointerEvents;
+      if (events === "none") return true;
+      // An explicit value on a child overrides the parent's none.
+      if (events && events !== "none") return false;
+    }
     return false;
   }
 
