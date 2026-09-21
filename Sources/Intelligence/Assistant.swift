@@ -152,17 +152,59 @@ final class Assistant {
 
             if let decision {
                 await carry(decision.action, of: decision, goal: goal, on: reader)
+                // El límite se dice aunque la acción sea otra. "Entrá a
+                // Mercado Libre y comprame pilas" vuelve como ir + comprar:
+                // se navega, Y se aclara qué parte no voy a hacer y hasta
+                // dónde sí llego. Callarlo es prometer una compra.
+                if decision.action != .noPuedo, let limit = decision.limit {
+                    say(Self.cannot(limit))
+                    if let offer = Self.insteadOffer(limit, arrived: reader.page != nil) { say(offer) }
+                }
                 // El segundo pedido de una frase que traía dos: "resumime y
                 // después entrame a la de Milei". Descartarlo en silencio era
                 // uno de los errores que la medición encontró.
                 if let next = decision.then, !working {
                     await carry(next, of: decision, goal: goal, on: reader)
                 }
+                // Y lo que falta de la tarea, ahora que ya hay otra página.
+                // "Quiero entrar a ANSES y pedir un turno" aterrizaba en ANSES
+                // y el turno se perdía: el pedido no sobrevivía al viaje.
+                if let rest = decision.rest, !rest.isEmpty {
+                    await continueWith(rest, on: reader)
+                }
                 return
             }
         }
 
         await run(goal, on: reader, steps: Self.maxSteps)
+    }
+
+    /// Cuántas veces se puede re-rutear una misma tarea en un turno.
+    ///
+    /// Tres: alcanza para "entrar a ANSES → turnos → solicitar" y corta
+    /// cualquier lazo. Un asistente que encadena diez pasos en silencio es
+    /// exactamente lo que alguien que no ve no puede seguir.
+    private static let maxHops = 3
+
+    /// Seguir con lo que faltaba de la tarea, ya parados en otra página.
+    ///
+    /// Cada salto se dice en voz alta. Enterarse de que el asistente sigue
+    /// haciendo cosas sin avisar es lo mismo que no saber dónde se está.
+    private func continueWith(_ rest: String, on reader: ReaderModel) async {
+        guard let router else { return }
+        var goal = rest
+        for _ in 0..<Self.maxHops {
+            guard let page = reader.page else { return }
+            say("Sigo con: \(goal).")
+            working = true
+            let state = Router.state(page: page, reading: readingProgress(page))
+            let decision = try? await router.decide(goal, state: state)
+            working = false
+            guard let decision else { return }
+            await carry(decision.action, of: decision, goal: goal, on: reader)
+            guard let more = decision.rest, !more.isEmpty, more != goal else { return }
+            goal = more
+        }
     }
 
     /// Por dónde va la lectura, para que el ruteador lo sepa sin preguntarle
@@ -183,7 +225,26 @@ final class Assistant {
         goal: String, on reader: ReaderModel
     ) async {
         switch action {
-        case .ir, .buscar:
+        case .ir:
+            await arrive(decision.target ?? goal, on: reader)
+
+        case .buscar:
+            // Buscar estando parado en un sitio es buscar EN ese sitio.
+            // Mandarlo al buscador de internet lo saca de donde acaba de
+            // llegar, que es justo lo que no pidió.
+            if let page = reader.page,
+               let form = page.actions.first(where: { $0.kind == .form && Self.isSearch($0) }),
+               let field = (form.fields ?? []).first(where: { $0.type != "hidden" && !$0.isSecure }) {
+                let what = decision.target ?? goal
+                working = true
+                say("Buscando \(what) en \(page.displaySite).")
+                reader.fill(field, with: what)
+                try? await Task.sleep(for: .milliseconds(700))
+                await reader.submit(form)
+                working = false
+                if let after = reader.page { describe(after) }
+                return
+            }
             await arrive(decision.target ?? goal, on: reader)
 
         case .abrir:
@@ -256,7 +317,14 @@ final class Assistant {
             describe(page)
 
         case .noPuedo:
+            // Un límite no es el final del camino: es un traspaso. Se dice
+            // qué parte no hago, y enseguida hasta dónde sí llego — porque
+            // quien no ve necesita saber qué le queda por delante, no sólo
+            // que algo falló.
             say(Self.cannot(decision.limit))
+            if let offer = Self.insteadOffer(decision.limit, arrived: reader.page != nil) {
+                say(offer)
+            }
         }
     }
 
@@ -267,13 +335,36 @@ final class Assistant {
     /// del modelo leído en voz alta, que es justo lo que no hacemos.
     static func cannot(_ limit: Router.Limit?) -> String {
         switch limit {
-        case .historial:  return "No manejo el historial ni cierro pestañas."
-        case .ajustes:    return "El tamaño de la letra y los ajustes se cambian en la app, no desde acá."
+        case .historial:  return "El historial y las pestañas no los manejo yo."
+        case .ajustes:    return "El tamaño de la letra se cambia en los ajustes de la app, no desde acá."
         case .compartir:  return "Todavía no sé compartir ni copiar enlaces."
-        case .otroSitio:  return "Para eso hay que ir a otro sitio. Decime a cuál y te llevo."
-        case .comprar:    return "No compro nada. Te llevo hasta ahí y la compra la hacés vos."
-        case .pagar:      return "No pago nada ni cargo datos de tarjeta. Eso lo hacés vos."
-        case .otra, nil:  return "Eso no lo sé hacer."
+        case .otroSitio:  return "Eso está en otro sitio."
+        case .comprar:    return "La compra la hacés vos: confirmar un pago no es algo que yo vaya a hacer en tu nombre."
+        case .pagar:      return "Pagar y cargar datos de tarjeta lo hacés vos. Eso no lo toco."
+        case .otra, nil:  return "Eso puntual no lo sé hacer."
+        }
+    }
+
+    /// Hasta dónde sí llego.
+    ///
+    /// La mitad que importa. "No puedo comprar" a secas deja a la persona
+    /// parada; "no compro, pero te llevo, te busco el producto, te leo los
+    /// precios y reviso el pedido antes de que confirmes" la deja adentro de
+    /// la tarea. El asistente no cierra caminos: los entrega.
+    static func insteadOffer(_ limit: Router.Limit?, arrived: Bool) -> String? {
+        switch limit {
+        case .comprar:
+            return arrived
+                ? "Sí puedo buscarte el producto, leerte los precios y repasar el pedido antes de que toques comprar."
+                : "Sí puedo llevarte hasta el sitio, buscarte el producto y leerte los precios. ¿Arranco por ahí?"
+        case .pagar:
+            return "Sí puedo llenar los datos que no son de tarjeta, leerte lo que dice el formulario y repasarlo antes de confirmar."
+        case .otroSitio:
+            return "Decime a cuál y te llevo."
+        case .ajustes, .compartir, .historial:
+            return "Mientras tanto puedo seguir leyéndote la página, resumirla o llevarte a otro lado."
+        case .otra, nil:
+            return nil
         }
     }
 
@@ -311,7 +402,10 @@ final class Assistant {
         }
         guard !field.isSecure else {
             // Una contraseña no se dicta y no se escribe por interpretación.
+            // Pero la persona tiene que saber que la tarea sigue: se queda en
+            // la página, escribe, y volvemos.
             say("La contraseña la escribís vos: ése es el único campo que no toco.")
+            say("Te dejo en el formulario. Cuando entres, volvé acá y seguimos.")
             return
         }
         guard let value = decision.value, !value.isEmpty else {
