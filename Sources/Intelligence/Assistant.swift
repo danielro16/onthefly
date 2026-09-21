@@ -1107,7 +1107,9 @@ final class Assistant {
         // cómo se abre, no qué es.
         let text = raw.replacingOccurrences(of: "(,\\s*)+,", with: ",", options: .regularExpression)
             .replacingOccurrences(of: "\\s{2,}", with: " ", options: .regularExpression)
-            .replacingOccurrences(of: ",\\s*ver (sub-?tr[aá]mites|m[aá]s|detalles?)\\s*$", with: "",
+            .replacingOccurrences(of: ",\\s*ver sub-?tr[aá]mites", with: "",
+                                  options: [.regularExpression, .caseInsensitive])
+            .replacingOccurrences(of: ",\\s*ver (m[aá]s|detalles?)\\s*$", with: "",
                                   options: [.regularExpression, .caseInsensitive])
         guard text.count > limit else { return text }
         let cut = text.prefix(limit)
@@ -1756,6 +1758,9 @@ final class Assistant {
             // Una pregunta que esperaba sitio: se contesta acá, sin describir.
             if let question = pendingQuestion, let page = reader.page {
                 pendingQuestion = nil
+                // Anotada: sin esto, Meteored cambiando su dirección al cargar
+                // se anunciaba como "la página cambió".
+                knownURL = page.url
                 say("En \(page.displaySite).")
                 working = true
                 await reply(question, about: page)
@@ -2535,8 +2540,16 @@ final class Assistant {
             // estaban ("sobreseyó a un acusado"). En pantalla no se repiten:
             // son los botones que siguen.
             let list = spoken.enumerated().map { "\($0.offset + 1). \(Self.sentence($0.element))" }.joined(separator: " ")
-            say("\(orientation.text) Los titulares principales son las primeras opciones.",
-                aloud: "\(orientation.text) Los titulares principales: \(list)")
+            // Una frase que el modelo dejó abierta para los titulares —"Estás
+            // en la portada de Clarín y sus titulares son:"— queda colgando:
+            // el lugar lo dice la plantilla.
+            // Y de lo que dijo, sólo la primera oración: pedido que no nombre
+            // titulares, igual agregaba las cotizaciones del dólar.
+            let said = orientation.text.trimmingCharacters(in: .whitespaces)
+            let first = said.range(of: ". ").map { String(said[..<$0.lowerBound]) + "." } ?? said
+            let intro = first.hasSuffix(":") ? "Estás en \(whereIs(page))." : first
+            say("\(intro) Los titulares principales son las primeras opciones.",
+                aloud: "\(intro) Los titulares principales: \(list)")
             leadSaid = lead.count
         }
         let options: [Action] = orientation.suggestions.compactMap { suggestion in
