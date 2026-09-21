@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: buscá mar del plata en wikipedia
+  3 [txt] Buscando: mar del plata wikipedia.
+  4 [txt] Estás en los resultados de «mar del plata wikipedia». Los 3 más probables:
+  5 [H] Vos: Mar del Plata - Wikipedia, la enciclopedia libre — es.wikipedia.org
+  6 [txt] Abriendo es.wikipedia.org.
+  7 [txt] En Mar del Plata — es.wikipedia.org.
+  8 [txt] Es una nota de 7 párrafos. Empieza así:
+  9 [txt] Mar del Plata es una ciudad ubicada en el sudeste de la provincia de Buenos Aires, Argentina, sobre la costa del mar argentino. Es la cabecera del partido de General Pueyrredón, un importante puerto, la localidad balnear
+ 10 [btn] Leer la nota  (Primera de 4 opciones.)
+ 11 [btn] Resumir la nota
+ 12 [btn] Volver a la página anterior
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar

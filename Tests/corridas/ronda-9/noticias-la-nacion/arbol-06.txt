@@ -1,0 +1,26 @@
+  1 [H] Asistente
+  2 [H] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada del diario La Nación. Los titulares principales son: Adorni explicó la decisión de vivir como si el dinero “no existiera” por bitcoins en negro y ventas a escondidas. Una jueza declaró inconstitucional la ley que bajó la punibilidad a 14 años y sobreseyó a un acusado. Hay filtraciones, desconfianza y una denuncia judicial tras la salida de una ladera de Karina Milei en la Quinta de Olivos. Renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes.
+  8 [H] Vos: dame los titulares
+  9 [txt] Titulares 5 a 7 de 143:
+ 10 [txt] 5. Tres misas y mucha orfebrería diplomática para evitar que la visita del Papa se politice
+ 11 [txt] 6. La aterradora frase de un acusado a la familia del asesinado: "Los dinosaurios que se comi
+ 12 [txt] 7. Las grandes cadenas dejaron sin audio a Trump tras el veto a CNN, Politico y MS NOW
+ 13 [H] Vos: Abrir «Tres misas y mucha orfebrería diplomática para evitar que la visita…»
+ 14 [txt] Abriendo «Tres misas y mucha orfebrería diplomática para evitar que la visita…»
+ 15 [txt] Estás en La Nación, en una nota sobre la visita del Papa a la Argentina: sus actividades planeadas y cómo se armó la agenda para evitar que se politice su figura durante 70 horas.
+ 16 [H] Vos: resumime la nota
+ 17 [txt] Resumen de la nota: El Papa León XIV visitará Argentina durante 70 horas, del 8 al 11 de noviembre. La agenda incluye tres misas en Capital, Córdoba y Luján, una visita a una cárcel y un gesto con discapacitados, y encuentros con autoridades y sociedad civil, buscando evitar la politización de su figura. Será la primera visita de un Papa al país desde 1987.
+ 18 [H] Vos: volvé
+ 19 [txt] Volviendo.
+ 20 [txt] De vuelta en «Últimas noticias de Argentina y el mundo», LA NACION.
+ 21 [btn] Leer los titulares  (Primera de 4 opciones.)
+ 22 [btn] Resumir la portada
+ 23 [btn] Volver a la página anterior
+ 24 [btn] Otra cosa
+ 25 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 26 [btn] Enviar

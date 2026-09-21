@@ -1,0 +1,9 @@
+  1 [H] Asistente
+  2 [H] Vos: http://localhost:61253/captcha.html
+  3 [txt] Abriendo localhost.
+  4 [txt] El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba: «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, continuamos.
+  5 [btn] Ir a la prueba  (Primera de 3 opciones.)
+  6 [btn] Ya la resolví
+  7 [btn] Otra cosa
+  8 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+  9 [btn] Enviar

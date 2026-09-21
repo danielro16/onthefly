@@ -1,0 +1,25 @@
+{"t": 1790030307.198925, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"t": 1790030313.739224, "texto": "http://localhost:61344/misma-pagina.html", "tipo": "turno", "quien": "persona"}
+{"opciones": [], "tipo": "botones", "t": 1790030313.74021}
+{"t": 1790030313.74044, "texto": "Abriendo localhost.", "tipo": "turno", "quien": "jef"}
+{"t": 1790030313.740666, "texto": "Abriendo localhost.", "tipo": "voz", "cola": false}
+{"tipo": "botones", "t": 1790030313.7754369, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"url": "http://localhost:61344/misma-pagina.html", "titulo": "Auriculares bluetooth", "texto": "PÁGINA: localhost — Auriculares bluetooth\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.", "t": 1790030316.1495519, "tipo": "pagina"}
+{"opciones": [], "tipo": "botones", "t": 1790030316.1504412}
+{"quien": "jef", "texto": "El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba: «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, continuamos.", "t": 1790030316.150663, "tipo": "turno"}
+{"texto": "El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba: «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, continuamos.", "t": 1790030316.151009, "tipo": "voz", "cola": false}
+{"opciones": ["Ir a la prueba", "Ya la resolví", "Otra cosa"], "t": 1790030316.151184, "tipo": "botones"}
+{"t": 1790030321.524096, "opciones": [], "tipo": "botones"}
+{"texto": "Ir a la prueba", "quien": "persona", "t": 1790030321.5243258, "tipo": "turno"}
+{"texto": "Listo: la prueba está en la página. Cuando esté resuelta, continuamos.", "quien": "jef", "t": 1790030321.5244942, "tipo": "turno"}
+{"texto": "Listo: la prueba está en la página. Cuando esté resuelta, continuamos.", "t": 1790030321.524705, "cola": false, "tipo": "voz"}
+{"t": 1790030321.524776, "tipo": "botones", "opciones": ["Ir a la prueba", "Ya la resolví", "Otra cosa"]}
+{"t": 1790030347.9659848, "opciones": [], "tipo": "botones"}
+{"texto": "Ya la resolví", "quien": "persona", "t": 1790030347.968945, "tipo": "turno"}
+{"tipo": "pagina", "url": "http://localhost:61344/misma-pagina.html", "titulo": "Auriculares bluetooth", "t": 1790030348.596873, "texto": "PÁGINA: localhost — Auriculares bluetooth\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nAuriculares bluetooth\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499\nAuriculares Vincha Bluetooth con Micrófono $24.990\nAuriculares con Cancelación de Ruido $89.900\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499, Auriculares Vincha Bluetooth con Micrófono $24.990, Auriculares con Cancelación de Ruido $89.900"}
+{"tipo": "turno", "t": 1790030348.597336, "quien": "jef", "texto": "Listo, ya pasamos la verificación."}
+{"tipo": "voz", "t": 1790030348.597869, "cola": false, "texto": "Listo, ya pasamos la verificación."}
+{"opciones": [], "tipo": "botones", "t": 1790030348.598028}
+{"tipo": "turno", "t": 1790030350.677483, "texto": "Estás en localhost, en una página de auriculares bluetooth. Encontraste tres modelos disponibles con envío gratis, ordenados por precio: Auriculares In Ear Bluetooth Básicos a $12.499, Auriculares Vincha Bluetooth con Micrófono a $24.990, y Auriculares con Cancelación de Ruido a $89.900.", "quien": "jef"}
+{"tipo": "voz", "t": 1790030350.677706, "texto": "Estás en localhost, en una página de auriculares bluetooth. Encontraste tres modelos disponibles con envío gratis, ordenados por precio: Auriculares In Ear Bluetooth Básicos a $12.499, Auriculares Vincha Bluetooth con Micrófono a $24.990, y Auriculares con Cancelación de Ruido a $89.900.", "cola": true}
+{"opciones": ["Leer la página", "Resumir la página", "Otra cosa"], "t": 1790030350.677847, "tipo": "botones"}

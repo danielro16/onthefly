@@ -1,0 +1,24 @@
+  1 [H] Asistente
+  2 [H] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Estás en los resultados de «clarin». Los 3 más probables:
+  5 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en Clarin.com, una página de noticias. Los titulares principales son: el Gobierno señala a un gas contaminado como causa del corte de luz que afectó a casi dos millones de personas; renunció el secretario de Discapacidad por recortes en el Presupuesto 2027; el Gobierno espera 7 millones de personas por la visita del Papa y evalúa declarar asueto; y Adorni dijo que ganó casi US$ 600 mil con criptomonedas y las guardaba en su casa para justificar su patrimonio.
+  8 [H] Vos: Abrir «El Gobierno apunta a un gas contaminado como la causa del corte de…»
+  9 [txt] Abriendo «El Gobierno apunta a un gas contaminado como la causa del corte de…»
+ 10 [txt] Estás en Clarín, en una nota sobre el apagón masivo que dejó sin luz a casi dos millones de personas. El Gobierno cree que la causa fue un gas contaminado, mientras Edenor sigue investigando.
+ 11 [H] Vos: Leer la nota
+ 12 [txt] Párrafos 1 a 2 de 10:
+ 13 [txt] La investigación oficial sobre el apagón que dejó sin electricidad a casi 600.000 usuarios del Área Metropolitana de Buenos Aires apunta a  la contaminación del gas utilizado por uno de los  interruptores de alta tensión de Edenor. La empresa, sin embargo, todavía no convalida esa explicación y sostiene que continúa analizando las causas de la falla.
+ 14 [txt] Según pudo confirmar Clarín con fuentes de la Secretaría de Energía, el desperfecto se produjo en el interruptor L46 de la subestación Malaver, ubicada en el partido bonaerense de San Martín. El equipo contenía gas hexafluoruro de azufre (SF6), utilizado como aislante en instalaciones eléctricas de alta tensión, que se encontraba contaminado.
+ 15 [H] Vos: Seguir leyendo
+ 16 [txt] Párrafos 3 a 4 de 10:
+ 17 [txt] “La falla se originó en un gas que llevan los interruptores. Se encontraba contaminado el gas SF6 del interruptor L46 y eso causó fallas en cadena en todo el sistema”, indicaron desde la Secretaría, que participa de la investigación a través del Ente Nacional Regulador del Gas y la Electricidad (Enrege).
+ 18 [txt] La versión de Edenor es, por el momento, más cautelosa. Desde la distribuidora se limitaron a señalar que “fue una falla en 220 kV en la subestación Malaver” y agregaron: “ Estamos investigando la causa”. La compañía no atribuyó oficialmente el episodio a la contaminación del SF6.
+ 19 [btn] Seguir leyendo  (Primera de 4 opciones.)
+ 20 [btn] Resumir la nota
+ 21 [btn] Volver a la página anterior
+ 22 [btn] Otra cosa
+ 23 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 24 [btn] Enviar

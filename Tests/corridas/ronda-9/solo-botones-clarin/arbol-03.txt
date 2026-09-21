@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [H] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Estás en los resultados de «clarin». Los 3 más probables:
+  5 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en Clarin.com, una página de noticias. Los titulares principales son: el Gobierno señala a un gas contaminado como causa del corte de luz que afectó a casi dos millones de personas; renunció el secretario de Discapacidad por recortes en el Presupuesto 2027; el Gobierno espera 7 millones de personas por la visita del Papa y evalúa declarar asueto; y Adorni dijo que ganó casi US$ 600 mil con criptomonedas y las guardaba en su casa para justificar su patrimonio.
+  8 [H] Vos: Abrir «El Gobierno apunta a un gas contaminado como la causa del corte de…»
+  9 [txt] Abriendo «El Gobierno apunta a un gas contaminado como la causa del corte de…»
+ 10 [txt] Estás en Clarín, en una nota sobre el apagón masivo que dejó sin luz a casi dos millones de personas. El Gobierno cree que la causa fue un gas contaminado, mientras Edenor sigue investigando.
+ 11 [btn] Leer la nota  (Primera de 5 opciones.)
+ 12 [btn] Resumir la nota
+ 13 [btn] Abrir «Clave Única PAMI: qué es, para qué sirve y quiénes deben registrarse»
+ 14 [btn] Volver a la página anterior
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 17 [btn] Enviar

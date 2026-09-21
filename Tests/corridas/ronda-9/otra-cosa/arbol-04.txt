@@ -1,0 +1,24 @@
+  1 [H] Asistente
+  2 [H] Vos: la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Los titulares principales son: Adorni explicó la situación de los Bitcoins en negro, las ventas a escondidas y su decisión de vivir como si el dinero no existiera. Una jueza declaró inconstitucional la ley que baja la punibilidad a 14 años y sobreseyó a un acusado. Hay filtraciones, desconfianza y una denuncia judicial por la salida de una asistente de Karina Milei en la Quinta de Olivos. Renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes.
+  8 [H] Vos: Otra cosa
+  9 [txt] ¿Qué otra cosa hacemos? Se puede escribir, o dictar con el micrófono del teclado.
+ 10 [H] Vos: llevame a deportes
+ 11 [txt] Abriendo «Deportes».
+ 12 [txt] En Noticias de Deportes — LA NACION.
+ 13 [txt] Hay 35 notas. Las tres primeras:
+ 14 [txt] El equipo que arrasa con goleadas, es un fenómeno global y quiere conquistar el mundo (ahora sin Messi)
+ 15 [txt] El ciclo de Hansi Flick tiene cifras que asombran y generan admiración; Raphinha como falso 9, uno de los ejes del fenómeno tras el gran…
+ 16 [txt] La aterradora frase de un acusado a la familia del asesinado: "Los dinosaurios que se comieron a su padre soy yo"
+ 17 [btn] Abrir «El equipo que arrasa con goleadas, es un fenómeno global y quiere…»  (Primera de 6 opciones.)
+ 18 [btn] Abrir «El ciclo de Hansi Flick tiene cifras que asombran y generan…»
+ 19 [btn] Abrir «La aterradora frase de un acusado a la familia del asesinado: "Los…»
+ 20 [btn] Seguir con los titulares
+ 21 [btn] Volver a la página anterior
+ 22 [btn] Otra cosa
+ 23 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 24 [btn] Enviar

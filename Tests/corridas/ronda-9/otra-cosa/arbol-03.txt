@@ -1,0 +1,11 @@
+  1 [H] Asistente
+  2 [H] Vos: la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Los titulares principales son: Adorni explicó la situación de los Bitcoins en negro, las ventas a escondidas y su decisión de vivir como si el dinero no existiera. Una jueza declaró inconstitucional la ley que baja la punibilidad a 14 años y sobreseyó a un acusado. Hay filtraciones, desconfianza y una denuncia judicial por la salida de una asistente de Karina Milei en la Quinta de Olivos. Renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes.
+  8 [H] Vos: Otra cosa
+  9 [txt] ¿Qué otra cosa hacemos? Se puede escribir, o dictar con el micrófono del teclado.
+ 10 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 11 [btn] Enviar

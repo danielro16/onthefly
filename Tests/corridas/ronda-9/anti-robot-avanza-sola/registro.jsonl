@@ -1,0 +1,23 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790030260.244092, "tipo": "botones"}
+{"texto": "http://localhost:61253/captcha.html", "t": 1790030266.737389, "quien": "persona", "tipo": "turno"}
+{"opciones": [], "t": 1790030266.738229, "tipo": "botones"}
+{"texto": "Abriendo localhost.", "t": 1790030266.738367, "quien": "jef", "tipo": "turno"}
+{"texto": "Abriendo localhost.", "t": 1790030266.738585, "cola": false, "tipo": "voz"}
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790030266.785396}
+{"texto": "PÁGINA: localhost — Verificación de seguridad\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.\nContinuar\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.", "titulo": "Verificación de seguridad", "t": 1790030269.1447701, "tipo": "pagina", "url": "http://localhost:61253/captcha.html"}
+{"t": 1790030269.1454039, "tipo": "botones", "opciones": []}
+{"texto": "El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba: «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, continuamos.", "t": 1790030269.1455631, "tipo": "turno", "quien": "jef"}
+{"texto": "El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba: «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, continuamos.", "tipo": "voz", "cola": false, "t": 1790030269.1458879}
+{"opciones": ["Ir a la prueba", "Ya la resolví", "Otra cosa"], "tipo": "botones", "t": 1790030269.1460261}
+{"texto": "PÁGINA: localhost — Auriculares bluetooth\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nAuriculares bluetooth\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499\nAuriculares Vincha Bluetooth con Micrófono $24.990\nAuriculares con Cancelación de Ruido $89.900\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499, Auriculares Vincha Bluetooth con Micrófono $24.990, Auriculares con Cancelación de Ruido $89.900", "t": 1790030281.145325, "url": "http://localhost:61253/resuelto.html", "tipo": "pagina", "titulo": "Auriculares bluetooth"}
+{"texto": "Listo, ya pasamos la verificación.", "t": 1790030281.146061, "quien": "jef", "tipo": "turno"}
+{"texto": "Listo, ya pasamos la verificación.", "cola": false, "t": 1790030281.147306, "tipo": "voz"}
+{"tipo": "botones", "opciones": [], "t": 1790030281.147443}
+{"tipo": "turno", "quien": "jef", "t": 1790030282.829745, "texto": "Estás en localhost, en una página de auriculares bluetooth. Te muestra tres opciones disponibles con envío gratis, ordenados por precio: Auriculares In Ear Bluetooth Básicos a $12.499, Auriculares Vincha Bluetooth con Micrófono a $24.990 y Auriculares con Cancelación de Ruido a $89.900."}
+{"tipo": "voz", "cola": true, "t": 1790030282.830709, "texto": "Estás en localhost, en una página de auriculares bluetooth. Te muestra tres opciones disponibles con envío gratis, ordenados por precio: Auriculares In Ear Bluetooth Básicos a $12.499, Auriculares Vincha Bluetooth con Micrófono a $24.990 y Auriculares con Cancelación de Ruido a $89.900."}
+{"opciones": ["Leer la página", "Resumir la página", "Volver a la página anterior", "Otra cosa"], "tipo": "botones", "t": 1790030282.831182}
+{"texto": "¿cuánto sale el más barato?", "quien": "persona", "t": 1790030297.704597, "tipo": "turno"}
+{"opciones": [], "tipo": "botones", "t": 1790030297.70503}
+{"texto": "El auricular más barato es el In Ear Bluetooth Básico, que sale $12.499.", "quien": "jef", "t": 1790030299.865326, "tipo": "turno"}
+{"texto": "El auricular más barato es el In Ear Bluetooth Básico, que sale $12.499.", "cola": false, "t": 1790030299.866534, "tipo": "voz"}
+{"t": 1790030299.86727, "opciones": ["¿Y el siguiente?", "Leer la página", "Resumir la página", "Volver a la página anterior", "Otra cosa"], "tipo": "botones"}
