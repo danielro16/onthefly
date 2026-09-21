@@ -225,6 +225,18 @@ final class HeadlessWebView: NSObject {
         return (result as? [String: Any])?["ok"] as? Bool == true
     }
 
+    /// Escribe en un campo y devuelve cuando la página lo recibió.
+    ///
+    /// `fill(fieldID:value:)` está pensado para el tecleo de una persona:
+    /// dispara y sigue. Un asistente que escribe y después envía necesita
+    /// saber que el valor llegó antes de apretar.
+    func write(_ fieldID: String, _ value: String) async {
+        _ = try? await fill(fieldID: fieldID, value: value)
+        // Lo que un sitio con autocompletado tarda en reaccionar. Medido en
+        // el buscador de vuelos: menos que esto y el submit salía vacío.
+        try? await Task.sleep(for: .milliseconds(700))
+    }
+
     /// Whether there is a page to go back to.
     var canGoBack: Bool { webView?.canGoBack ?? false }
 

@@ -54,7 +54,7 @@ struct AssistantPanel: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     if assistant.turns.isEmpty {
-                        Text("Decime a dónde querés ir o qué buscás en esta página. Por ejemplo: «llevame a deportes», «quiero iniciar sesión».")
+                        Text("Decime a dónde querés ir, o preguntame sobre esta página. Por ejemplo: «llevame a deportes», «¿a cuánto está el dólar?».")
                             .font(.callout)
                             .foregroundStyle(.secondary)
                     }

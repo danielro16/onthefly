@@ -453,6 +453,16 @@ final class ReaderModel {
         }
     }
 
+    /// Escribe en un campo y espera a que la página lo reciba.
+    ///
+    /// `fill` es sincrónica y dispara sin esperar: sirve mientras alguien
+    /// tipea, y no sirve para un asistente que escribe y a continuación
+    /// envía. Acá se escribe y se espera, que es lo que un paso necesita.
+    func type(_ value: String, into field: Action.Field) async {
+        await engine.write(field.id, value)
+        state = state
+    }
+
     /// Called when the user picks one of the offered options.
     func choose(_ intent: Intent) async {
         guard let page else { return }
