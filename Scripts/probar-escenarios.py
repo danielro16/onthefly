@@ -330,6 +330,11 @@ def correr_escenario(sim, escenario, destino):
             elif "tocar" in paso:
                 etiqueta = panel.tocar(paso["tocar"])
                 registro_paso["descripcion"] = f"toca «{etiqueta}»"
+            elif "esperar" in paso:
+                # La persona hace algo en la página misma —resolver una
+                # prueba— mientras el asistente espera.
+                registro_paso["descripcion"] = f"no toca el asistente durante {paso['esperar']} s (resuelve algo en la página)"
+                time.sleep(paso["esperar"])
             registro_paso["termino"] = esperar_calma(sim)
         except RuntimeError as error:
             registro_paso.setdefault("descripcion", json.dumps(paso, ensure_ascii=False))
@@ -355,15 +360,35 @@ def main():
     args = sys.argv[1:]
     udid = args[args.index("--udid") + 1] if "--udid" in args else os.environ.get("UDID", "8001AFAF-0DAF-421D-A0D8-DBABE38D9303")
     solo = set(args[args.index("--solo") + 1].split(",")) if "--solo" in args else None
+    archivo = args[args.index("--escenarios") + 1] if "--escenarios" in args else "Tests/escenarios.json"
     salida = pathlib.Path(args[args.index("--salida") + 1]) if "--salida" in args else \
         RAIZ / "Tests" / "corridas" / time.strftime("%Y-%m-%d_%H%M")
-    escenarios = json.loads((RAIZ / "Tests" / "escenarios.json").read_text())
+    escenarios = json.loads((RAIZ / archivo).read_text())
     sim = Simulador(udid)
     for escenario in escenarios:
         if solo and escenario["id"] not in solo:
             continue
         print(f"▶ {escenario['id']}", flush=True)
-        correr_escenario(sim, escenario, salida / escenario["id"])
+        # Páginas propias, servidas desde la Mac: el simulador las ve en
+        # localhost.
+        servidor = None
+        if escenario.get("servir"):
+            # Un puerto libre, no uno fijo: otro programa de la Mac puede
+            # estar usando el que se eligiera, y respondía él con un 404.
+            import socket
+            with socket.socket() as s:
+                s.bind(("", 0))
+                puerto = s.getsockname()[1]
+            servidor = subprocess.Popen(
+                [sys.executable, "-m", "http.server", str(puerto), "--directory", str(RAIZ / escenario["servir"])],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            time.sleep(1)
+            escenario = json.loads(json.dumps(escenario).replace("{servidor}", f"http://localhost:{puerto}"))
+        try:
+            correr_escenario(sim, escenario, salida / escenario["id"])
+        finally:
+            if servidor:
+                servidor.terminate()
     print(f"Listo: {salida}")
 
 

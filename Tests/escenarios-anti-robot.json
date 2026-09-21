@@ -1,0 +1,24 @@
+[
+  {
+    "id": "anti-robot-avanza-sola",
+    "persona": "Ciega, usa VoiceOver todos los días. Sabe resolver el reCAPTCHA con la opción de audio.",
+    "objetivo": "Llegar a una lista de auriculares que está detrás de una prueba anti-robot: resolverla cuando el asistente lo pida, y que el asistente siga solo.",
+    "servir": "Tests/fixtures/anti-robot",
+    "pasos": [
+      {"escribir": "{servidor}/captcha.html"},
+      {"esperar": 15},
+      {"escribir": "¿cuánto sale el más barato?"}
+    ]
+  },
+  {
+    "id": "anti-robot-ya-la-resolvi",
+    "persona": "72 años, baja visión. La prueba la resuelve su nieta, que le avisa cuando está.",
+    "objetivo": "Resolver la prueba anti-robot que aparece en la misma página y seguir con la tarea.",
+    "servir": "Tests/fixtures/anti-robot",
+    "pasos": [
+      {"escribir": "{servidor}/misma-pagina.html"},
+      {"esperar": 15},
+      {"tocar": "Ya la resolví"}
+    ]
+  }
+]

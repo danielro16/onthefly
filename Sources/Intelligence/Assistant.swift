@@ -107,6 +107,17 @@ final class Assistant {
     /// un resultado: "¿a cuánto está el blue?" se contesta en el sitio que
     /// elija, en vez de describir el sitio.
     private var pendingQuestion: String?
+    /// Una prueba anti-robot que tiene que resolver la persona, y lo que se
+    /// retoma cuando la resuelve. El asistente no la resuelve —no puede, y
+    /// no debe—, pero tampoco corta el camino: pide que la resuelvan y sigue.
+    private var challenge: Challenge?
+    private struct Challenge {
+        enum Resume { case question(String), rest(String), look }
+        let url: String
+        let resume: Resume
+    }
+    static let solvedID = "jef-ya-resuelta"
+
     /// La dirección de la última página que se contó. Si la página cambia
     /// sola y queda en otra, hay que decirlo.
     private var knownURL: String?
@@ -521,8 +532,7 @@ final class Assistant {
         // sin nombre?" frente al captcha de ANSES — ofrecerse a hacer algo
         // imposible es peor que decir que no se puede.
         if Self.isChallenge(field) {
-            say("Ese campo pide un código que está dibujado en una imagen. No lo puedo leer ni completar.")
-            say("Lo tenés que escribir vos mirando la pantalla, o pedir ayuda. Mientras tanto puedo llevarte a otro lado.")
+            askToSolve(page, image: true)
             return
         }
         guard let value = decision.value, !value.isEmpty else {
@@ -617,6 +627,15 @@ final class Assistant {
         let official = results.filter(isOfficial)
         let rest = results.filter { !isOfficial($0) }
         let byCountry = official + rest.filter { closer($0) > 0 } + rest.filter { closer($0) == 0 }
+        // Un sitio nombrado como PARTE del pedido es el que la persona pidió:
+        // "wikipedia" en "mar del plata wikipedia". Va primero, antes que lo
+        // oficial: con lo oficial adelante, la Municipalidad le ganaba a
+        // Wikipedia. Distinto de un sitio que se llama como el pedido ENTERO
+        // —turnosanses.net para "turnos anses"—, que es el truco de esos
+        // sitios y va después de lo oficial.
+        if let asked = siteNamed(within: request, among: results) {
+            return [asked] + byCountry.filter { $0.href != asked.href }
+        }
         guard naming, let best = named(request, among: results) else { return byCountry }
         // Lo oficial va antes que cualquier coincidencia de nombre. Para
         // "turnos anses", turnosanses.net se llama EXACTAMENTE como el pedido
@@ -889,6 +908,26 @@ final class Assistant {
         return clean.isEmpty ? nil : clean
     }
 
+    /// Un resultado cuyo sitio se llama como una parte del pedido —una o
+    /// varias palabras seguidas, pero no el pedido entero—.
+    static func siteNamed(within request: String, among results: [Result]) -> Result? {
+        let words = request.split(whereSeparator: { !$0.isLetter && !$0.isNumber }).map { flatten(String($0)) }
+        let whole = words.joined()
+        var parts = Set<String>()
+        for size in 1...3 where words.count >= size {
+            for start in 0...(words.count - size) {
+                let gram = words[start..<(start + size)].joined()
+                if gram.count >= 5, gram != whole { parts.insert(gram) }
+            }
+        }
+        // Lo oficial ya va primero: promoverlo por nombre subía la página de
+        // ANSES equivocada —una consulta de estudios con captcha— por encima
+        // de "Solicitar turnos".
+        return results.first { result in
+            closer(result) > 0 && !isOfficial(result) && siteName(of: result.host).map(parts.contains) == true
+        }
+    }
+
     /// El nombre del sitio: la parte registrada del dominio, sin
     /// subdominios. `bna` en homebanking.bna.com.es, `wikimapia` en
     /// mar-del-plata.wikimapia.org, `wikipedia` en es.wikipedia.org.
@@ -975,6 +1014,48 @@ final class Assistant {
             return mentionsOtherCountry(result.title, home: home) ? 0 : 1
         }
         return 0
+    }
+
+    /// Pide a la persona que resuelva la prueba, y deja anotado qué sigue.
+    ///
+    /// Antes decía "eso no lo puedo resolver yo" y ahí se terminaba el
+    /// camino. Lo pidió Daniel: decir qué pide el sitio, que lo resuelva la
+    /// persona, y seguir trabajando cuando esté.
+    private func askToSolve(_ page: ExtractedPage, image: Bool = false) {
+        let resume: Challenge.Resume = pendingQuestion.map { .question($0) } ?? waiting.map { .rest($0) } ?? .look
+        pendingQuestion = nil
+        waiting = nil
+        challenge = Challenge(url: page.url, resume: resume)
+        if image {
+            say("El sitio web me pide copiar un código que está dibujado en una imagen, y ésa no la puedo leer. Hay que resolverla en la página, arriba. Cuando esté resuelta, continuamos.")
+        } else {
+            say("El sitio web me pide resolver una prueba anti-robot. Hay que resolverla en la página, arriba. Cuando esté resuelta, continuamos.")
+            if page.overlay?.audioChallenge == true {
+                say("Tiene una opción de audio, dentro del recuadro de la prueba.")
+            }
+        }
+    }
+
+    /// Si la página todavía pide la prueba.
+    static func hasChallenge(_ page: ExtractedPage) -> Bool {
+        page.overlay?.kind == .captcha || page.actions.contains {
+            $0.kind == .form && ($0.fields ?? []).contains(where: isChallenge)
+        }
+    }
+
+    /// Lo que se estaba haciendo cuando apareció la prueba.
+    private func resume(_ task: Challenge.Resume, on reader: ReaderModel) async {
+        guard let page = reader.page else { return }
+        switch task {
+        case .question(let question):
+            working = true
+            await reply(question, about: page)
+            working = false
+        case .rest(let rest):
+            await continueWith(rest, on: reader)
+        case .look:
+            await arrived(page)
+        }
     }
 
     /// Una página que tapa la nota que se quería leer: pedir suscripción,
@@ -1266,6 +1347,20 @@ final class Assistant {
             await goBack(on: reader)
             return
         }
+        // La persona dice que ya resolvió la prueba: se vuelve a mirar la
+        // página, y se sigue o se dice que todavía está.
+        if action.id == Self.solvedID {
+            await reader.reread()
+            working = false
+            if let page = reader.page, !Self.hasChallenge(page), let pending = challenge {
+                challenge = nil
+                say("Listo, ya pasamos la verificación.")
+                await resume(pending.resume, on: reader)
+            } else {
+                say("Todavía veo la prueba en la página. Cuando esté resuelta, continuamos.")
+            }
+            return
+        }
         if action.id == Self.summaryID, let page = reader.page {
             await summarize(page)
             return
@@ -1299,6 +1394,10 @@ final class Assistant {
             // como el destino. En Clarín el titular llevó a la página de
             // suscripción, de ahí a iniciar sesión, y cada una se describía
             // como si la persona hubiera querido ir ahí.
+            if let page = reader.page, Self.hasChallenge(page) {
+                askToSolve(page, image: page.overlay?.kind != .captcha)
+                return
+            }
             if opensNote, let page = reader.page, Self.isWall(page) {
                 say("Esa nota es para suscriptores o pide iniciar sesión: el sitio me llevó a su página de ingreso.")
                 offer = reader.canGoBack
@@ -1642,12 +1741,29 @@ final class Assistant {
         // Ni pagar, ni suscribirse, ni bajar una app: en Clarín se sugería
         // suscribirse, y en el banco, la app — que no se usa desde acá.
         let paying = "suscri|subscri|premium|comprar|pagar|descarg|app store|google play|apple store"
-        let rest = all.filter {
-            !headlines.contains(tidy($0.label)) && $0.label.count >= 12 && !chrome.contains($0.region)
-                && $0.label.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        // Cinco letras y no doce: "Pedir turno" tiene once, y era justo el
+        // botón que servía en la página de turnos de ANSES.
+        func useful(_ action: Action) -> Bool {
+            action.label.count >= 5 && !chrome.contains(action.region)
+                && action.label.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
                     .range(of: paying, options: .regularExpression) == nil
         }
-        return Array((first + rest).prefix(30))
+        let rest = all.filter { !headlines.contains(tidy($0.label)) && useful($0) }
+        // Y los enlaces que viven adentro de un párrafo —"Ingresá a Solicitud
+        // de turnos"—, que no son controles sueltos y no entraban.
+        var seen = Set(all.compactMap(\.href))
+        var inline: [Action] = []
+        for block in page.blocks {
+            guard case .paragraph(let id, let text, let links) = block else { continue }
+            let units = Array(text.utf16)
+            for (index, link) in links.enumerated() {
+                let lower = max(0, min(link.start, units.count)), upper = max(lower, min(link.end, units.count))
+                let label = String(decoding: units[lower..<upper], as: UTF16.self).trimmingCharacters(in: .whitespaces)
+                let action = Action.link(id: "\(id)-l\(index)", label: label, href: link.href, region: "main")
+                if useful(action), seen.insert(link.href).inserted { inline.append(action) }
+            }
+        }
+        return Array((first + rest + inline).prefix(40))
     }
 
     static let readID = "jef-leer"
@@ -1675,7 +1791,11 @@ final class Assistant {
         let other = Action.link(id: Self.otherID, label: "Otra cosa", href: "", region: "main")
         if let current = offer {
             guard !current.options.contains(where: { $0.id == Self.otherID }) else { return }
-            var options = current.options
+            // Completar va primero aunque las opciones las haya armado el
+            // modelo: en el banco decía "ingresá tu DNI" y el único botón era
+            // "Recuperar usuario y contraseña".
+            let form = reader.page.map(Self.formOptions) ?? []
+            var options = form + current.options.filter { option in !form.contains { $0.id == option.id } }
             // Volver, aunque las opciones las haya armado el modelo: sin él,
             // salir de una página equivocada obligaba a escribir.
             let isResults = options.contains { $0.id.hasPrefix("res-") }
@@ -1691,7 +1811,9 @@ final class Assistant {
         var options: [Action] = []
         // Después de un dato, lo que probablemente se pregunte después; si la
         // página no lo tenía, buscarlo afuera. El camino sigue sin escribir.
-        options += nextQuestions.map { .link(id: Self.askPrefix + $0, label: $0, href: "", region: "main") }
+        if reader.page?.overlay?.kind != .captcha {
+            options += nextQuestions.map { .link(id: Self.askPrefix + $0, label: $0, href: "", region: "main") }
+        }
         if let question = searchInstead {
             options.append(.link(id: Self.askPrefix + "buscá en internet: " + question,
                                  label: "Buscarlo en internet", href: "", region: "main"))
@@ -1717,8 +1839,10 @@ final class Assistant {
         let summarized = lastDone == Self.summaryID
         var out: [Action] = []
 
-        if page.overlay?.kind == .captcha {
-            return canGoBack ? [option(Self.backID, "Volver a la página anterior")] : []
+        if challenge != nil || Self.hasChallenge(page) {
+            // Por si el sitio no avisa cuando se resuelve: la persona lo dice.
+            return [option(Self.solvedID, "Ya la resolví")]
+                + (canGoBack ? [option(Self.backID, "Volver a la página anterior")] : [])
         }
 
         if let query = Self.searchQuery(of: page) {
@@ -1731,19 +1855,7 @@ final class Assistant {
             return out
         }
 
-        // Un formulario que no es de búsqueda —el ingreso de un banco— se
-        // completa: ése es el paso que sigue, y no había forma de darlo sin
-        // saber escribir el pedido justo. La contraseña no: ésa es de la
-        // persona.
-        if let form = page.actions.first(where: { $0.kind == .form && !Self.isSearch($0) && !($0.fields ?? []).isEmpty }) {
-            let fillable = (form.fields ?? []).filter {
-                $0.type != "hidden" && !$0.isSecure && $0.type != "checkbox" && !Self.isChallenge($0)
-            }
-            for field in fillable.prefix(2) {
-                let name = Self.spoken(field)
-                out.append(.link(id: Self.askPrefix + "completá el campo \(name)", label: "Completar «\(name)»", href: "", region: "main"))
-            }
-        }
+        out += Self.formOptions(page)
 
         if readsHeadlines(page) {
             // Recién leídos, lo probable es abrir uno de ésos: son los que la
@@ -1797,6 +1909,21 @@ final class Assistant {
         return nil
     }
 
+    /// Un formulario que no es de búsqueda —el ingreso de un banco— se
+    /// completa: ése es el paso que sigue, y no había forma de darlo sin
+    /// saber escribir el pedido justo. La contraseña no: ésa es de la persona.
+    static func formOptions(_ page: ExtractedPage) -> [Action] {
+        guard let form = page.actions.first(where: { $0.kind == .form && !isSearch($0) && !($0.fields ?? []).isEmpty })
+        else { return [] }
+        let fillable = (form.fields ?? []).filter {
+            $0.type != "hidden" && !$0.isSecure && $0.type != "checkbox" && !isChallenge($0)
+        }
+        return fillable.prefix(2).map { field in
+            let name = spoken(field)
+            return .link(id: askPrefix + "completá el campo \(name)", label: "Completar «\(name)»", href: "", region: "main")
+        }
+    }
+
     /// Volver a la página anterior y decir dónde se quedó. También lo usa el
     /// gesto de escape de VoiceOver: volver siempre suena igual.
     func goBack(on reader: ReaderModel) async {
@@ -1830,6 +1957,20 @@ final class Assistant {
     /// persona tocando la página misma. En Mercado Libre el captcha llegó en
     /// silencio y el asistente seguía hablando de la portada.
     func pageChanged(_ page: ExtractedPage, on reader: ReaderModel) async {
+        // La prueba se resolvió: el sitio avanzó, o la sacó de la página. Se
+        // sigue solo con lo que se estaba haciendo, aunque la dirección sea
+        // la misma — hay sitios que muestran la prueba en la misma dirección.
+        if let pending = challenge, !inTurn, !working {
+            guard !Self.hasChallenge(page) else { return }
+            challenge = nil
+            inTurn = true
+            defer { inTurn = false }
+            interruptNext = true
+            say("Listo, ya pasamos la verificación.")
+            await resume(pending.resume, on: reader)
+            closeTurn(on: reader)
+            return
+        }
         guard !inTurn, !working, page.url != knownURL else { return }
         inTurn = true
         defer { inTurn = false }
@@ -1877,6 +2018,8 @@ final class Assistant {
         // Un captcha es el único aviso que es un muro: detrás no hay nada que
         // contar hasta que alguien lo resuelva.
         if page.overlay?.kind == .captcha { describe(page); return }
+        if Self.hasChallenge(page) { askToSolve(page, image: true); return }
+        challenge = nil
 
         // La página de resultados del buscador se ofrece como la primera vez:
         // los resultados como botones. Se vuelve a ella —"volvé" desde el
@@ -1973,11 +2116,7 @@ final class Assistant {
             // salida para otro lado. Medido contra el muro real de Mercado
             // Libre: el detector lo reconoce y avisa que hay opción de audio.
             if overlay.kind == .captcha {
-                say("El sitio me puso una verificación de «no soy un robot». Eso no lo puedo resolver yo.")
-                if overlay.audioChallenge == true {
-                    say("Suele tener una opción de audio, pero está dentro del recuadro de la verificación y no la puedo tocar: hay que hacerlo en la pantalla.")
-                }
-                say("Si preferís, te llevo a otro lado o volvemos a la página anterior.")
+                askToSolve(page)
                 return
             }
             // "Aviso de la página tapa la página" se oía roto: el título de un

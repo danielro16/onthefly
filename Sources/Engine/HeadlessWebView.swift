@@ -257,6 +257,13 @@ final class HeadlessWebView: NSObject {
         return try await nextPage()
     }
 
+    /// Reads the live page again, as it is now: after the person solved a
+    /// challenge on the page itself, for instance.
+    func reread() async throws -> ExtractedPage {
+        guard let web = webView else { throw ExtractionError.noSession }
+        return try await reextract(web)
+    }
+
     /// Submits the form an action belongs to, then reports what happened.
     func submit(actionID: String) async throws -> ActivationOutcome {
         guard let web = webView else { throw ExtractionError.noSession }

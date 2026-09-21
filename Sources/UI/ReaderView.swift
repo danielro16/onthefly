@@ -148,6 +148,13 @@ final class ReaderModel {
         }
     }
 
+    /// Vuelve a leer la página tal como está ahora.
+    func reread() async {
+        guard let page = try? await engine.reread() else { return }
+        address = page.url
+        state = .loaded(page)
+    }
+
     /// Lleva un valor a un campo de la página sin esperar a que lo reciba.
     /// Quien la llama espera lo que haga falta; `type` es la que espera.
     func fill(_ field: Action.Field, with value: String) {

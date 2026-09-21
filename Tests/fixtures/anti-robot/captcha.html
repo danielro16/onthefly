@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verificación de seguridad</title>
+</head>
+<body>
+<!-- Una prueba anti-robot que se resuelve sola a los 12 segundos: el sitio
+     avanza a otra página, como cuando alguien la resuelve. -->
+<h1>Por seguridad, completá este paso</h1>
+<p>Confirmá que no sos un robot para ver los resultados.</p>
+<iframe title="reCAPTCHA" src="about:blank" width="300" height="80" style="border:1px solid #999"></iframe>
+<p><button>Continuar</button></p>
+<script>
+  setTimeout(function () { location.href = "resuelto.html"; }, 12000);
+</script>
+</body>
+</html>
