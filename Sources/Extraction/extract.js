@@ -595,28 +595,6 @@
       return NOISE.some(function (pattern) { return pattern.test(label); });
     }
 
-    /// A guess at what an unnamed control does, from the words the page
-    /// used in its own markup. Weak evidence, but "Cerrar" beats silence
-    /// and beats discarding the only way out of a modal.
-    function inferredName(element) {
-      if (!element) return "";
-      const glyph = textOf(element);
-      if (/^[×✕✖xX]$/.test(glyph)) return "Cerrar";
-      const hint = (String(element.className || "") + " " + (element.id || "")).toLowerCase();
-      if (/close|cerrar|dismiss/.test(hint)) return "Cerrar";
-      if (/burger|hamburger|menu-?toggle|nav-?toggle|open-?menu/.test(hint)) return "Abrir el menú";
-      if (/search|buscar|lupa/.test(hint)) return "Buscar";
-      if (/\bback\b|volver|atras|atrás/.test(hint)) return "Volver";
-      if (/\bnext\b|siguiente|forward/.test(hint)) return "Siguiente";
-      if (/\bprev\b|anterior/.test(hint)) return "Anterior";
-      if (/play|reproducir/.test(hint)) return "Reproducir";
-      if (/^[+➕]$/.test(glyph) || /\badd\b|agregar|sumar/.test(hint)) return "Agregar";
-      if (/^[−-]$/.test(glyph) || /remove|quitar|restar/.test(hint)) return "Quitar";
-      if (/cart|carrito/.test(hint)) return "Carrito";
-      if (/account|cuenta|user|perfil/.test(hint)) return "Mi cuenta";
-      return "";
-    }
-
     function push(action, element) {
       // A control with no accessible name is the site's bug, and the "×"
       // that closes a modal is usually one of them. Discarding it made the
@@ -624,8 +602,7 @@
       //
       // A lone glyph counts as no name: "×" is a drawing of a cross, and a
       // screen reader says "multiplicación" or nothing at all.
-      const nameless = !action.label
-        || /^[\s×✕✖✗xX+−·•–—<>‹›«»←-⇿✀-➿]{1,2}$/.test(action.label);
+      const nameless = !action.label || LONE_GLYPH.test(action.label);
       if (nameless && action.kind === "button" && element) {
         const guess = inferredName(element);
         if (guess) {
@@ -2025,6 +2002,246 @@
     return title ? title.trim() : "";
   }
 
+  /// A drawing, not a word. "×" is a picture of a cross, and a screen reader
+  /// says "multiplicación" or nothing at all — so it counts as no name.
+  ///
+  /// Letters are in here on purpose: on a BUTTON, a lone "x" is a close
+  /// cross. That is a fact about control labels and about nothing else —
+  /// see DECORATION for why it must not be used on running text.
+  const LONE_GLYPH = /^[\s×✕✖✗xX+−·•–—<>‹›«»←-⇿✀-➿]{1,2}$/;
+
+  /// Punctuation standing alone in the middle of prose: a bullet between two
+  /// dates, a carousel's dots, a pipe between links.
+  ///
+  /// No letters. Reusing LONE_GLYPH here silenced eleven spans reading "XX"
+  /// in the Spanish Wikipedia — the century, not a pair of crosses. A rule
+  /// about buttons applied to prose deletes the prose.
+  const DECORATION = /^[\s·•‣▪▫◦※|¦+−–—‒―×✕✖✗<>‹›«»↑↓←→⇑⇓⇐⇒★☆♦◆▲▼✦✧]{1,2}$/;
+
+  /*
+   * The words a page hides around its own icons.
+   *
+   * Measured on fravega.com: 126 of its controls have no accessible name,
+   * and every one of them is an inline <svg> inside a button whose classes
+   * are generated — `sc-gJCZQp bsaTbk` says nothing about anything. But the
+   * naming is usually there, one attribute away from where a screen reader
+   * looks: a `data-testid`, a sprite reference like `<use href="#icon-cart">`,
+   * or an `alt` sitting on the <svg> itself, which is not a real attribute
+   * and so is read by nobody.
+   *
+   * None of this is authoritative. It feeds the guess, which is still only
+   * used when the page left no name at all.
+   */
+  function iconHint(element) {
+    const parts = [];
+    for (const attr of ["data-testid", "data-test", "data-qa", "data-icon", "name"]) {
+      const value = element.getAttribute(attr);
+      if (value) parts.push(value);
+    }
+    const svg = element.querySelector("svg");
+    if (svg) {
+      for (const attr of ["alt", "aria-label", "data-icon", "id"]) {
+        const value = svg.getAttribute(attr);
+        if (value) parts.push(value);
+      }
+      const title = svg.querySelector("title");
+      if (title) parts.push(title.textContent || "");
+      const use = svg.querySelector("use");
+      if (use) parts.push(use.getAttribute("href") || use.getAttribute("xlink:href") || "");
+      // Sprite ids live on the <g>/<symbol> the icon was copied from.
+      const group = svg.querySelector("[id]");
+      if (group) parts.push(group.getAttribute("id") || "");
+    }
+    // Separated, so "icon-cart" and "search" never run into one word.
+    return parts.join(" ");
+  }
+
+  /// A guess at what an unnamed control does, from the words the page
+  /// used in its own markup. Weak evidence, but "Cerrar" beats silence
+  /// and beats discarding the only way out of a modal.
+  function inferredName(element) {
+    if (!element) return "";
+    const glyph = textOf(element);
+    if (/^[×✕✖xX]$/.test(glyph)) return "Cerrar";
+    const hint = (String(element.className || "") + " " + (element.id || "") + " " + iconHint(element)).toLowerCase();
+    if (/close|cerrar|dismiss/.test(hint)) return "Cerrar";
+    if (/burger|hamburger|menu-?toggle|nav-?toggle|open-?menu/.test(hint)) return "Abrir el menú";
+    if (/search|buscar|lupa/.test(hint)) return "Buscar";
+    if (/\bback\b|volver|atras|atrás/.test(hint)) return "Volver";
+    if (/\bnext\b|siguiente|forward/.test(hint)) return "Siguiente";
+    if (/\bprev\b|anterior/.test(hint)) return "Anterior";
+    if (/play|reproducir/.test(hint)) return "Reproducir";
+    if (/^[+➕]$/.test(glyph) || /\badd\b|agregar|sumar/.test(hint)) return "Agregar";
+    if (/^[−-]$/.test(glyph) || /remove|quitar|restar/.test(hint)) return "Quitar";
+    if (/cart|carrito/.test(hint)) return "Carrito";
+    if (/account|cuenta|user|perfil/.test(hint)) return "Mi cuenta";
+    return "";
+  }
+
+  /* ---------------------------------------------------------------------
+   * The page, repaired where it stands.
+   *
+   * Nothing here moves, groups, or redraws anything. The page keeps the
+   * shape its author gave it and the layout everybody else sees; what this
+   * fixes are the three gaps that make VoiceOver useless on a page that
+   * otherwise works — a control with no name, an image with no alt, and a
+   * decorative glyph read out loud as if it meant something.
+   *
+   * Two rules keep a repair from being worse than the damage:
+   *
+   *   1. It only ADDS attributes. No node is moved or removed, no handler
+   *      replaced, no style touched. The worst case of a wrong guess is a
+   *      badly named button — never a broken one.
+   *   2. It never hides anything that can take focus. Hiding a focusable
+   *      element from the accessibility tree is the one "fix" that makes a
+   *      page unusable: the cursor lands on something VoiceOver has been
+   *      told is not there, and the person is stuck on a control that does
+   *      not exist.
+   *
+   * What it deliberately does NOT do: `inert` on what looks unreachable.
+   * A mobile nav panel usually sits at opacity 0 waiting to fade in, and
+   * `pointer-events: none` covers 137 of Frávega's 141 buttons because the
+   * handler lives on a wrapper. Marking either one unreachable would gut a
+   * page that works. Unreachable stays a reading problem, not a repair.
+   * ------------------------------------------------------------------- */
+
+  /// Anything the focus can land on. `tabindex="-1"` counts: it is out of
+  /// the tab order but a screen reader still reaches it.
+  const FOCUSABLE = "a[href],button,input,select,textarea,summary,[tabindex],[contenteditable],[role=button],[role=link],[role=tab],[role=menuitem],[role=checkbox],[role=radio]";
+
+  /// The controls worth naming. Same list the inventory walks, minus the
+  /// cap: the inventory stops at MAX_ACTIONS because each one costs money
+  /// to reason about, but a name costs nothing and the fortieth button is
+  /// as unusable as the first.
+  const REPAIRABLE = "a[href],button,summary,input[type=button],input[type=submit],input[type=image],input[type=checkbox],input[type=radio],[role=button],[role=link],[role=tab],[role=menuitem],[role=checkbox],[role=radio]";
+
+  /// What a screen reader would say for this element today, as close as we
+  /// can compute it without asking the platform.
+  function spokenName(el) {
+    const own = labelOf(el);
+    if (own && !LONE_GLYPH.test(own)) return own;
+    // A picture with an alt IS the name, natively — the inventory was the
+    // only thing missing it.
+    const pic = imageName(el);
+    if (pic && !LONE_GLYPH.test(pic)) return pic;
+    if (el.tagName === "INPUT") {
+      const value = (el.getAttribute("value") || "").trim();
+      if (value && /^(submit|button|image)$/i.test(el.getAttribute("type") || "")) return value;
+      const alt = (el.getAttribute("alt") || "").trim();
+      if (alt) return alt;
+      const placeholder = (el.getAttribute("placeholder") || "").trim();
+      if (placeholder) return placeholder;
+    }
+    // <label for> and a wrapping <label> are both real names to VoiceOver.
+    const wrapping = el.closest("label");
+    if (wrapping) {
+      const text = textOf(wrapping);
+      if (text && !LONE_GLYPH.test(text)) return text.slice(0, 60);
+    }
+    if (el.id && typeof CSS !== "undefined" && CSS.escape) {
+      const tag = document.querySelector('label[for="' + CSS.escape(el.id) + '"]');
+      if (tag) {
+        const text = textOf(tag);
+        if (text && !LONE_GLYPH.test(text)) return text.slice(0, 60);
+      }
+    }
+    return "";
+  }
+
+  /// Whether this element, or anything inside it, can take focus.
+  function holdsFocus(el) {
+    try {
+      if (el.matches(FOCUSABLE)) return true;
+      return !!el.querySelector(FOCUSABLE);
+    } catch (_) {
+      return true; // Unsure means leave it alone.
+    }
+  }
+
+  /// A picture that carries no meaning: it sits inside a control that
+  /// already has a name, or it is too small to be anything but a rule, a
+  /// spacer or a tracking pixel.
+  function isDecorativeImage(img) {
+    const control = img.closest(REPAIRABLE);
+    if (control && spokenName(control)) return true;
+    const rect = img.getBoundingClientRect();
+    if (rect.width && rect.height && rect.width <= 40 && rect.height <= 40) return true;
+    const src = (img.getAttribute("src") || "") + " " + (String(img.className || ""));
+    return /sprite|icon|spacer|pixel|separator|divider|bullet|\/1x1\.|blank\.gif/i.test(src);
+  }
+
+  function repairInPlace() {
+    // A page can turn this off for a run; the native side owns the switch.
+    if (window.__jefRepair === false) return { named: 0, quieted: 0, silenced: 0 };
+    let named = 0, quieted = 0, silenced = 0;
+
+    // 1. Controls the page left without a name.
+    for (const el of document.querySelectorAll(REPAIRABLE)) {
+      // Our own writing does not count as the page having a name: if the
+      // element still carries exactly what we put there, we are free to
+      // reconsider it. If it carries something else, the page spoke and we
+      // step back.
+      const ours = el.getAttribute("data-jef-name");
+      const current = el.getAttribute("aria-label");
+      if (ours !== null && current !== null && current !== ours) {
+        el.removeAttribute("data-jef-name");
+        continue;
+      }
+      if (ours === null && spokenName(el)) continue;
+      if (isHidden(el)) continue;
+      const guess = inferredName(el);
+      // No honest guess means silence. Writing "Botón sin nombre" into the
+      // page would make VoiceOver say "Botón sin nombre, botón", which is
+      // noisier than what the site already does. The inventory may still
+      // report it that way to the assistant; the page stays quiet.
+      if (!guess) continue;
+      if (ours === guess && current === guess) continue;
+      el.setAttribute("aria-label", guess);
+      el.setAttribute("data-jef-name", guess);
+      named++;
+    }
+
+    // 2. Pictures with no alt at all. VoiceOver reads the file name, which
+    //    is how a person hears "guion bajo hero guion bajo dos mil
+    //    veinticuatro punto jpg" in the middle of a front page. An empty
+    //    alt is silence, and silence is only right when the picture means
+    //    nothing — so a photo we cannot name is left alone rather than
+    //    silenced. That gap is where a caption model would go.
+    for (const img of document.querySelectorAll("img:not([alt])")) {
+      if (img.getAttribute("role") === "presentation") continue;
+      if (!isDecorativeImage(img)) continue;
+      img.setAttribute("alt", "");
+      img.setAttribute("data-jef-alt", "");
+      quieted++;
+    }
+
+    // 3. Decoration read out loud. A carousel's dots, a bullet between two
+    //    dates, an emoji used as a divider: each is its own stop, and a
+    //    front page can hold dozens.
+    for (const el of document.querySelectorAll("span,i,em,b,strong,div,li,p")) {
+      if (el.hasAttribute("aria-hidden")) continue;
+      if (el.children.length) continue;
+      const text = (el.textContent || "").trim();
+      if (!text || !DECORATION.test(text)) continue;
+      // Rule 2, the one that must never be broken.
+      if (holdsFocus(el)) continue;
+      // And its other half, which cost me 268 links on Wikipedia: the
+      // reference backlinks are <a href="#cite"><span>↑</span></a>, and
+      // silencing the span left the link with no name at all. The person
+      // still lands on it and now hears nothing. So: decoration inside
+      // something focusable is left alone, unless that something already
+      // carries its own name and does not depend on this text.
+      const owner = el.closest(FOCUSABLE);
+      if (owner && !(owner.getAttribute("aria-label") || owner.getAttribute("aria-labelledby"))) continue;
+      if (el.closest("[role=img],figure")) continue;
+      el.setAttribute("aria-hidden", "true");
+      el.setAttribute("data-jef-quiet", "1");
+      silenced++;
+    }
+
+    return { named: named, quieted: quieted, silenced: silenced };
+  }
+
   /*
    * Whether a destination is another document, or a place inside this one.
    *
@@ -2690,6 +2907,10 @@
   }
 
   function extract() {
+    // First, and on the live document: the page is repaired before anything
+    // reads it, so the inventory below sees the names we just wrote instead
+    // of computing them twice. Everything after this point is reading.
+    const repaired = repairInPlace();
     // Collected before Readability runs, and from the live document: the parse
     // below throws all of this away.
     // Overlay first: it stamps its own controls, and the action inventory has
@@ -2748,6 +2969,7 @@ allowedVideoRegex: /^$/,
             imagesWithoutAlt: 0,
             unsupported: 0,
             droppedActions: actions.droppedCount || 0,
+            repaired: repaired,
           },
         };
       }
@@ -2800,6 +3022,7 @@ allowedVideoRegex: /^$/,
         imagesWithoutAlt: blocks.filter(b => b.type === "image" && b.needsAlt).length,
         unsupported: blocks.filter(b => b.type === "unsupported").length,
         droppedActions: actions.droppedCount || 0,
+        repaired: repaired,
       },
     };
   }

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Página rota a propósito</title>
+<!--
+  El patrón de calibración.
+
+  Cada elemento de acá es un defecto real, copiado de sitios que medimos: un
+  botón que es sólo un dibujo, una "×" que cierra, una foto sin alt, un punto
+  decorativo que VoiceOver pronuncia. Sirve para dos cosas:
+
+    1. Validar el instrumento. Un medidor que da cero en un sitio grande puede
+       estar diciendo "el sitio está bien" o "yo no funciono". Contra este
+       archivo la respuesta correcta se sabe de antemano, así que un cero acá
+       es el medidor roto.
+    2. Ver la reparación hacer su trabajo, sin depender de que un sitio real
+       siga estando roto mañana.
+
+  Correr:  ./Scripts/voiceover-gap.js file:///<ruta>/Tests/roto.html
+-->
+<style>
+  body { font: 16px/1.5 system-ui; margin: 24px; }
+  button { width: 44px; height: 44px; }
+  .sep { color: #999; }
+</style>
+</head>
+<body>
+
+<h1>Diario de prueba</h1>
+
+<!-- 1. Botón que es sólo un dibujo. La clase dice "search", nada más. -->
+<button class="search-toggle">
+  <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="8" cy="8" r="6" fill="none" stroke="#000"/></svg>
+</button>
+
+<!-- 2. El hamburguesa. Tres rayas y ninguna palabra. -->
+<button class="nav-toggle"><span></span><span></span><span></span></button>
+
+<!-- 3. La "×" que cierra. VoiceOver dice "multiplicación". -->
+<button class="modal-dismiss">×</button>
+
+<!-- 4. Carrito, por la clase. -->
+<button class="cart-button"><svg width="20" height="20"><rect width="20" height="20"/></svg></button>
+
+<!-- 5. Foto de nota sin alt: VoiceOver lee el nombre del archivo. -->
+<img src="portada_hero_2026.jpg" width="320" height="180">
+
+<!-- 6. Ícono sin alt dentro de un link que YA tiene texto. Puro ruido. -->
+<a href="/deportes">Deportes <img src="icons/sprite-arrow.png" width="12" height="12"></a>
+
+<!-- 7. Puntos decorativos entre datos: cada uno es una parada. -->
+<p>12 de octubre <span class="sep">•</span> Buenos Aires <span class="sep">•</span> Política</p>
+
+<!-- 8. Los puntitos del carrusel. -->
+<div class="dots">
+  <span>•</span><span>•</span><span>•</span>
+</div>
+
+<!-- 9. Control que SÍ tiene nombre: no se debe tocar. -->
+<button aria-label="Suscribirme al boletín">✉</button>
+
+<!-- 10. Un punto que ADEMÁS es un botón. Silenciarlo sería la trampa:
+        el foco caería en algo que el lector cree inexistente. -->
+<span tabindex="0" role="button" class="page-dot">•</span>
+
+<p>Texto de relleno para que Readability encuentre algo que parsear. La prueba
+no depende de esto, pero el extractor corre su parse igual y conviene que no
+falle por una página sin prosa. Buenos Aires amaneció nublada y con una
+probabilidad de lluvia que nadie se tomó en serio hasta el mediodía.</p>
+
+</body>
+</html>
