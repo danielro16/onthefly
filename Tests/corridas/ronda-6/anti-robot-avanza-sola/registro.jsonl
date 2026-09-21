@@ -1,0 +1,23 @@
+{"t": 1790023013.620672, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones"}
+{"texto": "http://localhost:62436/captcha.html", "quien": "persona", "t": 1790023020.1651568, "tipo": "turno"}
+{"opciones": [], "tipo": "botones", "t": 1790023020.166294}
+{"texto": "Abriendo localhost.", "quien": "jef", "t": 1790023020.166449, "tipo": "turno"}
+{"texto": "Abriendo localhost.", "t": 1790023020.166644, "tipo": "voz", "cola": false}
+{"t": 1790023020.199483, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"texto": "PÁGINA: localhost — Verificación de seguridad\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.\nContinuar\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.", "titulo": "Verificación de seguridad", "tipo": "pagina", "url": "http://localhost:62436/captcha.html", "t": 1790023022.577825}
+{"tipo": "botones", "t": 1790023022.57847, "opciones": []}
+{"texto": "El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba; con VoiceOver, antes de esta conversación. Cuando esté resuelta, continuamos.", "t": 1790023022.57868, "tipo": "turno", "quien": "jef"}
+{"t": 1790023022.579041, "texto": "El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba; con VoiceOver, antes de esta conversación. Cuando esté resuelta, continuamos.", "cola": true, "tipo": "voz"}
+{"opciones": ["Ya la resolví", "Otra cosa"], "tipo": "botones", "t": 1790023022.579211}
+{"tipo": "pagina", "texto": "PÁGINA: localhost — Auriculares bluetooth\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nAuriculares bluetooth\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499\nAuriculares Vincha Bluetooth con Micrófono $24.990\nAuriculares con Cancelación de Ruido $89.900\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499, Auriculares Vincha Bluetooth con Micrófono $24.990, Auriculares con Cancelación de Ruido $89.900", "t": 1790023034.589921, "url": "http://localhost:62436/resuelto.html", "titulo": "Auriculares bluetooth"}
+{"tipo": "turno", "texto": "Listo, ya pasamos la verificación.", "t": 1790023034.5928168, "quien": "jef"}
+{"tipo": "voz", "texto": "Listo, ya pasamos la verificación.", "cola": false, "t": 1790023034.5935369}
+{"opciones": [], "tipo": "botones", "t": 1790023034.5937161}
+{"tipo": "turno", "quien": "jef", "t": 1790023035.8478332, "texto": "Estás en localhost, en una página que te muestra auriculares bluetooth con envío gratis, ordenados por precio. Hay Auriculares In Ear Bluetooth Básicos a $12.499, Auriculares Vincha Bluetooth con Micrófono a $24.990, y Auriculares con Cancelación de Ruido a $89.900."}
+{"tipo": "voz", "t": 1790023035.8487449, "cola": true, "texto": "Estás en localhost, en una página que te muestra auriculares bluetooth con envío gratis, ordenados por precio. Hay Auriculares In Ear Bluetooth Básicos a $12.499, Auriculares Vincha Bluetooth con Micrófono a $24.990, y Auriculares con Cancelación de Ruido a $89.900."}
+{"opciones": ["Leer la página", "Resumir la página", "Volver a la página anterior", "Otra cosa"], "tipo": "botones", "t": 1790023035.849131}
+{"quien": "persona", "tipo": "turno", "t": 1790023051.1264272, "texto": "¿cuánto sale el más barato?"}
+{"tipo": "botones", "opciones": [], "t": 1790023051.1268392}
+{"quien": "jef", "tipo": "turno", "t": 1790023052.842115, "texto": "El más barato es el \"Auriculares In Ear Bluetooth Básicos\", que sale $12.499."}
+{"cola": false, "tipo": "voz", "t": 1790023052.842956, "texto": "El más barato es el \"Auriculares In Ear Bluetooth Básicos\", que sale $12.499."}
+{"opciones": ["¿Y el de vincha?", "¿Cuánto sale el más caro?", "Leer la página", "Resumir la página", "Otra cosa"], "tipo": "botones", "t": 1790023052.843225}

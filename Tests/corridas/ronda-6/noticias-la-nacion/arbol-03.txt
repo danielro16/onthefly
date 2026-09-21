@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de LA NACION, con las últimas noticias de Argentina y el mundo. Los titulares principales son: renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes; las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele; un gas contaminado sería la causa del apagón que dejó a oscuras a más de 2 millones de personas; y tres misas y mucha orfebrería diplomática para evitar que la visita del Papa se politice.
+  8 [H] Vos: dame los titulares
+  9 [txt] Sin conexión. No puedo navegar a ningún lado.
+ 10 [btn] Leer los titulares  (Primera de 4 opciones.)
+ 11 [btn] Resumir la portada
+ 12 [btn] Volver a la página anterior
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar

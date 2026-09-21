@@ -1,0 +1,13 @@
+  1 [H] Asistente
+  2 [H] Vos: hola, ¿qué podés hacer?
+  3 [txt] Puedo abrir sitios, buscar, leerte páginas, resumirlas y contestar lo que dicen. Para empezar, un sitio o algo para buscar; o una de estas opciones.
+  4 [H] Vos: Llevame a La Nación
+  5 [txt] Abriendo lanacion.com.ar.
+  6 [txt] Estás en la portada de LA NACION, un portal de noticias de Argentina y el mundo. Los titulares principales son: Un gas contaminado sería la causa del apagón que dejó a oscuras a más de 2 millones de personas. Renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes. Las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele. Tres misas y mucha orfebrería diplomática para evitar que la visita del Papa se politice.
+  7 [btn] Abrir «Un gas contaminado sería la causa del apagón que dejó a oscuras a más…»  (Primera de 5 opciones.)
+  8 [btn] Abrir «A partir de este momento". Renunció el secretario de Discapacidad en…»
+  9 [btn] Abrir «Las grandes cadenas de TV reaccionan al veto de Trump y golpean donde…»
+ 10 [btn] Abrir «Tres misas y mucha orfebrería diplomática para evitar que la visita…»
+ 11 [btn] Otra cosa
+ 12 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 13 [btn] Enviar

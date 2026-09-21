@@ -1,0 +1,24 @@
+  1 [H] Asistente
+  2 [H] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Estás en los resultados de «clarin». Los 3 más probables:
+  5 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en la portada de Clarín. Los titulares principales son: Alejandro Vilches renunció como secretario de Discapacidad por recortes en el presupuesto 2027. Adorni dijo que ganó casi US$ 600 mil con criptomonedas y los guardaba en su casa, tratando de justificar su patrimonio. Se analizan quiénes ganan y quiénes pierden con la definición de la agenda del papa León XIV en Argentina. El Gobierno espera que la visita del Papa movilice 7 millones de personas y evalúa declarar asueto.
+  8 [H] Vos: Abrir «Cinco grandes cadenas de TV de EE.UU. suspenden la cobertura de la…»
+  9 [txt] Abriendo «Cinco grandes cadenas de TV de EE.UU. suspenden la cobertura de la…»
+ 10 [txt] Estás en Clarín, una nota sobre cómo cinco cadenas grandes de televisión de Estados Unidos suspendieron la cobertura conjunta de la Casa Blanca, porque el presidente Donald Trump vetó el acceso a varios periodistas.
+ 11 [H] Vos: Leer la nota
+ 12 [txt] Párrafos 1 a 2 de 20:
+ 13 [txt] Cinco cadenas de televisión estadounidenses anunciaron el lunes que suspenderán su cobertura conjunta del gobierno de Estados Unidos. Esta medida es una represalia por la decisión del presidente Donald Trump de prohibir el acceso de algunos periodistas  a la Casa Blanca durante el fin de semana.
+ 14 [txt] Las cadenas que participan en el llamado "grupo de medios" —una cobertura conjunta de la agenda de Trump— que han anunciado la suspensión de su cobertura son: ABC, CBS, CNN, Fox News y NBC.
+ 15 [H] Vos: Seguir leyendo
+ 16 [txt] Párrafos 3 a 4 de 20:
+ 17 [txt] Fox News es un aliado de la administración Trump.
+ 18 [txt] Las cinco cadenas, que se encuentran entre las más importantes de Estados Unidos, se turnan para captar imágenes de eventos y discursos en la Casa Blanca. Las imágenes capturadas se distribuyen a las cinco cadenas y también a las estaciones de televisión locales estadounidenses.
+ 19 [btn] Seguir leyendo  (Primera de 4 opciones.)
+ 20 [btn] Resumir la nota
+ 21 [btn] Volver a la página anterior
+ 22 [btn] Otra cosa
+ 23 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 24 [btn] Enviar

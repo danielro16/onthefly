@@ -1,0 +1,16 @@
+  1 [H] Asistente
+  2 [H] Vos: quiero sacar un turno en anses
+  3 [txt] Buscando: anses.
+  4 [txt] Estás en los resultados de «anses». Los 3 más probables:
+  5 [txt] Cuando elijas, sigo con: sacar un turno.
+  6 [H] Vos: ANSES - Argentina.gob.ar — www.argentina.gob.ar
+  7 [txt] Abriendo argentina.gob.ar.
+  8 [txt] Estás en la portada de ANSES. Para sacar un turno, tenés la opción de 'Turnos'.
+  9 [txt] Sigo con: sacar un turno.
+ 10 [txt] No es claro cuál. ¿Turnos? También encuentro Turnos.
+ 11 [btn] Turnos  (Primera de 4 opciones.)
+ 12 [btn] Turnos
+ 13 [btn] Volver a la página anterior
+ 14 [btn] Otra cosa
+ 15 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 16 [btn] Enviar

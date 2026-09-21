@@ -1,0 +1,16 @@
+  1 [H] Asistente
+  2 [H] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Estás en los resultados de «clarin». Los 3 más probables:
+  5 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en la portada de Clarín. Los titulares principales son: Alejandro Vilches renunció como secretario de Discapacidad por recortes en el presupuesto 2027. Adorni dijo que ganó casi US$ 600 mil con criptomonedas y los guardaba en su casa, tratando de justificar su patrimonio. Se analizan quiénes ganan y quiénes pierden con la definición de la agenda del papa León XIV en Argentina. El Gobierno espera que la visita del Papa movilice 7 millones de personas y evalúa declarar asueto.
+  8 [btn] Abrir «Cinco grandes cadenas de TV de EE.UU. suspenden la cobertura de la…»  (Primera de 7 opciones.)
+  9 [btn] Abrir «Renunció el secretario de Discapacidad en medio de la interna por los…»
+ 10 [btn] Abrir «Adorni trató de justificar su patrimonio: dijo que ganó casi US$ 600…»
+ 11 [btn] Abrir «Quiénes son los ganadores y los perdedores tras la definición de la…»
+ 12 [btn] Abrir «El Gobierno espera que por la visita del Papa se movilicen 7 millones…»
+ 13 [btn] Volver a la página anterior
+ 14 [btn] Otra cosa
+ 15 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 16 [btn] Enviar

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consulta de turnos solicitados</title>
+</head>
+<body>
+<!-- Un formulario con el reCAPTCHA INVISIBLE, como la consulta de turnos de
+     ANSES: el distintivo no pide nada, y no es una prueba. -->
+<h1>Consulta de turnos solicitados</h1>
+<form>
+  <label>CUIL <input name="cuil"></label>
+  <label>Número de solicitud <input name="solicitud"></label>
+  <button>Continuar</button>
+</form>
+<div class="grecaptcha-badge" style="position:fixed;right:0;bottom:14px;width:256px;height:60px">
+  <iframe title="reCAPTCHA" src="about:blank#k=abc&size=invisible" width="256" height="60"></iframe>
+</div>
+</body>
+</html>

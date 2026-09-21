@@ -205,7 +205,7 @@ struct AssistantPanel: View {
         HStack(spacing: 10) {
             // El texto de ayuda más oscuro que el gris de siempre: con poca
             // vista, el gris claro parecía un campo desactivado.
-            TextField("Pedido", text: $text, prompt: Text("¿Qué querés hacer?").foregroundStyle(.secondary), axis: .vertical)
+            TextField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? "¿Qué querés hacer?").foregroundStyle(.secondary), axis: .vertical)
                 .lineLimit(1...3)
                 .textFieldStyle(.plain)
                 .focused($writing)

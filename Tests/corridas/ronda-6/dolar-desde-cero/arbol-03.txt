@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [H] Vos: ¿a cuánto está el dólar blue hoy?
+  3 [txt] Buscando: dólar blue hoy.
+  4 [txt] Estás en los resultados de «dólar blue hoy». Los 3 más probables:
+  5 [H] Vos: Dólar Blue, Cotización del dólar Blue | Dolarhoy.com — dolarhoy.com
+  6 [txt] Abriendo dolarhoy.com.
+  7 [txt] En Dolarhoy.com.
+  8 [txt] El dólar blue hoy está a $1.530,00 para la compra y $1.550,00 para la venta. Esta cotización se actualizó por última vez el 21/09/26 a las 05:28 PM.
+  9 [H] Vos: ¿y el oficial?
+ 10 [txt] Buscando: Dólar oficial Dolarhoy.com.
+ 11 [txt] Estás en los resultados de «Dólar oficial Dolarhoy.com». Los 3 más probables:
+ 12 [btn] Dólar Oficial, Cotización del dólar oficial | Dolarhoy.com — dolarhoy.com  (Primera de 5 opciones.)
+ 13 [btn] Dólar Oficial Hoy | Cotización en tiempo real — DolarInfoHoy — dolarinfohoy.com.ar
+ 14 [btn] Dólar Oficial Hoy en Argentina - BCRA Cotización - dolarhoy.net — dolarhoy.net
+ 15 [btn] Ver más opciones (2)
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 18 [btn] Enviar

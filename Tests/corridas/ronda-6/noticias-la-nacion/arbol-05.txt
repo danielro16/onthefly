@@ -1,0 +1,23 @@
+  1 [H] Asistente
+  2 [H] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de LA NACION, con las últimas noticias de Argentina y el mundo. Los titulares principales son: renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes; las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele; un gas contaminado sería la causa del apagón que dejó a oscuras a más de 2 millones de personas; y tres misas y mucha orfebrería diplomática para evitar que la visita del Papa se politice.
+  8 [H] Vos: dame los titulares
+  9 [txt] Sin conexión. No puedo navegar a ningún lado.
+ 10 [H] Vos: Leer los titulares
+ 11 [txt] Titulares 1 a 3 de 142:
+ 12 [txt] 1. "A partir de este momento". Renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes
+ 13 [txt] 2. Escalada. Las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele
+ 14 [txt] 3. Interruptor L46. Un gas contaminado sería la causa del apagón que dejó a oscuras a más de 2 millones de personas
+ 15 [H] Vos: resumime la nota
+ 16 [txt] Todavía no hay una nota abierta: estás en la portada de LA NACION. ¿Cuál abro?
+ 17 [btn] Abrir «A partir de este momento". Renunció el secretario de Discapacidad en…»  (Primera de 5 opciones.)
+ 18 [btn] Abrir «Las grandes cadenas de TV reaccionan al veto de Trump y golpean donde…»
+ 19 [btn] Abrir «Un gas contaminado sería la causa del apagón que dejó a oscuras a más…»
+ 20 [btn] Seguir con los titulares
+ 21 [btn] Otra cosa
+ 22 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 23 [btn] Enviar

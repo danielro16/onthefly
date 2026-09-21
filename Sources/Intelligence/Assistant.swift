@@ -123,7 +123,12 @@ final class Assistant {
     private var knownURL: String?
     /// El campo cuyo valor se le pidió a la persona: lo próximo que escriba
     /// va ahí. Ver `ask`.
-    private var awaitingField: Action.Field?
+    private var awaitingField: Action.Field? {
+        didSet { awaiting = awaitingField.map(Self.spoken) }
+    }
+    /// El nombre del campo que espera su dato, para que el campo de escribir
+    /// lo diga en vez de "¿Qué querés hacer?".
+    private(set) var awaiting: String?
     /// Campos ya completados, para no volver a ofrecerlos.
     private var filledFields: Set<String> = []
     /// Las preguntas que siguen a una respuesta, como botones.
@@ -227,7 +232,8 @@ final class Assistant {
                 try? await Task.sleep(for: .milliseconds(700))
                 working = false
                 filledFields.insert(field.id)
-                say("Escrito «\(goal)» en \(Self.spoken(field)).")
+                // Sin repetir el dato: un DNI dicho en voz alta en la calle no.
+                say("Listo, escrito en \(Self.spoken(field)).")
                 return
             }
         }
@@ -593,7 +599,7 @@ final class Assistant {
         try? await Task.sleep(for: .milliseconds(700))
         working = false
         filledFields.insert(field.id)
-        say("Escrito «\(value)» en \(Self.spoken(field)).")
+        say("Listo, escrito en \(Self.spoken(field)).")
     }
 
     // MARK: - Llegar a algún lado desde la nada
@@ -1080,6 +1086,9 @@ final class Assistant {
         pendingQuestion = nil
         waiting = nil
         challenge = Challenge(url: page.url, resume: resume)
+        // Corta lo que se esté diciendo: en Mercado Libre el aviso quedó en
+        // cola detrás de la descripción de la portada, y nunca llegó a tiempo.
+        interruptNext = true
         if image {
             say("El sitio web me pide copiar un código que está dibujado en una imagen, y ésa no la puedo leer. Hay que resolverla en la página, arriba. Cuando esté resuelta, continuamos.")
         } else {
@@ -1119,6 +1128,13 @@ final class Assistant {
         if let kind = page.overlay?.kind, [.paywall, .login, .captcha].contains(kind) { return true }
         let text = (page.url + " " + page.title).folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
         return text.range(of: "suscri|subscri|registr|login|signin|sign-in|iniciar sesion|/ingresar", options: .regularExpression) != nil
+    }
+
+    /// Las raíces de las palabras con contenido: "turno" en "Turnos" y en
+    /// "sacar un turno". Para saber si una opción tiene que ver con un pedido.
+    static func stems(_ text: String) -> Set<String> {
+        let words = text.split(whereSeparator: { !$0.isLetter }).map { flatten(String($0)) }
+        return Set(words.filter { $0.count >= 5 }.map { String($0.prefix(5)) })
     }
 
     /// Si lo escrito es un dato para un campo —un DNI, un mail, un nombre— y
@@ -1242,7 +1258,10 @@ final class Assistant {
     /// Si en esta página se leen los titulares y no el texto: es una
     /// portada, y no una nota que además lista otras notas.
     private func readsHeadlines(_ page: ExtractedPage) -> Bool {
-        !Self.isArticle(page) && !Self.headlines(of: page).isEmpty
+        // Ocho como piso: una página de cotizaciones o una lista de trámites
+        // tienen algún título enlazado y no son un diario — ofrecían "Leer
+        // los titulares" y leían categorías.
+        !Self.isArticle(page) && Self.headlines(of: page).count >= 8
     }
 
     /// Una nota para leer: al menos dos párrafos largos, estén donde estén.
@@ -1543,10 +1562,18 @@ final class Assistant {
             let decision: PageAnalyzer.Step
             do {
                 decision = try await analyzer.nextStep(goal: goal, page: page, options: options)
-            } catch {
+            } catch JevClient.JevError.transport {
                 // Sin red no hay asistente, y eso se dice — no se disimula
                 // con un "no encontré nada".
                 say("Sin conexión. No puedo navegar a ningún lado.")
+                return
+            } catch {
+                // Y sólo si fue la red. Con la página recién cargada, "dame
+                // los titulares" contestó "Sin conexión": lo que había fallado
+                // era otra cosa, y decir que no hay internet cuando hay hace
+                // que no se crea nada de lo que sigue.
+                say("No pude decidir a dónde ir desde acá. Se puede pedir de otra forma, o tocar una opción.")
+                failedTurn = true
                 return
             }
 
@@ -1644,7 +1671,7 @@ final class Assistant {
         }
 
         await reader.type(value, into: field)
-        say("Escrito «\(value)» en \(Self.spoken(field)).")
+        say("Listo, escrito en \(Self.spoken(field)).")
 
         // Buscar no es comprometerse: es lo que la persona pidió, no cuesta
         // nada y se deshace volviendo. Hacerla buscar el botón ella misma
@@ -1872,7 +1899,8 @@ final class Assistant {
             // Completar va primero aunque las opciones las haya armado el
             // modelo: en el banco decía "ingresá tu DNI" y el único botón era
             // "Recuperar usuario y contraseña".
-            let form = reader.page.map { Self.formOptions($0, except: filledFields) } ?? []
+            let waitingFor = Set(awaitingField.map { [$0.id] } ?? [])
+            let form = reader.page.map { Self.formOptions($0, except: filledFields.union(waitingFor)) } ?? []
             var options = form + current.options.filter { option in !form.contains { $0.id == option.id } }
             // Volver, aunque las opciones las haya armado el modelo: sin él,
             // salir de una página equivocada obligaba a escribir.
@@ -1904,7 +1932,11 @@ final class Assistant {
         } else if options.isEmpty {
             options = Self.starters
         }
-        offer = Offer(goal: "", options: Array(options.prefix(4)) + [other])
+        // Volver no se cae al recortar: era lo primero que desaparecía.
+        let back = options.first { $0.id == Self.backID }
+        var kept = Array(options.filter { $0.id != Self.backID }.prefix(back == nil ? 4 : 3))
+        if let back { kept.append(back) }
+        offer = Offer(goal: "", options: kept + [other])
     }
 
     /// Lo que sigue, según la página y lo último que se hizo en ella.
@@ -1933,7 +1965,7 @@ final class Assistant {
             return out
         }
 
-        out += Self.formOptions(page, except: filledFields)
+        out += Self.formOptions(page, except: filledFields.union(awaitingField.map { [$0.id] } ?? []))
 
         if readsHeadlines(page) {
             // Recién leídos, lo probable es abrir uno de ésos: son los que la
@@ -1960,7 +1992,10 @@ final class Assistant {
             if !summarized { out.append(option(Self.summaryID, "Resumir la página")) }
         }
         if canGoBack { out.append(option(Self.backID, "Volver a la página anterior")) }
-        return Array(out.prefix(3))
+        // Volver al final y siempre: recortando, era lo primero que se caía.
+        let back = out.first { $0.id == Self.backID }
+        let rest = out.filter { $0.id != Self.backID }
+        return Array(rest.prefix(back == nil ? 3 : 2)) + (back.map { [$0] } ?? [])
     }
 
     /// Un titular sin su volanta: "Por carta. El secretario de Discapacidad…"
@@ -2198,13 +2233,18 @@ final class Assistant {
             // los botones eran sólo los primeros titulares: el de Turnos no
             // estaba.
             let hrefs = Set(named.compactMap(\.href))
-            let forGoal = ordered.filter { $0.id.hasPrefix("sug-") && !hrefs.contains($0.href ?? "") }.prefix(1)
+            // Y sólo si tiene que ver con lo pedido: en Clarín, con "clarín"
+            // como pedido, ese lugar lo ocupaba una nota que nadie nombró.
+            let asked = Self.stems(lastRequest ?? "")
+            let forGoal = ordered.filter {
+                $0.id.hasPrefix("sug-") && !hrefs.contains($0.href ?? "") && !Self.stems($0.label).isDisjoint(with: asked)
+            }.prefix(1)
             ordered = Array(forGoal) + named + ordered.filter { !$0.id.hasPrefix("sug-") }
         }
         // Una opción por id: dos "leer" con el mismo id eran, para VoiceOver,
         // el mismo botón dos veces con nombres distintos.
-        var ids = Set<String>()
-        ordered = ordered.filter { ids.insert($0.id).inserted }
+        var ids = Set<String>(), labels = Set<String>()
+        ordered = ordered.filter { ids.insert($0.id).inserted && labels.insert(Self.flatten($0.label)).inserted }
         if !ordered.isEmpty { offer = Offer(goal: "", options: ordered) }
     }
 

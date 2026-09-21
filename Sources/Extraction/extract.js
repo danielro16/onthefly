@@ -2349,6 +2349,11 @@
     const frames = Array.prototype.slice.call(document.querySelectorAll("iframe"));
     const frame = frames.find(function (f) {
       const src = (f.getAttribute("src") || "") + " " + (f.getAttribute("title") || "");
+      // The invisible reCAPTCHA's badge is not a test: it asks nothing of
+      // anyone. ANSES's appointment lookup carries one next to a two-field
+      // form, and the assistant asked a blind person to solve a test that
+      // did not exist.
+      if (/size=invisible/i.test(src) || f.closest(".grecaptcha-badge")) return false;
       return /recaptcha|hcaptcha|turnstile|challenges\.cloudflare|arkoselabs|funcaptcha/i.test(src) && !isHidden(f);
     });
     const words = /no soy un robot|i'm not a robot|verific[aá] que (sos|eres)|verify you are human|completá este paso/i;
