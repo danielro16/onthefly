@@ -103,7 +103,7 @@ final class Assistant {
         // es lo que hacía— termina ofreciendo "¿querés que vaya a Inicio?"
         // cuando lo que se pidió fue google.com.
         if let url = ReaderModel.normalize(goal), goal.contains(".") , !goal.contains(" ") {
-            say("Abro \(url.host() ?? goal).")
+            say("Abriendo \(url.host() ?? goal).")
             working = true
             reader.address = goal
             await reader.go()
@@ -168,27 +168,27 @@ final class Assistant {
         defer { working = false }
 
         if let url = ReaderModel.normalize(goal), goal.contains("."), !goal.contains(" ") {
-            say("Abro \(url.host() ?? goal).")
+            say("Abriendo \(url.host() ?? goal).")
             reader.address = goal
             await reader.go()
             if let page = reader.page { describe(page) }
             return
         }
 
-        say("Busco \(goal).")
+        say("Buscando: \(goal).")
         reader.address = Self.searchURL(for: goal)
         await reader.go()
         guard let results = reader.page.map(Self.results(of:)), !results.isEmpty else {
             // Pasa de verdad: en una consulta comercial la página trae
             // resultados y nosotros extraemos cero. Decirlo es mejor que
             // abrir cualquier cosa.
-            say("No pude leer los resultados de esa búsqueda. Decime un sitio y te llevo, o probá con otras palabras.")
+            say("No pude leer los resultados de esa búsqueda. Probar con otras palabras, o con el nombre de un sitio.")
             return
         }
 
         // La prueba: ¿alguno de estos ES el sitio que nombró?
         if let match = Self.named(goal, among: results) {
-            say("Abro \(match.host).")
+            say("Abriendo \(match.host).")
             reader.address = match.href
             await reader.go()
             if let page = reader.page { describe(page) }
@@ -199,18 +199,40 @@ final class Assistant {
         // nada que probar y no hay una respuesta correcta. Recién ACÁ vale
         // gastar una pregunta a Jev, que es elegir entre opciones
         // enumeradas: lo único que se midió que hace bien.
-        say("Encontré \(results.count) resultados y no sé cuál querés. Estos son los tres primeros:")
+        say("\(results.count) resultados. No puedo determinar cuál corresponde. Los tres primeros:")
         for result in results.prefix(3) { say("\(result.title) — \(result.host)") }
         offer = Offer(goal: goal, options: results.prefix(3).enumerated().map { index, result in
             .link(id: "r\(index)", label: result.title, href: result.href, region: "main")
         })
     }
 
-    /// Google, que es el que mejores resultados da acá.
-    static func searchURL(for query: String) -> String {
-        let escaped = query.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? query
-        return "https://www.google.com/search?q=\(escaped)&hl=es"
+    /// Dónde se busca.
+    ///
+    /// Google da los mejores resultados para Argentina y es el que va a
+    /// quedar. Hoy está DuckDuckGo lite porque Google bloquea: pedirle unas
+    /// decenas de búsquedas seguidas desde la misma IP devuelve
+    /// `google.com/sorry`, un CAPTCHA adentro de un iframe que no podemos
+    /// tocar. Eso le pasa también a quien navega por VPN, por una red
+    /// compartida o por ciertas operadoras — y para quien no ve, ese muro no
+    /// es una molestia, es el final del camino.
+    ///
+    /// Está acá arriba y solo para que cambiarlo sea una línea, y para que
+    /// el día que haya cadena de respaldo el resto del código no se entere.
+    enum Engine: String {
+        case duckduckgo, google
+
+        func url(for query: String) -> String {
+            let escaped = query.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? query
+            switch self {
+            case .google:     return "https://www.google.com/search?q=\(escaped)&hl=es"
+            case .duckduckgo: return "https://lite.duckduckgo.com/lite/?q=\(escaped)"
+            }
+        }
     }
+
+    static var engine: Engine = .duckduckgo
+
+    static func searchURL(for query: String) -> String { engine.url(for: query) }
 
     /// Lo que en una página de buscador es de verdad un resultado.
     ///
@@ -410,7 +432,7 @@ final class Assistant {
             return
         }
         guard readingFrom < pieces.count else {
-            say("Ya te leí todo. Decime si querés que resuma, que busque otra cosa, o que vuelva a empezar.")
+            say("Fin de la nota. Se puede resumir, buscar otra cosa, o volver a empezar.")
             readingFrom = 0
             return
         }
@@ -420,9 +442,9 @@ final class Assistant {
         readingFrom += chunk.count
 
         if readingFrom >= pieces.count {
-            say("Ahí termina. ¿Buscamos otra cosa?")
+            say("Fin de la nota.")
         } else {
-            say("Vas por \(readingFrom) de \(pieces.count). Decime «seguí» y continúo.")
+            say("Párrafo \(readingFrom) de \(pieces.count). «Continuar» para seguir.")
         }
     }
 
@@ -467,7 +489,7 @@ final class Assistant {
                 return
             }
             say(answer.text)
-            say("Lo dice así: \(answer.quote.prefix(160))")
+            say("Textual de la página: \(answer.quote.prefix(160))")
         } catch Answerer.AnswerError.transport {
             readTheOpening("No hay conexión para resumir, pero la página ya está acá. Te leo el principio:")
         } catch {
@@ -491,7 +513,7 @@ final class Assistant {
             return
         }
 
-        say("Toco \(action.label).")
+        say("Abriendo \(action.label).")
         await reader.activate(action)
         working = false
         await run(pending.goal, on: reader, steps: 1)
@@ -513,7 +535,7 @@ final class Assistant {
             }
             let options = Self.options(of: page)
             guard !options.isEmpty else {
-                say("Esta página no ofrece nada que pueda tocar.")
+                say("Esta página no ofrece nada que pueda abrir.")
                 return
             }
 
@@ -523,7 +545,7 @@ final class Assistant {
             } catch {
                 // Sin red no hay asistente, y eso se dice — no se disimula
                 // con un "no encontré nada".
-                say("No hay conexión. Sin internet no puedo llevarte a ningún lado.")
+                say("Sin conexión. No puedo navegar a ningún lado.")
                 return
             }
 
@@ -555,9 +577,9 @@ final class Assistant {
                 }
                 offer = Offer(goal: goal, options: Array(candidates))
                 if candidates.count > 1 {
-                    say("No estoy seguro. ¿Querés que vaya a \(first.label)? También veo \(candidates[1].label).")
+                    say("No es claro cuál. ¿\(first.label)? También encuentro \(candidates[1].label).")
                 } else {
-                    say("No estoy seguro. ¿Querés que vaya a \(first.label)?")
+                    say("No es claro cuál. ¿\(first.label)?")
                 }
                 return
 
@@ -573,7 +595,7 @@ final class Assistant {
 
                 // Oscilar no es avanzar.
                 guard touched.insert(chosen.id).inserted else {
-                    say("Estoy dando vueltas sobre lo mismo. Contame de otra forma qué buscás, o seguí vos.")
+                    say("Sin avance: doy vueltas sobre lo mismo. Probar con otras palabras.")
                     return
                 }
 
@@ -586,7 +608,7 @@ final class Assistant {
                     return
                 }
 
-                say("Toco \(chosen.label).")
+                say("Abriendo \(chosen.label).")
                 await reader.activate(chosen)
             }
         }
@@ -605,23 +627,23 @@ final class Assistant {
         _ field: Action.Field, of form: Action, goal: String, on reader: ReaderModel
     ) async {
         guard let answerer else {
-            say("Encontré el campo \(field.name), pero no puedo escribir en esta versión.")
+            say("Campo \(field.name) encontrado, pero no puedo escribir en esta versión.")
             return
         }
         let value: String?
         do {
             value = try await answerer.value(for: field.name, from: goal)
         } catch {
-            say("No pude preparar lo que hay que escribir. Probá de nuevo.")
+            say("No pude preparar lo que hay que escribir. Probar de nuevo.")
             return
         }
         guard let value else {
-            say("Encontré el campo \(field.name), pero no me dijiste qué poner. Decímelo y lo escribo.")
+            say("Campo \(field.name) encontrado, pero falta el valor. Indicarlo y lo escribo.")
             return
         }
 
         await reader.type(value, into: field)
-        say("Escribí \(value) en \(field.name).")
+        say("Escrito «\(value)» en \(field.name).")
 
         // Buscar no es comprometerse: es lo que la persona pidió, no cuesta
         // nada y se deshace volviendo. Hacerla buscar el botón ella misma
@@ -629,14 +651,14 @@ final class Assistant {
         // seguridad en un estorbo, y una regla que estorba en lo común se
         // termina desactivando en lo importante.
         if Self.isSearch(form) {
-            say("Busco.")
+            say("Buscando.")
             await reader.submit(form)
             if let page = reader.page { describe(page) }
             return
         }
 
         let submit = form.submit?.isEmpty == false ? form.submit! : "el botón de enviar"
-        say("Escrito. Tocá \(submit) vos: enviar esto es tu decisión, no mía.")
+        say("Formulario completo. Falta pulsar «\(submit)»: enviar es una decisión tuya, no mía.")
     }
 
     /// Si este formulario sólo busca.
@@ -681,7 +703,7 @@ final class Assistant {
     /// para quien no ve, una invención sin verificar es indetectable.
     private func reply(_ question: String, about page: ExtractedPage) async {
         guard let answerer else {
-            say("No puedo contestar preguntas en esta versión, pero puedo llevarte a algún lado.")
+            say("No puedo contestar preguntas en esta versión, pero sí navegar.")
             return
         }
         let text = Self.saying(page)
@@ -691,18 +713,18 @@ final class Assistant {
         }
         do {
             guard let answer = try await answerer.answer(question, about: text) else {
-                say("Eso no lo encontré en esta página.")
+                say("Eso no aparece en esta página.")
                 return
             }
             say(answer.text)
-            say("Lo dice así: \(answer.quote.prefix(160))")
+            say("Textual de la página: \(answer.quote.prefix(160))")
         } catch Answerer.AnswerError.transport {
-            say("No hay conexión. Sin internet puedo leerte la página, pero no contestar preguntas.")
+            say("Sin conexión. Puedo leer la página, pero no contestar preguntas.")
         } catch {
             // Un error del modelo no es un problema de red, y decir que lo es
             // manda a la persona a revisar el wifi por nada. Pasó: la
             // respuesta venía cortada y el mensaje hablaba de la conexión.
-            say("Algo falló de mi lado al contestar eso. Probá de nuevo, o preguntame de otra forma.")
+            say("Algo falló de mi lado al contestar. Probar de nuevo, o preguntar de otra forma.")
         }
     }
 
@@ -792,23 +814,23 @@ final class Assistant {
         // Lo que tapa va primero: detrás de un muro de cookies no hay nada
         // que hacer, y es justo lo que la persona no puede ver que está ahí.
         if let overlay = page.overlay {
-            say("Antes de nada: \(overlay.kind.title.lowercased()) tapa la página.")
+            say("\(overlay.kind.title) tapa la página.")
             if !overlay.choices.isEmpty {
-                say("Te deja: \(overlay.choices.map(\.label).prefix(3).joined(separator: ", ")). Decime cuál.")
+                say("Opciones: \(overlay.choices.map(\.label).prefix(3).joined(separator: ", ")).")
             } else {
-                say("No encontré cómo sacarlo. Podés seguir vos.")
+                say("No encontré cómo sacarlo.")
             }
             return
         }
 
-        say("Estás en \(page.sectionTitle), en \(page.displaySite).")
+        say("En \(page.sectionTitle) — \(page.displaySite).")
 
         // 1. Una portada: titulares que se abren.
         let headlines = Self.headlines(of: page)
         if !headlines.isEmpty {
             say("Hay \(headlines.count) \(headlines.count == 1 ? "nota" : "notas"). \(headlines.count == 1 ? "Dice" : "Las tres primeras"):")
             for title in headlines.prefix(3) { say(String(title.prefix(120))) }
-            say("¿Te leo alguna, te resumo la página, o buscamos otra cosa?")
+            say("Puedo leer una, resumir la página, o buscar otra cosa.")
             return
         }
 
@@ -821,7 +843,7 @@ final class Assistant {
         if paragraphs.count >= 3, let opening = paragraphs.prefix(3).first(where: { $0.count >= 160 }) {
             say("Es una nota de \(paragraphs.count) párrafos. Empieza así:")
             say(String(opening.prefix(220)))
-            say("¿Te la leo entera, te la resumo, o preguntás algo puntual?")
+            say("Puedo leerla entera, resumirla, o contestar algo puntual.")
             return
         }
 
@@ -835,7 +857,7 @@ final class Assistant {
                 ? "Hay \(items.count) resultados. Los tres primeros:"
                 : "\(named): \(items.count). Los tres primeros:")
             for item in items.prefix(3) { say(String(item.title.prefix(120))) }
-            say("¿Abro alguno, te leo más, o buscamos otra cosa?")
+            say("Puedo abrir uno, leer más, o buscar otra cosa.")
             return
         }
 
@@ -846,9 +868,9 @@ final class Assistant {
             say("Hay un formulario de \(fields.count) \(fields.count == 1 ? "campo" : "campos")\(names.isEmpty ? "" : ": " + names.prefix(4).joined(separator: ", ")).")
             if fields.contains(where: \.isSecure) {
                 // Una contraseña no se dicta y no se manda sola.
-                say("Pide una contraseña, así que esa la escribís vos.")
+                say("Incluye una contraseña: ese campo queda sin completar.")
             } else {
-                say("Decime qué poner y lo completo.")
+                say("Indicar qué poner y lo completo.")
             }
             return
         }
@@ -857,9 +879,9 @@ final class Assistant {
         //    opciones es distinto de no saber si la página cargó.
         let controls = page.actions.filter { $0.kind != .form }.count
         if controls > 0 {
-            say("Esta página tiene \(controls) \(controls == 1 ? "opción" : "opciones"). Pedime lo que buscás, o seguí vos.")
+            say("Esta página tiene \(controls) \(controls == 1 ? "opción" : "opciones"). Indicar qué buscar.")
         } else {
-            say("Esta página no me ofrece nada para tocar. Podés pedirme otra cosa.")
+            say("Esta página no ofrece nada para abrir.")
         }
     }
 
