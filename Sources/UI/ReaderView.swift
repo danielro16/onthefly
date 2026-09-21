@@ -294,7 +294,7 @@ final class ReaderModel {
         UIAccessibility.post(notification: .announcement, argument: "Activando \(action.label)")
 
         do {
-            switch try await engine.activate(actionID: action.id) {
+            switch try await engine.activate(actionID: action.id, expecting: action.label) {
             case .updated(let page):
                 // A control that changed nothing is not an error and must not
                 // look like one. Rebuilding the view would also send VoiceOver

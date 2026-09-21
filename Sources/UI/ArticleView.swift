@@ -1094,14 +1094,21 @@ struct ArticleView: View {
 
     @ViewBuilder
     private var footer: some View {
-        if page.stats.truncated || page.stats.unsupported > 0 {
+        let dropped = page.stats.droppedActions ?? 0
+        if page.stats.truncated || page.stats.unsupported > 0 || dropped > 0 {
             VStack(alignment: .leading, spacing: 4) {
                 Divider()
                 if page.stats.truncated {
-                    Text("This page was long and was cut short.")
+                    Text("Esta página era larga y se cortó.")
+                }
+                // Un silencio no se puede usar; un número sí. Si lo que la
+                // persona buscaba quedó del otro lado del tope, al menos sabe
+                // que hay algo del otro lado, y que le queda "Original".
+                if dropped > 0 {
+                    Text("\(dropped) \(dropped == 1 ? "control no entró" : "controles no entraron") en esta lectura. Están en la página original.")
                 }
                 if page.stats.unsupported > 0 {
-                    Text("\(page.stats.unsupported) element(s) could not be simplified yet.")
+                    Text("\(page.stats.unsupported) \(page.stats.unsupported == 1 ? "elemento" : "elementos") sin simplificar todavía.")
                 }
             }
             .font(.footnote)

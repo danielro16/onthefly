@@ -153,17 +153,26 @@ final class HeadlessWebView: NSObject {
     ///
     /// So the WebView is asked instead, and it is asked after giving the page
     /// a moment to start.
-    func activate(actionID: String) async throws -> ActivationOutcome {
+    func activate(actionID: String, expecting label: String = "") async throws -> ActivationOutcome {
         guard let web = webView else { throw ExtractionError.noSession }
 
         // The id is ours, generated during extraction — never page-supplied —
         // so a page cannot use this path to press its own controls.
         let escaped = actionID.filter { $0.isLetter || $0.isNumber }
+        // What the person heard. The page checks the control still says it
+        // before pressing: an id survives a re-render, but what the node says
+        // can change underneath it, and someone who cannot see has no way to
+        // notice that the button moved out from under their finger.
+        let expected = (try? JSONEncoder().encode([label]))
+            .flatMap { String(data: $0, encoding: .utf8) } ?? "[\"\"]"
         navigationStarted = false
-        let result = try await web.evaluateJavaScript("window.__jefActivate('\(escaped)')")
+        let result = try await web.evaluateJavaScript(
+            "window.__jefActivate('\(escaped)', \(expected)[0])"
+        )
 
         guard let dict = result as? [String: Any], dict["ok"] as? Bool == true else {
-            if let dict = result as? [String: Any], dict["reason"] as? String == "gone" {
+            let reason = (result as? [String: Any])?["reason"] as? String
+            if reason == "gone" || reason == "changed" {
                 return .stale
             }
             throw ExtractionError.activationFailed(

@@ -559,6 +559,8 @@
     // "Botón sin nombre" is a last resort, and a page full of them is
     // worse than a page without them.
     let unnamed = 0;
+    // Controls the cap left out. Reported, never silent.
+    let dropped = 0;
     // Elements this run has reported. Not the stamp: a stamp now outlives
     // the run that set it.
     const reported = new Set();
@@ -646,7 +648,11 @@
       // flights, and deduplicating it left two of them with nothing to
       // press.
       const key = action.kind === "button" ? null : action.kind + "|" + action.label.toLowerCase();
-      if ((key && seen.has(key)) || actions.length >= MAX_ACTIONS) return;
+      if (key && seen.has(key)) return;
+      // Past the cap, a control is not reported and nobody could tell. Counted
+      // so the reader can say it out loud: a number the person can act on
+      // beats a silence they cannot.
+      if (actions.length >= MAX_ACTIONS) { dropped++; return; }
       if (key) seen.add(key);
       action.id = priorId(element, "data-jef-id", "a") || "a" + nextActionId++;
       // Stamp the live element so it can be found again later.
@@ -736,11 +742,12 @@
     function labelFor(el) {
       const aria = el.getAttribute("aria-label");
       if (aria && aria.trim()) return aria.trim();
-      const labelledBy = el.getAttribute("aria-labelledby");
-      if (labelledBy) {
-        const target = document.getElementById(labelledBy.split(/\s+/)[0]);
-        if (target) return textOf(target);
-      }
+      // Every id it points at, joined, which is what a screen reader says.
+      // Taking only the first dropped half the name of the commonest pattern
+      // there is: a label and its unit, or a title and its price, written as
+      // two elements and tied together with one attribute.
+      const named = namedBy(el);
+      if (named) return named;
       const text = dedupeSegments(textOf(el));
       if (text) return text;
       const pictured = imageName(el);
@@ -1298,6 +1305,7 @@
       }
     }
 
+    actions.droppedCount = dropped;
     return actions;
   }
 
@@ -1987,10 +1995,30 @@
     };
   }
 
+  /// What `aria-labelledby` names, in order, with every id it points at.
+  /// Guards against a cycle: a label that points back at its own control.
+  function namedBy(el, seen) {
+    const ids = (el.getAttribute("aria-labelledby") || "").trim();
+    if (!ids) return "";
+    seen = seen || new Set();
+    if (seen.has(el)) return "";
+    seen.add(el);
+    const parts = [];
+    for (const id of ids.split(/\s+/)) {
+      const target = document.getElementById(id);
+      if (!target || seen.has(target)) continue;
+      const text = namedBy(target, seen) || (target.getAttribute("aria-label") || "").trim() || textOf(target);
+      if (text) parts.push(text);
+    }
+    return parts.join(" ");
+  }
+
   /// Label resolution that works outside collectActions' closure.
   function labelOf(el) {
     const aria = el.getAttribute("aria-label");
     if (aria && aria.trim()) return aria.trim();
+    const named = namedBy(el);
+    if (named) return named.slice(0, 60);
     const text = textOf(el);
     if (text) return text.slice(0, 60);
     const title = el.getAttribute("title");
@@ -2719,6 +2747,7 @@ allowedVideoRegex: /^$/,
             truncated: false,
             imagesWithoutAlt: 0,
             unsupported: 0,
+            droppedActions: actions.droppedCount || 0,
           },
         };
       }
@@ -2770,6 +2799,7 @@ allowedVideoRegex: /^$/,
         truncated: blocks.length >= MAX_BLOCKS,
         imagesWithoutAlt: blocks.filter(b => b.type === "image" && b.needsAlt).length,
         unsupported: blocks.filter(b => b.type === "unsupported").length,
+        droppedActions: actions.droppedCount || 0,
       },
     };
   }
@@ -3168,9 +3198,30 @@ allowedVideoRegex: /^$/,
     return { ok: true, navigated: documentKey() !== before, href: location.href };
   };
 
-  window.__jefActivate = function (id) {
+  /*
+   * Whether this is still the control the reader was told about.
+   *
+   * An id survives a re-render — that is the point of stamping the node — but
+   * what the node SAYS can change underneath it. A calendar that rolls to the
+   * next month keeps its cells and swaps their dates; a tab strip reuses its
+   * buttons. Pressing by id alone means pressing whatever took the place of
+   * what the person heard, which is the one mistake a reader must never make:
+   * they cannot see that it changed.
+   *
+   * Compared by name, because the name is what was said out loud.
+   */
+  function stillTheSame(el, expected) {
+    if (!expected) return true;
+    const now = (labelOf(el) || "").replace(/\s+/g, " ").trim().toLowerCase();
+    const said = String(expected).replace(/\s+/g, " ").trim().toLowerCase();
+    if (!now || !said) return true;
+    return now === said || now.indexOf(said) === 0 || said.indexOf(now) === 0;
+  }
+
+  window.__jefActivate = function (id, expected) {
     const el = document.querySelector('[data-jef-id="' + String(id).replace(/"/g, '') + '"]');
     if (!el) return { ok: false, reason: "gone" };
+    if (!stillTheSame(el, expected)) return { ok: false, reason: "changed", label: labelOf(el) };
     // A tap is a new trigger; the late-change budget is per trigger, not
     // per URL, or the fourth tap on a page stopped being watched.
     lateRounds = 0;

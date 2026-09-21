@@ -186,6 +186,9 @@ struct ExtractedPage: Codable, Sendable {
         let truncated: Bool
         let imagesWithoutAlt: Int
         let unsupported: Int
+        /// Controles que el tope dejó afuera. Se dicen: un número con el que
+        /// la persona puede hacer algo vale más que un silencio.
+        let droppedActions: Int?
     }
 }
 
