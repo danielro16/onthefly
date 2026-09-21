@@ -415,10 +415,23 @@ enum Block: Codable, Sendable, Identifiable {
             return items.map(\.text).joined(separator: ", ")
         case .image(_, _, let alt, _, let caption):
             return caption ?? alt
-        case .table(_, let caption, _, let rows, _):
-            return caption.isEmpty
-                ? "Tabla de \(rows.count) filas"
-                : "\(caption). \(rows.count) filas"
+        case .table(_, let caption, let headers, let rows, let keyValue):
+            // Con sus datos: es lo que lee el asistente. "Tabla de 12 filas"
+            // era un anuncio de la vista reconstruida, y el asistente no podía
+            // contestar nada de un extracto, una tabla de precios o de
+            // cotizaciones — llegó a decir "la página indica la existencia de
+            // una tabla con 36 filas". Cada celda con el nombre de su columna,
+            // que es lo que alguien que ve saca de la grilla.
+            let shown = rows.prefix(60).map { row -> String in
+                if keyValue, row.count >= 2 { return "\(row[0]): \(row.dropFirst().joined(separator: " "))" }
+                return row.enumerated().compactMap { index, cell -> String? in
+                    guard !cell.isEmpty else { return nil }
+                    return headers.indices.contains(index) && !headers[index].isEmpty
+                        ? "\(headers[index]): \(cell)" : cell
+                }.joined(separator: "; ")
+            }.filter { !$0.isEmpty }
+            let more = rows.count > 60 ? "\n(y \(rows.count - 60) filas más)" : ""
+            return (caption.isEmpty ? "" : "\(caption)\n") + shown.joined(separator: "\n") + more
         case .separator:
             return ""
         }

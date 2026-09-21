@@ -1,0 +1,8 @@
+  1 [H] Asistente
+  2 [txt] Vos: quiero entrar al home banking del banco nación
+  3 [txt] Buscando: home banking del banco nacion.
+  4 [txt] No pude leer los resultados de esa búsqueda. Probar con otras palabras, o con el nombre de un sitio.
+  5 [txt] Vos: Otra cosa
+  6 [txt] ¿Qué otra cosa hacemos? Se puede escribir o dictar abajo.
+  7 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+  8 [btn] Enviar

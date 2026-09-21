@@ -1,0 +1,23 @@
+{"texto": "buscá mar del plata en wikipedia", "quien": "persona", "t": 1790010854.801735, "tipo": "turno"}
+{"tipo": "botones", "t": 1790010854.803235, "opciones": []}
+{"texto": "Buscando: mar del plata en wikipedia.", "quien": "jef", "t": 1790010855.5828109, "tipo": "turno"}
+{"t": 1790010855.583753, "texto": "Buscando: mar del plata en wikipedia.", "tipo": "voz"}
+{"t": 1790010855.584649, "texto": "Cargando página", "tipo": "voz"}
+{"tipo": "pagina", "titulo": "mar del plata en wikipedia at DuckDuckGo", "texto": "PÁGINA: lite.duckduckgo.com — mar del plata en wikipedia at DuckDuckGo\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nDuckDuckGo\nNext Page >\nTabla de 36 filas\nNext Page >\nSearch", "url": "https://lite.duckduckgo.com/lite/?q=mar%20del%20plata%20en%20wikipedia&kl=ar-es", "t": 1790010858.916912}
+{"tipo": "turno", "quien": "jef", "texto": "No pude leer los resultados de esa búsqueda. Probar con otras palabras, o con el nombre de un sitio.", "t": 1790010858.917434}
+{"tipo": "voz", "texto": "No pude leer los resultados de esa búsqueda. Probar con otras palabras, o con el nombre de un sitio.", "t": 1790010858.91776}
+{"opciones": ["Otra cosa"], "tipo": "botones", "t": 1790010858.918009}
+{"tipo": "botones", "t": 1790010863.494787, "opciones": []}
+{"quien": "persona", "tipo": "turno", "t": 1790010863.495497, "texto": "Otra cosa"}
+{"quien": "jef", "tipo": "turno", "t": 1790010863.495729, "texto": "¿Qué otra cosa hacemos? Se puede escribir o dictar abajo."}
+{"texto": "¿Qué otra cosa hacemos? Se puede escribir o dictar abajo.", "tipo": "voz", "t": 1790010863.496194}
+{"tipo": "turno", "quien": "persona", "t": 1790010873.0486999, "texto": "¿cuándo se fundó?"}
+{"t": 1790010873.051153, "opciones": [], "tipo": "botones"}
+{"tipo": "turno", "quien": "jef", "t": 1790010875.1831589, "texto": "La página no menciona cuándo se fundó DuckDuckGo."}
+{"texto": "La página no menciona cuándo se fundó DuckDuckGo.", "t": 1790010875.184392, "tipo": "voz"}
+{"opciones": ["Otra cosa"], "t": 1790010875.184743, "tipo": "botones"}
+{"texto": "leeme la nota", "quien": "persona", "tipo": "turno", "t": 1790010882.580569}
+{"tipo": "botones", "t": 1790010882.580996, "opciones": []}
+{"quien": "jef", "texto": "Esta página no tiene texto corrido para leer.", "tipo": "turno", "t": 1790010883.1685739}
+{"texto": "Esta página no tiene texto corrido para leer.", "tipo": "voz", "t": 1790010883.1694}
+{"tipo": "botones", "t": 1790010883.16979, "opciones": ["Otra cosa"]}

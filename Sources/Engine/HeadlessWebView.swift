@@ -232,6 +232,14 @@ final class HeadlessWebView: NSObject {
         try? await Task.sleep(for: .milliseconds(700))
     }
 
+    /// Arriba de todo. El extractor baja hasta el final para despertar lo
+    /// que carga al scrollear y vuelve, pero no siempre queda arriba: en
+    /// Clarín se veía el pie mientras el asistente hablaba de la portada.
+    func scrollToTop() {
+        guard let scroll = webView?.scrollView else { return }
+        scroll.setContentOffset(CGPoint(x: 0, y: -scroll.adjustedContentInset.top), animated: false)
+    }
+
     /// Whether there is a page to go back to.
     var canGoBack: Bool { webView?.canGoBack ?? false }
 

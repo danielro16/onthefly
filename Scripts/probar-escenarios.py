@@ -27,7 +27,6 @@ import unicodedata
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 APP = "ai.jef.browser"
-PISTA_OPCION = "Va a esta opción"
 # VoiceOver en castellano, velocidad por defecto: unos 14 caracteres por
 # segundo. Sirve para estimar si un anuncio alcanzó a decirse antes de que
 # llegara el siguiente, que lo corta.
@@ -90,7 +89,7 @@ class Simulador:
         # Lento, no un latigazo: un latigazo deja el scroll desacelerando y el
         # toque siguiente sólo lo frena.
         correr(["axe", "swipe", "--start-x", "200", "--start-y", str(desde_y),
-                "--end-x", "200", "--end-y", str(hasta_y), "--duration", "1.0",
+                "--end-x", "200", "--end-y", str(hasta_y), "--duration", "0.5",
                 "--udid", self.udid])
         time.sleep(0.8)
 
@@ -153,7 +152,9 @@ class Panel:
 
     @staticmethod
     def opciones(nodos):
-        return [n for n in nodos if n.get("role") == "AXButton" and n.get("help") == PISTA_OPCION]
+        # En el panel, todo botón es una opción salvo "Enviar". El contenido de
+        # la página no aparece en el árbol que da axe.
+        return [n for n in nodos if n.get("role") == "AXButton" and n.get("AXLabel") != "Enviar"]
 
     def escribir(self, texto):
         campo = next((n for n in self.sim.nodos() if n.get("AXLabel") == "Pedido"), None)
@@ -189,11 +190,17 @@ class Panel:
             if arriba + 4 <= y <= abajo - 4:
                 self.sim.tocar_punto(marco["x"] + marco["width"] / 2, y)
                 return elegido.get("AXLabel")
-            # Se scrollea el panel, no la página: arrastrando adentro de él.
+            # Se scrollea el panel, no la página: arrastrando adentro de él, y
+            # lejos de los bordes — a 10 puntos del campo de escribir el
+            # arrastre no lo toma nadie y el panel no se mueve.
+            # Y de al menos 100 puntos: uno corto y lento no pasa de un toque
+            # sostenido, y el panel no se mueve.
+            desde_abajo, desde_arriba = abajo - 25, arriba + 25
+            recorrido = desde_abajo - desde_arriba
             if y > abajo:
-                self.sim.arrastrar(abajo - 10, max(arriba + 20, abajo - 10 - min(y - abajo + 40, abajo - arriba - 40)))
+                self.sim.arrastrar(desde_abajo, desde_abajo - min(max(100, y - abajo + 40), recorrido))
             else:
-                self.sim.arrastrar(arriba + 10, min(abajo - 20, arriba + 10 + min(arriba - y + 40, abajo - arriba - 40)))
+                self.sim.arrastrar(desde_arriba, desde_arriba + min(max(100, arriba - y + 40), recorrido))
         raise RuntimeError(f"no pude traer {cual!r} a la vista")
 
 
@@ -223,10 +230,18 @@ def transcribir(escenario, pasos, registro, destino):
            f"**Quién:** {escenario['persona']}", "",
            f"**Qué quiere:** {escenario['objetivo']}", "",
            "Convenciones: 🔊 lo que VoiceOver anuncia solo, con la hora desde el inicio. "
-           "Un anuncio nuevo corta al que se está diciendo; la duración se estima a "
+           "Un anuncio sin cola corta al que se está diciendo; uno en cola espera a que "
+           "termine el anterior. La duración se estima a "
            f"{CARACTERES_POR_SEGUNDO:.0f} caracteres por segundo. 💬 lo que queda escrito en la "
            "conversación. 🔘 los botones ofrecidos, en el orden en que VoiceOver los recorre. "
            "📄 la página que cargó (su texto, el que ve el asistente, está en paginas/).", ""]
+    # Cuándo empieza a sonar cada anuncio: uno en cola espera al anterior.
+    suena, fin_anterior = {}, 0.0
+    for v in voces:
+        dura = max(0.6, len(v["texto"]) / CARACTERES_POR_SEGUNDO)
+        inicio = max(v["t"], fin_anterior) if v.get("cola") else v["t"]
+        suena[id(v)] = inicio
+        fin_anterior = inicio + dura
     num_pagina = 0
     for i, paso in enumerate(pasos, 1):
         fin = pasos[i]["inicio"] if i < len(pasos) else float("inf")
@@ -244,7 +259,11 @@ def transcribir(escenario, pasos, registro, destino):
                 siguiente = next((v for v in voces if v["t"] > r["t"]), None)
                 dura = max(0.6, len(r["texto"]) / CARACTERES_POR_SEGUNDO)
                 nota = ""
-                if siguiente and siguiente["t"] - r["t"] < dura:
+                demora = suena[id(r)] - r["t"]
+                if r.get("cola"):
+                    if demora > 1.5:
+                        nota = f"  ⟶ en cola: empieza a sonar a los +{suena[id(r)] - t0:.1f}s"
+                elif siguiente and not siguiente.get("cola") and siguiente["t"] - r["t"] < dura:
                     oido = (siguiente["t"] - r["t"]) / dura
                     nota = f"  ⟶ CORTADO por el anuncio siguiente (se habría escuchado ~{oido:.0%})"
                 out.append(f"- [+{rel:5.1f}s] 🔊 «{r['texto']}»{nota}")

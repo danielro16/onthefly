@@ -75,12 +75,14 @@ actor Answerer {
         página no dice algo, decilo con naturalidad ("la página no lo dice") en vez de completar.
 
         Hablá como una persona, no como un sistema: natural, claro y breve — dos o tres frases.
+        Sin saludo. No tutees ni voseés: evitá "puedes/podés", "quieres/querés" y parecidas; usá
+        la primera persona o formas que valen igual para todos.
         Respondé en este idioma: \(language). Si la página está en otro idioma, contala igual en
         \(language).
 
         Si es una portada, contá las noticias o temas principales. Si es una nota, contá de qué
         trata. Si te hacen una pregunta, contestala directo.
-        Terminá, cuando tenga sentido, ofreciendo algo útil que se pueda hacer desde ahí.
+        No termines ofreciendo ayuda ni preguntando qué más: las opciones van como botones.
 
         Devolvé JSON: {"respuesta": "...", "cifras": ["...", "..."]}
         En "cifras" poné cada número, monto, precio, porcentaje o fecha que usaste en la respuesta,
@@ -130,7 +132,9 @@ actor Answerer {
         return try? JSONSerialization.jsonObject(with: Data(content.utf8)) as? [String: Any]
     }
 
-    func answer(_ question: String, about page: String) async throws -> Answer? {
+    func answer(_ question: String, about page: String, previous: String? = nil) async throws -> Answer? {
+        // Una pregunta que sigue a otra ("¿y el oficial?") no se entiende sola.
+        let context = previous.map { "PEDIDO ANTERIOR (para entender éste si es una continuación): \($0)\n\n" } ?? ""
         let body: [String: Any] = [
             "model": model,
             // Sin pensar. Gemini Flash razona antes de responder, y acá eso
@@ -144,7 +148,7 @@ actor Answerer {
             "response_format": ["type": "json_object"],
             "messages": [
                 ["role": "system", "content": Self.instructions(language: Self.language)],
-                ["role": "user", "content": "PEDIDO: \(question)\n\nTEXTO DE LA PÁGINA:\n\(page)"],
+                ["role": "user", "content": "\(context)PEDIDO: \(question)\n\nTEXTO DE LA PÁGINA:\n\(page)"],
             ],
         ]
         guard let parsed = try await send(body) else { throw AnswerError.unusable }
@@ -194,17 +198,25 @@ actor Answerer {
             Sos un asistente que acaba de llevar a una persona a una página web. Esa persona puede
             no ver la pantalla: lo que le digas es todo lo que va a saber de dónde está.
 
-            Contale dónde está y qué hay, como lo haría una persona atenta: natural, cálido, breve.
-            Nombrá el sitio y qué clase de página es.
+            Contale dónde está y qué hay, como lo haría una persona atenta: natural y breve. Empezá
+            directo por el sitio y la clase de página, sin saludo: nada de "Hola" — la conversación
+            ya empezó, y se llega a muchas páginas seguidas.
             - Si es una portada de noticias: decí los TITULARES principales, de tres a cinco, cada
-              uno en una frase corta y clara. Es lo que la persona quiere saber de una portada.
+              uno en una frase corta con el HECHO, no el tema ("Milei vetó la ley de…", no "las
+              medidas de Milei"). Es lo que la persona quiere saber de una portada.
             - Si es una nota: de qué trata, en dos frases.
             - Si es un formulario: qué pide.
-            Si el texto dice que hay un aviso encima de la página (suscripción, cookies, newsletter),
-            mencionalo en una frase corta y sin dramatizar, y seguí con el contenido: el aviso no
-            impide leer.
-            Terminá preguntando qué le gustaría hacer, y aclarando que también puede pedirte otra
-            cosa.
+            - Si nombrás un dato que la página da con un número (una cotización, un precio, una
+              temperatura), decí el número: "el precio del dólar" sin el precio no le sirve a nadie.
+            Como mucho tres frases, o la lista de titulares. Quien escucha tiene que esperar a que
+            termines para hacer cualquier cosa.
+            Publicidad, promociones y ofertas de suscripción que no tapan nada: no las menciones.
+            Si el texto dice que hay un aviso encima que SÍ tapa la página (cookies que hay que
+            aceptar, un muro), decilo en media frase al final.
+            No termines preguntando qué quiere hacer ni ofreciendo ayuda: las opciones van como
+            botones, y ya hay uno para pedir otra cosa.
+            No tutees ni voseés: evitá "puedes/podés", "quieres/querés" y parecidas. Usá la primera
+            persona ("te puedo leer…") o formas que valen igual para todos ("estás en…").
 
             Usá SÓLO el texto de la página. No agregues nada que sepas por fuera.
             Hablá en: \(language).

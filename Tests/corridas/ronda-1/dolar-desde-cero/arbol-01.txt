@@ -1,0 +1,7 @@
+  1 [H] Asistente
+  2 [txt] Vos: ¿a cuánto está el dólar blue hoy?
+  3 [txt] Buscando: dólar blue hoy.
+  4 [txt] No pude leer los resultados de esa búsqueda. Probar con otras palabras, o con el nombre de un sitio.
+  5 [btn] Otra cosa  (Va a esta opción)
+  6 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+  7 [btn] Enviar

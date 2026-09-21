@@ -147,15 +147,26 @@ actor Router {
         - Si hay una página abierta y la pregunta podría contestarse con lo que esa página
           dice, es responder — no buscar. Buscar la saca de donde está, y enterarse de que
           cambió de página sin pedirlo es lo más desorientador para alguien que no ve.
+        - Si está en un sitio y pide ir a una sección o un tema que ese sitio tiene ("llevame
+          a deportes" estando en un diario, "los resultados" estando en un buscador), es
+          abrir — reference = cómo lo nombró —, no ir ni buscar: la saca del sitio donde está.
+        - Si buscar sale de una pregunta que sigue la conversación ("¿cuándo se fundó?",
+          "¿y el oficial?"), target tiene que decir de qué se habla: completalo con el tema
+          de la página donde está ("cuándo se fundó Mar del Plata"). Una búsqueda sin tema
+          devuelve cualquier cosa.
         """
 
     /// El estado, armado por el código. Sin una línea del texto de la página:
     /// rutear no lo necesita, y dejándolo afuera un sitio no tiene por dónde
     /// influir en la decisión.
     @MainActor
-    static func state(page: ExtractedPage?, reading: (at: Int, of: Int)?) -> String {
-        guard let page else { return "No hay ninguna página abierta todavía." }
-        var parts: [String] = ["Está en «\(page.sectionTitle)», en \(page.displaySite)."]
+    static func state(page: ExtractedPage?, reading: (at: Int, of: Int)?, previous: String? = nil) -> String {
+        // Lo que pidió antes, con sus palabras: sin esto "¿y el oficial?"
+        // después de "dólar blue" no tenía de qué hablar, y "¿cuándo se
+        // fundó?" se buscaba sin decir qué.
+        let before = previous.map { " Lo que pidió antes: «\($0)»." } ?? ""
+        guard let page else { return "No hay ninguna página abierta todavía." + before }
+        var parts: [String] = ["Está en «\(page.sectionTitle)», en \(page.displaySite)." + before]
         let headlines = Assistant.headlines(of: page).count
         if headlines > 0 { parts.append("La página lista \(headlines) titulares que se pueden abrir.") }
         let items = page.listings.filter(\.isNavigable).flatMap(\.items).count

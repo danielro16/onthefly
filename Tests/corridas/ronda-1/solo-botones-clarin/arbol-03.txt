@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [txt] Vos: clarín
+  3 [txt] Buscando: clarín.
+  4 [txt] Encontré 5 resultados para «clarín». Los 3 más probables:
+  5 [txt] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo www.clarin.com.
+  7 [txt] Hola, estás en Clarin.com, la portada de noticias de Argentina. Te cuento los titulares principales: el gobierno calcula que 7 millones de personas se movilizarán por la visita de León XIV y evalúa declarar asueto; murió a los 97 años Carlos Alonso, un gran pintor argentino; el juez Rafecas procesó a iraníes y libaneses por el atentado a la AMIA; y una nueva encuesta midió a 26 políticos y a todos les fue mal o muy mal, ganando Bullrich. ¿Qué te gustaría hacer? También puedes pedirme otra cosa.
+  8 [txt] Vos: Abrir noticia de la visita de León XIV
+  9 [txt] Abriendo www.clarin.com.
+ 10 [txt] Hola, estás en Clarín, en una nota que analiza quiénes ganaron y quiénes perdieron con la definición de la agenda del papa León en Argentina. La nota explica que el Gobierno no consiguió evitar un encuentro del pontífice con movimientos populares, y que la Iglesia buscó una presencia política plural en la visita papal. También hay un aviso para suscribirte a Clarín por 930 pesos por seis meses. ¿Qué te gustaría hacer? También puedes pedirme otra cosa.
+ 11 [btn] Abrir Marcha del Orgullo Gay  (Va a esta opción)
+ 12 [btn] Abrir La Primavera comienza con una alerta por vientos fuertes  (Va a esta opción)
+ 13 [btn] Leer la nota completa  (Va a esta opción)
+ 14 [btn] Resumir esta nota  (Va a esta opción)
+ 15 [btn] Otra cosa  (Va a esta opción)
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 17 [btn] Enviar

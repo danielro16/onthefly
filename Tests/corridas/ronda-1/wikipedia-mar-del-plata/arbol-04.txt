@@ -1,0 +1,13 @@
+  1 [H] Asistente
+  2 [txt] Vos: buscá mar del plata en wikipedia
+  3 [txt] Buscando: mar del plata en wikipedia.
+  4 [txt] No pude leer los resultados de esa búsqueda. Probar con otras palabras, o con el nombre de un sitio.
+  5 [txt] Vos: Otra cosa
+  6 [txt] ¿Qué otra cosa hacemos? Se puede escribir o dictar abajo.
+  7 [txt] Vos: ¿cuándo se fundó?
+  8 [txt] La página no menciona cuándo se fundó DuckDuckGo.
+  9 [txt] Vos: leeme la nota
+ 10 [txt] Esta página no tiene texto corrido para leer.
+ 11 [btn] Otra cosa  (Va a esta opción)
+ 12 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 13 [btn] Enviar

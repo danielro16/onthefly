@@ -1,0 +1,12 @@
+  1 [H] Asistente
+  2 [txt] Vos: entrá a mercado libre y buscame auriculares bluetooth
+  3 [txt] Buscando: mercado libre.
+  4 [txt] Encontré 5 resultados para «mercado libre». Los 3 más probables:
+  5 [txt] Cuando elijas, sigo con: buscame auriculares bluetooth.
+  6 [btn] Mercado Libre Argentina - Envíos Gratis en el día — www.mercadolibre.com.ar  (Va a esta opción)
+  7 [btn] Mercado Libre - Envíos Gratis en el día — www.mercadolibre.com  (Va a esta opción)
+  8 [btn] Mercado Libre — listado.mercadolibre.com.ar  (Va a esta opción)
+  9 [btn] Ver más opciones (2)  (Va a esta opción)
+ 10 [btn] Otra cosa  (Va a esta opción)
+ 11 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 12 [btn] Enviar

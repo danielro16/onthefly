@@ -1,0 +1,13 @@
+{"quien": "persona", "tipo": "turno", "texto": "quiero entrar al home banking del banco nación", "t": 1790010987.4895248}
+{"t": 1790010987.4907598, "opciones": [], "tipo": "botones"}
+{"quien": "jef", "tipo": "turno", "texto": "Buscando: home banking del banco nacion.", "t": 1790010988.252465}
+{"t": 1790010988.253399, "texto": "Buscando: home banking del banco nacion.", "tipo": "voz"}
+{"t": 1790010988.255556, "texto": "Cargando página", "tipo": "voz"}
+{"titulo": "home banking del banco nacion at DuckDuckGo", "url": "https://lite.duckduckgo.com/lite/?q=home%20banking%20del%20banco%20nacion&kl=ar-es", "tipo": "pagina", "texto": "PÁGINA: lite.duckduckgo.com — home banking del banco nacion at DuckDuckGo\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nDuckDuckGo\nNext Page >\nTabla de 36 filas\nNext Page >\nSearch", "t": 1790010991.655973}
+{"quien": "jef", "tipo": "turno", "texto": "No pude leer los resultados de esa búsqueda. Probar con otras palabras, o con el nombre de un sitio.", "t": 1790010991.656475}
+{"tipo": "voz", "t": 1790010991.6568022, "texto": "No pude leer los resultados de esa búsqueda. Probar con otras palabras, o con el nombre de un sitio."}
+{"tipo": "botones", "opciones": ["Otra cosa"], "t": 1790010991.6570249}
+{"opciones": [], "t": 1790010996.091177, "tipo": "botones"}
+{"texto": "Otra cosa", "t": 1790010996.09198, "tipo": "turno", "quien": "persona"}
+{"texto": "¿Qué otra cosa hacemos? Se puede escribir o dictar abajo.", "t": 1790010996.092225, "tipo": "turno", "quien": "jef"}
+{"texto": "¿Qué otra cosa hacemos? Se puede escribir o dictar abajo.", "t": 1790010996.092571, "tipo": "voz"}

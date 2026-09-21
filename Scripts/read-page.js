@@ -54,6 +54,10 @@ async function read(browser, url, waitMs) {
     hasTouch: true,
     locale: "es-AR",
     userAgent: IPHONE,
+    // En la app el extractor entra como WKUserScript, que el CSP de la página
+    // no bloquea. Acá entra por addScriptTag, que sí: sin esto DuckDuckGo
+    // —justo el buscador del asistente— no se podía leer.
+    bypassCSP: true,
   });
   const page = await context.newPage();
   // El puente que en la app es un message handler de WebKit.

@@ -1,0 +1,12 @@
+  1 [H] Asistente
+  2 [txt] Vos: quiero sacar un turno en anses
+  3 [txt] Buscando: anses.
+  4 [txt] Encontré 6 resultados para «anses». Los 3 más probables:
+  5 [txt] Vos: ANSES — servicioswww.anses.gob.ar
+  6 [txt] Abriendo servicioswww.anses.gob.ar.
+  7 [txt] Estás en el sitio web de ANSES, en la página de consulta para completar o iniciar estudios. La página te pide que ingreses un código que se muestra en una imagen para continuar.
+  8 [btn] Ver mis trámites en Mi ANSES  (Va a esta opción)
+  9 [btn] Resumir esta página  (Va a esta opción)
+ 10 [btn] Otra cosa  (Va a esta opción)
+ 11 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 12 [btn] Enviar

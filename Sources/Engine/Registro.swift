@@ -10,9 +10,40 @@ import UIKit
 @MainActor
 enum Voz {
     static func decir(_ text: String) {
-        UIAccessibility.post(notification: .announcement, argument: text)
-        Registro.anotar("voz", ["texto": text])
+        // En cola, no encima. Un anuncio nuevo corta al que se está diciendo,
+        // y el asistente dice varias cosas seguidas: medido con el registro,
+        // al leer una nota los tres pedazos y "Titular 3 de 4" salían en el
+        // mismo instante, y de todo eso sólo se escuchaba el final.
+        let queued = NSAttributedString(
+            string: text, attributes: [.accessibilitySpeechQueueAnnouncement: true]
+        )
+        if UIAccessibility.isVoiceOverRunning { Habla.shared.empezo() }
+        UIAccessibility.post(notification: .announcement, argument: queued)
+        Registro.anotar("voz", ["texto": text, "cola": true])
     }
+}
+
+/// Cuántos anuncios VoiceOver todavía no terminó de decir.
+///
+/// Para saber cuándo se puede mover el cursor: moverlo hace que VoiceOver
+/// lea el elemento nuevo, y eso corta lo que quedaba en la cola. Con
+/// VoiceOver apagado nunca sube de cero.
+@MainActor
+@Observable
+final class Habla {
+    static let shared = Habla()
+    private(set) var pendientes = 0
+
+    private init() {
+        NotificationCenter.default.addObserver(
+            forName: UIAccessibility.announcementDidFinishNotification, object: nil, queue: .main
+        ) { _ in
+            MainActor.assumeIsolated { Habla.shared.termino() }
+        }
+    }
+
+    func empezo() { pendientes += 1 }
+    func termino() { pendientes = max(0, pendientes - 1) }
 }
 
 /// El registro de una prueba: lo que se dijo, lo que se mostró y lo que se vio.

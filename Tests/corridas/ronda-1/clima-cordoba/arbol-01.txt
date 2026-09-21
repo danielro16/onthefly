@@ -1,0 +1,11 @@
+  1 [H] Asistente
+  2 [txt] Vos: ¿cómo va a estar el tiempo mañana en córdoba?
+  3 [txt] Buscando: tiempo mañana córdoba.
+  4 [txt] Encontré 6 resultados para «tiempo mañana córdoba». Los 3 más probables:
+  5 [btn] El tiempo en Córdoba mañana - Meteored España — www.tiempo.com  (Va a esta opción)
+  6 [btn] Clima mañana en Córdoba | Hora a hora - eltiempoen.com — eltiempoen.com  (Va a esta opción)
+  7 [btn] Tiempo en Córdoba mañana - Meteored Argentina — www.meteored.com.ar  (Va a esta opción)
+  8 [btn] Ver más opciones (3)  (Va a esta opción)
+  9 [btn] Otra cosa  (Va a esta opción)
+ 10 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 11 [btn] Enviar

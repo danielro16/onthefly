@@ -369,6 +369,20 @@
       if (body[0].length <= 2 && avgLength > 120) return null;
     }
 
+    // A list of links laid out with a table — a search engine's results, an
+    // old site's menu — is not data either. Kept as a table, its links were
+    // lost inside the cells: DuckDuckGo's results reached the assistant as
+    // "Tabla de 33 filas", and it said there were no results. With no
+    // headers, no caption, and a link in at least one row out of four, the
+    // walk goes inside instead and the links come out as links.
+    if (headerIndex < 0 && !caption && !keyValue) {
+      let linkRows = 0;
+      for (const row of rows) {
+        if (row.querySelector("a[href]:not([href^='#']):not([href^='javascript'])")) linkRows++;
+      }
+      if (linkRows >= 3 && linkRows * 4 >= body.length) return null;
+    }
+
     return {
       id: id,
       type: "table",

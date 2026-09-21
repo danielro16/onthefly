@@ -13,9 +13,14 @@ struct AssistantPanel: View {
 
     @State private var text = ""
     @FocusState private var writing: Bool
-    /// Para llevar el cursor de VoiceOver a la última respuesta: un anuncio
-    /// se pierde si VoiceOver estaba hablando, una parada no.
+    /// Para llevar el cursor de VoiceOver a lo que sigue cuando terminó de
+    /// hablar. Ver `placeFocus`.
     @AccessibilityFocusState private var focused: String?
+    /// La cantidad de líneas cuando se puso el cursor por última vez: una
+    /// vez por respuesta, no cada vez que algo se mueve.
+    @State private var placedAt = 0
+    /// Los "Otra cosa" ya atendidos.
+    @State private var inputsHandled = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -72,26 +77,40 @@ struct AssistantPanel: View {
                                 Button {
                                     onAccept(option)
                                 } label: {
+                                    // Texto oscuro con borde de color, y no
+                                    // celeste sobre celeste: con poca vista
+                                    // no se leía, y se confundía con los
+                                    // globos de la conversación.
                                     HStack(spacing: 10) {
                                         Text(option.label)
-                                            .font(.callout)
+                                            .font(.callout.weight(.medium))
+                                            .foregroundStyle(.primary)
                                             .multilineTextAlignment(.leading)
                                         Spacer(minLength: 0)
                                         Image(systemName: "chevron.right")
-                                            .font(.footnote.weight(.semibold))
+                                            .font(.footnote.weight(.bold))
+                                            .foregroundStyle(.tint)
                                             .accessibilityHidden(true)
                                     }
                                     .padding(.horizontal, 14)
-                                    .padding(.vertical, 10)
-                                    .background(
-                                        .tint.opacity(0.12),
-                                        in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .padding(.vertical, 12)
+                                    .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                            .strokeBorder(.tint, lineWidth: 1.5)
                                     )
                                     .contentShape(.rect)
                                 }
                                 .buttonStyle(.plain)
-                                .foregroundStyle(.tint)
-                                .accessibilityHint("Va a esta opción")
+                                // Sin pista: el nombre ya dice qué hace, y
+                                // "Va a esta opción" después de cada botón
+                                // era una frase más por botón.
+                                .accessibilityFocused($focused, equals: "opcion-\(option.id)")
+                                // Sólo la primera dice cuántas hay: saber que
+                                // hay opciones y cuántas, sin que cada botón
+                                // agregue una frase.
+                                .accessibilityHint(option.id == offer.options.first?.id && offer.options.count > 1
+                                    ? "Primera de \(offer.options.count) opciones." : "")
                             }
                         }
                     }
@@ -105,13 +124,59 @@ struct AssistantPanel: View {
                 writing = true
             }
             .onChange(of: assistant.turns.count) { _, _ in
-                guard let last = assistant.turns.last else { return }
-                withAnimation { scroll.scrollTo(last.id, anchor: .bottom) }
-                // Sólo cuando terminó de hablar: mover el cursor en medio de
-                // una respuesta corta lo que se estaba diciendo.
-                if !assistant.working { focused = last.id }
+                guard !assistant.turns.isEmpty else { return }
+                // La respuesta, desde su comienzo, con los botones debajo.
+                // Anclando la ÚLTIMA línea abajo, los botones —que vienen
+                // después— quedaban escondidos detrás del campo de escribir:
+                // en una portada de La Nación había cuatro y no se veía
+                // ninguno. Con VoiceOver se llegaba igual; con poca vista, no.
+                if let start = responseStart {
+                    withAnimation { scroll.scrollTo(start, anchor: .top) }
+                }
+            }
+            // El cursor, cuando todo se dijo: en la primera opción, que es lo
+            // que sigue. Antes iba a la última línea apenas aparecía: cortaba
+            // lo que quedaba por decir, y la releía —se escuchaba dos veces—.
+            .onChange(of: settled) { _, now in
+                guard now else { return }
+                Task {
+                    // Las opciones se ponen al cerrar el turno, un instante
+                    // después de la última línea.
+                    try? await Task.sleep(for: .milliseconds(400))
+                    placeFocus()
+                }
             }
         }
+    }
+
+    /// La respuesta terminó y VoiceOver ya dijo todo.
+    private var settled: Bool {
+        !assistant.inTurn && Habla.shared.pendientes == 0 && !assistant.turns.isEmpty
+    }
+
+    private func placeFocus() {
+        guard settled, placedAt != assistant.turns.count else { return }
+        placedAt = assistant.turns.count
+        // "Otra cosa": al campo, a escribir. Con el teclado sólo no alcanzaba:
+        // el cursor de VoiceOver se quedaba en la conversación.
+        if assistant.inputRequests != inputsHandled {
+            inputsHandled = assistant.inputRequests
+            focused = "campo"
+            return
+        }
+        if let first = assistant.offer?.options.first {
+            focused = "opcion-\(first.id)"
+        } else if let last = assistant.turns.last {
+            focused = last.id
+        }
+    }
+
+    /// Dónde empieza la última respuesta: la primera línea de JEF después
+    /// de lo último que dijo la persona.
+    private var responseStart: String? {
+        let turns = assistant.turns
+        guard let asked = turns.lastIndex(where: { $0.who == .person }) else { return turns.first?.id }
+        return turns.indices.contains(asked + 1) ? turns[asked + 1].id : turns[asked].id
     }
 
     private func line(_ turn: Assistant.Turn) -> some View {
@@ -135,10 +200,13 @@ struct AssistantPanel: View {
 
     private var composer: some View {
         HStack(spacing: 10) {
-            TextField("¿Qué querés hacer?", text: $text, axis: .vertical)
+            // El texto de ayuda más oscuro que el gris de siempre: con poca
+            // vista, el gris claro parecía un campo desactivado.
+            TextField("Pedido", text: $text, prompt: Text("¿Qué querés hacer?").foregroundStyle(.secondary), axis: .vertical)
                 .lineLimit(1...3)
                 .textFieldStyle(.plain)
                 .focused($writing)
+                .accessibilityFocused($focused, equals: "campo")
                 .submitLabel(.send)
                 .onSubmit(send)
                 .padding(.horizontal, 14)

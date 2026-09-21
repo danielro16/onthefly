@@ -1,0 +1,23 @@
+  1 [H] Asistente
+  2 [txt] Vos: entrá a mercado libre y buscame auriculares bluetooth
+  3 [txt] Buscando: mercado libre.
+  4 [txt] Encontré 5 resultados para «mercado libre». Los 3 más probables:
+  5 [txt] Cuando elijas, sigo con: buscame auriculares bluetooth.
+  6 [txt] Vos: Mercado Libre Argentina - Envíos Gratis en el día — www.mercadolibre.com.ar
+  7 [txt] Abriendo www.mercadolibre.com.ar.
+  8 [txt] Estás en la portada de Mercado Libre Argentina. Hay un aviso sobre el uso de cookies al pie de la página. Hay varias ofertas destacadas:
+1. Ofertas "Glam Days" en pantalones con hasta un 40% de descuento.
+2. Ofertas "Glam Days" en remeras también con hasta un 40% de descuento.
+3. Ofertas en accesorios con hasta un 45% de descuento y 18 cuotas sin interés.
+4. Promociones con hasta un 45% de descuento y envíos en 24 horas.
+También se ofrece la suscripción a Meli+, con beneficios desde 5490 pesos por mes. Podés explorar categorías como Vehículos, Hogar, Celulares y Electrodomésticos.
+  9 [txt] Sigo con: buscame auriculares bluetooth.
+ 10 [txt] Buscando auriculares bluetooth en www.mercadolibre.com.ar.
+ 11 [txt] El sitio me puso una verificación de «no soy un robot». Eso no lo puedo resolver yo.
+ 12 [txt] Suele tener una opción de audio, pero está dentro del recuadro del proveedor y no la alcanzo: hay que tocarla en la pantalla.
+ 13 [txt] Si preferís, te llevo a otro lado o volvemos a la página anterior.
+ 14 [btn] Suscribirme a Meli+  (Va a esta opción)
+ 15 [btn] Configurar cookies  (Va a esta opción)
+ 16 [btn] Otra cosa  (Va a esta opción)
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 18 [btn] Enviar

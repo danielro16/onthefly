@@ -1,0 +1,38 @@
+{"tipo": "turno", "quien": "persona", "texto": "quiero sacar un turno en anses", "t": 1790010898.122837}
+{"tipo": "botones", "t": 1790010898.124614, "opciones": []}
+{"quien": "jef", "tipo": "turno", "texto": "Buscando: anses.", "t": 1790010898.900969}
+{"texto": "Buscando: anses.", "tipo": "voz", "t": 1790010898.901463}
+{"texto": "Cargando página", "tipo": "voz", "t": 1790010898.90176}
+{"titulo": "anses at DuckDuckGo", "texto": "PÁGINA: lite.duckduckgo.com — anses at DuckDuckGo\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nDuckDuckGo\nNext Page >\nTabla de 30 filas\nNext Page >\nSearch\nANSES - Argentina.gob.ar, 1.\nAdministración Nacional de la Seguridad Social\nwww.argentina.gob.ar/anses\n\nANSES, 2.\nConsulta para completar o iniciar estudios Ingrese el código que se muestra en la imagen\nservicioswww.anses.gob.ar/Z2CONSEDUCSitio/Paginas/Inicio.aspx\n\nSolicitar turnos en ANSES - Argentina.gob.ar, 3.\nPodés solicitar un turno por internet para ser atendido en una oficina de ANSES.\nwww.argentina.gob.ar/servicio/solicitar-turnos-en-anses\n\nANSES - Mi Anses, 4.\nWeb dedicada a brindar ayuda si la necesitas con tus tramites, ya sea con solicitar un turno online, ver tu fecha de cob\nmianses.org/anses/\n\nCalendario de Pagos de ANSES - Infobae, 5.\nConsultá el calendario ANSES 2025 con las fechas de cobro de jubilaciones, pensiones y asignaciones familiares. Informac\nwww.infobae.com/calendarios/anses/, 2026-09-20T00:00:00.0000000\n\nANSES - Mis Datos para Contacto, 6.\nAccedé a tus datos de contacto en ANSES para actualizarlos y mantenerlos al día.\nservicioswww.anses.gob.ar/DCW/paginas/Ingreso.aspx\n\nCómo ingresar a Mi Anses - LA NACION, 7.\nCómo ingresar a Mi Anses El sitio oficial del organismo previsional sirve para realizar diversas consultas sobre las pre\nwww.lanacion.com.ar/economia/como-ingresar-a-mi-anses-nid10052024/\n\nAnses: fecha y lugar de cobro - ¿Dónde y cuándo cobro?, 8.\nAnses: ¿Dónde cobro? y ¿Cuándo cobro? Conozca la fecha y lugar de pago de su beneficio Anses en forma rápida y sencilla.", "t": 1790010902.103726, "url": "https://lite.duckduckgo.com/lite/?q=anses&kl=ar-es", "tipo": "pagina"}
+{"texto": "Encontré 6 resultados para «anses». Los 3 más probables:", "quien": "jef", "t": 1790010902.108778, "tipo": "turno"}
+{"tipo": "voz", "t": 1790010902.109617, "texto": "Encontré 6 resultados para «anses». Los 3 más probables: 1. ANSES — servicioswww.anses.gob.ar. 2. ANSES - Argentina.gob.ar — www.argentina.gob.ar. 3. ANSES - Mi Anses — mianses.org"}
+{"tipo": "botones", "opciones": ["ANSES — servicioswww.anses.gob.ar", "ANSES - Argentina.gob.ar — www.argentina.gob.ar", "ANSES - Mi Anses — mianses.org", "Ver más opciones (3)"], "t": 1790010902.109785}
+{"tipo": "botones", "opciones": ["ANSES — servicioswww.anses.gob.ar", "ANSES - Argentina.gob.ar — www.argentina.gob.ar", "ANSES - Mi Anses — mianses.org", "Ver más opciones (3)", "Otra cosa"], "t": 1790010902.109922}
+{"opciones": [], "tipo": "botones", "t": 1790010906.797336}
+{"quien": "persona", "t": 1790010906.798201, "texto": "ANSES — servicioswww.anses.gob.ar", "tipo": "turno"}
+{"quien": "jef", "t": 1790010906.7986012, "texto": "Abriendo servicioswww.anses.gob.ar.", "tipo": "turno"}
+{"tipo": "voz", "t": 1790010906.7991061, "texto": "Abriendo servicioswww.anses.gob.ar."}
+{"tipo": "voz", "t": 1790010906.799499, "texto": "Cargando página"}
+{"url": "https://servicioswww.anses.gob.ar/Z2CONSEDUCSitio/Paginas/Inicio.aspx", "titulo": "Consulta para completar o iniciar estudios", "texto": "PÁGINA: servicioswww.anses.gob.ar — Consulta para completar o iniciar estudios\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nAdministración Nacional de la Seguridad Social\nLunes, 21 de Septiembre de 2026\nMi ANSES\nSalir\nConsulta para completar o iniciar estudios\nIngrese el código que se muestra en la imagen\nCopyright 2013 | Todos los derechos reservados | Términos de uso\nAdministración Nacional de la Seguridad Social\nPresidencia de la Nación", "tipo": "pagina", "t": 1790010909.719861}
+{"tipo": "turno", "quien": "jef", "texto": "Estás en el sitio web de ANSES, en la página de consulta para completar o iniciar estudios. La página te pide que ingreses un código que se muestra en una imagen para continuar.", "t": 1790010911.4873471}
+{"t": 1790010911.488282, "tipo": "voz", "texto": "Estás en el sitio web de ANSES, en la página de consulta para completar o iniciar estudios. La página te pide que ingreses un código que se muestra en una imagen para continuar."}
+{"t": 1790010911.4887218, "opciones": ["Ver mis trámites en Mi ANSES", "Resumir esta página"], "tipo": "botones"}
+{"t": 1790010911.489032, "opciones": ["Ver mis trámites en Mi ANSES", "Resumir esta página", "Otra cosa"], "tipo": "botones"}
+{"t": 1790010917.3768659, "opciones": [], "tipo": "botones"}
+{"quien": "persona", "t": 1790010917.379911, "texto": "Ver mis trámites en Mi ANSES", "tipo": "turno"}
+{"quien": "jef", "t": 1790010917.380764, "texto": "Abriendo Ver mis trámites en Mi ANSES.", "tipo": "turno"}
+{"t": 1790010917.3816519, "tipo": "voz", "texto": "Abriendo Ver mis trámites en Mi ANSES."}
+{"t": 1790010917.38211, "tipo": "voz", "texto": "Activando Ver mis trámites en Mi ANSES"}
+{"texto": "Ese control ya no está. Recargando.", "tipo": "voz", "t": 1790010917.405453}
+{"texto": "Cargando página", "tipo": "voz", "t": 1790010917.405786}
+{"url": "https://servicioswww.anses.gob.ar/Z2CONSEDUCSitio/Paginas/Inicio.aspx", "titulo": "Consulta para completar o iniciar estudios", "t": 1790010919.821569, "texto": "PÁGINA: servicioswww.anses.gob.ar — Consulta para completar o iniciar estudios\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nAdministración Nacional de la Seguridad Social\nLunes, 21 de Septiembre de 2026\nMi ANSES\nSalir\nConsulta para completar o iniciar estudios\nIngrese el código que se muestra en la imagen\nCopyright 2013 | Todos los derechos reservados | Términos de uso\nAdministración Nacional de la Seguridad Social\nPresidencia de la Nación", "tipo": "pagina"}
+{"t": 1790010921.964915, "tipo": "turno", "texto": "Hola, estás en la página de la Administración Nacional de la Seguridad Social, que es la ANSES. Acá podés hacer consultas para completar o iniciar estudios. Para continuar, tenés que ingresar un código que se muestra en una imagen. ¿Qué te gustaría hacer?", "quien": "jef"}
+{"texto": "Hola, estás en la página de la Administración Nacional de la Seguridad Social, que es la ANSES. Acá podés hacer consultas para completar o iniciar estudios. Para continuar, tenés que ingresar un código que se muestra en una imagen. ¿Qué te gustaría hacer?", "t": 1790010921.965622, "tipo": "voz"}
+{"t": 1790010921.965868, "opciones": ["Leer la página", "Resumir la página", "Volver a la página anterior", "Otra cosa"], "tipo": "botones"}
+{"opciones": [], "tipo": "botones", "t": 1790010927.948585}
+{"quien": "persona", "t": 1790010927.949434, "texto": "Leer la página", "tipo": "turno"}
+{"quien": "jef", "t": 1790010927.94982, "texto": "Ingrese el código que se muestra en la imagen", "tipo": "turno"}
+{"t": 1790010927.950217, "texto": "Ingrese el código que se muestra en la imagen", "tipo": "voz"}
+{"quien": "jef", "t": 1790010927.9504762, "texto": "Fin de la nota.", "tipo": "turno"}
+{"t": 1790010927.9506922, "texto": "Fin de la nota.", "tipo": "voz"}
+{"opciones": ["Resumir la página", "Volver a la página anterior", "Otra cosa"], "tipo": "botones", "t": 1790010927.9508739}

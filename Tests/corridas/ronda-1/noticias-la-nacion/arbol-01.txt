@@ -1,0 +1,11 @@
+  1 [H] Asistente
+  2 [txt] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Encontré 5 resultados para «la nación». Los 3 más probables:
+  5 [btn] Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar  (Va a esta opción)
+  6 [btn] Últimas noticias de Argentina y el mundo - LA NACION — cdnedge.lanacion.com.ar  (Va a esta opción)
+  7 [btn] En Vivo | Los Detalles Y El Cronograma Oficial Del Papa León Xiv a La ... — www.youtube.com  (Va a esta opción)
+  8 [btn] Ver más opciones (2)  (Va a esta opción)
+  9 [btn] Otra cosa  (Va a esta opción)
+ 10 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 11 [btn] Enviar

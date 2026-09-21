@@ -85,16 +85,15 @@ final class ReaderModel {
         }
 
         state = .loading(url)
-        Voz.decir("Cargando página")
 
         do {
             let page = try await engine.extract(url: url)
             address = page.url
             state = .loaded(page)
+            engine.scrollToTop()
         } catch {
             guard !Self.wasSuperseded(error) else { return }
             state = .failed(error.localizedDescription)
-            Voz.decir("No se pudo leer esta página")
         }
     }
 
@@ -120,8 +119,6 @@ final class ReaderModel {
             return
         }
 
-        Voz.decir("Activando \(action.label)")
-
         do {
             switch try await engine.activate(actionID: action.id, expecting: action.label) {
             case .updated(let page):
@@ -135,16 +132,11 @@ final class ReaderModel {
                 }
                 address = page.url
                 state = .loaded(page)
-                Voz.decir(
-                    "\(action.label) activado. La página cambió."
-                )
 
             case .stale:
                 // The node vanished between extraction and the tap — a SPA
                 // re-rendered underneath us. Reloading re-stamps everything.
-                Voz.decir(
-                    "Ese control ya no está. Recargando."
-                )
+                Voz.decir("Esa opción ya no está en la página. La vuelvo a cargar.")
                 await go()
             }
         } catch {
@@ -163,7 +155,6 @@ final class ReaderModel {
 
     /// Submits a form and reads whatever the page became.
     func submit(_ action: Action) async {
-        Voz.decir("Enviando formulario")
         do {
             switch try await engine.submit(actionID: action.id) {
             case .updated(let page):
@@ -190,13 +181,8 @@ final class ReaderModel {
                 }
                 address = page.url
                 state = .loaded(page)
-                Voz.decir(
-                    "Formulario enviado."
-                )
             case .stale:
-                Voz.decir(
-                    "El formulario ya no está. Recargando."
-                )
+                Voz.decir("El formulario ya no está en la página. La vuelvo a cargar.")
                 await go()
             }
         } catch {
@@ -225,7 +211,6 @@ final class ReaderModel {
             Voz.decir("No hay página anterior")
             return
         }
-        Voz.decir("Volviendo")
         // Volver es una carga como cualquier otra y se tiene que ver como
         // una: sin esto el toque parecía no haber hecho nada, y el segundo
         // cancelaba al primero.
@@ -274,27 +259,33 @@ struct ReaderView: View {
     @State private var model = ReaderModel()
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Recién cuando hubo una página. Antes no hay nada que mirar, y
-            // la conversación ocupa la pantalla entera.
-            if let web = model.liveWebView {
-                WebPageView(webView: web)
-                Divider()
+        GeometryReader { screen in
+            VStack(spacing: 0) {
+                // Recién cuando hubo una página. Antes no hay nada que mirar,
+                // y la conversación ocupa la pantalla entera.
+                if let web = model.liveWebView {
+                    WebPageView(webView: web)
+                    Divider()
+                }
+                // No es una hoja: una hoja se cierra sola cuando la página
+                // cambia, que es exactamente lo que el asistente hace.
+                //
+                // Y con más de la mitad de la pantalla: la conversación es la
+                // app. En una franja de 380 puntos las respuestas se cortaban
+                // y los botones quedaban abajo, fuera de la vista.
+                AssistantPanel(
+                    assistant: model.assistant,
+                    onAsk: { goal in Task { await model.assistant.ask(goal, on: model) } },
+                    onAccept: { action in Task { await model.assistant.accept(action, on: model) } }
+                )
+                .frame(height: model.liveWebView == nil ? nil : max(380, screen.size.height * 0.55))
+                .background(.bar)
             }
-            // No es una hoja: una hoja se cierra sola cuando la página
-            // cambia, que es exactamente lo que el asistente hace.
-            AssistantPanel(
-                assistant: model.assistant,
-                onAsk: { goal in Task { await model.assistant.ask(goal, on: model) } },
-                onAccept: { action in Task { await model.assistant.accept(action, on: model) } }
-            )
-            .frame(height: model.liveWebView == nil ? nil : 380)
-            .background(.bar)
         }
         // Salir es volver. Es el gesto con el que se sale de todo lo demás
         // en iOS.
         .accessibilityAction(.escape) {
-            Task { await model.back() }
+            Task { await model.assistant.goBack(on: model) }
         }
     }
 }

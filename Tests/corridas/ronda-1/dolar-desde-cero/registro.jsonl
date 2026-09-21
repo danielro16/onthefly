@@ -1,0 +1,18 @@
+{"quien": "persona", "t": 1790010821.429033, "tipo": "turno", "texto": "¿a cuánto está el dólar blue hoy?"}
+{"t": 1790010821.431176, "opciones": [], "tipo": "botones"}
+{"quien": "jef", "t": 1790010822.4895658, "tipo": "turno", "texto": "Buscando: dólar blue hoy."}
+{"texto": "Buscando: dólar blue hoy.", "tipo": "voz", "t": 1790010822.490425}
+{"texto": "Cargando página", "tipo": "voz", "t": 1790010822.491313}
+{"tipo": "pagina", "t": 1790010825.67129, "url": "https://lite.duckduckgo.com/lite/?q=d%C3%B3lar%20blue%20hoy&kl=ar-es", "titulo": "dólar blue hoy at DuckDuckGo", "texto": "PÁGINA: lite.duckduckgo.com — dólar blue hoy at DuckDuckGo\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nDuckDuckGo\nNext Page >\nTabla de 33 filas\nNext Page >\nSearch"}
+{"quien": "jef", "t": 1790010825.671876, "tipo": "turno", "texto": "No pude leer los resultados de esa búsqueda. Probar con otras palabras, o con el nombre de un sitio."}
+{"tipo": "voz", "t": 1790010825.6723309, "texto": "No pude leer los resultados de esa búsqueda. Probar con otras palabras, o con el nombre de un sitio."}
+{"opciones": ["Otra cosa"], "tipo": "botones", "t": 1790010825.672812}
+{"tipo": "botones", "t": 1790010830.0865378, "opciones": []}
+{"texto": "Otra cosa", "quien": "persona", "tipo": "turno", "t": 1790010830.087009}
+{"quien": "jef", "texto": "¿Qué otra cosa hacemos? Se puede escribir o dictar abajo.", "tipo": "turno", "t": 1790010830.087215}
+{"tipo": "voz", "texto": "¿Qué otra cosa hacemos? Se puede escribir o dictar abajo.", "t": 1790010830.087548}
+{"t": 1790010839.681669, "quien": "persona", "texto": "¿y el oficial?", "tipo": "turno"}
+{"tipo": "botones", "opciones": [], "t": 1790010839.682218}
+{"quien": "jef", "t": 1790010841.417484, "tipo": "turno", "texto": "La página muestra una tabla con 33 filas, pero no especifica qué tipo de cambio se detalla ni menciona el \"dólar oficial\"."}
+{"tipo": "voz", "texto": "La página muestra una tabla con 33 filas, pero no especifica qué tipo de cambio se detalla ni menciona el \"dólar oficial\".", "t": 1790010841.418567}
+{"tipo": "botones", "opciones": ["Otra cosa"], "t": 1790010841.4189591}
