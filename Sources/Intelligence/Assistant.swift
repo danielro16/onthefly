@@ -884,7 +884,7 @@ final class Assistant {
         }
 
         guard let answerer else {
-            readTheOpening("No tengo el modelo para resumir acá, así que te leo el principio tal cual:")
+            readTheOpening("Te cuento cómo empieza:")
             return
         }
         let text = Self.saying(page)
@@ -896,15 +896,14 @@ final class Assistant {
             guard let answer = try await answerer.answer(
                 "Resumí de qué trata esta página en dos o tres frases.", about: text
             ) else {
-                readTheOpening("No pude resumirla sin inventar, así que te leo el principio tal cual:")
+                readTheOpening("Te cuento cómo empieza:")
                 return
             }
             say(answer.text)
-            say("Textual de la página: \(answer.quote.prefix(160))")
         } catch Answerer.AnswerError.transport {
-            readTheOpening("No hay conexión para resumir, pero la página ya está acá. Te leo el principio:")
+            readTheOpening("Sin conexión no puedo resumirla, pero te cuento cómo empieza:")
         } catch {
-            readTheOpening("Algo falló de mi lado al resumir. Te leo el principio tal cual:")
+            readTheOpening("Te cuento cómo empieza:")
         }
     }
 
@@ -1153,7 +1152,6 @@ final class Assistant {
                 return
             }
             say(answer.text)
-            say("Textual de la página: \(answer.quote.prefix(160))")
         } catch Answerer.AnswerError.transport {
             say("Sin conexión. Puedo leer la página, pero no contestar preguntas.")
         } catch {
