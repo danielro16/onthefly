@@ -181,7 +181,7 @@ final class ReaderModel {
             // Screen-reader users get no visual cue that the page swapped, so
             // say it. Without this the app looks frozen to VoiceOver.
             announce("\(page.title). \(page.stats.blockCount) secciones.")
-            await detectIntent(for: page)
+            Task { await detectIntent(for: page) }
         } catch {
             guard !Self.wasSuperseded(error) else { return }
             state = .failed(error.localizedDescription)
@@ -202,6 +202,15 @@ final class ReaderModel {
 
     // MARK: - Intent
 
+    /// Se llama siempre de fondo, nunca esperándola.
+    ///
+    /// Le hace a Jev tres o más consultas en fila —la intención de la página,
+    /// los grupos de opciones, los nombres de los listados— para la vista que
+    /// reconstruye la página. El asistente no usa nada de eso, y esperarla
+    /// trababa cada navegación: en el New York Times el asistente quedó
+    /// "trabajando" más de un minuto después de "Abriendo www.nytimes.com.",
+    /// sin haberle preguntado nada al modelo. Los siete lugares que la
+    /// llamaban la esperaban.
     private func detectIntent(for page: ExtractedPage) async {
         guard let analyzer else { return }
         // Una página que se lee en su orden no se agrupa por intención: no
@@ -269,7 +278,7 @@ final class ReaderModel {
                     notification: .announcement,
                     argument: page.overlay == nil ? "Aviso resuelto." : "La página sigue mostrando un aviso."
                 )
-                await detectIntent(for: page)
+                Task { await detectIntent(for: page) }
             case .stale:
                 await go()
             }
@@ -322,7 +331,7 @@ final class ReaderModel {
                         : "\(action.label) activado. Aparecieron \(arrivals.count) opciones."
                 )
                 focusTarget = arrivals.isEmpty ? nil : ReaderModel.arrivalsAnchor
-                await detectIntent(for: page)
+                Task { await detectIntent(for: page) }
 
             case .stale:
                 // The node vanished between extraction and the tap — a SPA
@@ -437,7 +446,7 @@ final class ReaderModel {
                 UIAccessibility.post(
                     notification: .announcement, argument: "Formulario enviado."
                 )
-                await detectIntent(for: page)
+                Task { await detectIntent(for: page) }
             case .stale:
                 UIAccessibility.post(
                     notification: .announcement,
@@ -497,7 +506,7 @@ final class ReaderModel {
             arrivals = []
             intentState = .unavailable
             announce("\(page.displayTitle). \(page.stats.blockCount) secciones.")
-            await detectIntent(for: page)
+            Task { await detectIntent(for: page) }
         } catch {
             guard !Self.wasSuperseded(error) else { return }
             state = .failed(error.localizedDescription)
@@ -518,7 +527,7 @@ final class ReaderModel {
                 notification: .announcement,
                 argument: "\(page.displayTitle). \(page.stats.blockCount) secciones."
             )
-            await detectIntent(for: page)
+            Task { await detectIntent(for: page) }
         } catch {
             guard !Self.wasSuperseded(error) else { return }
             UIAccessibility.post(notification: .announcement, argument: "No se pudo leer la página")

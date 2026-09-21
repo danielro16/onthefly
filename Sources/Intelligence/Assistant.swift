@@ -127,7 +127,7 @@ final class Assistant {
             reader.address = goal
             await reader.go()
             working = false
-            if let page = reader.page { describe(page) }
+            if let page = reader.page { await arrived(page) }
             return
         }
 
@@ -256,7 +256,7 @@ final class Assistant {
                 try? await Task.sleep(for: .milliseconds(700))
                 await reader.submit(form)
                 working = false
-                if let after = reader.page { describe(after) }
+                if let after = reader.page { await arrived(after) }
                 return
             }
             await arrive(decision.target ?? goal, on: reader)
@@ -312,7 +312,7 @@ final class Assistant {
             say("Enviando.")
             await reader.submit(form)
             working = false
-            if let after = reader.page { describe(after) }
+            if let after = reader.page { await arrived(after) }
 
         case .volver:
             guard reader.canGoBack else { say("No hay a dónde volver: esta es la primera página."); return }
@@ -321,14 +321,14 @@ final class Assistant {
             await reader.back()
             working = false
             readingFrom = 0
-            if let page = reader.page { describe(page) }
+            if let page = reader.page { await arrived(page) }
 
         case .orientar:
             guard let page = reader.page else {
                 say("Todavía no hay ninguna página abierta. Decir un sitio o qué buscar.")
                 return
             }
-            describe(page)
+            await arrived(page)
 
         case .noPuedo:
             // Un límite no es el final del camino: es un traspaso. Se dice
@@ -468,7 +468,7 @@ final class Assistant {
             say("Abriendo \(url.host() ?? goal).")
             reader.address = goal
             await reader.go()
-            if let page = reader.page { describe(page) }
+            if let page = reader.page { await arrived(page) }
             return
         }
 
@@ -821,7 +821,18 @@ final class Assistant {
     /// Los encabezados también se dicen: son los que hacen que una nota larga
     /// tenga forma en vez de ser un chorro de párrafos.
     func readablePieces(_ page: ExtractedPage) -> [String] {
-        page.blocks.compactMap { block in
+        // Una portada no se lee como una nota. En el New York Times eso dio
+        // "U.S.. International. Canada. Español. 中文" como primer párrafo:
+        // el menú de ediciones. En una portada, leer es leer los titulares.
+        let paragraphs: [String] = page.blocks.compactMap {
+            if case .paragraph(_, let text, _) = $0 { return text } else { return nil }
+        }
+        let isArticle = paragraphs.count >= 3 && paragraphs.prefix(3).contains { $0.count >= 160 }
+        let headlines = Self.headlines(of: page)
+        if !isArticle, !headlines.isEmpty {
+            return headlines.enumerated().map { "\($0.offset + 1). \($0.element)" }
+        }
+        return page.blocks.compactMap { block in
             switch block {
             case .heading(_, _, let text): return text.isEmpty ? nil : "— \(text) —"
             case .paragraph(_, let text, _): return text.count >= 40 ? text : nil
@@ -915,6 +926,18 @@ final class Assistant {
         working = true
         defer { working = false }
 
+        // Leer y resumir no llevan a ningún lado: actúan sobre esta página.
+        if action.id == Self.readID, let page = reader.page {
+            working = false
+            readingFrom = 0
+            readAloud(page)
+            return
+        }
+        if action.id == Self.summaryID, let page = reader.page {
+            await summarize(page)
+            return
+        }
+
         // "Ver más opciones" no lleva a ningún lado: trae los que quedaron.
         if action.id == Self.moreID {
             present(pending, for: chosen.goal)
@@ -925,12 +948,13 @@ final class Assistant {
         // página: se carga, no se toca. Tocarlo sería buscar ese elemento
         // adentro de la página de resultados, que es otra cosa.
         if action.href?.isEmpty == false, let href = action.href,
-           ReaderModel.normalize(href) != nil, action.id.hasPrefix("res-") {
+           ReaderModel.normalize(href) != nil,
+           action.id.hasPrefix("res-") || action.id.hasPrefix("sug-") {
             say("Abriendo \(URL(string: href)?.host() ?? action.label).")
             reader.address = href
             await reader.go()
             working = false
-            if let page = reader.page { describe(page) }
+            if let page = reader.page { await arrived(page) }
             // Y recién ahora sigue la tarea que estaba esperando que la
             // persona eligiera: "…y pedir un turno".
             if let rest = waiting {
@@ -951,6 +975,10 @@ final class Assistant {
         say("Abriendo \(action.label).")
         await reader.activate(action)
         working = false
+        guard !chosen.goal.isEmpty else {
+            if let page = reader.page { await arrived(page) }
+            return
+        }
         await run(chosen.goal, on: reader, steps: 1)
     }
 
@@ -1048,7 +1076,7 @@ final class Assistant {
             }
         }
 
-        if let page = reader.page { describe(page) }
+        if let page = reader.page { await arrived(page) }
     }
 
     /// Escribe en un campo lo que la persona pidió, y para antes de enviar.
@@ -1088,7 +1116,7 @@ final class Assistant {
         if Self.isSearch(form) {
             say("Buscando.")
             await reader.submit(form)
-            if let page = reader.page { describe(page) }
+            if let page = reader.page { await arrived(page) }
             return
         }
 
@@ -1227,6 +1255,72 @@ final class Assistant {
             out += chrome.joined(separator: "\n").prefix(3000)
         }
         return out
+    }
+
+    /// Qué se abre, en qué orden: los titulares primero, después el resto de
+    /// lo que la página ofrece. La lista que ve el modelo empieza por lo que
+    /// una persona quiere de una portada.
+    static func candidates(of page: ExtractedPage) -> [Action] {
+        let all = options(of: page)
+        let headlines = Set(headlines(of: page))
+        let first = all.filter { headlines.contains($0.label) }
+        let rest = all.filter { !headlines.contains($0.label) && $0.label.count >= 12 }
+        return Array((first + rest).prefix(30))
+    }
+
+    static let readID = "jef-leer"
+    static let summaryID = "jef-resumir"
+
+    /// Llegar a una página, dicho como lo diría una persona.
+    ///
+    /// Es lo que pidió Daniel al ver la portada del New York Times leída como
+    /// una nota, con el menú de ediciones como primer párrafo: "estás en la
+    /// portada del New York Times, los titulares son éstos, ¿qué te gustaría
+    /// hacer?" — con las opciones como botones.
+    ///
+    /// Sin modelo (sin red, o sin key) se cae a `describe`, que es plantilla
+    /// pero es cierta.
+    private func arrived(_ page: ExtractedPage) async {
+        // Un captcha es el único aviso que es un muro: detrás no hay nada que
+        // contar hasta que alguien lo resuelva.
+        if page.overlay?.kind == .captcha { describe(page); return }
+        guard let answerer else { describe(page); return }
+
+        // Cualquier otro aviso se menciona y se sigue. Antes, "si hay un aviso,
+        // describilo y pará": el New York Times SIEMPRE tiene el de
+        // suscripción, así que el asistente anunciaba "Opciones: Close, Get
+        // started" y nunca llegaba a los titulares — que estaban extraídos,
+        // ahí abajo. Un aviso de suscripción no impide leer.
+        var text = Self.saying(page)
+        if let overlay = page.overlay {
+            text = "HAY UN AVISO ENCIMA DE LA PÁGINA (\(overlay.kind.title)): \(overlay.text)\n\n" + text
+        }
+        let candidates = Self.candidates(of: page)
+        working = true
+        let orientation = try? await answerer.orient(
+            page: text, candidates: candidates.map(\.label)
+        )
+        working = false
+        guard let orientation else { describe(page); return }
+
+        say(orientation.text)
+        let options: [Action] = orientation.suggestions.compactMap { suggestion in
+            switch suggestion.kind {
+            case .abrir:
+                guard let number = suggestion.number, candidates.indices.contains(number - 1) else { return nil }
+                let target = candidates[number - 1]
+                return Action(
+                    id: "sug-\(target.id)", kind: target.kind, label: suggestion.label, href: target.href,
+                    fields: nil, submit: nil, notices: nil, region: target.region,
+                    unnamed: nil, cluster: nil, primary: nil, fresh: nil
+                )
+            case .leer:
+                return .link(id: Self.readID, label: suggestion.label, href: "", region: "main")
+            case .resumir:
+                return .link(id: Self.summaryID, label: suggestion.label, href: "", region: "main")
+            }
+        }
+        if !options.isEmpty { offer = Offer(goal: "", options: options) }
     }
 
     /// Dónde quedó la persona y qué hay, sin generar una palabra.
