@@ -76,9 +76,14 @@ final class ReaderModel {
 
     private let engine = HeadlessWebView()
     private let analyzer: PageAnalyzer?
+    /// El asistente: la persona dice a dónde quiere ir y JEF la lleva. La
+    /// página se carga tal como es; esto es lo único que se le agrega.
+    let assistant: Assistant
 
     init() {
-        analyzer = JevClient.fromEnvironment().map(PageAnalyzer.init)
+        let analyzer = JevClient.fromEnvironment().map(PageAnalyzer.init)
+        self.analyzer = analyzer
+        self.assistant = Assistant(analyzer: analyzer)
         engine.onPageChanged = { [weak self] result in
             self?.pageChangedOnItsOwn(result)
         }
@@ -607,6 +612,7 @@ struct ReaderView: View {
     @State private var sites = SavedSites()
     @State private var showingSites = false
     @State private var showingSettings = false
+    @State private var showingAssistant = false
     @AppStorage("jef.textSize") private var textSize = TextSize.system.rawValue
     @AppStorage("jef.appearance") private var appearance = Appearance.system.rawValue
     @Environment(\.dynamicTypeSize) private var systemTypeSize
@@ -713,6 +719,7 @@ struct ReaderView: View {
             .sheet(isPresented: $showingSettings) {
                 SettingsView { showingSettings = false }
             }
+
             // After the view is rebuilt, not before: the element to focus
             // has to exist, and the announcement that says why should be
             // heard first rather than cut off by the cursor landing.
@@ -838,15 +845,35 @@ struct ReaderView: View {
     /// aprender de memoria, y aprenderla de memoria es exactamente para lo
     /// que sirve. Lo que ofrece cada sitio vive adentro de la página, en
     /// "Más de este sitio", y nunca acá.
+    @ViewBuilder
     private var chrome: some View {
-        VStack(spacing: 10) {
-            addressField
-            if !addressFocused { toolbar }
+        if showingAssistant {
+            // La conversación, abajo, con la página donde el asistente te
+            // dejó arriba. No es una hoja: una hoja se cierra sola cuando la
+            // página cambia, que es exactamente lo que el asistente hace.
+            AssistantPanel(
+                assistant: model.assistant,
+                onAsk: { goal in Task { await model.assistant.ask(goal, on: model) } },
+                onAccept: { action in Task { await model.assistant.accept(action, on: model) } },
+                onClose: {
+                    showingAssistant = false
+                    // Quien cierra el asistente vuelve a la vista que lee
+                    // mejor. La original queda a un toque, como siempre.
+                    model.showAccessible()
+                }
+            )
+            .frame(height: 380)
+            .background(.bar)
+        } else {
+            VStack(spacing: 10) {
+                addressField
+                if !addressFocused { toolbar }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 10)
+            .padding(.bottom, 4)
+            .background(.bar)
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 10)
-        .padding(.bottom, 4)
-        .background(.bar)
     }
 
     /// Un solo campo que muestra dos cosas, como el de Safari: el dominio
@@ -935,6 +962,21 @@ struct ReaderView: View {
                     : "La web tal cual, con navegación web estándar"
             ) {
                 model.showingOriginal ? model.showAccessible() : model.showOriginal()
+            }
+
+            toolbarButton(
+                symbol: "bubble.left.and.text.bubble.right",
+                label: "Asistente",
+                enabled: model.page != nil && model.assistant.isAvailable,
+                hint: "Pedile que te lleve a algún lado de esta página"
+            ) {
+                addressFocused = false
+                // La página original, tal como es. El asistente no la
+                // reconstruye: el extractor pasa a ser sólo sus ojos, y lo
+                // que la persona tiene delante es la web de verdad, con su
+                // propia accesibilidad y todo lo que el sitio hace.
+                model.showOriginal()
+                showingAssistant = true
             }
 
             toolbarButton(symbol: "gearshape", label: "Ajustes", hint: "Tamaño del texto y apariencia") {
