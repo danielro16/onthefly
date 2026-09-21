@@ -90,13 +90,15 @@ final class Assistant {
     /// página que ya está abierta.
     var isAvailable: Bool { analyzer != nil || router != nil }
 
-    private func say(_ text: String) {
+    /// `aloud`, cuando lo que se escucha tiene que decir más que lo que se
+    /// ve: una lista de opciones que en pantalla ya son botones.
+    private func say(_ text: String, aloud: String? = nil) {
         counter += 1
         turns.append(Turn(id: "t\(counter)", who: .jef, text: text))
         latest = text
         // Dicho en voz alta. Es la única manera de que alguien que no ve se
         // entere de lo que el asistente hizo mientras lo hace.
-        UIAccessibility.post(notification: .announcement, argument: text)
+        UIAccessibility.post(notification: .announcement, argument: aloud ?? text)
     }
 
     private func heard(_ text: String) {
@@ -287,7 +289,7 @@ final class Assistant {
             // Si lo que pregunta es por dónde va la lectura, la respuesta ya
             // está contada acá: no hay por qué pagar un viaje a la nube.
             if let progress = readingProgress(page), Self.asksProgress(decision.question ?? goal) {
-                say("Párrafo \(progress.at) de \(progress.of).")
+                say("\(readingUnit(page)) \(progress.at) de \(progress.of).")
                 return
             }
             working = true
@@ -517,11 +519,15 @@ final class Assistant {
     private func present(_ results: [Result], for goal: String) {
         pending = Array(results.dropFirst(Self.shownAtOnce))
         let shown = results.prefix(Self.shownAtOnce)
-        say("Encontré \(results.count) \(results.count == 1 ? "resultado" : "resultados") para «\(goal)».")
-        say(results.count == 1 ? "Es éste:" : "Los \(shown.count) más probables:")
-        for (index, result) in shown.enumerated() {
-            say("\(index + 1). \(result.title) — \(result.host)")
-        }
+        // Cada resultado aparece una sola vez: como el botón que se toca,
+        // justo debajo de esto. Escritos además como mensajes quedaban
+        // repetidos, y los botones lejos del texto que los presentaba.
+        // En voz alta sí se dicen, porque quien no ve no los barre con la
+        // vista.
+        let found = "Encontré \(results.count) \(results.count == 1 ? "resultado" : "resultados") para «\(goal)»."
+        let intro = results.count == 1 ? "Es éste:" : "Los \(shown.count) más probables:"
+        let list = shown.enumerated().map { "\($0.offset + 1). \($0.element.title) — \($0.element.host)" }
+        say("\(found) \(intro)", aloud: "\(found) \(intro) " + list.joined(separator: ". "))
         var options: [Action] = shown.enumerated().map { index, result in
             .link(id: "res-\(index)-\(result.host)", label: "\(result.title) — \(result.host)",
                   href: result.href, region: "main")
@@ -580,6 +586,17 @@ final class Assistant {
     }
 
     static var engine: Engine = .duckduckgo
+
+    /// La consulta, si la página es una de resultados del buscador.
+    static func searchQuery(of page: ExtractedPage) -> String? {
+        guard let parts = URLComponents(string: page.url),
+              let host = parts.host?.lowercased(),
+              host.contains("duckduckgo.") || (host.contains("google.") && parts.path == "/search"),
+              let query = parts.queryItems?.first(where: { $0.name == "q" })?.value,
+              !query.isEmpty
+        else { return nil }
+        return query
+    }
 
     static func searchURL(for query: String) -> String { engine.url(for: query) }
 
@@ -821,16 +838,13 @@ final class Assistant {
     /// Los encabezados también se dicen: son los que hacen que una nota larga
     /// tenga forma en vez de ser un chorro de párrafos.
     func readablePieces(_ page: ExtractedPage) -> [String] {
-        // Una portada no se lee como una nota. En el New York Times eso dio
-        // "U.S.. International. Canada. Español. 中文" como primer párrafo:
-        // el menú de ediciones. En una portada, leer es leer los titulares.
-        let paragraphs: [String] = page.blocks.compactMap {
-            if case .paragraph(_, let text, _) = $0 { return text } else { return nil }
-        }
-        let isArticle = paragraphs.count >= 3 && paragraphs.prefix(3).contains { $0.count >= 160 }
-        let headlines = Self.headlines(of: page)
-        if !isArticle, !headlines.isEmpty {
-            return headlines.enumerated().map { "\($0.offset + 1). \($0.element)" }
+        // Una portada no se lee como una nota: Readability busca UNA nota, y
+        // en una portada se queda con cualquier cosa. En el New York Times dio
+        // "U.S.. International. Canada. Español. 中文" —el menú de ediciones—
+        // como primer párrafo; en La Nación, el pie: el director, el ISSN y la
+        // dirección de la empresa. En una portada, leer es leer los titulares.
+        if readsHeadlines(page) {
+            return Self.headlines(of: page).enumerated().map { "\($0.offset + 1). \($0.element)" }
         }
         return page.blocks.compactMap { block in
             switch block {
@@ -845,16 +859,38 @@ final class Assistant {
         }
     }
 
+    /// Si en esta página se leen los titulares y no el texto: es una
+    /// portada, y no una nota que además lista otras notas.
+    private func readsHeadlines(_ page: ExtractedPage) -> Bool {
+        !Self.isArticle(page) && !Self.headlines(of: page).isEmpty
+    }
+
+    /// Una nota para leer: la misma regla con la que `describe` la reconoce.
+    /// Párrafo largo y no sólo muchos caracteres: los recortes de una página
+    /// de resultados suman caracteres de sobra y no son una nota.
+    static func isArticle(_ page: ExtractedPage) -> Bool {
+        let paragraphs: [String] = page.blocks.compactMap {
+            if case .paragraph(_, let text, _) = $0 { return text } else { return nil }
+        }
+        return paragraphs.count >= 3 && paragraphs.prefix(3).contains { $0.count >= 160 }
+    }
+
+    /// Cómo se cuenta lo que se lee.
+    private func readingUnit(_ page: ExtractedPage) -> String {
+        readsHeadlines(page) ? "Titular" : "Párrafo"
+    }
+
     private func readAloud(_ page: ExtractedPage) {
         if page.url != readingURL { readingURL = page.url; readingFrom = 0 }
         let pieces = readablePieces(page)
+        let end = readsHeadlines(page) ? "Fin de los titulares." : "Fin de la nota."
 
         guard !pieces.isEmpty else {
             say("Esta página no tiene texto corrido para leer.")
             return
         }
         guard readingFrom < pieces.count else {
-            say("Fin de la nota. Se puede resumir, buscar otra cosa, o volver a empezar.")
+            say("\(end) Se puede resumir, buscar otra cosa, o volver a empezar.")
             readingFrom = 0
             return
         }
@@ -864,9 +900,9 @@ final class Assistant {
         readingFrom += chunk.count
 
         if readingFrom >= pieces.count {
-            say("Fin de la nota.")
+            say(end)
         } else {
-            say("Párrafo \(readingFrom) de \(pieces.count). «Continuar» para seguir.")
+            say("\(readingUnit(page)) \(readingFrom) de \(pieces.count). «Continuar» para seguir.")
         }
     }
 
@@ -1284,6 +1320,20 @@ final class Assistant {
         // Un captcha es el único aviso que es un muro: detrás no hay nada que
         // contar hasta que alguien lo resuelva.
         if page.overlay?.kind == .captcha { describe(page); return }
+
+        // La página de resultados del buscador se ofrece como la primera vez:
+        // los resultados como botones. Se vuelve a ella —"volvé" desde el
+        // sitio que no era— y descripta como una página más decía "hay 6
+        // notas, puedo leer una", el vocabulario de la página de la que se
+        // venía, con los resultados como texto. Lo vio Daniel en el simulador.
+        if let query = Self.searchQuery(of: page) {
+            let found = Self.results(of: page)
+            if !found.isEmpty {
+                present(Self.ranked(query, among: found), for: query)
+                return
+            }
+        }
+
         guard let answerer else { describe(page); return }
 
         // Cualquier otro aviso se menciona y se sigue. Antes, "si hay un aviso,

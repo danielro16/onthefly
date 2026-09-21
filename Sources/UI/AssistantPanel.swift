@@ -62,17 +62,35 @@ struct AssistantPanel: View {
                     // Lo que propuso cuando no estuvo seguro: se toca, no se
                     // contesta por voz. Una radio o la página leída en voz
                     // alta pueden decir "sí"; la mano no se confunde.
+                    //
+                    // Justo debajo de lo que las presenta, y con forma de
+                    // fila: con `.bordered` se veían como texto azul
+                    // centrado, sueltas, lejos de la frase que las nombraba.
                     if let offer = assistant.offer {
                         VStack(alignment: .leading, spacing: 8) {
                             ForEach(offer.options) { option in
                                 Button {
                                     onAccept(option)
                                 } label: {
-                                    Text(option.label)
-                                        .font(.callout)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    HStack(spacing: 10) {
+                                        Text(option.label)
+                                            .font(.callout)
+                                            .multilineTextAlignment(.leading)
+                                        Spacer(minLength: 0)
+                                        Image(systemName: "chevron.right")
+                                            .font(.footnote.weight(.semibold))
+                                            .accessibilityHidden(true)
+                                    }
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 10)
+                                    .background(
+                                        .tint.opacity(0.12),
+                                        in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    )
+                                    .contentShape(.rect)
                                 }
-                                .buttonStyle(.bordered)
+                                .buttonStyle(.plain)
+                                .foregroundStyle(.tint)
                                 .accessibilityHint("Va a esta opción")
                             }
                         }
