@@ -237,6 +237,14 @@ final class Assistant {
             }
         }
 
+        // Sin ruteador —no está, o no contestó— y sin página, buscar el pedido
+        // tal cual es mejor que decir que no hay página. Pasó en una prueba:
+        // la API devolvió "demasiados pedidos" y "clarín" terminó en "Todavía
+        // no hay una página cargada".
+        guard reader.page != nil else {
+            await arrive(goal, on: reader, naming: false)
+            return
+        }
         await run(goal, on: reader, steps: Self.maxSteps)
     }
 
@@ -287,7 +295,7 @@ final class Assistant {
     ) async {
         switch action {
         case .ir:
-            await arrive(decision.target ?? goal, on: reader)
+            await arrive(decision.target ?? goal, on: reader, naming: true)
 
         case .buscar:
             // Buscar estando parado en un sitio es buscar EN ese sitio.
@@ -306,7 +314,7 @@ final class Assistant {
                 await landed(reader)
                 return
             }
-            await arrive(decision.target ?? goal, on: reader)
+            await arrive(decision.target ?? goal, on: reader, naming: false)
 
         case .abrir:
             // Una referencia —"la segunda", "el del paro"— se resuelve contra
@@ -501,7 +509,11 @@ final class Assistant {
     /// modelo que adivine un dominio — inventar "lanacion.com.ar" es fácil,
     /// inventar "bancoprovinciadesantafe.com.ar" es cómo se manda a alguien
     /// que no ve a un sitio que no es el suyo.
-    private func arrive(_ goal: String, on reader: ReaderModel) async {
+    /// `naming`: la persona nombró un sitio ("llevame a la nación") y no un
+    /// tema ("el tiempo en Córdoba"). Sólo entonces se sube el resultado que
+    /// se llama como lo que dijo: con un tema, "tiempo" subía tiempo.com —la
+    /// Córdoba de España— por encima de todo.
+    private func arrive(_ goal: String, on reader: ReaderModel, naming: Bool) async {
         working = true
         defer { working = false }
 
@@ -542,20 +554,18 @@ final class Assistant {
         //
         // Lo que la prueba de dominio sigue haciendo es ORDENAR: el que
         // coincide va primero. Elegir no.
-        present(Self.ranked(goal, among: found), for: goal)
+        present(Self.ranked(goal, among: found, naming: naming), for: goal)
     }
 
-    /// Los resultados, con el que coincide con lo pedido adelante, y después
-    /// los del país antes que los de afuera.
+    /// Los resultados en el orden del buscador, con los de otro país al
+    /// final; y si la persona nombró un sitio, el que se llama así adelante.
     ///
-    /// Lo segundo porque con la región puesta el buscador igual dejó primera
-    /// la Córdoba de España para "el tiempo mañana en Córdoba", a alguien en
-    /// Argentina. El orden del buscador se respeta dentro de cada grupo.
-    static func ranked(_ request: String, among results: [Result]) -> [Result] {
-        let byCountry = results.enumerated().sorted { a, b in
-            closer(a.element) != closer(b.element) ? closer(a.element) > closer(b.element) : a.offset < b.offset
-        }.map(\.element)
-        guard let best = named(request, among: results) else { return byCountry }
+    /// Al final y no reordenados: con la región puesta el buscador igual dejó
+    /// primera la Córdoba de España para "el tiempo mañana en Córdoba". Pero
+    /// ordenar todo por país pasaba cualquier .ar por delante de Wikipedia.
+    static func ranked(_ request: String, among results: [Result], naming: Bool) -> [Result] {
+        let byCountry = results.filter { closer($0) > 0 } + results.filter { closer($0) == 0 }
+        guard naming, let best = named(request, among: results) else { return byCountry }
         return [best] + byCountry.filter { $0.href != best.href }
     }
 
@@ -885,10 +895,32 @@ final class Assistant {
         guard let last = parts.last else { return 0 }
         let home = (Locale.current.region?.identifier ?? "AR").lowercased()
         if last == home { return 2 }
-        // Sin país: .com, .org, .net y compañía valen para cualquiera.
-        if ["com", "org", "net", "info", "app", "io", "edu", "int"].contains(last) { return 1 }
+        // Sin país: .com, .org, .net y compañía valen para cualquiera — salvo
+        // que el título diga que es de otro. "El tiempo en Córdoba mañana -
+        // Meteored España" vive en tiempo.com; "Últimas noticias de Costa Rica
+        // | La Nación", en nacion.com. En un dominio del país no se mira: un
+        // diario argentino puede titular sobre Perú.
+        if ["com", "org", "net", "info", "app", "io", "edu", "int"].contains(last) {
+            return mentionsOtherCountry(result.title, home: home) ? 0 : 1
+        }
         return 0
     }
+
+    /// Si un título nombra un país que no es el de la persona.
+    static func mentionsOtherCountry(_ title: String, home: String) -> Bool {
+        let own = Locale(identifier: "es").localizedString(forRegionCode: home.uppercased()).map(flatten) ?? ""
+        let text = " " + title.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+            .map { $0.isLetter ? $0 : " " }.reduce("") { $0 + String($1) } + " "
+        return countries.contains { name in
+            flatten(name) != own && text.contains(" " + name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil) + " ")
+        }
+    }
+
+    static let countries = [
+        "Argentina", "España", "México", "Chile", "Perú", "Colombia", "Uruguay", "Paraguay",
+        "Bolivia", "Venezuela", "Ecuador", "Costa Rica", "Panamá", "Guatemala", "Honduras",
+        "El Salvador", "Nicaragua", "Cuba", "República Dominicana", "Puerto Rico", "Estados Unidos",
+    ]
 
     /// Las partes del dominio que nombran al sitio.
     ///
@@ -1529,7 +1561,7 @@ final class Assistant {
 
         if let query = Self.searchQuery(of: page) {
             // En la página del buscador lo probable es uno de los resultados.
-            let found = Self.ranked(query, among: Self.results(of: page))
+            let found = Self.ranked(query, among: Self.results(of: page), naming: false)
             for (index, result) in found.prefix(3).enumerated() {
                 out.append(.link(id: "res-\(index)-\(result.host)", label: "\(result.title) — \(result.host)",
                                  href: result.href, region: "main"))
@@ -1641,7 +1673,7 @@ final class Assistant {
         if let query = Self.searchQuery(of: page) {
             let found = Self.results(of: page)
             if !found.isEmpty {
-                present(Self.ranked(query, among: found), for: query)
+                present(Self.ranked(query, among: found, naming: false), for: query)
                 return
             }
         }
