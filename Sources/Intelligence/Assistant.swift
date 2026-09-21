@@ -540,8 +540,12 @@ final class Assistant {
         working = true
         defer { working = false }
 
-        // Una dirección no se adivina: la escribió la persona.
-        if let url = ReaderModel.normalize(goal), goal.contains("."), !goal.contains(" ") {
+        // Una dirección no se adivina: la escribió la persona. Si la escribió
+        // el ruteador —"buscá mar del plata en wikipedia" volvió una vez como
+        // ir a "wikipedia.org"—, no se carga: se busca. Cargada, llevó al
+        // portal en inglés con un pedido de donaciones.
+        let typed = (lastRequest ?? "").lowercased().contains(goal.lowercased().replacingOccurrences(of: "www.", with: ""))
+        if typed, let url = ReaderModel.normalize(goal), goal.contains("."), !goal.contains(" ") {
             say("Abriendo \(Self.bare(url.host() ?? "") ?? goal).")
             reader.address = goal
             await reader.go()
@@ -594,7 +598,11 @@ final class Assistant {
         let rest = results.filter { !isOfficial($0) }
         let byCountry = official + rest.filter { closer($0) > 0 } + rest.filter { closer($0) == 0 }
         guard naming, let best = named(request, among: results) else { return byCountry }
-        return [best] + byCountry.filter { $0.href != best.href }
+        // Lo oficial va antes que cualquier coincidencia de nombre. Para
+        // "turnos anses", turnosanses.net se llama EXACTAMENTE como el pedido
+        // —es el truco de esos sitios— y le ganaba a argentina.gob.ar.
+        let others = byCountry.filter { $0.href != best.href && !isOfficial($0) }
+        return official + (isOfficial(best) ? [] : [best]) + others
     }
 
     /// Lo que se encontró, como botones.
@@ -1072,9 +1080,14 @@ final class Assistant {
     /// "leeme la nota" sobre Mar del Plata leía los epígrafes de las fotos
     /// como si fueran titulares de una portada.
     static func isArticle(_ page: ExtractedPage) -> Bool {
-        page.blocks.filter {
+        let long = page.blocks.filter {
             if case .paragraph(_, let text, _) = $0 { return text.count >= 160 } else { return false }
-        }.count >= 2
+        }.count
+        // Muchos titulares y pocos párrafos largos es una portada, aunque
+        // tenga dos o tres bajadas largas: la de Clarín ofrecía "Leer la
+        // nota" primero y leía el menú — "Modo Día/Noche. Suscribite…".
+        if headlines(of: page).count >= 15 && long < 6 { return false }
+        return long >= 2
     }
 
     /// Cómo se cuenta lo que se lee.
