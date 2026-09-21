@@ -79,6 +79,8 @@ actor Answerer {
         "quieres/querés"): usá las que valen igual ("estás", "te leo").
         Las horas de actualización de una cobertura en vivo ("12:30", "Hace 5 min") no son parte
         de los hechos: nunca las pegues a una noticia.
+        Decí siempre la unidad de una medida tal como está en la página ("63 °F", "13 mph"): una
+        temperatura sin unidad se entiende en grados Celsius, y 63 °F no son 63 °C.
         Respondé en este idioma: \(language). Si la página está en otro idioma, contala igual en
         \(language).
 

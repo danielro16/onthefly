@@ -122,6 +122,12 @@
           continue;
         }
         if (child.nodeType !== Node.ELEMENT_NODE) continue;
+        // Code is not text. A Mercado Libre offer link carried its own
+        // tracking script inside, and the name came out as "GLAM DAYS
+        // PANTALONES ¡HASTA 40% OFF! Ver ofertas, var trackMclicks =…".
+        // A screen reader never reads these.
+        if (child.tagName === "SCRIPT" || child.tagName === "STYLE" ||
+            child.tagName === "NOSCRIPT" || child.tagName === "TEMPLATE") continue;
         // What a screen reader says for this element, if the page said so:
         // <abbr aria-label="10 de octubre de 2026">10</abbr> reads as the
         // date, not as "10". Same rule as the accessible name computation.

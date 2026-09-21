@@ -147,6 +147,10 @@ actor Router {
         - Si hay una página abierta y la pregunta podría contestarse con lo que esa página
           dice, es responder — no buscar. Buscar la saca de donde está, y enterarse de que
           cambió de página sin pedirlo es lo más desorientador para alguien que no ve.
+        - "Buscá X en Y", donde Y es un sitio ("buscá mar del plata en wikipedia", "auriculares
+          en mercado libre"): es buscar, con target = las dos cosas juntas ("mar del plata
+          wikipedia"). El buscador lleva directo a la página; ir a Y y buscar ahí son dos pasos
+          y se pierde X en el camino.
         - Si está en un sitio y pide ir a una sección o un tema que ese sitio tiene ("llevame
           a deportes" estando en un diario, "los resultados" estando en un buscador), es
           abrir — reference = cómo lo nombró —, no ir ni buscar: la saca del sitio donde está.
