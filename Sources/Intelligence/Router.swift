@@ -137,6 +137,7 @@ actor Router {
     /// El estado, armado por el código. Sin una línea del texto de la página:
     /// rutear no lo necesita, y dejándolo afuera un sitio no tiene por dónde
     /// influir en la decisión.
+    @MainActor
     static func state(page: ExtractedPage?, reading: (at: Int, of: Int)?) -> String {
         guard let page else { return "No hay ninguna página abierta todavía." }
         var parts: [String] = ["Está en «\(page.sectionTitle)», en \(page.displaySite)."]
@@ -213,7 +214,26 @@ actor Router {
             field: text("field") ?? (action == .completar ? text("target") : nil),
             value: text("value"),
             then: text("then").flatMap(Action.init(rawValue:)),
-            limit: text("limit").flatMap(Limit.init(rawValue:))
+            limit: text("limit").flatMap(Self.limit(from:))
         )
+    }
+
+    /// El motivo, aflojando la exigencia.
+    ///
+    /// Medido: pidiendo `historial` el modelo devuelve "borrar historial", y
+    /// el decodificador estricto lo tiraba a nil — la persona se quedaba sin
+    /// saber por qué no se podía. Acá la flexibilidad no cuesta nada: el
+    /// motivo sólo elige cuál de nuestras frases se dice, y ninguna frase la
+    /// escribe el modelo.
+    static func limit(from raw: String) -> Limit {
+        let text = raw.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        if let exact = Limit(rawValue: raw) { return exact }
+        if text.contains("histor") { return .historial }
+        if text.contains("ajuste") || text.contains("letra") || text.contains("tamano") { return .ajustes }
+        if text.contains("compart") || text.contains("link") || text.contains("enlace") { return .compartir }
+        if text.contains("pag") || text.contains("tarjeta") { return .pagar }
+        if text.contains("compr") { return .comprar }
+        if text.contains("sitio") { return .otroSitio }
+        return .otra
     }
 }

@@ -64,9 +64,18 @@ final class Assistant {
     /// "sé a dónde ir" de "me parece" — ver la nota de arriba.
     private static let sureEnough = 0.7
 
-    init(analyzer: PageAnalyzer?, answerer: Answerer? = Answerer.fromEnvironment()) {
+    /// Quien entiende el pedido. Ver `Router.swift` para por qué no es una
+    /// lista de frases.
+    private let router: Router?
+
+    init(
+        analyzer: PageAnalyzer?,
+        answerer: Answerer? = Answerer.fromEnvironment(),
+        router: Router? = Router.fromEnvironment()
+    ) {
         self.analyzer = analyzer
         self.answerer = answerer
+        self.router = router
     }
 
     var isAvailable: Bool { analyzer != nil }
@@ -122,29 +131,198 @@ final class Assistant {
             return
         }
 
-        // Hay pedidos que no son ni un destino ni una pregunta sobre un dato,
-        // y mandarlos a decidir afuera es lo que produjo, con la página de
-        // Buenos Aires abierta: "Ayudame a navegar en esta página" →
-        // "¿Querés que vaya a Geografía?". Nadie pidió ir a Geografía. Se
-        // pidió saber dónde se está. Eso lo sabe el código, gratis y sin red.
-        if let page = reader.page, let intent = Self.intent(of: goal) {
-            switch intent {
-            case .orient:
-                describe(page)
-            case .summarize:
-                working = true
-                await summarize(page)
+        // Qué quiere, decidido por un modelo con un esquema cerrado.
+        //
+        // Antes había acá una lista de expresiones regulares que escribí yo, y
+        // la medición la refutó: 5 de 60 pedidos reales, con dos de esos cinco
+        // mal resueltos. El mismo set con el Router da 46. "Ayudame a navegar
+        // en esta página" ya no termina en "¿querés que vaya a Geografía?".
+        if let router {
+            working = true
+            let state = Router.state(page: reader.page, reading: readingProgress(reader.page))
+            let decision: Router.Decision?
+            do { decision = try await router.decide(goal, state: state) }
+            catch Router.RouterError.transport {
                 working = false
-            case .read:
-                readingFrom = 0
-                readAloud(page)
-            case .keepReading:
-                readAloud(page)
+                say("Sin conexión. No puedo entender lo que pedís sin internet.")
+                return
             }
-            return
+            catch { decision = nil }
+            working = false
+
+            if let decision {
+                await carry(decision.action, of: decision, goal: goal, on: reader)
+                // El segundo pedido de una frase que traía dos: "resumime y
+                // después entrame a la de Milei". Descartarlo en silencio era
+                // uno de los errores que la medición encontró.
+                if let next = decision.then, !working {
+                    await carry(next, of: decision, goal: goal, on: reader)
+                }
+                return
+            }
         }
 
         await run(goal, on: reader, steps: Self.maxSteps)
+    }
+
+    /// Por dónde va la lectura, para que el ruteador lo sepa sin preguntarle
+    /// a nadie: "cuánto falta" es un dato del estado, no una pregunta para un
+    /// modelo.
+    private func readingProgress(_ page: ExtractedPage?) -> (at: Int, of: Int)? {
+        guard let page, page.url == readingURL, readingFrom > 0 else { return nil }
+        return (at: readingFrom, of: readablePieces(page).count)
+    }
+
+    /// Hacer lo que el ruteador decidió.
+    ///
+    /// Cada rama de acá o llama a algo que ya estaba probado, o dice por qué
+    /// no puede. Lo que NO hay es una rama que redacte: todo lo que se dice
+    /// sale de una plantilla o del texto literal de la página.
+    private func carry(
+        _ action: Router.Action, of decision: Router.Decision,
+        goal: String, on reader: ReaderModel
+    ) async {
+        switch action {
+        case .ir, .buscar:
+            await arrive(decision.target ?? goal, on: reader)
+
+        case .abrir:
+            // Una referencia —"la segunda", "el del paro"— se resuelve contra
+            // lo que la página ofrece de verdad. El modelo nombra; la lista
+            // de destinos la pone la página, nunca él.
+            await run(decision.reference ?? goal, on: reader, steps: Self.maxSteps)
+
+        case .leer:
+            guard let page = reader.page else { return }
+            readingFrom = 0
+            readAloud(page)
+
+        case .seguir:
+            guard let page = reader.page else { return }
+            readAloud(page)
+
+        case .resumir:
+            guard let page = reader.page else { return }
+            working = true
+            await summarize(page)
+            working = false
+
+        case .responder:
+            guard let page = reader.page else { return }
+            // Si lo que pregunta es por dónde va la lectura, la respuesta ya
+            // está contada acá: no hay por qué pagar un viaje a la nube.
+            if let progress = readingProgress(page), Self.asksProgress(decision.question ?? goal) {
+                say("Párrafo \(progress.at) de \(progress.of).")
+                return
+            }
+            working = true
+            await reply(decision.question ?? goal, about: page)
+            working = false
+
+        case .completar:
+            await complete(decision, goal: goal, on: reader)
+
+        case .enviar:
+            guard let page = reader.page,
+                  let form = page.actions.first(where: { $0.kind == .form && !($0.fields ?? []).isEmpty })
+            else { say("Acá no hay un formulario para enviar."); return }
+            // La lista blanca de siempre: se envía sólo cuando se puede
+            // PROBAR que es una búsqueda. Un botón que dice "Continuar" y
+            // cobra pasa cualquier lista negra.
+            guard Self.isSearch(form) else {
+                say("Esto no lo envío yo: puede cobrar, contratar o dar de alta algo. El botón «\(form.submit ?? "enviar")» queda para vos.")
+                return
+            }
+            working = true
+            say("Enviando.")
+            await reader.submit(form)
+            working = false
+            if let after = reader.page { describe(after) }
+
+        case .volver:
+            guard reader.canGoBack else { say("No hay a dónde volver: esta es la primera página."); return }
+            working = true
+            say("Volviendo.")
+            await reader.back()
+            working = false
+            readingFrom = 0
+            if let page = reader.page { describe(page) }
+
+        case .orientar:
+            guard let page = reader.page else {
+                say("Todavía no hay ninguna página abierta. Decir un sitio o qué buscar.")
+                return
+            }
+            describe(page)
+
+        case .noPuedo:
+            say(Self.cannot(decision.limit))
+        }
+    }
+
+    /// Lo que el asistente no sabe hacer, dicho por el código.
+    ///
+    /// El modelo elige un motivo de una lista cerrada; la frase la escribe
+    /// esta función. Si el motivo fuera texto libre del modelo, sería texto
+    /// del modelo leído en voz alta, que es justo lo que no hacemos.
+    static func cannot(_ limit: Router.Limit?) -> String {
+        switch limit {
+        case .historial:  return "No manejo el historial ni cierro pestañas."
+        case .ajustes:    return "El tamaño de la letra y los ajustes se cambian en la app, no desde acá."
+        case .compartir:  return "Todavía no sé compartir ni copiar enlaces."
+        case .otroSitio:  return "Para eso hay que ir a otro sitio. Decime a cuál y te llevo."
+        case .comprar:    return "No compro nada. Te llevo hasta ahí y la compra la hacés vos."
+        case .pagar:      return "No pago nada ni cargo datos de tarjeta. Eso lo hacés vos."
+        case .otra, nil:  return "Eso no lo sé hacer."
+        }
+    }
+
+    /// "¿Cuánto falta?" sobre una lectura en curso. Es lo único que se
+    /// pregunta sobre el ESTADO y no sobre la página, y la respuesta está
+    /// contada acá: mandarlo a un modelo es pagar por un dato propio.
+    static func asksProgress(_ question: String) -> Bool {
+        let text = question.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        return text.range(of: "cuanto falta|cuanto queda|cuanto (mas )?hay|en que parte (voy|estoy)|cuantos parrafos",
+                          options: .regularExpression) != nil
+    }
+
+    /// Escribir en un campo, con el campo verificado contra la página.
+    ///
+    /// La verificación existe porque la medición encontró esto: "capital
+    /// federal", dicho en una página cuyos campos son usuario, clave y dni,
+    /// se rutea como completar con field="usuario". Escribir "capital
+    /// federal" adentro del campo de usuario, en un formulario que la persona
+    /// no ve, es peor que no hacer nada. Si el campo que nombró el modelo no
+    /// existe de verdad, se pregunta.
+    private func complete(_ decision: Router.Decision, goal: String, on reader: ReaderModel) async {
+        guard let page = reader.page,
+              let form = page.actions.first(where: { $0.kind == .form && !($0.fields ?? []).isEmpty })
+        else { say("Acá no hay un formulario para completar."); return }
+
+        let fields = (form.fields ?? []).filter { $0.type != "hidden" }
+        let named = decision.field.flatMap { wanted in
+            fields.first { Self.flatten($0.name) == Self.flatten(wanted) }
+                ?? fields.first { Self.distance(Self.flatten($0.name), Self.flatten(wanted)) <= 2 }
+        }
+        guard let field = named else {
+            let names = fields.map(\.name).prefix(4).joined(separator: ", ")
+            say("No encuentro ese campo. Los de esta página son: \(names).")
+            return
+        }
+        guard !field.isSecure else {
+            // Una contraseña no se dicta y no se escribe por interpretación.
+            say("La contraseña la escribís vos: ése es el único campo que no toco.")
+            return
+        }
+        guard let value = decision.value, !value.isEmpty else {
+            say("¿Qué pongo en \(field.name)?")
+            return
+        }
+        working = true
+        reader.fill(field, with: value)
+        try? await Task.sleep(for: .milliseconds(700))
+        working = false
+        say("Escrito «\(value)» en \(field.name).")
     }
 
     // MARK: - Llegar a algún lado desde la nada
@@ -358,43 +536,6 @@ final class Assistant {
         return previous[b.count]
     }
 
-    /// Lo que el asistente se contesta solo.
-    enum Intent { case orient, summarize, read, keepReading }
-
-    /// Sin tildes y sin mayúsculas, porque se escribe con dictado y el
-    /// dictado acentúa cuando quiere.
-    static func intent(of goal: String) -> Intent? {
-        let text = goal
-            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        // Antes que nada: "seguí" no dice qué seguir, dice que siga lo que
-        // veníamos haciendo. Si no fuera primero, "seguí leyendo" se leería
-        // como empezar de nuevo desde el principio.
-        let keepReading = "^(segui|seguí|segui leyendo|continua|continuar|mas|otro parrafo|dale)$|^segui (leyendo|con la nota)"
-        if text.range(of: keepReading, options: .regularExpression) != nil { return .keepReading }
-
-        let summarize = "resum|de que (se )?trata|que dice (esta|la) pagina|contame (esta|la) pagina|de que habla"
-        if text.range(of: summarize, options: .regularExpression) != nil { return .summarize }
-
-        // Angosto a propósito. "Leeme el precio del dólar" NO es un pedido de
-        // lectura: es una pregunta, y leerle la nota desde el principio es
-        // ignorarla. Leer es leer TODO — entonces o se pide pelado, o se
-        // nombra la cosa entera.
-        let read = "^(lee|leeme|leemelo|leelo|leela|leer|leermelo)( esto| esta| la)?( pagina| nota)?$"
-            + "|^lee(me|la|lo)? (la nota|el articulo|la pagina|la noticia|el texto|todo)"
-        if text.range(of: read, options: .regularExpression) != nil { return .read }
-
-        // Deliberadamente angosto. "Ayudame a comprar un pasaje" es una
-        // tarea y tiene que seguir yendo a Jev; sólo "ayudame a navegar" y
-        // sus parientes son un pedido de orientación.
-        let orient = "^(ayuda|ayudame|guiame|orientame|ubicame)( en| con| por)?( esta| la)?( pagina| web| pantalla)?$"
-            + "|^ayudame a (navegar|moverme|orientarme|ubicarme)"
-            + "|donde estoy|en que pagina estoy|que hay (aca|aqui|en esta pagina)"
-            + "|que puedo hacer|que es esta pagina|describ(ime|i|ir)( esta| la)? pagina"
-        if text.range(of: orient, options: .regularExpression) != nil { return .orient }
-        return nil
-    }
 
     /// Por dónde va la lectura de esta página.
     ///
@@ -410,12 +551,12 @@ final class Assistant {
     /// razón por la que existe el asistente: que el ritmo lo ponga ella.
     ///
     /// Texto literal de la página. Acá no hay modelo ni hay red.
-    private func readAloud(_ page: ExtractedPage) {
-        if page.url != readingURL { readingURL = page.url; readingFrom = 0 }
-
-        // Los encabezados también se dicen: son los que hacen que una nota
-        // larga tenga forma en vez de ser un chorro de párrafos.
-        let pieces: [String] = page.blocks.compactMap { block in
+    /// Lo que hay para leer, en orden.
+    ///
+    /// Los encabezados también se dicen: son los que hacen que una nota larga
+    /// tenga forma en vez de ser un chorro de párrafos.
+    func readablePieces(_ page: ExtractedPage) -> [String] {
+        page.blocks.compactMap { block in
             switch block {
             case .heading(_, _, let text): return text.isEmpty ? nil : "— \(text) —"
             case .paragraph(_, let text, _): return text.count >= 40 ? text : nil
@@ -426,6 +567,11 @@ final class Assistant {
             default: return nil
             }
         }
+    }
+
+    private func readAloud(_ page: ExtractedPage) {
+        if page.url != readingURL { readingURL = page.url; readingFrom = 0 }
+        let pieces = readablePieces(page)
 
         guard !pieces.isEmpty else {
             say("Esta página no tiene texto corrido para leer.")
