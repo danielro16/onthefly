@@ -154,10 +154,10 @@ actor Router {
         - Si está en un sitio y pide ir a una sección o un tema que ese sitio tiene ("llevame
           a deportes" estando en un diario, "los resultados" estando en un buscador), es
           abrir — reference = cómo lo nombró —, no ir ni buscar: la saca del sitio donde está.
-        - Si buscar sale de una pregunta que sigue la conversación ("¿cuándo se fundó?",
-          "¿y el oficial?"), target tiene que decir de qué se habla: completalo con el tema
-          de la página donde está ("cuándo se fundó Mar del Plata"). Una búsqueda sin tema
-          devuelve cualquier cosa.
+        - Si buscar sale de una pregunta que sigue la conversación, target tiene que decir de
+          qué se habla: completalo con el tema de la página donde está o de lo que pidió antes.
+          Una búsqueda sin tema devuelve cualquier cosa. Usá SÓLO las palabras de la persona y
+          del tema: nunca las de estas instrucciones.
         """
 
     /// El estado, armado por el código. Sin una línea del texto de la página:

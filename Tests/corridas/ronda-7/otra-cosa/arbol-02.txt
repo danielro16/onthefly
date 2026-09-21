@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Los titulares principales son: Adorni explicó la decisión de vivir como si el dinero “no existiera” tras lo de los Bitcoins en negro y las ventas a escondidas. Hubo filtraciones, desconfianza y una denuncia judicial tras la salida de una colaboradora de Karina en la Quinta de Olivos. Renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes. Grandes cadenas le cortaron el audio a Trump tras el veto a CNN, Politico y MS NOW.
+  8 [btn] Abrir «Bitcoins en negro, ventas a escondidas y la decisión de vivir como si…»  (Primera de 6 opciones.)
+  9 [btn] Abrir «Filtraciones, desconfianza y una denuncia judicial: la trastienda de…»
+ 10 [btn] Abrir «A partir de este momento". Renunció el secretario de Discapacidad en…»
+ 11 [btn] Abrir «La guerra con la prensa. Las grandes cadenas le cortaron el audio a…»
+ 12 [btn] Volver a la página anterior
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar

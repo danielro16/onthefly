@@ -1,0 +1,29 @@
+  1 [H] Asistente
+  2 [H] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Estás en los resultados de «clarin». Los 3 más probables:
+  5 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] En Noticias de Argentina — Clarin.com.
+  8 [txt] Hay 126 notas. Las tres primeras:
+  9 [txt] El Gobierno apunta a un gas contaminado como la causa del corte de luz que afectó a casi dos millones de personas, La Secretaría de Energía…
+ 10 [txt] Renunció el secretario de Discapacidad en medio de la interna por los recortes del área en el Presupuesto 2027, Otra salida del Gobierno…
+ 11 [txt] El Gobierno espera que por la visita del Papa se movilicen 7 millones de personas y evalúa declarar asueto, Habrá tres misas masivas…
+ 12 [H] Vos: Leer los titulares
+ 13 [txt] Titulares 1 a 3 de 126:
+ 14 [txt] 1. El Gobierno apunta a un gas contaminado como la causa del corte de luz que afectó a casi dos millones de personas, La Secretaría de Energía informó que el probl
+ 15 [txt] 2. Renunció el secretario de Discapacidad en medio de la interna por los recortes del área en el Presupuesto 2027, Otra salida del Gobierno, Política, Renunció el
+ 16 [txt] 3. El Gobierno espera que por la visita del Papa se movilicen 7 millones de personas y evalúa declarar asueto, Habrá tres misas masivas, Política, El Gobierno espe
+ 17 [H] Vos: Abrir «El Gobierno apunta a un gas contaminado como la causa del corte de…»
+ 18 [txt] Abriendo «El Gobierno apunta a un gas contaminado como la causa del corte de…»
+ 19 [txt] Estás en Clarín, en una nota sobre el apagón masivo que afectó a casi 600.000 usuarios: el Gobierno apunta a un gas contaminado, mientras que Edenor dice que sigue investigando la causa.
+ 20 [H] Vos: Leer la nota
+ 21 [txt] Párrafos 1 a 2 de 10:
+ 22 [txt] La investigación oficial sobre el apagón que dejó sin electricidad a casi 600.000 usuarios del Área Metropolitana de Buenos Aires apunta a  la contaminación del gas utilizado por uno de los  interruptores de alta tensión de Edenor. La empresa, sin embargo, todavía no convalida esa explicación y sostiene que continúa analizando las causas de la falla.
+ 23 [txt] Según pudo confirmar Clarín con fuentes de la Secretaría de Energía, el desperfecto se produjo en el interruptor L46 de la subestación Malaver, ubicada en el partido bonaerense de San Martín. El equipo contenía gas hexafluoruro de azufre (SF6), utilizado como aislante en instalaciones eléctricas de alta tensión, que se encontraba contaminado.
+ 24 [btn] Seguir leyendo  (Primera de 4 opciones.)
+ 25 [btn] Resumir la nota
+ 26 [btn] Volver a la página anterior
+ 27 [btn] Otra cosa
+ 28 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 29 [btn] Enviar

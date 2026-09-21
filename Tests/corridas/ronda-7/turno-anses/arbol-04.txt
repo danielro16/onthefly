@@ -1,0 +1,21 @@
+  1 [H] Asistente
+  2 [H] Vos: quiero sacar un turno en anses
+  3 [txt] Buscando: turnos anses.
+  4 [txt] Estás en los resultados de «turnos anses». Los 3 más probables:
+  5 [H] Vos: Solicitar turnos en ANSES - Argentina.gob.ar — www.argentina.gob.ar
+  6 [txt] Abriendo argentina.gob.ar.
+  7 [txt] Estás en la página de Argentina.gob.ar para solicitar turnos en ANSES. La página te indica que podés pedir un turno por internet para trámites en una oficina de ANSES.
+  8 [H] Vos: Abrir «Pedir turno»
+  9 [txt] Abriendo «Pedir turno»
+ 10 [txt] Estás en la página de turnos de Anses. Para sacar un turno, tenés que buscar el trámite.
+ 11 [H] Vos: Abrir «CONSULTAR TURNO»
+ 12 [txt] Abriendo «CONSULTAR TURNO»
+ 13 [txt] Estás en la página de turnos de la Anses. Esta página sirve para consultar turnos que ya pediste, te pide el número de CUIL del titular y el número de solicitud. Si no tenés el número de solicitud, podés entrar a Mi Anses.
+ 14 [btn] Completar «CUIL»  (Primera de 6 opciones.)
+ 15 [btn] Completar «Número de solicitud»
+ 16 [btn] Abrir «mi ANSES»
+ 17 [btn] Abrir «VOLVER»
+ 18 [btn] Volver a la página anterior
+ 19 [btn] Otra cosa
+ 20 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 21 [btn] Enviar

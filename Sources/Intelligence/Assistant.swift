@@ -208,7 +208,10 @@ final class Assistant {
         guard !goal.isEmpty, !working else { return }
         inTurn = true
         defer { inTurn = false }
-        heard(shown ?? goal)
+        // Un dato para un campo —un DNI— se muestra tapado: la pantalla la
+        // puede ver cualquiera al lado.
+        let isValue = awaitingField != nil && Self.looksLikeValue(goal)
+        heard(isValue ? Self.masked(goal) : shown ?? goal)
         offer = nil
         touched = []
         lastDone = nil
@@ -232,6 +235,9 @@ final class Assistant {
                 try? await Task.sleep(for: .milliseconds(700))
                 working = false
                 filledFields.insert(field.id)
+                // Y no queda como "lo que pidió antes": eso viaja al modelo en
+                // el turno siguiente, y un DNI no tiene que ir a ningún lado.
+                lastRequest = previousRequest
                 // Sin repetir el dato: un DNI dicho en voz alta en la calle no.
                 say("Listo, escrito en \(Self.spoken(field)).")
                 return
@@ -248,6 +254,16 @@ final class Assistant {
             await reader.go()
             working = false
             await landed(reader)
+            return
+        }
+
+        // En una portada, "titulares" es leer los titulares. Sin preguntarle
+        // a nadie: una vez el ruteador lo tomó como abrir algo, la elección de
+        // destino falló, y "dame los titulares" terminó en "no pude decidir".
+        if let page = reader.page, readsHeadlines(page), !Self.isQuestion(goal),
+           goal.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil).contains("titulares") {
+            readingFrom = 0
+            readAloud(page)
             return
         }
 
@@ -445,12 +461,16 @@ final class Assistant {
             guard let page = reader.page else { return }
             // Si lo que pregunta es por dónde va la lectura, la respuesta ya
             // está contada acá: no hay por qué pagar un viaje a la nube.
-            if let progress = readingProgress(page), Self.asksProgress(decision.question ?? goal) {
+            if let progress = readingProgress(page), Self.asksProgress(goal) {
                 say("\(readingUnit(page)) \(progress.at) de \(progress.of).")
                 return
             }
             working = true
-            await reply(decision.question ?? goal, about: page)
+            // Con las palabras de la persona, no con las del ruteador. Una vez
+            // reescribió "¿y el oficial?" como "¿cuándo se fundó…?" —un
+            // ejemplo de sus propias instrucciones— y eso fue lo contestado.
+            // El contexto de la pregunta anterior ya viaja aparte.
+            await reply(goal, about: page)
             working = false
 
         case .completar:
@@ -1130,6 +1150,21 @@ final class Assistant {
         return text.range(of: "suscri|subscri|registr|login|signin|sign-in|iniciar sesion|/ingresar", options: .regularExpression) != nil
     }
 
+    /// Una dirección sin consulta ni fragmento: el lugar, no el estado.
+    static func place(_ address: String) -> String {
+        guard var parts = URLComponents(string: address) else { return address }
+        parts.query = nil
+        parts.fragment = nil
+        return parts.string ?? address
+    }
+
+    /// Un dato tapado salvo sus tres últimos caracteres: "•••••456".
+    static func masked(_ value: String) -> String {
+        let visible = 3
+        guard value.count > visible else { return String(repeating: "•", count: value.count) }
+        return String(repeating: "•", count: value.count - visible) + value.suffix(visible)
+    }
+
     /// Las raíces de las palabras con contenido: "turno" en "Turnos" y en
     /// "sacar un turno". Para saber si una opción tiene que ver con un pedido.
     static func stems(_ text: String) -> Set<String> {
@@ -1240,7 +1275,7 @@ final class Assistant {
         // como primer párrafo; en La Nación, el pie: el director, el ISSN y la
         // dirección de la empresa. En una portada, leer es leer los titulares.
         if readsHeadlines(page) {
-            return Self.headlines(of: page).enumerated().map { "\($0.offset + 1). \($0.element)" }
+            return Self.headlines(of: page).enumerated().map { "\($0.offset + 1). \(Self.dekick($0.element))" }
         }
         return page.blocks.compactMap { block in
             switch block {
@@ -1978,6 +2013,7 @@ final class Assistant {
                                      href: href, region: "main"))
                 }
                 if more { out.append(option(Self.continueID, "Seguir con los titulares")) }
+                if canGoBack { out.append(option(Self.backID, "Volver a la página anterior")) }
                 return out
             }
             out.append(option(Self.readID, "Leer los titulares"))
@@ -2002,8 +2038,8 @@ final class Assistant {
     /// es "El secretario de Discapacidad…". La volanta no es lo que se dijo,
     /// y con el rotor un botón se reconoce por sus primeras palabras.
     static func dekick(_ title: String) -> String {
-        guard let range = title.range(of: "^[^.!?]{2,30}\\.\\s+(?=[A-ZÁÉÍÓÚÑ¿¡\"«])", options: .regularExpression),
-              title[range].split(separator: " ").count <= 4 else { return title }
+        guard let range = title.range(of: "^[^.!?]{2,32}\\.\\s+(?=[A-ZÁÉÍÓÚÑ¿¡\"«])", options: .regularExpression),
+              title[range].split(separator: " ").count <= 5 else { return title }
         let rest = String(title[range.upperBound...])
         return rest.count >= 20 ? rest : title
     }
@@ -2094,7 +2130,10 @@ final class Assistant {
             closeTurn(on: reader)
             return
         }
-        guard !inTurn, !working, page.url != knownURL else { return }
+        // Misma página si cambia sólo la consulta o el "#": Meteored actualiza
+        // su dirección apenas carga, y se anunciaba "la página cambió" sobre
+        // la misma página.
+        guard !inTurn, !working, Self.place(page.url) != knownURL.map(Self.place) else { return }
         inTurn = true
         defer { inTurn = false }
         interruptNext = true
@@ -2297,7 +2336,13 @@ final class Assistant {
         let headlines = Self.headlines(of: page)
         if !headlines.isEmpty, !Self.isArticle(page) {
             say("Hay \(headlines.count) \(headlines.count == 1 ? "nota" : "notas"). \(headlines.count == 1 ? "Dice" : "Las tres primeras"):")
-            for title in headlines.prefix(3) { say(Self.short(title, 140)) }
+            for title in headlines.prefix(3) { say(Self.short(Self.dekick(title), 140)) }
+            // Como si se hubieran leído: las opciones son abrir ésas y seguir,
+            // no "Leer los titulares", que repetía las mismas tres.
+            readingURL = page.url
+            readingFrom = min(3, headlines.count)
+            lastChunk = 0..<min(3, headlines.count)
+            lastDone = Self.readID
             return
         }
 

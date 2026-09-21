@@ -2,6 +2,10 @@ name: JEFBrowser
 
 options:
   bundleIdPrefix: ai.jef
+  # Castellano: es el idioma de toda la app. Con inglés de base, el WebView
+  # pedía las páginas en inglés — el clima llegaba en Fahrenheit y millas, y
+  # DuckDuckGo con los botones en inglés.
+  developmentLanguage: es
   deploymentTarget:
     iOS: "26.0"
   createIntermediateGroups: true

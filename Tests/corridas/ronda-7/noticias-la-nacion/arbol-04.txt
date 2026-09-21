@@ -1,0 +1,21 @@
+  1 [H] Asistente
+  2 [H] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Los titulares principales son: Adorni explicó la trama de bitcoins en negro y ventas a escondidas de un funcionario. La trastienda de la salida de una colaboradora de Karina, con filtraciones, desconfianza y una denuncia judicial. Renunció el secretario de Discapacidad en medio de la interna por los recortes. Grandes cadenas le cortaron el audio a Trump por la guerra con la prensa tras vetar a CNN, Politico y MS NOW.
+  8 [H] Vos: dame los titulares
+  9 [txt] No pude decidir a dónde ir desde acá. Se puede pedir de otra forma, o tocar una opción.
+ 10 [H] Vos: Intentar de nuevo
+ 11 [txt] Titulares 1 a 3 de 139:
+ 12 [txt] 1. La explicación de Adorni. Bitcoins en negro, ventas a escondidas y la decisión de vivir como si el dinero “no existiera”
+ 13 [txt] 2. Quinta de Olivos. Filtraciones, desconfianza y una denuncia judicial: la trastienda de la salida de una ladera de Karina
+ 14 [txt] 3. "A partir de este momento". Renunció el secretario de Discapacidad en medio de la interna del Gobierno por los recortes
+ 15 [btn] Abrir «Bitcoins en negro, ventas a escondidas y la decisión de vivir como si…»  (Primera de 5 opciones.)
+ 16 [btn] Abrir «Filtraciones, desconfianza y una denuncia judicial: la trastienda de…»
+ 17 [btn] Abrir «A partir de este momento". Renunció el secretario de Discapacidad en…»
+ 18 [btn] Seguir con los titulares
+ 19 [btn] Otra cosa
+ 20 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 21 [btn] Enviar
