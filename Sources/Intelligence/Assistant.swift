@@ -112,7 +112,97 @@ final class Assistant {
             return
         }
 
+        // Hay pedidos que no son ni un destino ni una pregunta sobre un dato,
+        // y mandarlos a decidir afuera es lo que produjo, con la página de
+        // Buenos Aires abierta: "Ayudame a navegar en esta página" →
+        // "¿Querés que vaya a Geografía?". Nadie pidió ir a Geografía. Se
+        // pidió saber dónde se está. Eso lo sabe el código, gratis y sin red.
+        if let page = reader.page, let intent = Self.intent(of: goal) {
+            switch intent {
+            case .orient:
+                describe(page)
+            case .summarize:
+                working = true
+                await summarize(page)
+                working = false
+            }
+            return
+        }
+
         await run(goal, on: reader, steps: Self.maxSteps)
+    }
+
+    /// Lo que el asistente se contesta solo.
+    enum Intent { case orient, summarize }
+
+    /// Sin tildes y sin mayúsculas, porque se escribe con dictado y el
+    /// dictado acentúa cuando quiere.
+    static func intent(of goal: String) -> Intent? {
+        let text = goal
+            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let summarize = "resum|de que (se )?trata|que dice (esta|la) pagina|contame (esta|la) pagina|de que habla"
+        if text.range(of: summarize, options: .regularExpression) != nil { return .summarize }
+
+        // Deliberadamente angosto. "Ayudame a comprar un pasaje" es una
+        // tarea y tiene que seguir yendo a Jev; sólo "ayudame a navegar" y
+        // sus parientes son un pedido de orientación.
+        let orient = "^(ayuda|ayudame|guiame|orientame|ubicame)( en| con| por)?( esta| la)?( pagina| web| pantalla)?$"
+            + "|^ayudame a (navegar|moverme|orientarme|ubicarme)"
+            + "|donde estoy|en que pagina estoy|que hay (aca|aqui|en esta pagina)"
+            + "|que puedo hacer|que es esta pagina|describ(ime|i|ir)( esta| la)? pagina"
+        if text.range(of: orient, options: .regularExpression) != nil { return .orient }
+        return nil
+    }
+
+    /// De qué trata la página.
+    ///
+    /// No es una pregunta sobre un dato: si la página tiene texto, SIEMPRE
+    /// hay respuesta. Decir "eso no lo encontré en esta página" —que es lo
+    /// que decía sobre un artículo de diecisiete mil caracteres— es falso y
+    /// deja a la persona sin nada.
+    ///
+    /// Por eso hay piso: si el modelo no está, no contesta, o su cita no se
+    /// puede verificar, se leen los primeros párrafos tal cual los escribió
+    /// la página. Es peor resumen y es cierto al cien por ciento.
+    private func summarize(_ page: ExtractedPage) async {
+        let paragraphs: [String] = page.blocks.compactMap {
+            if case .paragraph(_, let text, _) = $0 { return text } else { return nil }
+        }
+
+        func readTheOpening(_ why: String) {
+            guard let opening = paragraphs.first(where: { $0.count >= 80 }) else {
+                describe(page)
+                return
+            }
+            say(why)
+            say(String(opening.prefix(400)))
+        }
+
+        guard let answerer else {
+            readTheOpening("No tengo el modelo para resumir acá, así que te leo el principio tal cual:")
+            return
+        }
+        let text = Self.saying(page)
+        guard !text.isEmpty else {
+            say("Esta página no tiene texto que pueda leer.")
+            return
+        }
+        do {
+            guard let answer = try await answerer.answer(
+                "Resumí de qué trata esta página en dos o tres frases.", about: text
+            ) else {
+                readTheOpening("No pude resumirla sin inventar, así que te leo el principio tal cual:")
+                return
+            }
+            say(answer.text)
+            say("Lo dice así: \(answer.quote.prefix(160))")
+        } catch Answerer.AnswerError.transport {
+            readTheOpening("No hay conexión para resumir, pero la página ya está acá. Te leo el principio:")
+        } catch {
+            readTheOpening("Algo falló de mi lado al resumir. Te leo el principio tal cual:")
+        }
     }
 
     /// La persona aceptó lo que el asistente propuso.
@@ -414,25 +504,93 @@ final class Assistant {
     }
 
     /// Dónde quedó la persona y qué hay, sin generar una palabra.
+    ///
+    /// Esta es la parte que más pesa cuando la página no se recorre. Si nadie
+    /// va a pasarle VoiceOver por encima, esto es TODO lo que la persona va a
+    /// saber del lugar donde está: no alcanza con el título. Hay que decir
+    /// qué clase de página es, cuánto tiene, y qué se puede hacer desde acá.
+    ///
+    /// Cinco formas, porque son las cinco que encontramos midiendo: algo que
+    /// tapa, una portada, una nota, una lista de resultados y un formulario.
+    /// La que no cae en ninguna termina en el conteo de opciones, que es
+    /// pobre pero es cierto.
+    ///
+    /// Ni una palabra de acá la escribe un modelo: todo es plantilla, texto
+    /// literal de la página y cuentas del código. Un resumen se pide; una
+    /// orientación no puede depender de que la red conteste.
     private func describe(_ page: ExtractedPage) {
-        say("Llegué. Estás en \(page.sectionTitle).")
-
-        let headlines = Self.headlines(of: page)
-        guard !headlines.isEmpty else {
-            let controls = page.actions.filter { $0.kind != .form }.count
-            if controls > 0 {
-                say("Esta página tiene \(controls) \(controls == 1 ? "opción" : "opciones"). Pedime lo que buscás, o seguí vos.")
+        // Lo que tapa va primero: detrás de un muro de cookies no hay nada
+        // que hacer, y es justo lo que la persona no puede ver que está ahí.
+        if let overlay = page.overlay {
+            say("Antes de nada: \(overlay.kind.title.lowercased()) tapa la página.")
+            if !overlay.choices.isEmpty {
+                say("Te deja: \(overlay.choices.map(\.label).prefix(3).joined(separator: ", ")). Decime cuál.")
             } else {
-                say("Seguí vos cuando quieras.")
+                say("No encontré cómo sacarlo. Podés seguir vos.")
             }
             return
         }
 
-        say("Hay \(headlines.count) \(headlines.count == 1 ? "nota" : "notas"). \(headlines.count == 1 ? "Dice" : "Las tres primeras"):")
-        for title in headlines.prefix(3) {
-            say(String(title.prefix(120)))
+        say("Estás en \(page.sectionTitle), en \(page.displaySite).")
+
+        // 1. Una portada: titulares que se abren.
+        let headlines = Self.headlines(of: page)
+        if !headlines.isEmpty {
+            say("Hay \(headlines.count) \(headlines.count == 1 ? "nota" : "notas"). \(headlines.count == 1 ? "Dice" : "Las tres primeras"):")
+            for title in headlines.prefix(3) { say(String(title.prefix(120))) }
+            say("¿Te leo alguna, te resumo la página, o buscamos otra cosa?")
+            return
         }
-        say("¿Te leo alguna, seguís vos, o buscamos otra cosa?")
+
+        // 2. Una nota para leer. Se pide párrafo largo y no sólo muchos
+        //    caracteres: los recortes de una página de resultados suman
+        //    caracteres de sobra y no son una nota.
+        let paragraphs: [String] = page.blocks.compactMap {
+            if case .paragraph(_, let text, _) = $0 { return text } else { return nil }
+        }
+        if paragraphs.count >= 3, let opening = paragraphs.prefix(3).first(where: { $0.count >= 160 }) {
+            say("Es una nota de \(paragraphs.count) párrafos. Empieza así:")
+            say(String(opening.prefix(220)))
+            say("¿Te la leo entera, te la resumo, o preguntás algo puntual?")
+            return
+        }
+
+        // 3. Una lista de resultados. Es el caso que antes salía como
+        //    "Llegué. Estás en Buscar" y no decía cuántos ni cuáles.
+        let lists = page.listings.filter(\.isNavigable)
+        let items = lists.flatMap(\.items)
+        if items.count >= 3 {
+            let named = lists.count == 1 ? lists[0].title.trimmingCharacters(in: .whitespaces) : ""
+            say(named.isEmpty
+                ? "Hay \(items.count) resultados. Los tres primeros:"
+                : "\(named): \(items.count). Los tres primeros:")
+            for item in items.prefix(3) { say(String(item.title.prefix(120))) }
+            say("¿Abro alguno, te leo más, o buscamos otra cosa?")
+            return
+        }
+
+        // 4. Un formulario: acá no se mira, se completa.
+        if let form = page.actions.first(where: { $0.kind == .form && !($0.fields ?? []).isEmpty }) {
+            let fields = (form.fields ?? []).filter { $0.type != "hidden" }
+            let names = fields.map(\.name).filter { !$0.isEmpty }
+            say("Hay un formulario de \(fields.count) \(fields.count == 1 ? "campo" : "campos")\(names.isEmpty ? "" : ": " + names.prefix(4).joined(separator: ", ")).")
+            if fields.contains(where: \.isSecure) {
+                // Una contraseña no se dicta y no se manda sola.
+                say("Pide una contraseña, así que esa la escribís vos.")
+            } else {
+                say("Decime qué poner y lo completo.")
+            }
+            return
+        }
+
+        // 5. Nada de lo anterior. El número igual sirve: saber que hay 40
+        //    opciones es distinto de no saber si la página cargó.
+        let controls = page.actions.filter { $0.kind != .form }.count
+        if controls > 0 {
+            say("Esta página tiene \(controls) \(controls == 1 ? "opción" : "opciones"). Pedime lo que buscás, o seguí vos.")
+        } else {
+            say("Esta página no me ofrece nada para tocar. Podés pedirme otra cosa.")
+        }
     }
 
     // MARK: - La tabla
