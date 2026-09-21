@@ -68,6 +68,13 @@ final class Assistant {
     /// lista de frases.
     private let router: Router?
 
+    /// Los resultados que no entraron en los tres primeros.
+    private var pending: [Result] = []
+    /// Lo que quedaba de la tarea cuando se frenó a preguntar. "Quiero entrar
+    /// a ANSES y pedir un turno" muestra los resultados de ANSES y se guarda
+    /// el turno: en cuanto la persona elige, sigue sola.
+    private var waiting: String?
+
     init(
         analyzer: PageAnalyzer?,
         answerer: Answerer? = Answerer.fromEnvironment(),
@@ -169,7 +176,15 @@ final class Assistant {
                 // "Quiero entrar a ANSES y pedir un turno" aterrizaba en ANSES
                 // y el turno se perdía: el pedido no sobrevivía al viaje.
                 if let rest = decision.rest, !rest.isEmpty {
-                    await continueWith(rest, on: reader)
+                    if offer != nil {
+                        // Se frenó a preguntar cuál resultado. La tarea espera
+                        // a que la persona elija; seguir ahora sería resolver
+                        // "pedir un turno" contra la página del buscador.
+                        waiting = rest
+                        say("Cuando elijas, sigo con: \(rest).")
+                    } else {
+                        await continueWith(rest, on: reader)
+                    }
                 }
                 return
             }
@@ -448,6 +463,7 @@ final class Assistant {
         working = true
         defer { working = false }
 
+        // Una dirección no se adivina: la escribió la persona.
         if let url = ReaderModel.normalize(goal), goal.contains("."), !goal.contains(" ") {
             say("Abriendo \(url.host() ?? goal).")
             reader.address = goal
@@ -459,7 +475,7 @@ final class Assistant {
         say("Buscando: \(goal).")
         reader.address = Self.searchURL(for: goal)
         await reader.go()
-        guard let results = reader.page.map(Self.results(of:)), !results.isEmpty else {
+        guard let found = reader.page.map(Self.results(of:)), !found.isEmpty else {
             // Pasa de verdad: en una consulta comercial la página trae
             // resultados y nosotros extraemos cero. Decirlo es mejor que
             // abrir cualquier cosa.
@@ -467,25 +483,61 @@ final class Assistant {
             return
         }
 
-        // La prueba: ¿alguno de estos ES el sitio que nombró?
-        if let match = Self.named(goal, among: results) {
-            say("Abriendo \(match.host).")
-            reader.address = match.href
-            await reader.go()
-            if let page = reader.page { describe(page) }
-            return
-        }
-
-        // No nombró un sitio —"quiero ver cómo está el dólar"— así que no hay
-        // nada que probar y no hay una respuesta correcta. Recién ACÁ vale
-        // gastar una pregunta a Jev, que es elegir entre opciones
-        // enumeradas: lo único que se midió que hace bien.
-        say("\(results.count) resultados. No puedo determinar cuál corresponde. Los tres primeros:")
-        for result in results.prefix(3) { say("\(result.title) — \(result.host)") }
-        offer = Offer(goal: goal, options: results.prefix(3).enumerated().map { index, result in
-            .link(id: "r\(index)", label: result.title, href: result.href, region: "main")
-        })
+        // Y acá no se elige. Se presenta.
+        //
+        // Venía abriendo solo el resultado que podía PROBAR que era el sitio
+        // nombrado, y esa prueba falló tres veces en una tarde: "anses" es
+        // exactamente el dominio de la agencia francesa de seguridad
+        // alimentaria; "la nación" también es un diario de Costa Rica; y el
+        // resultado que sí era ANSES apuntaba a una página interna con un
+        // captcha. Cada arreglo tapaba un caso y dejaba el siguiente.
+        //
+        // Un buscador nunca navega solo: muestra la lista. El "voy a tener
+        // suerte" existió durante veinte años como un botón aparte, opcional,
+        // y hasta ahí se acabó. Adivinar por alguien que no puede ver adónde
+        // fue a parar es la peor versión de eso.
+        //
+        // Lo que la prueba de dominio sigue haciendo es ORDENAR: el que
+        // coincide va primero. Elegir no.
+        present(Self.ranked(goal, among: found), for: goal)
     }
+
+    /// Los resultados, con el que coincide con lo pedido adelante.
+    static func ranked(_ request: String, among results: [Result]) -> [Result] {
+        guard let best = named(request, among: results) else { return results }
+        return [best] + results.filter { $0.href != best.href }
+    }
+
+    /// Lo que se encontró, como botones.
+    ///
+    /// De a tres, porque tres opciones se retienen de memoria y diez no —y
+    /// quien no ve tiene que retenerlas de memoria, no puede barrerlas con la
+    /// vista—. El resto queda detrás de "Ver más opciones", que también es un
+    /// botón.
+    private func present(_ results: [Result], for goal: String) {
+        pending = Array(results.dropFirst(Self.shownAtOnce))
+        let shown = results.prefix(Self.shownAtOnce)
+        say("Encontré \(results.count) \(results.count == 1 ? "resultado" : "resultados") para «\(goal)».")
+        say(results.count == 1 ? "Es éste:" : "Los \(shown.count) más probables:")
+        for (index, result) in shown.enumerated() {
+            say("\(index + 1). \(result.title) — \(result.host)")
+        }
+        var options: [Action] = shown.enumerated().map { index, result in
+            .link(id: "res-\(index)-\(result.host)", label: "\(result.title) — \(result.host)",
+                  href: result.href, region: "main")
+        }
+        if !pending.isEmpty {
+            options.append(.link(id: Self.moreID, label: "Ver más opciones (\(pending.count))",
+                                 href: "", region: "main"))
+        }
+        offer = Offer(goal: goal, options: options)
+    }
+
+    /// Cuántos resultados se dicen de una vez.
+    static let shownAtOnce = 3
+    /// El botón que trae los que faltan. No es un destino: no lleva a ningún
+    /// lado, muestra los que quedaron.
+    static let moreID = "jef-mas-opciones"
 
     /// Dónde se busca.
     ///
@@ -858,24 +910,49 @@ final class Assistant {
 
     /// La persona aceptó lo que el asistente propuso.
     func accept(_ action: Action, on reader: ReaderModel) async {
-        guard let pending = offer, !working else { return }
+        guard let chosen = offer, !working else { return }
         offer = nil
         heard(action.label)
         working = true
         defer { working = false }
 
+        // "Ver más opciones" no lleva a ningún lado: trae los que quedaron.
+        if action.id == Self.moreID {
+            present(pending, for: chosen.goal)
+            return
+        }
+
+        // Un resultado de búsqueda es una dirección, no un control de esta
+        // página: se carga, no se toca. Tocarlo sería buscar ese elemento
+        // adentro de la página de resultados, que es otra cosa.
+        if action.href?.isEmpty == false, let href = action.href,
+           ReaderModel.normalize(href) != nil, action.id.hasPrefix("res-") {
+            say("Abriendo \(URL(string: href)?.host() ?? action.label).")
+            reader.address = href
+            await reader.go()
+            working = false
+            if let page = reader.page { describe(page) }
+            // Y recién ahora sigue la tarea que estaba esperando que la
+            // persona eligiera: "…y pedir un turno".
+            if let rest = waiting {
+                waiting = nil
+                await continueWith(rest, on: reader)
+            }
+            return
+        }
+
         // Un campo se llena, no se toca. Sin esto, aceptar "Buscar en
         // Wikipedia" volvía a apretar la lupa y a preguntar de nuevo: la
         // persona confirmaba una y otra vez sin que nada se escribiera.
         if let page = reader.page, let field = Self.field(named: action, in: page) {
-            await write(field, of: action, goal: pending.goal, on: reader)
+            await write(field, of: action, goal: chosen.goal, on: reader)
             return
         }
 
         say("Abriendo \(action.label).")
         await reader.activate(action)
         working = false
-        await run(pending.goal, on: reader, steps: 1)
+        await run(chosen.goal, on: reader, steps: 1)
     }
 
     private func run(_ goal: String, on reader: ReaderModel, steps: Int) async {
@@ -1187,7 +1264,11 @@ final class Assistant {
                 say("Si preferís, te llevo a otro lado o volvemos a la página anterior.")
                 return
             }
-            say("\(overlay.kind.title) tapa la página.")
+            // "Aviso de la página tapa la página" se oía roto: el título de un
+            // aviso genérico ya dice "página". Se nombra lo que tapa y listo.
+            say(overlay.kind == .other
+                ? "Hay un aviso encima de la página."
+                : "\(overlay.kind.title) encima de la página.")
             if !overlay.choices.isEmpty {
                 say("Opciones: \(overlay.choices.map(\.label).prefix(3).joined(separator: ", ")).")
             } else {
