@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [txt] Vos: quiero sacar un turno en anses
+  3 [txt] Buscando: turnos anses.
+  4 [txt] Estás en los resultados de «turnos anses». Los 3 más probables:
+  5 [txt] Vos: Solicitar turnos en ANSES - Argentina.gob.ar — www.argentina.gob.ar
+  6 [txt] Abriendo argentina.gob.ar.
+  7 [txt] Estás en Argentina.gob.ar, en la página para solicitar turnos en ANSES. Podés pedir un turno por internet para ser atendido en una oficina de ANSES.
+  8 [txt] Vos: Abrir «Consultar en línea»
+  9 [txt] Abriendo «Consultar en línea»
+ 10 [txt] Estás en la página de turnos de ANSES. Aquí podés solicitar un turno para ir a una de sus oficinas, aunque muchos trámites también se pueden hacer online. Te informa qué trámites puedes hacer desde el celular o computadora y te da la opción de pedir un turno para otros trámites o atención presencial.
+ 11 [btn] Abrir «Cambio de obra social para trabajadores»  (Primera de 6 opciones.)
+ 12 [btn] Abrir «Cambio medio de cobro jubilaciones y pensiones»
+ 13 [btn] Abrir «Elegir medio de cobro asignaciones y programas»
+ 14 [btn] Abrir «Solicitar la Pensión No Contributiva por Invalidez»
+ 15 [btn] Volver a la página anterior
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 18 [btn] Enviar

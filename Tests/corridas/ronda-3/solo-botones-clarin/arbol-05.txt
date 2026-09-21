@@ -1,0 +1,25 @@
+  1 [H] Asistente
+  2 [txt] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Estás en los resultados de «clarin». Los 3 más probables:
+  5 [txt] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en Clarin.com, una portada de noticias. Los titulares principales son: Adorni justificó su patrimonio diciendo que ganó casi 600 mil dólares con la venta de criptomonedas. Murió a los 97 años Carlos Alonso, pintor argentino contemporáneo. El juez Rafecas procesó a iraníes y libaneses por el atentado a la AMIA.
+  8 [txt] Vos: Abrir «Quiénes son los ganadores y los perdedores tras la definición de la…»
+  9 [txt] Abriendo «Quiénes son los ganadores y los perdedores tras la definición de la…»
+ 10 [txt] Esa nota no se puede leer sin suscribirse o iniciar sesión: el sitio me llevó a «Landing suscripciones».
+ 11 [txt] Vos: Volver a la página anterior
+ 12 [txt] Volviendo.
+ 13 [txt] De vuelta en «Noticias de Argentina», Clarin.com.
+ 14 [txt] Vos: Leer los titulares
+ 15 [txt] 1. Adorni intentó justificar su patrimonio: dijo que ganó casi US$ 600 mil con la venta de criptomonedas, Casi tres meses después de renunciar, el ex jefe de Gabin
+ 16 [txt] 2. Quiénes son los ganadores y los perdedores tras la definición de la agenda del papa León XIV en la Argentina, Tironeo entre Gobierno e Iglesia, Sergio Rubin, Qu
+ 17 [txt] 3. El Gobierno espera que por la visita del Papa se movilicen 7 millones de personas y evalúa declarar asueto, “La Argentina lo espera”, Política, El Gobierno espe
+ 18 [txt] Titular 3 de 131.
+ 19 [btn] Abrir «Adorni intentó justificar su patrimonio: dijo que ganó casi US$ 600…»  (Primera de 5 opciones.)
+ 20 [btn] Abrir «Quiénes son los ganadores y los perdedores tras la definición de la…»
+ 21 [btn] Abrir «El Gobierno espera que por la visita del Papa se movilicen 7 millones…»
+ 22 [btn] Seguir con los titulares
+ 23 [btn] Otra cosa
+ 24 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 25 [btn] Enviar

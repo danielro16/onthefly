@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [txt] Vos: hola, ¿qué podés hacer?
+  3 [txt] Puedo abrir sitios, buscar, leerte páginas, resumirlas y contestar lo que dicen. Para empezar, un sitio o algo para buscar; o una de estas opciones.
+  4 [txt] Vos: Llevame a La Nación
+  5 [txt] Abriendo lanacion.com.ar.
+  6 [txt] Estás en la portada de LA NACION. Los titulares principales son: El secretario de Discapacidad presentó su renuncia. Las grandes cadenas de TV reaccionan al veto de Trump. Un gas contaminado en un interruptor sería la causa de un apagón que dejó a oscuras a más de 2 millones de personas. El Vaticano difundió el cronograma oficial del papa León XIV en la Argentina. Procesaron a siete iraníes y un libanés como presuntos responsables del atentado a la AMIA.
+  7 [txt] Vos: no entiendo, ¿dónde estoy?
+  8 [txt] En Últimas noticias de Argentina y el mundo — LA NACION.
+  9 [txt] Hay 140 notas. Las tres primeras:
+ 10 [txt] Por carta. El secretario de Discapacidad presentó su renuncia en medio de la puja por el rumbo del área
+ 11 [txt] Escalada. Las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele
+ 12 [txt] Interruptor L46. Un gas contaminado en un interruptor sería la causa del apagón que dejó a oscuras a más de 2 millones d
+ 13 [btn] Leer los titulares  (Primera de 3 opciones.)
+ 14 [btn] Resumir la portada
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 17 [btn] Enviar

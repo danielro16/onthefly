@@ -1,0 +1,14 @@
+  1 [H] Asistente
+  2 [txt] Vos: clarín
+  3 [txt] Buscando: clarin.
+  4 [txt] Estás en los resultados de «clarin». Los 3 más probables:
+  5 [txt] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en Clarin.com, una portada de noticias. Los titulares principales son: Adorni justificó su patrimonio diciendo que ganó casi 600 mil dólares con la venta de criptomonedas. Murió a los 97 años Carlos Alonso, pintor argentino contemporáneo. El juez Rafecas procesó a iraníes y libaneses por el atentado a la AMIA.
+  8 [btn] Abrir «Quiénes son los ganadores y los perdedores tras la definición de la…»  (Primera de 5 opciones.)
+  9 [btn] Abrir «Murió a los 97 años Carlos Alonso, uno de los máximos pintores…»
+ 10 [btn] Abrir «El juez Rafecas procesó a los iraníes y libaneses acusados del…»
+ 11 [btn] Volver a la página anterior
+ 12 [btn] Otra cosa
+ 13 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 14 [btn] Enviar

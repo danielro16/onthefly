@@ -107,6 +107,13 @@ final class Assistant {
     /// un resultado: "¿a cuánto está el blue?" se contesta en el sitio que
     /// elija, en vez de describir el sitio.
     private var pendingQuestion: String?
+    /// La dirección de la última página que se contó. Si la página cambia
+    /// sola y queda en otra, hay que decirlo.
+    private var knownURL: String?
+    /// Las preguntas que siguen a una respuesta, como botones.
+    private var nextQuestions: [String] = []
+    /// Una pregunta que la página no contestó: se ofrece buscarla afuera.
+    private var searchInstead: String?
 
     init(
         analyzer: PageAnalyzer?,
@@ -151,7 +158,7 @@ final class Assistant {
         Registro.anotar("turno", ["quien": "jef", "texto": text])
         // Dicho en voz alta. Es la única manera de que alguien que no ve se
         // entere de lo que el asistente hizo mientras lo hace.
-        Voz.decir(aloud ?? text, interrumpir: interruptNext)
+        Voz.decir(Self.forEar(aloud ?? text), interrumpir: interruptNext)
         interruptNext = false
     }
 
@@ -183,6 +190,8 @@ final class Assistant {
         lastDone = nil
         failedTurn = false
         pendingQuestion = nil
+        nextQuestions = []
+        searchInstead = nil
         previousRequest = lastRequest
         lastRequest = goal
         defer { closeTurn(on: reader) }
@@ -327,12 +336,23 @@ final class Assistant {
                let form = page.actions.first(where: { $0.kind == .form && Self.isSearch($0) }),
                let field = (form.fields ?? []).first(where: { $0.type != "hidden" && !$0.isSecure }) {
                 let what = decision.target ?? goal
+                let site = Self.bare(URL(string: page.url)?.host() ?? "") ?? page.displaySite
+                let before = page.url
                 working = true
-                say("Buscando \(what) en \(page.displaySite).")
+                say("Buscando \(what) en \(site).")
                 reader.fill(field, with: what)
                 try? await Task.sleep(for: .milliseconds(700))
                 await reader.submit(form)
                 working = false
+                // La búsqueda del sitio puede no responder: la de Mercado
+                // Libre no hizo nada con el envío, y el asistente volvía a
+                // describir la portada como si hubiera buscado. Entonces se
+                // busca en internet, con el sitio en la consulta.
+                if reader.page?.url == before {
+                    say("La búsqueda de \(site) no respondió. Busco en internet.")
+                    await arrive("\(what) \(site)", on: reader, naming: false)
+                    return
+                }
                 await landed(reader)
                 return
             }
@@ -611,7 +631,9 @@ final class Assistant {
     /// quien no ve tiene que retenerlas de memoria, no puede barrerlas con la
     /// vista—. El resto queda detrás de "Ver más opciones", que también es un
     /// botón.
-    private func present(_ results: [Result], for goal: String) {
+    /// `speak`: decirlos. Al volver a una lista ya escuchada, no: la persona
+    /// ya los oyó, y releerlos era medio minuto de lo mismo.
+    private func present(_ results: [Result], for goal: String, speak: Bool = true) {
         pending = Array(results.dropFirst(Self.shownAtOnce))
         let shown = results.prefix(Self.shownAtOnce)
         // Cada resultado aparece una sola vez: como el botón que se toca,
@@ -628,7 +650,7 @@ final class Assistant {
         let list = shown.enumerated().map {
             "\($0.offset + 1). \(Self.short($0.element.title, 60)), \(Self.bare($0.element.host) ?? $0.element.host)"
         }
-        say("\(found) \(intro)", aloud: "\(found) \(intro) " + list.joined(separator: ". "))
+        if speak { say("\(found) \(intro)", aloud: "\(found) \(intro) " + list.joined(separator: ". ")) }
         var options: [Action] = shown.enumerated().map { index, result in
             .link(id: "res-\(index)-\(result.host)", label: "\(result.title) — \(result.host)",
                   href: result.href, region: "main")
@@ -844,6 +866,12 @@ final class Assistant {
             guard near(result), let site = siteName(of: result.host) else { return false }
             return distance(wanted, site) <= room
         }
+    }
+
+    /// Lo que se escribe, dicho para el oído: "$1.550,00" es "$1.550". Con
+    /// la voz rápida, los centavos en cero se oían "coma cero cero".
+    static func forEar(_ text: String) -> String {
+        text.replacingOccurrences(of: "(\\d),00(?!\\d)", with: "$1", options: .regularExpression)
     }
 
     /// Un título que entra en un botón, cortado en una palabra y no en la
@@ -1180,7 +1208,9 @@ final class Assistant {
                 readTheOpening()
                 return
             }
-            say(answer.text)
+            // Diciendo de qué: "resumime la nota" con la nota sin abrir
+            // resumía la portada, y nadie se enteraba de que era la portada.
+            say("De «\(page.sectionTitle)»: \(answer.text)")
         } catch Answerer.AnswerError.transport {
             readTheOpening(offline: true)
         } catch {
@@ -1204,6 +1234,8 @@ final class Assistant {
         heard(action.label)
         lastDone = nil
         failedTurn = false
+        nextQuestions = []
+        searchInstead = nil
         working = true
         defer { working = false }
 
@@ -1211,7 +1243,7 @@ final class Assistant {
         // la persona escribiendo — sin más botones, que es justo lo que no
         // servía.
         if action.id == Self.otherID {
-            say("¿Qué otra cosa hacemos? Se puede escribir o dictar.")
+            say("¿Qué otra cosa hacemos? Se puede escribir, o dictar con el micrófono del teclado.")
             inputRequests += 1
             return
         }
@@ -1268,7 +1300,7 @@ final class Assistant {
             // suscripción, de ahí a iniciar sesión, y cada una se describía
             // como si la persona hubiera querido ir ahí.
             if opensNote, let page = reader.page, Self.isWall(page) {
-                say("Esa nota no se puede leer sin suscribirse o iniciar sesión: el sitio me llevó a «\(page.sectionTitle)».")
+                say("Esa nota es para suscriptores o pide iniciar sesión: el sitio me llevó a su página de ingreso.")
                 offer = reader.canGoBack
                     ? Offer(goal: "", options: [.link(id: Self.backID, label: "Volver a la página anterior", href: "", region: "main")])
                     : nil
@@ -1506,9 +1538,11 @@ final class Assistant {
         do {
             guard let answer = try await answerer.answer(question, about: text, previous: previousRequest) else {
                 say("Eso no aparece en esta página.")
+                searchInstead = question
                 return
             }
             say(answer.text)
+            nextQuestions = answer.questions
         } catch Answerer.AnswerError.transport {
             say("Sin conexión. Puedo leer la página, pero no contestar preguntas.")
         } catch {
@@ -1605,7 +1639,14 @@ final class Assistant {
         // Del resto, sólo lo que está en el contenido: "Ya tenés tu tarjeta
         // 365?" y "Correo electrónico" salían como opciones de una nota.
         let chrome: Set<String> = ["header", "banner", "nav", "navigation", "footer", "contentinfo"]
-        let rest = all.filter { !headlines.contains(tidy($0.label)) && $0.label.count >= 12 && !chrome.contains($0.region) }
+        // Ni pagar, ni suscribirse, ni bajar una app: en Clarín se sugería
+        // suscribirse, y en el banco, la app — que no se usa desde acá.
+        let paying = "suscri|subscri|premium|comprar|pagar|descarg|app store|google play|apple store"
+        let rest = all.filter {
+            !headlines.contains(tidy($0.label)) && $0.label.count >= 12 && !chrome.contains($0.region)
+                && $0.label.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+                    .range(of: paying, options: .regularExpression) == nil
+        }
         return Array((first + rest).prefix(30))
     }
 
@@ -1648,6 +1689,13 @@ final class Assistant {
         // escribirlo de nuevo. Antes el único botón era "Otra cosa": para
         // quien escribir le cuesta, ahí se terminaba el camino.
         var options: [Action] = []
+        // Después de un dato, lo que probablemente se pregunte después; si la
+        // página no lo tenía, buscarlo afuera. El camino sigue sin escribir.
+        options += nextQuestions.map { .link(id: Self.askPrefix + $0, label: $0, href: "", region: "main") }
+        if let question = searchInstead {
+            options.append(.link(id: Self.askPrefix + "buscá en internet: " + question,
+                                 label: "Buscarlo en internet", href: "", region: "main"))
+        }
         if failedTurn, let request = lastRequest {
             options.append(.link(id: Self.askPrefix + request, label: "Intentar de nuevo", href: "", region: "main"))
         }
@@ -1681,6 +1729,20 @@ final class Assistant {
                                  href: result.href, region: "main"))
             }
             return out
+        }
+
+        // Un formulario que no es de búsqueda —el ingreso de un banco— se
+        // completa: ése es el paso que sigue, y no había forma de darlo sin
+        // saber escribir el pedido justo. La contraseña no: ésa es de la
+        // persona.
+        if let form = page.actions.first(where: { $0.kind == .form && !Self.isSearch($0) && !($0.fields ?? []).isEmpty }) {
+            let fillable = (form.fields ?? []).filter {
+                $0.type != "hidden" && !$0.isSecure && $0.type != "checkbox" && !Self.isChallenge($0)
+            }
+            for field in fillable.prefix(2) {
+                let name = Self.spoken(field)
+                out.append(.link(id: Self.askPrefix + "completá el campo \(name)", label: "Completar «\(name)»", href: "", region: "main"))
+            }
         }
 
         if readsHeadlines(page) {
@@ -1749,12 +1811,38 @@ final class Assistant {
         // entera eran cuarenta segundos de algo ya escuchado. La página del
         // buscador sí se ofrece como la primera vez: sus resultados son los
         // botones.
-        guard let page = reader.page, Self.searchQuery(of: page) == nil else {
+        guard let page = reader.page else {
             await landed(reader)
+            return
+        }
+        knownURL = page.url
+        if let query = Self.searchQuery(of: page) {
+            say("De vuelta en los resultados de «\(query)».")
+            present(Self.ranked(query, among: Self.results(of: page), naming: false), for: query, speak: false)
             return
         }
         offer = nil
         say("De vuelta en «\(page.sectionTitle)», \(page.displaySite).")
+    }
+
+    /// La página cambió sin que nadie se lo pidiera al asistente: un
+    /// captcha que aparece después de cargar, un sitio que redirige, o la
+    /// persona tocando la página misma. En Mercado Libre el captcha llegó en
+    /// silencio y el asistente seguía hablando de la portada.
+    func pageChanged(_ page: ExtractedPage, on reader: ReaderModel) async {
+        guard !inTurn, !working, page.url != knownURL else { return }
+        inTurn = true
+        defer { inTurn = false }
+        interruptNext = true
+        if page.overlay?.kind == .captcha {
+            say("La página cambió.")
+            describe(page)
+        } else {
+            knownURL = page.url
+            offer = nil
+            say("La página cambió: ahora estás en «\(page.sectionTitle)», \(page.displaySite).")
+        }
+        closeTurn(on: reader)
     }
 
     /// Después de cargar: dónde quedó, o que no se pudo.
@@ -1785,6 +1873,7 @@ final class Assistant {
         // "no soy un robot", seguían ofreciéndose "Suscribirme a Meli+" y
         // "Configurar cookies" de la portada.
         offer = nil
+        knownURL = page.url
         // Un captcha es el único aviso que es un muro: detrás no hay nada que
         // contar hasta que alguien lo resuelva.
         if page.overlay?.kind == .captcha { describe(page); return }
@@ -1816,7 +1905,7 @@ final class Assistant {
         let candidates = Self.candidates(of: page)
         working = true
         let orientation = try? await answerer.orient(
-            page: text, candidates: candidates.map(\.label)
+            page: text, candidates: candidates.map(\.label), goal: lastRequest
         )
         working = false
         guard let orientation else { describe(page); return }
@@ -1873,6 +1962,7 @@ final class Assistant {
     /// literal de la página y cuentas del código. Un resumen se pide; una
     /// orientación no puede depender de que la red conteste.
     private func describe(_ page: ExtractedPage) {
+        knownURL = page.url
         // Lo que tapa va primero: detrás de un muro de cookies no hay nada
         // que hacer, y es justo lo que la persona no puede ver que está ahí.
         if let overlay = page.overlay {
@@ -1909,7 +1999,7 @@ final class Assistant {
         let headlines = Self.headlines(of: page)
         if !headlines.isEmpty, !Self.isArticle(page) {
             say("Hay \(headlines.count) \(headlines.count == 1 ? "nota" : "notas"). \(headlines.count == 1 ? "Dice" : "Las tres primeras"):")
-            for title in headlines.prefix(3) { say(String(title.prefix(120))) }
+            for title in headlines.prefix(3) { say(Self.short(title, 140)) }
             return
         }
 
@@ -1934,7 +2024,7 @@ final class Assistant {
             say(named.isEmpty
                 ? "Hay \(items.count) resultados. Los tres primeros:"
                 : "\(named): \(items.count). Los tres primeros:")
-            for item in items.prefix(3) { say(String(item.title.prefix(120))) }
+            for item in items.prefix(3) { say(Self.short(item.title, 140)) }
             return
         }
 

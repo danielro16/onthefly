@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [txt] Vos: entrá a mercado libre y buscame auriculares bluetooth
+  3 [txt] Buscando: mercado libre.
+  4 [txt] Estás en los resultados de «mercado libre». Los 3 más probables:
+  5 [txt] Cuando elijas, sigo con: buscame auriculares bluetooth.
+  6 [txt] Vos: Mercado Libre Argentina - Envíos Gratis en el día — www.mercadolibre.com.ar
+  7 [txt] Abriendo mercadolibre.com.ar.
+  8 [txt] Estás en la portada de Mercado Libre Argentina. Hay ofertas destacadas como GLAM DAYS con hasta 40% de descuento en pantalones y remeras, y en accesorios para vehículos, zapatillas y electrónica hay hasta 45% de descuento y 18 cuotas sin interés. Además, hay beneficios de entretenimiento como 15% de descuento en HBO Max, Universal+ y ViX Premium.
+  9 [txt] Sigo con: buscame auriculares bluetooth.
+ 10 [txt] Buscando auriculares bluetooth en www.mercadolibre.com.ar.
+ 11 [txt] Estás en la portada de Mercado Libre Argentina. Tenés descuentos en Glam Days para pantalones y remeras, hasta un 40%. También hay ofertas en accesorios para vehículos y zapatillas, ambos hasta un 45% y 18 cuotas sin interés. Hay una opción de suscripción con beneficios exclusivos desde $ 5.490 por mes y beneficios de entretenimiento como 15% de descuento en HBO Max, Universal+ y ViX Premium.
+ 12 [txt] Vos: ¿cuánto sale el más barato?
+ 13 [txt] La página me pide que complete un paso de seguridad para poder verla, así que no puedo decirte el precio de los auriculares más baratos.
+ 14 [btn] Volver a la página anterior  (Primera de 2 opciones.)
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 17 [btn] Enviar

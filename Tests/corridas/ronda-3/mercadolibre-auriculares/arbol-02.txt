@@ -1,0 +1,19 @@
+  1 [H] Asistente
+  2 [txt] Vos: entrá a mercado libre y buscame auriculares bluetooth
+  3 [txt] Buscando: mercado libre.
+  4 [txt] Estás en los resultados de «mercado libre». Los 3 más probables:
+  5 [txt] Cuando elijas, sigo con: buscame auriculares bluetooth.
+  6 [txt] Vos: Mercado Libre Argentina - Envíos Gratis en el día — www.mercadolibre.com.ar
+  7 [txt] Abriendo mercadolibre.com.ar.
+  8 [txt] Estás en la portada de Mercado Libre Argentina. Hay ofertas destacadas como GLAM DAYS con hasta 40% de descuento en pantalones y remeras, y en accesorios para vehículos, zapatillas y electrónica hay hasta 45% de descuento y 18 cuotas sin interés. Además, hay beneficios de entretenimiento como 15% de descuento en HBO Max, Universal+ y ViX Premium.
+  9 [txt] Sigo con: buscame auriculares bluetooth.
+ 10 [txt] Buscando auriculares bluetooth en www.mercadolibre.com.ar.
+ 11 [txt] Estás en la portada de Mercado Libre Argentina. Tenés descuentos en Glam Days para pantalones y remeras, hasta un 40%. También hay ofertas en accesorios para vehículos y zapatillas, ambos hasta un 45% y 18 cuotas sin interés. Hay una opción de suscripción con beneficios exclusivos desde $ 5.490 por mes y beneficios de entretenimiento como 15% de descuento en HBO Max, Universal+ y ViX Premium.
+ 12 [btn] Abrir «GLAM DAYS PANTALONES ¡HASTA 40% OFF! Ver ofertas, var trackMclicks =…»  (Primera de 6 opciones.)
+ 13 [btn] Abrir «GLAM DAYS REMERAS ¡HASTA 40% OFF! Ver ofertas, var trackMclicks =…»
+ 14 [btn] Abrir «ACC, VEHÍCULOS ¡HASTA 45% OFF Y 18X SIN INTERÉS! Ver ofertas, var…»
+ 15 [btn] Abrir «Suscribirme desde $ 5.490»
+ 16 [btn] Volver a la página anterior
+ 17 [btn] Otra cosa
+ 18 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 19 [btn] Enviar

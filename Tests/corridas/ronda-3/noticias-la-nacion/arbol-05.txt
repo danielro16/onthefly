@@ -1,0 +1,19 @@
+  1 [H] Asistente
+  2 [txt] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [txt] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de La Nación. Los titulares principales son: las grandes cadenas de TV reaccionan al veto de Trump; un gas contaminado en un interruptor sería la causa del apagón que dejó a oscuras a más de 2 millones de personas; y Adorni dijo ante la Justicia que su evolución patrimonial tiene “sustento razonable y verificable”.
+  8 [txt] Vos: dame los titulares
+  9 [txt] 1. Escalada. Las grandes cadenas de TV reaccionan al veto de Trump y golpean donde más le duele
+ 10 [txt] 2. Interruptor L46. Un gas contaminado en un interruptor sería la causa del apagón que dejó a oscuras a más de 2 millones d
+ 11 [txt] 3. 70 horas de frenesí. Tres misas y mucha orfebrería diplomática para evitar que la visita del Papa se politice
+ 12 [txt] Titular 3 de 140.
+ 13 [txt] Vos: resumime la nota
+ 14 [txt] La ultraderecha alemana se posiciona como "el partido del pueblo" tras otro triunfo. En la Argentina, el Vaticano difundió el cronograma oficial del papa León XIV, quien visitará el país del 8 al 11 de noviembre. Además, murió el pintor Carlos Alonso a los 97 años.
+ 15 [btn] Leer los titulares  (Primera de 3 opciones.)
+ 16 [btn] Volver a la página anterior
+ 17 [btn] Otra cosa
+ 18 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 19 [btn] Enviar

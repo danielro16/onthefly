@@ -1,0 +1,16 @@
+  1 [H] Asistente
+  2 [txt] Vos: quiero entrar al home banking del banco nación
+  3 [txt] Buscando: home banking banco nacion.
+  4 [txt] Estás en los resultados de «home banking banco nacion». Los 3 más probables:
+  5 [txt] Vos: Banco de la Nación Argentina - Home banking — digital.bna.com.ar
+  6 [txt] Abriendo digital.bna.com.ar.
+  7 [txt] Estás en el Home Banking del Banco Nación. Te pide tu DNI y Usuario para continuar. Si olvidaste tu usuario o contraseña, podés recuperarlos.
+  8 [txt] Vos: Abrir «Recuperar usuario y contraseña»
+  9 [txt] Tocando «Recuperar usuario y contraseña».
+ 10 [txt] Estás en el home banking del Banco Nación. Esta página te pide que continúes el proceso desde tu celular, y que uses la app BNA+ para recuperar tu usuario y contraseña.
+ 11 [btn] Abrir «Disponible en google play»  (Primera de 4 opciones.)
+ 12 [btn] Abrir «Descárgalo en el app store»
+ 13 [btn] Volver a la página anterior
+ 14 [btn] Otra cosa
+ 15 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 16 [btn] Enviar

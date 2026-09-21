@@ -1,0 +1,20 @@
+  1 [H] Asistente
+  2 [txt] Vos: buscá mar del plata en wikipedia
+  3 [txt] Buscando: wikipedia.
+  4 [txt] Estás en los resultados de «wikipedia». Los 3 más probables:
+  5 [txt] Vos: Wikipedia — www.wikipedia.org
+  6 [txt] Abriendo wikipedia.org.
+  7 [txt] Estás en la portada de Wikipedia. Te pide que busques algo en la enciclopedia, y te cuenta que Wikipedia no se puede vender. Te pide que consideres donar para apoyar el sitio, que es una organización sin fines de lucro. Un mensaje te informa que en Estados Unidos el promedio de donación es de 13 dólares, y muchos donantes aportan 2.75 dólares, que es lo que te piden. Hay un formulario para donar.
+  8 [txt] Vos: ¿cuándo se fundó?
+  9 [txt] La página no tiene la información que buscás. Es la portada de Wikipedia y solo muestra un formulario para buscar y un pedido de donación.
+ 10 [txt] Vos: leeme la nota
+ 11 [txt] An important update for readers in the United States.
+ 12 [txt] You deserve an explanation, so please don't skip this 1-minute read. This year, Wikipedia has had fewer visitors and fewer new supporters, so your visit today means a lot. We hope that Wikipedia's given you at least $2.75 of knowledge recently. If everyone who found Wikipedia useful gave $2.75, we'd hit our goal in a few hours.
+ 13 [txt] After 25 years, Wikipedia is still the internet we were promised—created by people, not by machines. It's not perfect, but it's not here to push a point of view. It's run by a nonprofit, not a giant technology company or a billionaire.
+ 14 [txt] Párrafo 3 de 8.
+ 15 [btn] Seguir leyendo  (Primera de 4 opciones.)
+ 16 [btn] Resumir la nota
+ 17 [btn] Volver a la página anterior
+ 18 [btn] Otra cosa
+ 19 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 20 [btn] Enviar

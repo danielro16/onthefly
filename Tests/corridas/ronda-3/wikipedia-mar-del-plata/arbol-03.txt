@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [txt] Vos: buscá mar del plata en wikipedia
+  3 [txt] Buscando: wikipedia.
+  4 [txt] Estás en los resultados de «wikipedia». Los 3 más probables:
+  5 [txt] Vos: Wikipedia — www.wikipedia.org
+  6 [txt] Abriendo wikipedia.org.
+  7 [txt] Estás en la portada de Wikipedia. Te pide que busques algo en la enciclopedia, y te cuenta que Wikipedia no se puede vender. Te pide que consideres donar para apoyar el sitio, que es una organización sin fines de lucro. Un mensaje te informa que en Estados Unidos el promedio de donación es de 13 dólares, y muchos donantes aportan 2.75 dólares, que es lo que te piden. Hay un formulario para donar.
+  8 [txt] Vos: ¿cuándo se fundó?
+  9 [txt] La página no tiene la información que buscás. Es la portada de Wikipedia y solo muestra un formulario para buscar y un pedido de donación.
+ 10 [btn] Leer la nota  (Primera de 4 opciones.)
+ 11 [btn] Resumir la nota
+ 12 [btn] Volver a la página anterior
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.)
+ 15 [btn] Enviar

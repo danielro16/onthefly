@@ -196,6 +196,9 @@ struct AssistantPanel: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(mine ? "Vos: \(turn.text)" : turn.text)
+        // Cada pedido es un encabezado: con el rotor se salta de un pedido al
+        // siguiente, en vez de recorrer cada línea de cada respuesta.
+        .accessibilityAddTraits(mine ? .isHeader : [])
     }
 
     private var composer: some View {
@@ -212,6 +215,8 @@ struct AssistantPanel: View {
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .background(Color(.tertiarySystemFill), in: Capsule())
+                // Con borde: sin él, con poca vista el campo no se distinguía.
+                .overlay(Capsule().strokeBorder(Color.secondary, lineWidth: 1))
                 .accessibilityLabel("Pedido")
                 .accessibilityHint("Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.")
 

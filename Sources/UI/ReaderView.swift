@@ -73,6 +73,7 @@ final class ReaderModel {
             guard !page.isEquivalent(to: self.page) else { return }
             address = page.url
             state = .loaded(page)
+            Task { await assistant.pageChanged(page, on: self) }
         case .failure(let error):
             state = .failed(error.localizedDescription)
         }
