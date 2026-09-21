@@ -407,6 +407,16 @@ final class Assistant {
             say("Te dejo en el formulario. Cuando entres, volvé acá y seguimos.")
             return
         }
+        // Un desafío de imagen no se completa por más que sea un campo de
+        // texto: el código está dibujado y nadie de este lado lo ve. En el
+        // simulador el asistente llegó a preguntar "¿qué pongo en un campo
+        // sin nombre?" frente al captcha de ANSES — ofrecerse a hacer algo
+        // imposible es peor que decir que no se puede.
+        if Self.isChallenge(field) {
+            say("Ese campo pide un código que está dibujado en una imagen. No lo puedo leer ni completar.")
+            say("Lo tenés que escribir vos mirando la pantalla, o pedir ayuda. Mientras tanto puedo llevarte a otro lado.")
+            return
+        }
         guard let value = decision.value, !value.isEmpty else {
             say("¿Qué pongo en \(Self.spoken(field))?")
             return
@@ -492,11 +502,27 @@ final class Assistant {
     enum Engine: String {
         case duckduckgo, google
 
+        /// La consulta, con el país de la persona.
+        ///
+        /// Es lo que hace bien un buscador y nosotros no podemos: ordenar por
+        /// dónde está quien pregunta. Sin esto, "anses" devuelve la agencia
+        /// francesa de seguridad alimentaria entre los primeros, y "banco
+        /// nación" el Banco de la Nación del Perú. Medido: con la región
+        /// puesta, anses.fr se cae del top y bna.com.ar sube.
+        ///
+        /// Va el PAÍS y el idioma, nada más. Ni ciudad ni coordenadas: para
+        /// ordenar resultados alcanza con eso, y es lo único que hace falta
+        /// mandarle a un tercero.
         func url(for query: String) -> String {
             let escaped = query.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? query
+            let country = (Locale.current.region?.identifier ?? "AR").lowercased()
+            let language = Locale.current.language.languageCode?.identifier ?? "es"
             switch self {
-            case .google:     return "https://www.google.com/search?q=\(escaped)&hl=es"
-            case .duckduckgo: return "https://lite.duckduckgo.com/lite/?q=\(escaped)"
+            case .google:
+                return "https://www.google.com/search?q=\(escaped)&gl=\(country)&hl=\(language)"
+            case .duckduckgo:
+                // DuckDuckGo lo llama kl, y lo escribe al revés: país-idioma.
+                return "https://lite.duckduckgo.com/lite/?q=\(escaped)&kl=\(country)-\(language)"
             }
         }
     }
@@ -577,14 +603,25 @@ final class Assistant {
         // cosméticos, sólo porque el buscador lo había puesto más arriba.
         // Una coincidencia exacta nunca puede perder contra un parecido.
         //
-        // Pero entre varios exactos manda el país. Visto en el simulador:
+        // Entre varios exactos manda el país. Es una RED, no el mecanismo:
+        // lo que ordena bien es la región que se le manda al buscador, y esto
+        // atrapa lo que se le escape. Visto en el simulador:
         // "anses" coincide exacto con anses.fr, la agencia francesa de
         // seguridad alimentaria, y ahí terminó una persona que pedía la ANSES
         // argentina. El dominio prueba QUÉ sitio es; el país prueba CUÁL de
         // los que se llaman igual.
         let exact = results.filter { labels(of: $0.host).contains(wanted) }
         if !exact.isEmpty {
-            return exact.min { closer($0) > closer($1) } ?? exact[0]
+            // Y entre los exactos del mismo país gana la PORTADA. Quien dice
+            // "anses" quiere anses.gob.ar, no
+            // servicioswww.anses.gob.ar/Consulta/…, que es adonde fue a parar
+            // en el simulador: una página de consulta de estudios con un
+            // captcha. Nombrar un sitio es pedir su entrada, no un rincón.
+            return exact.min { a, b in
+                if closer(a) != closer(b) { return closer(a) > closer(b) }
+                if depth(a) != depth(b) { return depth(a) < depth(b) }
+                return false
+            } ?? exact[0]
         }
 
         // Un prefijo cuenta: lanacion contra lanacionmas.
@@ -611,6 +648,19 @@ final class Assistant {
             .filter { $0.isLetter || $0.isNumber }
     }
 
+    /// Un campo que pide copiar un código dibujado.
+    ///
+    /// Es la clase de muro que no tiene traspaso: el código vive en una
+    /// imagen, y ni el extractor ni el asistente lo ven. Los de reCAPTCHA los
+    /// agarra `detectChallenge` en el extractor; éste es el casero, que en
+    /// ANSES es un input común con un cartel al lado.
+    static func isChallenge(_ field: Action.Field) -> Bool {
+        let text = (field.name + " " + field.value)
+            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        return text.range(of: "captcha|codigo de (la )?imagen|codigo que se muestra|verificacion visual",
+                          options: .regularExpression) != nil
+    }
+
     /// El nombre de un campo, dicho como se le dice a una persona.
     ///
     /// Visto en el simulador, en el sistema de ANSES: el asistente anunció
@@ -632,6 +682,19 @@ final class Assistant {
         case "search":   return "búsqueda"
         default:         return "un campo sin nombre"
         }
+    }
+
+    /// Cuán adentro del sitio está esta dirección.
+    ///
+    /// Subdominios más los tramos de la ruta. `anses.gob.ar` da 0;
+    /// `servicioswww.anses.gob.ar/Consulta/Estudios.aspx` da 3. Sirve para
+    /// preferir la portada cuando alguien nombra un sitio.
+    static func depth(_ result: Result) -> Int {
+        let host = result.host.split(separator: ".").map(String.init)
+            .filter { !suffixes.contains($0) }
+        let path = (URL(string: result.href)?.path ?? "")
+            .split(separator: "/").filter { !$0.isEmpty }
+        return max(0, host.count - 1) + path.count
     }
 
     /// Cuán cerca está un sitio de quien pregunta.
