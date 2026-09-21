@@ -112,6 +112,16 @@ final class Assistant {
             return
         }
 
+        // Con la app recién abierta no hay página donde buscar nada, y el
+        // asistente contestaba "Todavía no hay una página cargada": un
+        // callejón sin salida en el primer turno, que es justo donde alguien
+        // que no ve necesita que algo pase. Escribir "la nación" tiene que
+        // terminar en La Nación.
+        if reader.page == nil {
+            await arrive(goal, on: reader)
+            return
+        }
+
         // Hay pedidos que no son ni un destino ni una pregunta sobre un dato,
         // y mandarlos a decidir afuera es lo que produjo, con la página de
         // Buenos Aires abierta: "Ayudame a navegar en esta página" →
@@ -135,6 +145,195 @@ final class Assistant {
         }
 
         await run(goal, on: reader, steps: Self.maxSteps)
+    }
+
+    // MARK: - Llegar a algún lado desde la nada
+
+    /// Un resultado de buscador del que podemos probar que es un resultado.
+    struct Result: Sendable {
+        let title: String
+        let href: String
+        var host: String { URL(string: href)?.host()?.lowercased() ?? "" }
+    }
+
+    /// Adónde ir cuando todavía no hay página.
+    ///
+    /// El orden es por costo y por certeza, no por elegancia: una dirección
+    /// se carga, y todo lo demás se busca. Lo que NO se hace es pedirle a un
+    /// modelo que adivine un dominio — inventar "lanacion.com.ar" es fácil,
+    /// inventar "bancoprovinciadesantafe.com.ar" es cómo se manda a alguien
+    /// que no ve a un sitio que no es el suyo.
+    private func arrive(_ goal: String, on reader: ReaderModel) async {
+        working = true
+        defer { working = false }
+
+        if let url = ReaderModel.normalize(goal), goal.contains("."), !goal.contains(" ") {
+            say("Abro \(url.host() ?? goal).")
+            reader.address = goal
+            await reader.go()
+            if let page = reader.page { describe(page) }
+            return
+        }
+
+        say("Busco \(goal).")
+        reader.address = Self.searchURL(for: goal)
+        await reader.go()
+        guard let results = reader.page.map(Self.results(of:)), !results.isEmpty else {
+            // Pasa de verdad: en una consulta comercial la página trae
+            // resultados y nosotros extraemos cero. Decirlo es mejor que
+            // abrir cualquier cosa.
+            say("No pude leer los resultados de esa búsqueda. Decime un sitio y te llevo, o probá con otras palabras.")
+            return
+        }
+
+        // La prueba: ¿alguno de estos ES el sitio que nombró?
+        if let match = Self.named(goal, among: results) {
+            say("Abro \(match.host).")
+            reader.address = match.href
+            await reader.go()
+            if let page = reader.page { describe(page) }
+            return
+        }
+
+        // No nombró un sitio —"quiero ver cómo está el dólar"— así que no hay
+        // nada que probar y no hay una respuesta correcta. Recién ACÁ vale
+        // gastar una pregunta a Jev, que es elegir entre opciones
+        // enumeradas: lo único que se midió que hace bien.
+        say("Encontré \(results.count) resultados y no sé cuál querés. Estos son los tres primeros:")
+        for result in results.prefix(3) { say("\(result.title) — \(result.host)") }
+        offer = Offer(goal: goal, options: results.prefix(3).enumerated().map { index, result in
+            .link(id: "r\(index)", label: result.title, href: result.href, region: "main")
+        })
+    }
+
+    /// Google, que es el que mejores resultados da acá.
+    static func searchURL(for query: String) -> String {
+        let escaped = query.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? query
+        return "https://www.google.com/search?q=\(escaped)&hl=es"
+    }
+
+    /// Lo que en una página de buscador es de verdad un resultado.
+    ///
+    /// Medido, y por eso existe: en Bing y en Startpage los tres primeros
+    /// "resultados" que extraíamos eran "Último Momento", "Deportes" y
+    /// "Economía" — enlaces de navegación de una tarjeta, no resultados. Si
+    /// hubiéramos abierto el primero, abríamos cualquier cosa. La posición
+    /// no prueba nada.
+    static func results(of page: ExtractedPage) -> [Result] {
+        var out: [Result] = []
+        var seen = Set<String>()
+
+        func consider(_ title: String, _ href: String) {
+            // Los anuncios se sacan por el href, que es donde se declaran.
+            // Pedirle a un modelo que "no elija publicidad" sería gastar una
+            // probabilidad en algo que se puede demostrar.
+            let ad = "aclk\\?|googleadservices|doubleclick|/aclick|bing\\.com/aclick|duckduckgo\\.com/y\\.js|utm_medium=cpc"
+            guard href.range(of: ad, options: [.regularExpression, .caseInsensitive]) == nil else { return }
+            guard let url = URL(string: href), let host = url.host()?.lowercased() else { return }
+            // El buscador no es un resultado de sí mismo.
+            let engine = "google\\.|gstatic|googleusercontent|bing\\.|microsoft\\.|duckduckgo\\.|brave\\.|startpage\\."
+            guard host.range(of: engine, options: [.regularExpression]) == nil else { return }
+            // "Deportes" no es un resultado. Un título de resultado es una
+            // frase, no una palabra de menú.
+            let clean = title.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard clean.count >= 15 else { return }
+            guard seen.insert(host).inserted else { return }
+            out.append(Result(title: clean, href: href))
+        }
+
+        let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        for entry in page.stream ?? [] {
+            switch entry.kind {
+            case "link":
+                if let label = entry.label, let href = entry.href { consider(label, href) }
+            case "listing":
+                guard let listing = entry.ref.flatMap({ byID[$0] }) else { continue }
+                for item in listing.items { if let href = item.href { consider(item.title, href) } }
+            default: continue
+            }
+        }
+        return out
+    }
+
+    /// El resultado que ES el sitio que la persona nombró, si alguno lo es.
+    ///
+    /// Se compara contra el DOMINIO y no contra el título, porque el dominio
+    /// es lo que distingue al sitio real del que se le parece. Y se compara
+    /// aproximado a propósito: quien escribe "la nasion" quiere La Nación, y
+    /// Google ya lo entendió — el que no tiene que ser más estricto que
+    /// Google somos nosotros.
+    ///
+    /// Entre los que se parecen gana el mejor rankeado, no el más parecido:
+    /// "clarín" está a un carácter de clarins.com, que vende cosméticos, y
+    /// no es eso lo que nadie busca desde acá.
+    static func named(_ request: String, among results: [Result]) -> Result? {
+        let wanted = flatten(request)
+        guard wanted.count >= 3 else { return nil }
+
+        // Primero el que ES, sin aproximar nada — y recién después el que se
+        // parece. Al revés, "clarín" se iba a clarins.com, que vende
+        // cosméticos, sólo porque el buscador lo había puesto más arriba.
+        // Una coincidencia exacta nunca puede perder contra un parecido.
+        if let exact = results.first(where: { labels(of: $0.host).contains(wanted) }) { return exact }
+
+        // Un prefijo cuenta: lanacion contra lanacionmas.
+        if let prefix = results.first(where: {
+            labels(of: $0.host).contains { $0.hasPrefix(wanted) || wanted.hasPrefix($0) }
+        }) { return prefix }
+
+        // Y por último el error de tipeo. Margen angosto: un carácter cada
+        // cinco. Abrir el sitio equivocado a alguien que no ve es peor que
+        // no abrir nada.
+        let room = max(1, wanted.count / 5)
+        return results.first { result in
+            labels(of: result.host).contains { distance(wanted, $0) <= room }
+        }
+    }
+
+    /// Sin tildes, sin mayúsculas y sin espacios.
+    ///
+    /// El artículo NO se saca, y ése era el error: "La Nación" se escribe
+    /// `lanacion.com.ar`, con el "la" adentro. Sacándoselo dejaba de
+    /// coincidir con lo único contra lo que vale la pena comparar.
+    static func flatten(_ text: String) -> String {
+        text.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+            .filter { $0.isLetter || $0.isNumber }
+    }
+
+    /// Las partes del dominio que nombran al sitio.
+    ///
+    /// No alcanza con la primera: Wikipedia vive en `es.wikipedia.org`, y
+    /// quedarse con "es" es no encontrarla nunca. Se sacan los sufijos, que
+    /// no nombran a nadie.
+    static let suffixes: Set<String> = [
+        "www", "com", "org", "net", "gob", "gov", "edu", "int", "mil", "co",
+        "ar", "es", "mx", "cl", "uy", "br", "us", "uk", "io", "app", "info",
+    ]
+
+    static func labels(of host: String) -> [String] {
+        host.split(separator: ".").map(String.init)
+            .filter { !suffixes.contains($0) }
+            .map(flatten)
+            .filter { !$0.isEmpty }
+    }
+
+    /// Cuántos caracteres hay que cambiar para llegar de una a la otra.
+    static func distance(_ a: String, _ b: String) -> Int {
+        let a = Array(a), b = Array(b)
+        guard !a.isEmpty else { return b.count }
+        guard !b.isEmpty else { return a.count }
+        var previous = Array(0...b.count)
+        var current = [Int](repeating: 0, count: b.count + 1)
+        for i in 1...a.count {
+            current[0] = i
+            for j in 1...b.count {
+                current[j] = a[i - 1] == b[j - 1]
+                    ? previous[j - 1]
+                    : 1 + min(previous[j - 1], previous[j], current[j - 1])
+            }
+            swap(&previous, &current)
+        }
+        return previous[b.count]
     }
 
     /// Lo que el asistente se contesta solo.
