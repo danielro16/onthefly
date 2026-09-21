@@ -125,6 +125,11 @@ final class Assistant {
                 working = true
                 await summarize(page)
                 working = false
+            case .read:
+                readingFrom = 0
+                readAloud(page)
+            case .keepReading:
+                readAloud(page)
             }
             return
         }
@@ -133,7 +138,7 @@ final class Assistant {
     }
 
     /// Lo que el asistente se contesta solo.
-    enum Intent { case orient, summarize }
+    enum Intent { case orient, summarize, read, keepReading }
 
     /// Sin tildes y sin mayúsculas, porque se escribe con dictado y el
     /// dictado acentúa cuando quiere.
@@ -142,8 +147,22 @@ final class Assistant {
             .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
             .trimmingCharacters(in: .whitespacesAndNewlines)
 
+        // Antes que nada: "seguí" no dice qué seguir, dice que siga lo que
+        // veníamos haciendo. Si no fuera primero, "seguí leyendo" se leería
+        // como empezar de nuevo desde el principio.
+        let keepReading = "^(segui|seguí|segui leyendo|continua|continuar|mas|otro parrafo|dale)$|^segui (leyendo|con la nota)"
+        if text.range(of: keepReading, options: .regularExpression) != nil { return .keepReading }
+
         let summarize = "resum|de que (se )?trata|que dice (esta|la) pagina|contame (esta|la) pagina|de que habla"
         if text.range(of: summarize, options: .regularExpression) != nil { return .summarize }
+
+        // Angosto a propósito. "Leeme el precio del dólar" NO es un pedido de
+        // lectura: es una pregunta, y leerle la nota desde el principio es
+        // ignorarla. Leer es leer TODO — entonces o se pide pelado, o se
+        // nombra la cosa entera.
+        let read = "^(lee|leeme|leemelo|leelo|leela|leer|leermelo)( esto| esta| la)?( pagina| nota)?$"
+            + "|^lee(me|la|lo)? (la nota|el articulo|la pagina|la noticia|el texto|todo)"
+        if text.range(of: read, options: .regularExpression) != nil { return .read }
 
         // Deliberadamente angosto. "Ayudame a comprar un pasaje" es una
         // tarea y tiene que seguir yendo a Jev; sólo "ayudame a navegar" y
@@ -154,6 +173,58 @@ final class Assistant {
             + "|que puedo hacer|que es esta pagina|describ(ime|i|ir)( esta| la)? pagina"
         if text.range(of: orient, options: .regularExpression) != nil { return .orient }
         return nil
+    }
+
+    /// Por dónde va la lectura de esta página.
+    ///
+    /// Se reinicia sola cuando la página cambia: `readAloud` compara la
+    /// dirección, así que volver a una nota no te deja a mitad de otra.
+    private var readingFrom = 0
+    private var readingURL = ""
+
+    /// La nota, leída de verdad, de a tres párrafos.
+    ///
+    /// Entera de una vez son sesenta mensajes en el chat y un muro imposible
+    /// de recorrer. De a tres, la persona decide si sigue — que es la misma
+    /// razón por la que existe el asistente: que el ritmo lo ponga ella.
+    ///
+    /// Texto literal de la página. Acá no hay modelo ni hay red.
+    private func readAloud(_ page: ExtractedPage) {
+        if page.url != readingURL { readingURL = page.url; readingFrom = 0 }
+
+        // Los encabezados también se dicen: son los que hacen que una nota
+        // larga tenga forma en vez de ser un chorro de párrafos.
+        let pieces: [String] = page.blocks.compactMap { block in
+            switch block {
+            case .heading(_, _, let text): return text.isEmpty ? nil : "— \(text) —"
+            case .paragraph(_, let text, _): return text.count >= 40 ? text : nil
+            case .quote(_, let text, _): return text.isEmpty ? nil : text
+            case .list(_, _, let items):
+                let lines = items.map(\.text).filter { !$0.isEmpty }
+                return lines.isEmpty ? nil : lines.prefix(6).joined(separator: ". ")
+            default: return nil
+            }
+        }
+
+        guard !pieces.isEmpty else {
+            say("Esta página no tiene texto corrido para leer.")
+            return
+        }
+        guard readingFrom < pieces.count else {
+            say("Ya te leí todo. Decime si querés que resuma, que busque otra cosa, o que vuelva a empezar.")
+            readingFrom = 0
+            return
+        }
+
+        let chunk = pieces[readingFrom..<min(readingFrom + 3, pieces.count)]
+        for piece in chunk { say(String(piece.prefix(600))) }
+        readingFrom += chunk.count
+
+        if readingFrom >= pieces.count {
+            say("Ahí termina. ¿Buscamos otra cosa?")
+        } else {
+            say("Vas por \(readingFrom) de \(pieces.count). Decime «seguí» y continúo.")
+        }
     }
 
     /// De qué trata la página.
