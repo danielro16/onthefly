@@ -78,7 +78,10 @@ final class Assistant {
         self.router = router
     }
 
-    var isAvailable: Bool { analyzer != nil }
+    /// Alcanza con uno de los dos. El ruteador solo ya sirve para llegar a
+    /// algún lado desde la nada; el analizador es para elegir adentro de una
+    /// página que ya está abierta.
+    var isAvailable: Bool { analyzer != nil || router != nil }
 
     private func say(_ text: String) {
         counter += 1
@@ -121,22 +124,18 @@ final class Assistant {
             return
         }
 
-        // Con la app recién abierta no hay página donde buscar nada, y el
-        // asistente contestaba "Todavía no hay una página cargada": un
-        // callejón sin salida en el primer turno, que es justo donde alguien
-        // que no ve necesita que algo pase. Escribir "la nación" tiene que
-        // terminar en La Nación.
-        if reader.page == nil {
-            await arrive(goal, on: reader)
-            return
-        }
-
         // Qué quiere, decidido por un modelo con un esquema cerrado.
         //
         // Antes había acá una lista de expresiones regulares que escribí yo, y
         // la medición la refutó: 5 de 60 pedidos reales, con dos de esos cinco
         // mal resueltos. El mismo set con el Router da 46. "Ayudame a navegar
         // en esta página" ya no termina en "¿querés que vaya a Geografía?".
+        // También —y sobre todo— cuando no hay ninguna página abierta. Antes
+        // acá había un atajo que llamaba a arrive() con la frase cruda, y se
+        // adelantaba al ruteador justo en el primer turno: "quiero entrar a
+        // anses y pedir un turno" terminaba buscando esa frase entera en el
+        // buscador, que devuelve blogs. Ruteada, la búsqueda es "anses" y el
+        // segundo resultado es anses.gob.ar. Se vio en el simulador.
         if let router {
             working = true
             let state = Router.state(page: reader.page, reading: readingProgress(reader.page))
@@ -396,7 +395,7 @@ final class Assistant {
                 ?? fields.first { Self.distance(Self.flatten($0.name), Self.flatten(wanted)) <= 2 }
         }
         guard let field = named else {
-            let names = fields.map(\.name).prefix(4).joined(separator: ", ")
+            let names = fields.map(Self.spoken).prefix(4).joined(separator: ", ")
             say("No encuentro ese campo. Los de esta página son: \(names).")
             return
         }
@@ -409,14 +408,14 @@ final class Assistant {
             return
         }
         guard let value = decision.value, !value.isEmpty else {
-            say("¿Qué pongo en \(field.name)?")
+            say("¿Qué pongo en \(Self.spoken(field))?")
             return
         }
         working = true
         reader.fill(field, with: value)
         try? await Task.sleep(for: .milliseconds(700))
         working = false
-        say("Escrito «\(value)» en \(field.name).")
+        say("Escrito «\(value)» en \(Self.spoken(field)).")
     }
 
     // MARK: - Llegar a algún lado desde la nada
@@ -527,10 +526,19 @@ final class Assistant {
             // El buscador no es un resultado de sí mismo.
             let engine = "google\\.|gstatic|googleusercontent|bing\\.|microsoft\\.|duckduckgo\\.|brave\\.|startpage\\."
             guard host.range(of: engine, options: [.regularExpression]) == nil else { return }
-            // "Deportes" no es un resultado. Un título de resultado es una
-            // frase, no una palabra de menú.
+            // Un piso bajo, y el porqué importa. Pedía quince letras para
+            // descartar la basura de navegación de Bing —"Deportes",
+            // "Economía"— y con eso tiraba el resultado correcto: la ANSES
+            // argentina aparece en DuckDuckGo titulada "ANSES", cinco
+            // letras. Por ese descarte una persona que pidió ANSES terminó
+            // en anses.fr, la agencia francesa de seguridad alimentaria.
+            //
+            // El intercambio es a favor: lo que se compara es el HOST, no el
+            // título, y los hosts se deduplican quedándose con el primero.
+            // Un título feo en la lista de tres es un problema cosmético;
+            // un resultado que falta es que la persona no llega.
             let clean = title.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard clean.count >= 15 else { return }
+            guard clean.count >= 4 else { return }
             guard seen.insert(host).inserted else { return }
             out.append(Result(title: clean, href: href))
         }
@@ -568,7 +576,16 @@ final class Assistant {
         // parece. Al revés, "clarín" se iba a clarins.com, que vende
         // cosméticos, sólo porque el buscador lo había puesto más arriba.
         // Una coincidencia exacta nunca puede perder contra un parecido.
-        if let exact = results.first(where: { labels(of: $0.host).contains(wanted) }) { return exact }
+        //
+        // Pero entre varios exactos manda el país. Visto en el simulador:
+        // "anses" coincide exacto con anses.fr, la agencia francesa de
+        // seguridad alimentaria, y ahí terminó una persona que pedía la ANSES
+        // argentina. El dominio prueba QUÉ sitio es; el país prueba CUÁL de
+        // los que se llaman igual.
+        let exact = results.filter { labels(of: $0.host).contains(wanted) }
+        if !exact.isEmpty {
+            return exact.min { closer($0) > closer($1) } ?? exact[0]
+        }
 
         // Un prefijo cuenta: lanacion contra lanacionmas.
         if let prefix = results.first(where: {
@@ -592,6 +609,45 @@ final class Assistant {
     static func flatten(_ text: String) -> String {
         text.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
             .filter { $0.isLetter || $0.isNumber }
+    }
+
+    /// El nombre de un campo, dicho como se le dice a una persona.
+    ///
+    /// Visto en el simulador, en el sistema de ANSES: el asistente anunció
+    /// "hay un formulario de 1 campo: ctl00$PlaceContent$txt_Captcha". Ese es
+    /// el nombre interno de un control de ASP.NET, y leérselo en voz alta a
+    /// alguien que no ve no es un detalle feo: es no haber dicho nada.
+    static func spoken(_ field: Action.Field) -> String {
+        let name = field.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let code = name.contains("$") || name.contains("ctl00")
+            || name.range(of: "^[a-z]+[A-Z_][A-Za-z0-9_]*$", options: .regularExpression) != nil
+        if !code, !name.isEmpty { return name }
+        // El cartel que la página le puso al lado vale más que su id.
+        let fallback = field.value.isEmpty ? "" : field.value
+        if !fallback.isEmpty { return fallback }
+        switch field.type {
+        case "email":    return "correo"
+        case "tel":      return "teléfono"
+        case "password": return "contraseña"
+        case "search":   return "búsqueda"
+        default:         return "un campo sin nombre"
+        }
+    }
+
+    /// Cuán cerca está un sitio de quien pregunta.
+    ///
+    /// Dos puntos si termina en el país de la persona, uno si es un dominio
+    /// sin país (.com, .org), cero si es de otro país. Sirve sólo para
+    /// desempatar entre sitios que se llaman igual, que es donde la
+    /// coincidencia de nombre ya no alcanza.
+    static func closer(_ result: Result) -> Int {
+        let parts = result.host.split(separator: ".").map(String.init)
+        guard let last = parts.last else { return 0 }
+        let home = (Locale.current.region?.identifier ?? "AR").lowercased()
+        if last == home { return 2 }
+        // Sin país: .com, .org, .net y compañía valen para cualquiera.
+        if ["com", "org", "net", "info", "app", "io", "edu", "int"].contains(last) { return 1 }
+        return 0
     }
 
     /// Las partes del dominio que nombran al sitio.
@@ -883,7 +939,7 @@ final class Assistant {
         }
 
         await reader.type(value, into: field)
-        say("Escrito «\(value)» en \(field.name).")
+        say("Escrito «\(value)» en \(Self.spoken(field)).")
 
         // Buscar no es comprometerse: es lo que la persona pidió, no cuesta
         // nada y se deshace volviendo. Hacerla buscar el botón ella misma
@@ -1054,11 +1110,25 @@ final class Assistant {
         // Lo que tapa va primero: detrás de un muro de cookies no hay nada
         // que hacer, y es justo lo que la persona no puede ver que está ahí.
         if let overlay = page.overlay {
+            // Un desafío anti-robot es el único muro que no tiene traspaso:
+            // el rompecabezas vive dentro del iframe del proveedor, otro
+            // origen, así que no podemos tocarlo ni describirlo. Lo único
+            // honesto es decir qué es, que no lo voy a resolver, y que hay
+            // salida para otro lado. Medido contra el muro real de Mercado
+            // Libre: el detector lo reconoce y avisa que hay opción de audio.
+            if overlay.kind == .captcha {
+                say("El sitio me puso una verificación de «no soy un robot». Eso no lo puedo resolver yo.")
+                if overlay.audioChallenge == true {
+                    say("Suele tener una opción de audio, pero está dentro del recuadro del proveedor y no la alcanzo: hay que tocarla en la pantalla.")
+                }
+                say("Si preferís, te llevo a otro lado o volvemos a la página anterior.")
+                return
+            }
             say("\(overlay.kind.title) tapa la página.")
             if !overlay.choices.isEmpty {
                 say("Opciones: \(overlay.choices.map(\.label).prefix(3).joined(separator: ", ")).")
             } else {
-                say("No encontré cómo sacarlo.")
+                say("No encontré cómo sacarlo, así que esta página queda para vos. Puedo llevarte a otro lado.")
             }
             return
         }
@@ -1104,7 +1174,7 @@ final class Assistant {
         // 4. Un formulario: acá no se mira, se completa.
         if let form = page.actions.first(where: { $0.kind == .form && !($0.fields ?? []).isEmpty }) {
             let fields = (form.fields ?? []).filter { $0.type != "hidden" }
-            let names = fields.map(\.name).filter { !$0.isEmpty }
+            let names = fields.map(Self.spoken).filter { !$0.isEmpty }
             say("Hay un formulario de \(fields.count) \(fields.count == 1 ? "campo" : "campos")\(names.isEmpty ? "" : ": " + names.prefix(4).joined(separator: ", ")).")
             if fields.contains(where: \.isSecure) {
                 // Una contraseña no se dicta y no se manda sola.

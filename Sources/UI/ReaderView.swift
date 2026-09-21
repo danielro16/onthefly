@@ -977,8 +977,13 @@ struct ReaderView: View {
             toolbarButton(
                 symbol: "bubble.left.and.text.bubble.right",
                 label: "Asistente",
-                enabled: model.page != nil && model.assistant.isAvailable,
-                hint: "Pedile que te lleve a algún lado de esta página"
+                // Sin exigir que haya página. Pedirla era dejar el asistente
+                // apagado justo al abrir la app, que es cuando más sirve:
+                // "la nación" con la pantalla en blanco tiene que terminar en
+                // La Nación. Se descubrió corriéndolo en el simulador, no
+                // leyéndolo.
+                enabled: model.assistant.isAvailable,
+                hint: "Decile a dónde querés ir, o preguntale sobre esta página"
             ) {
                 addressFocused = false
                 // La página original, tal como es. El asistente no la
