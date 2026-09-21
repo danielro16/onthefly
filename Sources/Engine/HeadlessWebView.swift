@@ -91,8 +91,19 @@ final class HeadlessWebView: NSObject {
         unconsumed = nil
         var request = URLRequest(url: url)
         request.attribution = .user
+        // En el idioma del teléfono, dicho explícitamente: sin esto el
+        // buscador salía en inglés ("Next Page >", "Sponsored link").
+        request.setValue(Self.acceptLanguage, forHTTPHeaderField: "Accept-Language")
         web.load(request)
         return try await nextPage()
+    }
+
+    /// "es-AR, es;q=0.9": el idioma y el país del teléfono.
+    static var acceptLanguage: String {
+        let language = Locale.preferredLanguages.first
+            .flatMap { Locale(identifier: $0).language.languageCode?.identifier } ?? "es"
+        guard let region = Locale.current.region?.identifier else { return language }
+        return "\(language)-\(region), \(language);q=0.9"
     }
 
     /// The WebView, created on first use and kept for the life of the engine.

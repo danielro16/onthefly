@@ -47,6 +47,36 @@ final class ReaderModel {
         engine.onPageChanged = { [weak self] result in
             self?.pageChangedOnItsOwn(result)
         }
+        assistant.onChallenge = { [weak self] in self?.watchChallenge() }
+    }
+
+    private var watching: Task<Void, Never>?
+
+    /// Mientras hay una prueba anti-robot pendiente, la página se vuelve a
+    /// mirar cada dos segundos.
+    ///
+    /// El aviso de cambios del extractor no alcanza: cambiar la prueba por el
+    /// listado en la misma dirección movió 16 nodos, menos que su umbral, y
+    /// JEF tardó veinte segundos en enterarse —hasta que la persona tocó "Ya
+    /// la resolví"—. Y su ventana es de noventa segundos: resolver una
+    /// prueba con audio puede llevar más.
+    func watchChallenge() {
+        guard watching == nil else { return }
+        watching = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(2))
+                guard let self, self.assistant.waitsForChallenge else { break }
+                // Con la persona hablando con el asistente, no se relee: el
+                // turno en curso es el que manda.
+                guard !self.assistant.inTurn, !self.assistant.working,
+                      let page = try? await self.engine.reread(),
+                      !Assistant.hasChallenge(page) else { continue }
+                self.address = page.url
+                self.state = .loaded(page)
+                await self.assistant.pageChanged(page, on: self)
+            }
+            self?.watching = nil
+        }
     }
 
     var page: ExtractedPage? {

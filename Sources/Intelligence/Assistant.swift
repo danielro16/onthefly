@@ -110,12 +110,32 @@ final class Assistant {
     /// Una prueba anti-robot que tiene que resolver la persona, y lo que se
     /// retoma cuando la resuelve. El asistente no la resuelve —no puede, y
     /// no debe—, pero tampoco corta el camino: pide que la resuelvan y sigue.
-    private var challenge: Challenge?
+    private var challenge: Challenge? {
+        didSet { if challenge != nil, oldValue == nil { onChallenge?() } }
+    }
     private struct Challenge {
         enum Resume { case question(String), rest(String), look }
         let url: String
         let resume: Resume
+        /// Una pregunta hecha con la prueba todavía en pantalla: se contesta
+        /// después de lo que se retoma. "¿Cuánto sale el más barato?" frente
+        /// a la prueba de Mercado Libre iba al modelo, que contestaba sobre
+        /// la página de seguridad.
+        var after: String?
     }
+    /// Hay una prueba anti-robot esperando a la persona. Mientras tanto la
+    /// página se vuelve a mirar sola: ver `ReaderModel.watchChallenge`.
+    var waitsForChallenge: Bool { challenge != nil }
+    /// Lo llama el asistente cuando aparece una prueba.
+    var onChallenge: (() -> Void)?
+    /// Sube cuando el cursor tiene que quedarse en la página —"Ir a la
+    /// prueba"— y no volver a las opciones.
+    private(set) var pageFocusRequests = 0
+    /// Las opciones que había antes de "Otra cosa", para volver a ellas.
+    private var stashed: Offer?
+    static let restoreID = "jef-volver-a-las-opciones"
+    /// Los titulares que se dijeron al llegar a una portada.
+    private var leadSaid = 0
     static let solvedID = "jef-ya-resuelta"
     static let toTestID = "jef-ir-a-la-prueba"
 
@@ -212,7 +232,8 @@ final class Assistant {
         // Un dato para un campo —un DNI— se muestra tapado: la pantalla la
         // puede ver cualquiera al lado.
         let isValue = awaitingField != nil && Self.looksLikeValue(goal)
-        heard(isValue ? Self.masked(goal) : shown ?? goal)
+        // Tapado y dicho en palabras: "•••••456" se leía como puntos.
+        heard(isValue ? "\(awaitingField.map(Self.spoken) ?? "Dato") terminado en \(goal.suffix(3))" : shown ?? goal)
         offer = nil
         touched = []
         lastDone = nil
@@ -239,8 +260,9 @@ final class Assistant {
                 // Y no queda como "lo que pidió antes": eso viaja al modelo en
                 // el turno siguiente, y un DNI no tiene que ir a ningún lado.
                 lastRequest = previousRequest
-                // Sin repetir el dato: un DNI dicho en voz alta en la calle no.
-                say("Listo, escrito en \(Self.spoken(field)).")
+                // Sin repetir el dato entero: un DNI dicho en voz alta en la
+                // calle no. Las tres últimas cifras alcanzan para confirmarlo.
+                say("Listo: quedó escrito en «\(Self.spoken(field))», terminado en \(goal.suffix(3)).")
                 return
             }
         }
@@ -257,6 +279,21 @@ final class Assistant {
             await landed(reader)
             return
         }
+
+        // Una pregunta con la prueba anti-robot todavía en pantalla no va al
+        // modelo: la página es la de seguridad, y lo que contestaba era "la
+        // página actual es de seguridad". Se anota y se contesta después.
+        // Escrita, no tocada: "Buscarlo en otro sitio" también lleva signos
+        // de pregunta, y es justamente la salida.
+        if var pending = challenge, shown == nil, let page = reader.page, Self.hasChallenge(page), Self.isQuestion(goal) {
+            pending.after = goal
+            challenge = pending
+            lastRequest = previousRequest
+            say("Todavía está la prueba anti-robot en la página. Cuando esté resuelta, contesto eso.")
+            return
+        }
+        // Cualquier otro pedido deja la prueba atrás: se fue a otro lado.
+        challenge = nil
 
         // En una portada, "titulares" es leer los titulares. Sin preguntarle
         // a nadie: una vez el ruteador lo tomó como abrir algo, la elección de
@@ -319,7 +356,7 @@ final class Assistant {
                         // a que la persona elija; seguir ahora sería resolver
                         // "pedir un turno" contra la página del buscador.
                         waiting = rest
-                        say("Cuando elijas, sigo con: \(rest).")
+                        say("Cuando elijas, sigo con «\(rest)».")
                     } else {
                         await continueWith(rest, on: reader)
                     }
@@ -355,7 +392,9 @@ final class Assistant {
         var goal = rest
         for _ in 0..<Self.maxHops {
             guard let page = reader.page else { return }
-            say("Sigo con: \(goal).")
+            // Sin anunciar "Sigo con: buscame…": cada paso ya dice lo que hace
+            // ("Buscando auriculares en…"), y la orden de la persona repetida
+            // tal cual sonaba a que JEF le daba órdenes.
             working = true
             let state = Router.state(page: page, reading: readingProgress(page))
             let decision = try? await router.decide(goal, state: state)
@@ -396,7 +435,7 @@ final class Assistant {
             if let page = reader.page, Self.isQuestion(goal), let answerer,
                let answer = try? await answerer.answer(goal, about: Self.saying(page), previous: previousRequest) {
                 say(answer.text)
-                nextQuestions = Self.fresh(answer.questions, after: goal)
+                nextQuestions = Self.fresh(answer.questions, after: goal, answered: answer.text)
                 return
             }
             // Buscar estando parado en un sitio es buscar EN ese sitio.
@@ -500,13 +539,19 @@ final class Assistant {
 
         case .orientar:
             guard let page = reader.page else {
-                say("Puedo abrir sitios, buscar, leerte páginas, resumirlas y contestar lo que dicen. Para empezar, un sitio o algo para buscar; o una de estas opciones.")
+                say("Puedo abrir sitios, buscar, leer páginas, resumirlas y contestar lo que dicen. Para empezar, se puede escribir un sitio o algo para buscar, o tocar una de estas opciones.")
                 offer = Offer(goal: "", options: Self.starters)
                 return
             }
             // Corto: dónde, y qué es esto. Contar la portada entera otra vez
             // no contestaba "no entiendo, ¿dónde estoy?".
-            say("Estás en «\(page.sectionTitle)», \(page.displaySite). Arriba está la página; acá abajo, la conversación con JEF: se le pide algo escribiendo, o se toca una opción.")
+            // Con el nombre corriente del lugar ("la portada de La Nación") y
+            // en primera persona: "la conversación con JEF: se le pide algo"
+            // sonaba a que JEF era otro.
+            let gestures = UIAccessibility.isVoiceOverRunning
+                ? " Las opciones vienen después de este mensaje: deslizando a la derecha se llega a ellas."
+                : ""
+            say("Estás en \(whereIs(page)). Arriba se ve la página, y esto es la conversación conmigo, JEF: se avanza tocando una opción o escribiendo lo que haga falta.\(gestures)")
 
         case .noPuedo:
             // Un límite no es el final del camino: es un traspaso. Se dice
@@ -647,6 +692,9 @@ final class Assistant {
     private func arrive(_ goal: String, on reader: ReaderModel, naming: Bool) async {
         working = true
         defer { working = false }
+        // Con las tildes de la persona: el ruteador devolvía "clarin" y se
+        // oía "Buscando: clarin" después de haber escrito "clarín".
+        let goal = Self.inTheirWords(goal, from: lastRequest)
 
         // Una dirección no se adivina: la escribió la persona. Si la escribió
         // el ruteador —"buscá mar del plata en wikipedia" volvió una vez como
@@ -703,8 +751,16 @@ final class Assistant {
         // primer resultado era turnosanses.net, que no es ANSES: a alguien que
         // toca siempre la primera opción, un sitio así le puede pedir datos.
         let official = results.filter(isOfficial)
-        let rest = results.filter { !isOfficial($0) }
+        // Los que se llaman como el organismo sin serlo —mianses.org,
+        // turnosanses.net— van al final cuando el organismo está en la lista.
+        let names = Set(official.flatMap { labels(of: $0.host) }.filter { $0.count >= 4 && $0 != "argentina" })
+        func borrows(_ result: Result) -> Bool {
+            guard let site = siteName(of: result.host) else { return false }
+            return names.contains { site.contains($0) }
+        }
+        let rest = results.filter { !isOfficial($0) && !borrows($0) }
         let byCountry = official + rest.filter { closer($0) > 0 } + rest.filter { closer($0) == 0 }
+            + results.filter { !isOfficial($0) && borrows($0) }
         // Un sitio nombrado como PARTE del pedido es el que la persona pidió:
         // "wikipedia" en "mar del plata wikipedia". Va primero, antes que lo
         // oficial: con lo oficial adelante, la Municipalidad le ganaba a
@@ -714,7 +770,7 @@ final class Assistant {
         if let asked = siteNamed(within: request, among: results) {
             return [asked] + byCountry.filter { $0.href != asked.href }
         }
-        guard naming, let best = named(request, among: results) else { return byCountry }
+        guard naming, let best = named(request, among: results), !borrows(best) else { return byCountry }
         // Lo oficial va antes que cualquier coincidencia de nombre. Para
         // "turnos anses", turnosanses.net se llama EXACTAMENTE como el pedido
         // —es el truco de esos sitios— y le ganaba a argentina.gob.ar.
@@ -833,6 +889,7 @@ final class Assistant {
     static func results(of page: ExtractedPage) -> [Result] {
         var out: [Result] = []
         var seen = Set<String>()
+        var repeated = Set<String>()
         var titles = Set<String>()
 
         func consider(_ title: String, _ href: String) {
@@ -861,7 +918,16 @@ final class Assistant {
             // un resultado que falta es que la persona no llega.
             let clean = title.trimmingCharacters(in: .whitespacesAndNewlines)
             guard clean.count >= 4 else { return }
-            guard seen.insert(host).inserted else { return }
+            // Una pantalla de ingreso no es un resultado: "La Nacion —
+            // ingresar.lanacion.com.ar" salía entre los tres más probables.
+            guard host.range(of: "^(ingresar|login|signin|auth|accounts?|myaccount|micuenta|sso)\\.",
+                             options: .regularExpression) == nil else { return }
+            // Un sitio del Estado puede aparecer dos veces: argentina.gob.ar
+            // tiene la página de ANSES y la de "Solicitar turnos en ANSES", y
+            // la segunda —la que servía— se descartaba por repetir el sitio.
+            if !seen.insert(host).inserted {
+                guard isOfficial(Result(title: clean, href: href)), repeated.insert(host).inserted else { return }
+            }
             // El mismo título en otro dominio es el mismo resultado: un espejo
             // técnico (cdnedge.lanacion.com.ar) o una copia de prueba
             // (web-clarinsandbox.lilax.io). Ofrecido como "segundo más
@@ -973,11 +1039,17 @@ final class Assistant {
 
     /// Un título que entra en un botón, cortado en una palabra y no en la
     /// mitad: "…su evolución patrimo" era un botón que nadie entendía.
-    static func short(_ raw: String, _ limit: Int = 70) -> String {
+    /// Cien letras: con setenta, "Una jueza declaró la inconstitucionalidad de
+    /// la ley que bajó la…" no decía qué ley.
+    static func short(_ raw: String, _ limit: Int = 100) -> String {
         // Sin las comas de celdas vacías: "Solicitud de Jubilación, , ver
         // sub-trámites".
+        // Ni el "ver sub-trámites" que ANSES le pega a cada trámite: es
+        // cómo se abre, no qué es.
         let text = raw.replacingOccurrences(of: "(,\\s*)+,", with: ",", options: .regularExpression)
             .replacingOccurrences(of: "\\s{2,}", with: " ", options: .regularExpression)
+            .replacingOccurrences(of: ",\\s*ver (sub-?tr[aá]mites|m[aá]s|detalles?)\\s*$", with: "",
+                                  options: [.regularExpression, .caseInsensitive])
         guard text.count > limit else { return text }
         let cut = text.prefix(limit)
         let clean = cut.lastIndex(of: " ").map { cut[..<$0] } ?? cut
@@ -1111,14 +1183,21 @@ final class Assistant {
         // Corta lo que se esté diciendo: en Mercado Libre el aviso quedó en
         // cola detrás de la descripción de la portada, y nunca llegó a tiempo.
         interruptNext = true
+        // Quién la resuelve, dicho sin vueltas: "me pide resolver" hacía
+        // creer que la iba a resolver JEF. Y qué pasa después, con las
+        // palabras de la persona. Todo en un solo anuncio: el de la opción de
+        // audio, aparte, lo cortaba el siguiente.
+        let then: String
+        switch resume {
+        case .question(let question): then = "contesto «\(question)»"
+        case .rest(let rest): then = "sigo con «\(rest)»"
+        case .look: then = "seguimos"
+        }
         if image {
-            say("El sitio web me pide copiar un código que está dibujado en una imagen, y ésa no la puedo leer. Hay que resolverla en la página, arriba. Cuando esté resuelta, continuamos.")
+            say("El sitio web pide copiar un código dibujado en una imagen, y eso no lo puedo hacer yo: hace falta resolverlo en la página. Cuando esté resuelto, \(then).")
         } else {
-            // Y cómo llegar: el botón "Ir a la prueba" lleva hasta ella.
-            say("El sitio web me pide resolver una prueba anti-robot. Está en la página, arriba: «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, continuamos.")
-            if page.overlay?.audioChallenge == true {
-                say("Tiene una opción de audio, dentro del recuadro de la prueba.")
-            }
+            let audio = page.overlay?.audioChallenge == true ? ", y tiene opción de audio" : ""
+            say("El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella\(audio). Cuando esté resuelta, \(then).")
         }
     }
 
@@ -1130,9 +1209,9 @@ final class Assistant {
     }
 
     /// Lo que se estaba haciendo cuando apareció la prueba.
-    private func resume(_ task: Challenge.Resume, on reader: ReaderModel) async {
+    private func resume(_ task: Challenge, on reader: ReaderModel) async {
         guard let page = reader.page else { return }
-        switch task {
+        switch task.resume {
         case .question(let question):
             working = true
             await reply(question, about: page)
@@ -1140,7 +1219,14 @@ final class Assistant {
         case .rest(let rest):
             await continueWith(rest, on: reader)
         case .look:
-            await arrived(page)
+            // Con una pregunta esperando, la pregunta es lo que se quiere
+            // saber: describir la página antes era hacerla esperar.
+            if task.after == nil { await arrived(page) }
+        }
+        if let question = task.after, let page = reader.page, !Self.hasChallenge(page) {
+            working = true
+            await reply(question, about: page)
+            working = false
         }
     }
 
@@ -1154,9 +1240,17 @@ final class Assistant {
 
     /// Las preguntas sugeridas que no son la que se acaba de contestar: después
     /// de "¿y el oficial?", ofrecer "¿Y el dólar oficial?" era repetirla.
-    static func fresh(_ questions: [String], after asked: String) -> [String] {
+    /// Ni las que la respuesta ya contestó: después de "La fundó Patricio
+    /// Peralta Ramos" se ofrecía "¿Quién la fundó?".
+    static func fresh(_ questions: [String], after asked: String, answered: String = "") -> [String] {
         let done = stems(asked)
-        return questions.filter { !stems($0).subtracting(done).isEmpty }
+        let said = stems(answered)
+        // Las palabras de preguntar no cuentan: "quién", "cuánto", "dónde".
+        let asking: Set<String> = ["quien", "cuant", "donde", "cuand", "porqu"]
+        return questions.filter { question in
+            let own = stems(question).subtracting(asking)
+            return !stems(question).subtracting(done).isEmpty && (own.isEmpty || !own.isSubset(of: said))
+        }
     }
 
     /// Una dirección sin consulta ni fragmento: el lugar, no el estado.
@@ -1365,10 +1459,20 @@ final class Assistant {
         let chunk = pieces[readingFrom..<min(readingFrom + size, pieces.count)]
         let unit = readingUnit(page)
         let first = chunk.startIndex + 1, last = chunk.endIndex
-        say(first == last
-            ? "\(unit) \(first) de \(pieces.count):"
-            : "\(unit == "Titular" ? "Titulares" : "Párrafos") \(first) a \(last) de \(pieces.count):")
-        for piece in chunk { say(String(piece.prefix(600))) }
+        if unit == "Titular" {
+            // Sin el total —"de 143" contaba lo que el sitio repite— y
+            // diciendo por qué no empieza en el 1: "Titulares 5 a 7" sin más
+            // sonaba a que se habían perdido cuatro.
+            let skipped = first == leadSaid + 1 && leadSaid > 0 ? "Los \(leadSaid) primeros ya los dije. " : ""
+            say(first == last ? "\(skipped)Titular \(first):" : "\(skipped)Titulares \(first) a \(last):")
+        } else {
+            say(first == last
+                ? "\(unit) \(first) de \(pieces.count):"
+                : "Párrafos \(first) a \(last) de \(pieces.count):")
+        }
+        // Enteros: cortado a 600 letras, un párrafo largo terminaba en la
+        // mitad de una palabra.
+        for piece in chunk { say(piece) }
         lastChunk = chunk.indices
         lastDone = Self.readID
         readingFrom += chunk.count
@@ -1401,7 +1505,7 @@ final class Assistant {
                     ? "Sin conexión no puedo resumirla, pero te cuento los primeros titulares:"
                     : "Te cuento los primeros titulares:")
                 for (index, title) in Self.headlines(of: page).prefix(3).enumerated() {
-                    say("\(index + 1). \(title.prefix(160))")
+                    say("\(index + 1). \(Self.dekick(title))")
                 }
                 return
             }
@@ -1412,7 +1516,7 @@ final class Assistant {
             say(offline
                 ? "Sin conexión no puedo resumirla, pero te cuento cómo empieza:"
                 : "Te cuento cómo empieza:")
-            say(String(opening.prefix(400)))
+            say(Self.opening(opening, 400))
         }
 
         guard let answerer else {
@@ -1426,7 +1530,7 @@ final class Assistant {
         }
         do {
             guard let answer = try await answerer.answer(
-                "Resumí esta página en dos o tres frases, con los hechos concretos: qué pasó, quién, cuándo, las cifras. Si es una cobertura en vivo, lo último que informa. Nada de describir la página («informa sobre…»): los hechos.", about: text
+                "Resumí esta página en dos frases, con los hechos concretos: qué pasó, quién, cuándo, las cifras. Si es una cobertura en vivo, lo último que informa. Nada de describir la página («informa sobre…»): los hechos.", about: text
             ) else {
                 readTheOpening()
                 return
@@ -1472,15 +1576,35 @@ final class Assistant {
         working = true
         defer { working = false }
 
+        // Lo que no es la prueba la deja atrás: se fue a otro lado.
+        if ![Self.toTestID, Self.solvedID, Self.otherID, Self.restoreID].contains(action.id) {
+            challenge = nil
+        }
+
         // "Otra cosa": ninguna de las opciones era. Se pregunta y se deja a
-        // la persona escribiendo — sin más botones, que es justo lo que no
-        // servía.
+        // la persona escribiendo, con un solo botón: volver a las opciones
+        // de antes. Sin ninguno, quien se arrepentía tenía que escribir.
         if action.id == Self.otherID {
             say("¿Qué otra cosa hacemos? Se puede escribir, o dictar con el micrófono del teclado.")
             inputRequests += 1
+            let before = chosen.options.filter { $0.id != Self.otherID }
+            if !before.isEmpty {
+                stashed = Offer(goal: chosen.goal, options: before)
+                offer = Offer(goal: "", options: [.link(id: Self.restoreID, label: "Volver a las opciones", href: "", region: "main")])
+            }
             return
         }
         defer { closeTurn(on: reader) }
+
+        if action.id == Self.restoreID {
+            working = false
+            if let before = stashed {
+                stashed = nil
+                say("Las opciones de antes:")
+                offer = before
+            }
+            return
+        }
 
         // Leer y resumir no llevan a ningún lado: actúan sobre esta página.
         if action.id == Self.readID, let page = reader.page {
@@ -1505,7 +1629,11 @@ final class Assistant {
         if action.id == Self.toTestID {
             working = false
             reader.showChallenge()
-            say("Listo: la prueba está en la página. Cuando esté resuelta, continuamos.")
+            // Y el cursor se queda en la prueba: volver a ponerlo en "Ir a la
+            // prueba" deshacía el salto.
+            pageFocusRequests += 1
+            lastDone = Self.toTestID
+            say("La prueba quedó a la vista, en la página. Cuando esté resuelta, sigo solo; si no me doy cuenta, está «Ya la resolví».")
             return
         }
         // La persona dice que ya resolvió la prueba: se vuelve a mirar la
@@ -1516,7 +1644,7 @@ final class Assistant {
             if let page = reader.page, !Self.hasChallenge(page), let pending = challenge {
                 challenge = nil
                 say("Listo, ya pasamos la verificación.")
-                await resume(pending.resume, on: reader)
+                await resume(pending, on: reader)
             } else {
                 say("Todavía veo la prueba en la página. Cuando esté resuelta, continuamos.")
             }
@@ -1575,6 +1703,18 @@ final class Assistant {
                 working = false
                 return
             }
+            // Si hay una tarea esperando, se sigue con ella sin orientar. En
+            // Mercado Libre, JEF explicaba "usá el cuadro de texto que dice
+            // Ingresá lo que quieras encontrar" y medio segundo después
+            // buscaba él mismo.
+            if let rest = waiting, let page = reader.page, !Self.hasChallenge(page) {
+                waiting = nil
+                knownURL = page.url
+                offer = nil
+                say("Estás en \(page.displaySite).")
+                await continueWith(rest, on: reader)
+                return
+            }
             await landed(reader)
             // Y recién ahora sigue la tarea que estaba esperando que la
             // persona eligiera: "…y pedir un turno".
@@ -1627,11 +1767,16 @@ final class Assistant {
             // "Deportes"—, no hay nada que decidir. Preguntárselo a Jev era un
             // viaje de más, y una vez falló y "llevame a deportes" terminó en
             // "no pude decidir a dónde ir".
+            // Y abierta, se llegó: se cuenta el lugar como cualquier llegada.
+            // Preguntarle después a Jev si ya estaba terminaba en la
+            // descripción de plantilla —"Estás en la portada de LA NACION"
+            // parado en Deportes—.
             if first, let exact = Self.exactOption(for: goal, among: options), touched.insert(exact.id).inserted {
                 say("Abriendo «\(exact.label)».")
                 await reader.activate(exact)
-                first = false
-                continue
+                working = false
+                await landed(reader)
+                return
             }
 
             let decision: PageAnalyzer.Step
@@ -1667,7 +1812,8 @@ final class Assistant {
 
             switch decision.move {
             case .done:
-                describe(page)
+                working = false
+                await arrived(page)
                 return
 
             case .ask, .go where decision.confidence < Self.sureEnough:
@@ -1821,7 +1967,7 @@ final class Assistant {
                 return
             }
             say(answer.text)
-            nextQuestions = Self.fresh(answer.questions, after: question)
+            nextQuestions = Self.fresh(answer.questions, after: question, answered: answer.text)
         } catch Answerer.AnswerError.transport {
             say("Sin conexión. Puedo leer la página, pero no contestar preguntas.")
         } catch {
@@ -1905,13 +2051,48 @@ final class Assistant {
             out += "\n\nMENÚ, AVISOS Y DATOS AL PASO DEL SITIO (no es el contenido, pero se puede preguntar por esto):\n"
             out += chrome.joined(separator: "\n").prefix(3000)
         }
-        return out
+        return metric(out)
+    }
+
+    /// Las medidas de Estados Unidos, pasadas a las de acá.
+    ///
+    /// El sitio del clima eligió solo, del lado del servidor, servir Córdoba
+    /// en Fahrenheit y millas: "máxima de 63º" sin decir de qué, y quien no
+    /// ve no tiene cómo sospechar que son 17 °C. Se convierte acá, antes de
+    /// que lo lea nadie, y se avisa arriba que se convirtió.
+    static func metric(_ text: String) -> String {
+        guard text.range(of: "\\d\\s?mph\\b|\\d\\s?[°º]\\s?F\\b", options: .regularExpression) != nil else { return text }
+        var out = text
+        func convert(_ pattern: String, _ transform: (Double) -> String) {
+            guard let regex = try? NSRegularExpression(pattern: pattern) else { return }
+            let source = out as NSString
+            var result = ""
+            var last = 0
+            for match in regex.matches(in: out, range: NSRange(location: 0, length: source.length)) {
+                result += source.substring(with: NSRange(location: last, length: match.range.location - last))
+                let number = source.substring(with: match.range(at: 1)).replacingOccurrences(of: ",", with: ".")
+                result += Double(number).map(transform) ?? source.substring(with: match.range)
+                last = match.range.location + match.range.length
+            }
+            out = result + source.substring(from: last)
+        }
+        func whole(_ value: Double) -> String { String(Int(value.rounded())) }
+        // Con "°F" escrito, o sin letra en una página que mide el viento en
+        // millas: "63º 40º" junto a "13 mph".
+        convert("(-?\\d+(?:[.,]\\d+)?)\\s?[°º]\\s?F\\b") { "\(whole(($0 - 32) * 5 / 9)) °C" }
+        convert("(-?\\d+(?:[.,]\\d+)?)\\s?[°º](?!\\s?[CcFf]\\b)") { "\(whole(($0 - 32) * 5 / 9)) °C" }
+        convert("(\\d+(?:[.,]\\d+)?)\\s?mph\\b") { "\(whole($0 * 1.609)) km/h" }
+        convert("(\\d+(?:[.,]\\d+)?)\\s?in\\b") { $0 * 25.4 < 10 && $0 > 0
+            ? String(format: "%.1f mm", $0 * 25.4).replacingOccurrences(of: ".", with: ",")
+            : "\(whole($0 * 25.4)) mm" }
+        convert("(\\d+(?:[.,]\\d+)?)\\s?mi\\b") { "\(whole($0 * 1.609)) km" }
+        return "(Esta página venía en medidas de Estados Unidos; acá están pasadas a °C, km/h, mm y km.)\n" + out
     }
 
     /// Qué se abre, en qué orden: los titulares primero, después el resto de
     /// lo que la página ofrece. La lista que ve el modelo empieza por lo que
     /// una persona quiere de una portada.
-    static func candidates(of page: ExtractedPage) -> [Action] {
+    static func candidates(of page: ExtractedPage, goal: String? = nil) -> [Action] {
         let all = options(of: page)
         let headlines = Set(headlines(of: page))
         let first = all.filter { headlines.contains(tidy($0.label)) }
@@ -1920,7 +2101,13 @@ final class Assistant {
         let chrome: Set<String> = ["header", "banner", "nav", "navigation", "footer", "contentinfo"]
         // Ni pagar, ni suscribirse, ni bajar una app: en Clarín se sugería
         // suscribirse, y en el banco, la app — que no se usa desde acá.
-        let paying = "suscri|subscri|premium|comprar|pagar|descarg|app store|google play|apple store"
+        var paying = "suscri|subscri|premium|comprar|pagar|descarg|app store|google play|apple store|abrir app|abrir la app"
+        // Ni iniciar sesión, salvo que la persona haya venido a eso: en una
+        // nota del Papa se ofrecía "Abrir «Iniciar sesión»".
+        let flatGoal = (goal ?? "").folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        if flatGoal.range(of: "cuenta|sesion|ingres|entrar|login|home ?banking|usuario|clave", options: .regularExpression) == nil {
+            paying += "|iniciar sesion|inicia sesion|ingresar|ingresa a tu|mi cuenta|registrate|crear cuenta|log ?in|sign ?in"
+        }
         // Cinco letras y no doce: "Pedir turno" tiene once, y era justo el
         // botón que servía en la página de turnos de ANSES.
         func useful(_ action: Action) -> Bool {
@@ -2028,9 +2215,18 @@ final class Assistant {
 
         if challenge != nil || Self.hasChallenge(page) {
             // Llevar hasta la prueba, y por si el sitio no avisa cuando se
-            // resuelve, que la persona lo diga.
-            return [option(Self.toTestID, "Ir a la prueba"), option(Self.solvedID, "Ya la resolví")]
-                + (canGoBack ? [option(Self.backID, "Volver a la página anterior")] : [])
+            // resuelve, que la persona lo diga. Ya en la prueba, lo que sigue
+            // es decir que se resolvió.
+            let test = [option(Self.toTestID, "Ir a la prueba"), option(Self.solvedID, "Ya la resolví")]
+            var out = lastDone == Self.toTestID ? test.reversed() : test
+            // Y otro camino, para quien no puede o no quiere resolverla.
+            switch challenge?.resume {
+            case .question(let task), .rest(let task):
+                out.append(.link(id: Self.askPrefix + "buscá en internet: " + task,
+                                 label: "Buscarlo en otro sitio", href: "", region: "main"))
+            default: break
+            }
+            return out + (canGoBack ? [option(Self.backID, "Volver a la página anterior")] : [])
         }
 
         if let query = Self.searchQuery(of: page) {
@@ -2151,7 +2347,7 @@ final class Assistant {
             return
         }
         offer = nil
-        say("De vuelta en «\(page.sectionTitle)», \(page.displaySite).")
+        say("De vuelta en \(whereIs(page)).")
     }
 
     /// La página cambió sin que nadie se lo pidiera al asistente: un
@@ -2169,7 +2365,7 @@ final class Assistant {
             defer { inTurn = false }
             interruptNext = true
             say("Listo, ya pasamos la verificación.")
-            await resume(pending.resume, on: reader)
+            await resume(pending, on: reader)
             closeTurn(on: reader)
             return
         }
@@ -2186,7 +2382,7 @@ final class Assistant {
         } else {
             knownURL = page.url
             offer = nil
-            say("La página cambió: ahora estás en «\(page.sectionTitle)», \(page.displaySite).")
+            say("La página cambió: ahora estás en \(whereIs(page)).")
         }
         closeTurn(on: reader)
     }
@@ -2250,25 +2446,40 @@ final class Assistant {
         if let overlay = page.overlay {
             text = "HAY UN AVISO ENCIMA DE LA PÁGINA (\(overlay.kind.title)): \(overlay.text)\n\n" + text
         }
-        let candidates = Self.candidates(of: page)
+        let candidates = Self.candidates(of: page, goal: lastRequest)
         // En una portada, los titulares que se nombran y los botones son los
         // mismos porque los elige el código: los primeros de la página. Dejando
         // que el modelo eligiera los botones por número, nombraba unos y
         // ofrecía otros.
         let lead = readsHeadlines(page) ? Array(Self.headlines(of: page).prefix(4)) : []
         let spoken = lead.map(Self.dekick)
-        if !lead.isEmpty {
-            text = "TITULARES PRINCIPALES, EN ORDEN (nombrá estos y en este orden, nada más de la portada): "
-                + spoken.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: " / ") + "\n\n" + text
-        }
         working = true
-        let orientation = try? await answerer.orient(
-            page: text, candidates: candidates.map(\.label), goal: lastRequest
-        )
+        var orientation: Answerer.Orientation?
+        do {
+            orientation = try await answerer.orient(
+                page: text, candidates: candidates.map(\.label), goal: lastRequest, frontPage: !lead.isEmpty
+            )
+        } catch {
+            // Por qué se cayó a la descripción: en una prueba pasó en Clarín
+            // y no había cómo saber si fue la red o una cifra sin verificar.
+            Registro.anotar("error", ["orientar": String(describing: error)])
+        }
         working = false
         guard let orientation else { describe(page); return }
 
-        say(orientation.text)
+        if lead.isEmpty {
+            say(orientation.text)
+        } else {
+            // Los titulares, tal cual los escribió el diario y dichos por el
+            // código. Reescritos por el modelo salían distintos en cada visita
+            // —tres versiones del mismo titular de Adorni— y con cosas que no
+            // estaban ("sobreseyó a un acusado"). En pantalla no se repiten:
+            // son los botones que siguen.
+            let list = spoken.enumerated().map { "\($0.offset + 1). \(Self.sentence($0.element))" }.joined(separator: " ")
+            say("\(orientation.text) Los titulares principales son las primeras opciones.",
+                aloud: "\(orientation.text) Los titulares principales: \(list)")
+            leadSaid = lead.count
+        }
         let options: [Action] = orientation.suggestions.compactMap { suggestion in
             switch suggestion.kind {
             case .abrir:
@@ -2377,13 +2588,14 @@ final class Assistant {
             return
         }
 
-        say("En \(page.sectionTitle) — \(page.displaySite).")
+        say("Estás en \(whereIs(page)).")
 
         // 1. Una portada: titulares que se abren.
         let headlines = Self.headlines(of: page)
         if !headlines.isEmpty, !Self.isArticle(page) {
-            say("Hay \(headlines.count) \(headlines.count == 1 ? "nota" : "notas"). \(headlines.count == 1 ? "Dice" : "Las tres primeras"):")
-            for title in headlines.prefix(3) { say(Self.short(Self.dekick(title), 140)) }
+            // Sin el total: "Hay 35 notas" contaba lo que el sitio repite.
+            say(headlines.count == 1 ? "Dice:" : "Las primeras notas:")
+            for title in headlines.prefix(3) { say(Self.dekick(title)) }
             // Como si se hubieran leído: las opciones son abrir ésas y seguir,
             // no "Leer los titulares", que repetía las mismas tres.
             readingURL = page.url
@@ -2400,8 +2612,11 @@ final class Assistant {
             if case .paragraph(_, let text, _) = $0 { return text } else { return nil }
         }
         if Self.isArticle(page), let opening = paragraphs.first(where: { $0.count >= 160 }) {
-            say("Es una nota de \(paragraphs.count) párrafos. Empieza así:")
-            say(String(opening.prefix(220)))
+            // Contados como los cuenta la lectura: decía "una nota de 7
+            // párrafos" y después leía "párrafos 1 a 2 de 6".
+            let count = readablePieces(page).count
+            say("Es una nota de \(count) párrafos. Empieza así:")
+            say(Self.opening(opening, 280))
             return
         }
 
@@ -2487,24 +2702,93 @@ final class Assistant {
         return Array(out.prefix(240))
     }
 
+    /// El lugar, con el nombre que le daría una persona: "la portada de La
+    /// Nación", no "«Últimas noticias de Argentina y el mundo», LA NACION".
+    func whereIs(_ page: ExtractedPage) -> String {
+        if let query = Self.searchQuery(of: page) { return "los resultados de «\(query)»" }
+        if readsHeadlines(page) {
+            // Deportes no es la portada: la portada es la raíz del sitio.
+            let path = URL(string: page.url)?.path ?? "/"
+            if path.isEmpty || path == "/" { return "la portada de \(page.displaySite)" }
+            return "la sección «\(Self.short(page.sectionTitle, 60))» de \(page.displaySite)"
+        }
+        if Self.isArticle(page) {
+            let title = Self.short(page.sectionTitle, 90)
+            // Wikipedia no tiene notas: tiene artículos.
+            if page.url.contains("wikipedia.org") { return "el artículo «\(title)» de Wikipedia" }
+            return "la nota «\(title)», de \(page.displaySite)"
+        }
+        return "«\(Self.short(page.sectionTitle, 90))», \(page.displaySite)"
+    }
+
+    /// Un texto que termina como una oración, para que la voz haga la pausa.
+    static func sentence(_ text: String) -> String {
+        let clean = text.trimmingCharacters(in: .whitespaces)
+        guard let last = clean.last else { return clean }
+        // Después de unas comillas también: "…como si el dinero “no
+        // existiera”" seguido del número siguiente se oía sin pausa.
+        return ".!?…".contains(last) ? clean : clean + "."
+    }
+
+    /// El comienzo de un párrafo, cortado donde termina una oración: "…la
+    /// localidad balnear" era lo último que se oía del adelanto de Wikipedia.
+    static func opening(_ text: String, _ limit: Int) -> String {
+        guard text.count > limit else { return text }
+        let head = String(text.prefix(limit))
+        // El último fin de oración que entra.
+        var end: String.Index?
+        var index = head.startIndex
+        while index < head.endIndex {
+            let next = head.index(after: index)
+            if ".!?".contains(head[index]), next < head.endIndex, head[next] == " " { end = index }
+            index = next
+        }
+        if let end, head.distance(from: head.startIndex, to: end) >= 60 {
+            return String(head[...end])
+        }
+        return short(text, limit)
+    }
+
+    /// Las palabras del pedido con las tildes con que las escribió la
+    /// persona: el ruteador devuelve "clarin" por "clarín".
+    static func inTheirWords(_ target: String, from request: String?) -> String {
+        guard let request else { return target }
+        var theirs: [String: String] = [:]
+        for word in request.split(whereSeparator: { !$0.isLetter && !$0.isNumber }) {
+            theirs[flatten(String(word))] = String(word)
+        }
+        return target.split(separator: " ", omittingEmptySubsequences: false).map { word in
+            let key = flatten(String(word))
+            guard let own = theirs[key], own.count == word.count,
+                  own.lowercased() != word.lowercased() else { return String(word) }
+            return word.first?.isUppercase == true ? own.prefix(1).uppercased() + own.dropFirst() : own
+        }.joined(separator: " ")
+    }
+
     /// Los titulares de esta página: un link que además es encabezado, o un
     /// ítem de listado con nombre largo que abre otra página. La misma regla
     /// que decide si algo es una portada.
     static func headlines(of page: ExtractedPage) -> [String] {
         var out: [String] = []
         var seen = Set<String>()
+        // Una nota por dirección: el título y la bajada de la misma tarjeta
+        // son dos links a la misma nota. En Deportes de La Nación, "El ciclo
+        // de Hansi Flick…" —la bajada de la primera— se contaba como la
+        // segunda nota.
+        var opened = Set<String>()
         let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for entry in page.stream ?? [] {
             // Veinte letras como piso: "Medidas de Milei" y "Dólar hoy" son
             // etiquetas de sección del ticker, no notas.
-            if entry.kind == "link", entry.level != nil, entry.href != nil, let label = entry.label.map(tidy),
+            if entry.kind == "link", entry.level != nil, let href = entry.href, let label = entry.label.map(tidy),
                label.count >= 20 {
-                if seen.insert(label).inserted { out.append(label) }
+                if seen.insert(label).inserted, opened.insert(place(href)).inserted { out.append(label) }
             }
             if entry.kind == "listing", let listing = entry.ref.flatMap({ byID[$0] }) {
-                for item in listing.items where item.href != nil && item.title.count >= 25 {
+                for item in listing.items where item.title.count >= 25 {
+                    guard let href = item.href else { continue }
                     let title = tidy(item.title)
-                    if seen.insert(title).inserted { out.append(title) }
+                    if seen.insert(title).inserted, opened.insert(place(href)).inserted { out.append(title) }
                 }
             }
         }

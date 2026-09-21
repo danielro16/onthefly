@@ -21,6 +21,8 @@ struct AssistantPanel: View {
     @State private var placedAt = 0
     /// Los "Otra cosa" ya atendidos.
     @State private var inputsHandled = 0
+    /// Los "Ir a la prueba" ya atendidos.
+    @State private var pageFocusHandled = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -164,6 +166,12 @@ struct AssistantPanel: View {
             focused = "campo"
             return
         }
+        // "Ir a la prueba": el cursor quedó en la página, y ahí se queda.
+        // Traerlo de vuelta a las opciones deshacía el salto.
+        if assistant.pageFocusRequests != pageFocusHandled {
+            pageFocusHandled = assistant.pageFocusRequests
+            return
+        }
         if let first = assistant.offer?.options.first {
             focused = "opcion-\(first.id)"
         } else if let last = assistant.turns.last {
@@ -218,7 +226,10 @@ struct AssistantPanel: View {
                 // Con borde: sin él, con poca vista el campo no se distinguía.
                 .overlay(Capsule().strokeBorder(Color.secondary, lineWidth: 1))
                 .accessibilityLabel("Pedido")
-                .accessibilityHint("Escribí a dónde querés ir. Con el dictado del teclado también se puede hablar.")
+                // La pista dice lo que va a pasar con lo escrito: con un dato
+                // pedido, que va directo al campo de la página.
+                .accessibilityHint(assistant.awaiting.map { "Va directo al campo «\($0)» de la página." }
+                    ?? "Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.")
 
             Button(action: send) {
                 Image(systemName: "arrow.up.circle.fill")

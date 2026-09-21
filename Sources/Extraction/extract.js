@@ -111,6 +111,16 @@
    * not getComputedStyle, because this runs over every cell, label and button
    * on the page.
    */
+  /// Text that fits, cut between words and marked as cut. A slice in the
+  /// middle of a word read "Los dinosaurios que se comi" as the end of a
+  /// headline.
+  function clip(text, max) {
+    if (text.length <= max) return text;
+    const cut = text.slice(0, max);
+    const space = cut.lastIndexOf(" ");
+    return (space > max / 2 ? cut.slice(0, space) : cut).replace(/[\s,;:.\-–—]+$/, "") + "…";
+  }
+
   function textOf(node) {
     if (!node) return "";
     let raw = "";
@@ -191,7 +201,11 @@
     (function walk(node, hrefStack) {
       for (const child of node.childNodes) {
         if (child.nodeType === Node.TEXT_NODE) {
-          const chunk = (child.textContent || "").replace(/\s+/g, " ");
+          let chunk = (child.textContent || "").replace(/\s+/g, " ");
+          // A space already there is enough. Wikipedia writes "301&nbsp;%"
+          // with the nbsp in its own span, and the break added for the span
+          // plus the nbsp read "301  %" — two spaces the ear hears as a pause.
+          if (/\s$/.test(text) && chunk.startsWith(" ")) chunk = chunk.slice(1);
           if (!chunk) continue;
           const start = text.length;
           text += chunk;
@@ -1606,7 +1620,7 @@
       seen.add(href);
       const meta = tidy(textOf(card).replace(title, "")).slice(0, 200);
       if (!byParent.has(parent)) byParent.set(parent, []);
-      byParent.get(parent).push({ title: title.slice(0, 120), href: href, meta: meta });
+      byParent.get(parent).push({ title: clip(title, 200), href: href, meta: meta });
     }
 
     const found = [];
@@ -1771,8 +1785,19 @@
     if (!title && link) {
       const linkText = textOf(link);
       if (linkText.length < text.length - 20 || linkText.length <= 80) {
-        title = linkText;
-        for (const leaf of leaves) if (link.contains(leaf.node)) used.add(leaf.node);
+        // A link that wraps headline, summary and section together: the
+        // headline is its first real line. Taken whole, a Clarín card read
+        // "…dos millones de personas, La Secretaría de Energía informó…".
+        const first = linkText.length > 100
+          ? leaves.find(function (leaf) { return link.contains(leaf.node) && leaf.text.length >= 25; })
+          : null;
+        if (first) {
+          title = first.text;
+          used.add(first.node);
+        } else {
+          title = linkText;
+          for (const leaf of leaves) if (link.contains(leaf.node)) used.add(leaf.node);
+        }
       }
     }
     if (!title) {
@@ -1798,11 +1823,11 @@
           joined += (joined ? " " : "") + leaf.text;
           used.add(leaf.node);
         }
-        title = joined || text.slice(0, 80);
+        title = joined || clip(text, 80);
       }
     }
 
-    const item = { title: title.slice(0, 120) };
+    const item = { title: clip(title, 200) };
     if (link) {
       const href = absolute(link.getAttribute("href") || "");
       if (href) item.href = href;
@@ -2563,7 +2588,7 @@
       const key = plain(label) + "|" + href;
       if (saidLinks.has(key)) return;
       saidLinks.add(key);
-      const entry = { kind: "link", label: label.slice(0, 160), href: href };
+      const entry = { kind: "link", label: clip(label, 200), href: href };
       if (level) entry.level = level;
       if (group) entry.group = group;
       if (!says(label)) entry.noise = true;
@@ -2952,7 +2977,20 @@
     const stream = collectStream(actions, listings, found ? found.element : null);
 
     // Readability mutates the document it parses, so hand it a clone.
-    const article = new Readability(document.cloneNode(true), {
+    const clone = document.cloneNode(true);
+    // What a wiki puts around an article is not the article. Read as its
+    // first paragraphs, Mar del Plata opened with "ciudad de la provincia de
+    // Buenos Aires, Argentina" (the short description) and "«Marplatense»
+    // redirige aquí" (a hatnote), and every citation mark read as "[2 ]".
+    if (clone.querySelector(".mw-parser-output")) {
+      // The mobile skin puts the short description under the title, as a
+      // tagline, outside the article body.
+      clone.querySelectorAll(
+        ".tagline, .shortdescription, .hatnote, .dablink, .rellink, sup.reference, .mw-editsection, " +
+        ".mw-empty-elt, .navbox, .ambox, .noprint, #toc, .toc, .mw-cite-backlink"
+      ).forEach(function (el) { el.remove(); });
+    }
+    const article = new Readability(clone, {
       charThreshold: 200,
 allowedVideoRegex: /^$/,
     }).parse();
@@ -3239,6 +3277,12 @@ allowedVideoRegex: /^$/,
       el.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertText", data: String(value) }));
       el.dispatchEvent(new Event("change", { bubbles: true }));
       el.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true }));
+      // And let go, unless the field offers suggestions: a field left
+      // focused keeps the keyboard's form bar on screen — "˄ ˅ ✓", an
+      // unnamed "Barra de herramientas" next to the conversation.
+      const suggests = el.getAttribute("role") === "combobox" || el.hasAttribute("aria-autocomplete") ||
+        el.hasAttribute("list") || el.getAttribute("aria-haspopup") === "listbox";
+      if (!suggests) el.blur();
     } catch (e) {
       return { ok: false, reason: "error", message: String((e && e.message) || e) };
     }
