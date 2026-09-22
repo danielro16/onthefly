@@ -122,10 +122,11 @@ con Wikidata.
 
 ## Decisiones de Daniel (2026-09-22, después de F1)
 
-- **JEF no da orientaciones: propone los siguientes pasos, como botones.** Al
-  llegar, una línea de dónde se está y los botones; nada de describir la
-  página ni de explicar cómo se usa la app. La acción "orientar" del ruteador
-  pasa a ser "proponer los próximos pasos".
+- **Al llegar, como hoy:** un resumen de la página donde se está y los
+  botones con los próximos pasos. Lo que no va es hablar de la mecánica
+  interna: nunca "el botón está en el número 4 de la lista". Los números de
+  la lista son sólo para que el modelo elija; se arregla por estructura
+  (ids opacos y la lista descripta como interna), no con una frase.
 - **Primero la página, después afuera.** Con una página abierta, lo pedido se
   busca primero en ella (Jev: ¿está?, ¿cuál?; Gemini: contestar con la
   página) y sólo si no está se busca en Google, con el nombre del sitio. Salvo
