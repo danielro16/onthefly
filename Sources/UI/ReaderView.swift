@@ -345,6 +345,11 @@ struct ReaderView: View {
     private var open: Bool { panelOpen || !hasPage }
 
     private static let motion = Animation.spring(duration: 0.45, bounce: 0.14)
+    /// El vidrio de la barra y del panel, el mismo en los dos. Con algo del
+    /// fondo del sistema: el transparente dejaba leer la página debajo del
+    /// texto —con poca vista, ruido—, y sin tinte la barra era clara y el
+    /// panel oscuro, y al abrirse el vidrio pasaba de blanco a negro.
+    private static let glass = Glass.regular.tint(Color(.systemBackground).opacity(0.8))
 
     var body: some View {
         GeometryReader { screen in
@@ -450,11 +455,8 @@ struct ReaderView: View {
             .frame(maxWidth: .infinity)
             .frame(height: panelHeight(in: screen))
             .background {
-                // Vidrio con algo de blanco: con el transparente de siempre,
-                // lo que la página tenía detrás —un botón de color— se veía
-                // debajo del texto, y con poca vista eso es ruido.
                 Color.clear
-                    .glassEffect(.regular.tint(Color(.systemBackground).opacity(0.7)), in: shape)
+                    .glassEffect(Self.glass, in: shape)
                     .glassEffectID("asistente", in: glassSpace)
                     .padding(.bottom, keyboardUp ? 0 : 8)
                     .ignoresSafeArea(.container, edges: .bottom)
@@ -529,10 +531,12 @@ struct ReaderView: View {
     }
 
     /// Lo que la barra o el panel tapan de la página, desde el pie de la
-    /// pantalla.
+    /// pantalla. Con el teclado de un campo de la página, la barra queda
+    /// detrás de él, y del teclado se ocupa el WebView.
     private func covered(in screen: GeometryProxy) -> CGFloat {
         let bottom = screen.safeAreaInsets.bottom
-        return open ? panelHeight(in: screen) + bottom : barHeight + bottom
+        if open { return panelHeight(in: screen) + bottom }
+        return bottom > 100 ? 0 : barHeight + bottom
     }
 
     // MARK: - La barra
@@ -557,7 +561,7 @@ struct ReaderView: View {
                     .contentShape(.circle)
             }
             .buttonStyle(.plain)
-            .glassEffect(.regular.interactive(), in: .circle)
+            .glassEffect(Self.glass.interactive(), in: .circle)
             // Aparece en su lugar: saliendo del panel, nacía como un círculo
             // grande en medio de la pantalla.
             .glassEffectTransition(.materialize)
@@ -585,7 +589,7 @@ struct ReaderView: View {
                 .contentShape(.capsule)
             }
             .buttonStyle(.plain)
-            .glassEffect(.regular.interactive(), in: .capsule)
+            .glassEffect(Self.glass.interactive(), in: .capsule)
             .glassEffectID("asistente", in: glassSpace)
             .accessibilityLabel("Abrir el asistente")
             .accessibilityValue(model.assistant.working ? "Buscando" : (place ?? ""))
@@ -594,6 +598,10 @@ struct ReaderView: View {
         .padding(.horizontal, 20)
         .padding(.bottom, 4)
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { barHeight = $0 + 4 }
+        // Con el teclado de un campo de la página, la barra queda detrás de
+        // él, como en Safari. Subiendo y bajando con el teclado, el texto y
+        // el vidrio se desacomodaban.
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 
     /// Dónde se está, como lo muestra Safari: el dominio, sin "www.".

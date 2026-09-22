@@ -57,7 +57,13 @@ struct AssistantPanel: View {
         // Reabierto, el cursor va a lo último que se dijo: es lo que la
         // persona vino a buscar.
         .onChange(of: isOpen) { _, open in
-            guard open else { return }
+            // Cerrado, el campo suelta el teclado. Si no, seguía con el foco
+            // escondido y el teclado volvía solo al reabrir: pasó después de
+            // un "Completar", que abre el teclado para el dato.
+            guard open else {
+                writing = false
+                return
+            }
             Task {
                 try? await Task.sleep(for: .milliseconds(450))
                 if let first = assistant.offer?.options.first {
