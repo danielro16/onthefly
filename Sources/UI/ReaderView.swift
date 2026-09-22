@@ -311,70 +311,299 @@ final class ReaderModel {
     }
 }
 
-/// La app: la página tal como es, arriba, y la conversación abajo.
+/// La app: la página tal como es, a pantalla completa, y la conversación
+/// encima.
 ///
 /// No hay barra de direcciones ni vista reconstruida. A todos lados se llega
 /// hablando con el asistente; la página queda a la vista y sin tocar, para
 /// quien ve y para lo que sólo la persona puede hacer —una contraseña, un
 /// captcha, el botón de pagar—.
+///
+/// Como Safari: abajo flotan Volver y el buscador, de vidrio. Tocar el
+/// buscador levanta la conversación.
 struct ReaderView: View {
     @State private var model = ReaderModel()
     /// El asistente a la vista. Cerrado, la página ocupa la pantalla entera
-    /// y queda el botón "Asistente" para volver.
+    /// y queda la barra de abajo para volver.
     @State private var panelOpen = true
+    /// Las dos alturas del panel: un poco más de media pantalla, o entera.
+    private enum Detent { case medium, large }
+    @State private var detent = Detent.medium
+    /// Lo que se lleva arrastrada la manija, hacia abajo en positivo.
+    @State private var drag: CGFloat = 0
+    /// Cerrado a mano, el cursor de VoiceOver va a la barra: es lo que
+    /// queda en pantalla y lo que lo vuelve a abrir.
+    @AccessibilityFocusState private var barFocused: Bool
+    @State private var barHeight: CGFloat = 0
+    /// El buscador y el panel son el mismo vidrio: al abrir, el buscador se
+    /// estira hasta ser el panel; al cerrar, el panel se encoge hasta ser el
+    /// buscador. Lo pidió Daniel: que se entienda de dónde sale y a dónde
+    /// vuelve.
+    @Namespace private var glassSpace
+
+    private var hasPage: Bool { model.liveWebView != nil }
+    private var open: Bool { panelOpen || !hasPage }
+
+    private static let motion = Animation.spring(duration: 0.45, bounce: 0.14)
 
     var body: some View {
         GeometryReader { screen in
-            VStack(spacing: 0) {
-                // Recién cuando hubo una página. Antes no hay nada que mirar,
-                // y la conversación ocupa la pantalla entera.
+            ZStack(alignment: .bottom) {
                 if let web = model.liveWebView {
-                    WebPageView(webView: web)
-                    Divider()
+                    // Por debajo del vidrio, como en Safari. Lo que la barra
+                    // o el panel tapan se le dice al WebView: lo fijo al pie
+                    // de la página —un aviso de cookies, un botón de pagar—
+                    // se acomoda arriba de ellos en vez de quedar debajo.
+                    WebPageView(webView: web, coveredBottom: covered(in: screen))
+                        .ignoresSafeArea(edges: .bottom)
                 }
-                // No es una hoja: una hoja se cierra sola cuando la página
-                // cambia, que es exactamente lo que el asistente hace.
-                //
-                // Y con más de la mitad de la pantalla: la conversación es la
-                // app. En una franja de 380 puntos las respuestas se cortaban
-                // y los botones quedaban abajo, fuera de la vista.
-                if panelOpen || model.liveWebView == nil {
-                    AssistantPanel(
-                        assistant: model.assistant,
-                        onAsk: { goal in Task { await model.assistant.ask(goal, on: model) } },
-                        onAccept: { action in Task { await model.assistant.accept(action, on: model) } },
-                        onClose: model.liveWebView == nil ? nil : { panelOpen = false }
-                    )
-                    .frame(height: model.liveWebView == nil ? nil : max(380, screen.size.height * 0.55))
-                    .background(.bar)
-                }
-            }
-            .overlay(alignment: .bottomTrailing) {
-                if !panelOpen, model.liveWebView != nil {
-                    Button { panelOpen = true } label: {
-                        Label("Asistente", systemImage: "bubble.left.and.bubble.right.fill")
-                            .font(.headline)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 14)
-                            .background(.tint, in: Capsule())
-                            .foregroundStyle(.white)
+                // Sólo el vidrio va en el contenedor: lo que se pone adentro
+                // queda debajo del vidrio, borroso. La conversación va
+                // encima, en su propia capa.
+                GlassEffectContainer(spacing: 12) {
+                    ZStack(alignment: .bottom) {
+                        if hasPage, open {
+                            panelGlass(in: screen)
+                        }
+                        if hasPage, !panelOpen {
+                            bar
+                        }
                     }
-                    .padding(20)
-                    .accessibilityLabel("Abrir el asistente")
                 }
+                panel(in: screen)
             }
+            .animation(Self.motion, value: hasPage)
         }
         // El país para buscar: la ubicación, con el permiso que el sistema
         // pide una vez; sin permiso, la región de Ajustes.
         .task { Ubicacion.shared.start() }
         // "Ir a la prueba": la página entera, para poder resolverla.
-        .onChange(of: model.assistant.pageFocusRequests) { _, _ in panelOpen = false }
-        // Resuelta, el asistente vuelve: lo que sigue lo cuenta él.
-        .onChange(of: model.assistant.panelRequests) { _, _ in panelOpen = true }
-        // Salir es volver. Es el gesto con el que se sale de todo lo demás
-        // en iOS.
-        .accessibilityAction(.escape) {
-            Task { await model.assistant.goBack(on: model) }
+        .onChange(of: model.assistant.pageFocusRequests) { _, _ in
+            withAnimation(Self.motion) { panelOpen = false }
         }
+        // Resuelta, el asistente vuelve: lo que sigue lo cuenta él.
+        .onChange(of: model.assistant.panelRequests) { _, _ in
+            withAnimation(Self.motion) { panelOpen = true }
+        }
+        // Salir es cerrar lo que está abierto, como en todo iOS: con el
+        // asistente a la vista lo cierra; con la página sola, vuelve.
+        .accessibilityAction(.escape) {
+            if hasPage, panelOpen {
+                close()
+            } else {
+                Task { await model.assistant.goBack(on: model) }
+            }
+        }
+    }
+
+    // MARK: - El panel
+
+    /// La conversación. Sin página es la pantalla entera; con página, un
+    /// panel de vidrio que flota sobre ella.
+    ///
+    /// No es una hoja del sistema: una hoja se cierra sola cuando la página
+    /// cambia, que es exactamente lo que el asistente hace, y le cobra a
+    /// VoiceOver una parada de "Sheet Grabber" antes de todo.
+    ///
+    /// Cerrado sigue armado, invisible: la conversación y hasta dónde se
+    /// leyó quedan como estaban para cuando se vuelva a abrir.
+    private func panel(in screen: GeometryProxy) -> some View {
+        AssistantPanel(
+            assistant: model.assistant,
+            onAsk: { goal in Task { await model.assistant.ask(goal, on: model) } },
+            onAccept: { action in Task { await model.assistant.accept(action, on: model) } },
+            onClose: hasPage ? { close() } : nil,
+            onDrag: hasPage ? { value, ended in dragged(value, ended: ended, in: screen) } : nil,
+            isOpen: open
+        )
+        .frame(maxWidth: .infinity)
+        .frame(height: hasPage ? panelHeight(in: screen) : screen.size.height)
+        .clipShape(.rect(topLeadingRadius: hasPage ? 34 : 0, topTrailingRadius: hasPage ? 34 : 0, style: .continuous))
+        // Al cerrar, lo de adentro se apaga enseguida y el vidrio se encoge
+        // solo hasta el buscador; al abrir, aparece cuando el vidrio ya se
+        // estiró. Apagándose al mismo ritmo, el texto quedaba flotando sobre
+        // la página, sin vidrio detrás.
+        .opacity(open ? 1 : 0)
+        .scaleEffect(open ? 1 : 0.9, anchor: .bottom)
+        .animation(open ? .easeOut(duration: 0.22).delay(0.12) : .easeOut(duration: 0.1), value: open)
+        .background {
+            if !hasPage { Color(.systemBackground).ignoresSafeArea() }
+        }
+        .padding(.horizontal, hasPage ? 8 : 0)
+        .offset(y: dragOffset(in: screen))
+        .allowsHitTesting(open)
+    }
+
+    /// El vidrio del panel, en su capa. Tiene el mismo marco que la
+    /// conversación que va encima.
+    private func panelGlass(in screen: GeometryProxy) -> some View {
+        // Arriba, redondeado; abajo, siguiendo la curva de la pantalla, como
+        // las hojas de iOS.
+        let shape = ConcentricRectangle(
+            topLeadingCorner: .fixed(34), topTrailingCorner: .fixed(34),
+            bottomLeadingCorner: .concentric(minimum: .fixed(34)), bottomTrailingCorner: .concentric(minimum: .fixed(34))
+        )
+        // Con el teclado arriba el vidrio termina en él; sin teclado, baja
+        // hasta casi el borde de la pantalla.
+        let keyboardUp = screen.safeAreaInsets.bottom > 100
+        return Color.clear
+            .frame(maxWidth: .infinity)
+            .frame(height: panelHeight(in: screen))
+            .background {
+                // Vidrio con algo de blanco: con el transparente de siempre,
+                // lo que la página tenía detrás —un botón de color— se veía
+                // debajo del texto, y con poca vista eso es ruido.
+                Color.clear
+                    .glassEffect(.regular.tint(Color(.systemBackground).opacity(0.7)), in: shape)
+                    .glassEffectID("asistente", in: glassSpace)
+                    .padding(.bottom, keyboardUp ? 0 : 8)
+                    .ignoresSafeArea(.container, edges: .bottom)
+            }
+            .padding(.horizontal, 8)
+            .offset(y: dragOffset(in: screen))
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+
+    /// Arrastrado más allá de su altura mínima, el panel entero baja.
+    private func dragOffset(in screen: GeometryProxy) -> CGFloat {
+        open ? max(0, drag - (restingHeight(in: screen) - 200)) : 0
+    }
+
+    /// Sin arrastrar: 55 % de la pantalla, o entera. Y con más de la mitad a
+    /// propósito: la conversación es la app. En una franja de 380 puntos las
+    /// respuestas se cortaban y los botones quedaban abajo, fuera de la vista.
+    private func restingHeight(in screen: GeometryProxy) -> CGFloat {
+        let full = screen.size.height
+        switch detent {
+        case .medium: return min(full, max(380, full * 0.55))
+        case .large: return full
+        }
+    }
+
+    /// La altura mientras se arrastra: sigue al dedo, hasta la pantalla
+    /// entera para arriba y hasta 200 puntos para abajo. Pasado eso, el
+    /// panel entero baja.
+    private func panelHeight(in screen: GeometryProxy) -> CGFloat {
+        let resting = restingHeight(in: screen)
+        return min(screen.size.height, max(200, resting - drag))
+    }
+
+    private func dragged(_ value: DragGesture.Value, ended: Bool, in screen: GeometryProxy) {
+        guard ended else {
+            drag = value.translation.height
+            return
+        }
+        let flung = value.predictedEndTranslation.height
+        switch detent {
+        case .medium where flung > 140, .large where flung > 420:
+            close()
+            return
+        default:
+            break
+        }
+        withAnimation(Self.motion) {
+            drag = 0
+            switch detent {
+            case .medium where flung < -120: detent = .large
+            case .large where flung > 120: detent = .medium
+            default: break
+            }
+        }
+    }
+
+    private func openPanel() {
+        withAnimation(Self.motion) { panelOpen = true }
+    }
+
+    private func close() {
+        withAnimation(Self.motion) {
+            panelOpen = false
+            detent = .medium
+            drag = 0
+        }
+        Task {
+            try? await Task.sleep(for: .milliseconds(450))
+            barFocused = true
+        }
+    }
+
+    /// Lo que la barra o el panel tapan de la página, desde el pie de la
+    /// pantalla.
+    private func covered(in screen: GeometryProxy) -> CGFloat {
+        let bottom = screen.safeAreaInsets.bottom
+        return open ? panelHeight(in: screen) + bottom : barHeight + bottom
+    }
+
+    // MARK: - La barra
+
+    /// Volver y el buscador, flotando sobre la página como en Safari.
+    ///
+    /// El buscador no es un campo: levanta la conversación, con la última
+    /// respuesta y sus botones a la vista. El teclado los taparía, y los
+    /// botones son el camino; para escribir está el campo de abajo del
+    /// panel.
+    private var bar: some View {
+        HStack(spacing: 12) {
+            Button {
+                Task { await model.assistant.goBack(on: model) }
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(model.canGoBack ? .primary : .tertiary)
+                    .frame(width: 54, height: 54)
+                    // Sin forma, un botón liso sólo se toca sobre el
+                    // dibujo: la flecha, no el círculo.
+                    .contentShape(.circle)
+            }
+            .buttonStyle(.plain)
+            .glassEffect(.regular.interactive(), in: .circle)
+            // Aparece en su lugar: saliendo del panel, nacía como un círculo
+            // grande en medio de la pantalla.
+            .glassEffectTransition(.materialize)
+            .disabled(!model.canGoBack)
+            .accessibilityLabel("Volver")
+
+            Button(action: openPanel) {
+                HStack(spacing: 10) {
+                    if model.assistant.working {
+                        ProgressView()
+                            .controlSize(.small)
+                    } else {
+                        Image(systemName: "magnifyingglass")
+                            .font(.body.weight(.semibold))
+                    }
+                    Text(place ?? "¿Qué querés hacer?")
+                        .font(.body)
+                        .foregroundStyle(place == nil ? .secondary : .primary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 18)
+                .frame(height: 54)
+                .contentShape(.capsule)
+            }
+            .buttonStyle(.plain)
+            .glassEffect(.regular.interactive(), in: .capsule)
+            .glassEffectID("asistente", in: glassSpace)
+            .accessibilityLabel("Abrir el asistente")
+            .accessibilityValue(model.assistant.working ? "Buscando" : (place ?? ""))
+            .accessibilityFocused($barFocused)
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 4)
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { barHeight = $0 + 4 }
+    }
+
+    /// Dónde se está, como lo muestra Safari: el dominio, sin "www.".
+    private var place: String? {
+        let url: URL? = switch model.state {
+        case .loading(let url): url
+        case .loaded(let page): URL(string: page.url)
+        case .idle, .failed: URL(string: model.address)
+        }
+        guard let host = url?.host(), !host.isEmpty else { return nil }
+        return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
     }
 }

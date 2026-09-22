@@ -13,6 +13,12 @@ struct AssistantPanel: View {
     /// Cerrar el asistente y dejar la página entera a la vista. Nil sin
     /// página: antes de la primera carga no hay nada que mirar.
     var onClose: (() -> Void)?
+    /// Arrastrar la parte de arriba sube, baja o cierra el panel. Nil a
+    /// pantalla completa, sin página detrás.
+    var onDrag: ((DragGesture.Value, _ ended: Bool) -> Void)?
+    /// Cerrado sigue armado, invisible: la conversación y hasta dónde se
+    /// leyó quedan como estaban para cuando se vuelva a abrir.
+    var isOpen = true
 
     @State private var text = ""
     @FocusState private var writing: Bool
@@ -28,38 +34,103 @@ struct AssistantPanel: View {
     @State private var pageFocusHandled = 0
 
     var body: some View {
+        // Cerrado, VoiceOver no lo recorre. Por partes y no sobre el panel
+        // entero: puesto ahí, abierto valía `false` y destapaba la manija,
+        // que VoiceOver no tiene que tocar.
         VStack(spacing: 0) {
             header
-            Divider()
+            // Se desvanece en los bordes en vez de cortarse en seco. No pasa
+            // por debajo del título ni del campo: detrás de ellos, borroso,
+            // era ruido, y VoiceOver leía el campo antes que la conversación.
             conversation
-            Divider()
+                .mask {
+                    VStack(spacing: 0) {
+                        LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom).frame(height: 14)
+                        Color.black
+                        LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom).frame(height: 14)
+                    }
+                }
+                .accessibilityHidden(!isOpen)
             composer
+                .accessibilityHidden(!isOpen)
         }
-        .background(Color(.systemBackground))
+        // Reabierto, el cursor va a lo último que se dijo: es lo que la
+        // persona vino a buscar.
+        .onChange(of: isOpen) { _, open in
+            guard open else { return }
+            Task {
+                try? await Task.sleep(for: .milliseconds(450))
+                if let first = assistant.offer?.options.first {
+                    focused = "opcion-\(first.id)"
+                } else if let last = assistant.turns.last {
+                    focused = last.id
+                }
+            }
+        }
     }
 
     private var header: some View {
         HStack {
+            // Cerrado, oculto pieza por pieza: sobre la fila entera, el
+            // título tomaba el ancho de la fila.
             Text("Asistente")
                 .font(.headline)
+                .allowsHitTesting(false)
                 .accessibilityAddTraits(.isHeader)
+                .accessibilityHidden(!isOpen)
             Spacer()
             if assistant.working {
                 ProgressView()
                     .controlSize(.small)
                     .accessibilityLabel("Buscando")
+                    .accessibilityHidden(!isOpen)
             }
             // Volvió: sin él no había cómo usar la página misma —resolver una
             // prueba anti-robot, escribir una contraseña—. Lo marcó Daniel.
             if let onClose {
-                Button("Cerrar", action: onClose)
-                    .font(.body.weight(.semibold))
-                    .accessibilityLabel("Cerrar el asistente")
-                    .accessibilityHint("Deja la página entera a la vista. Para volver, el botón Asistente.")
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.body.weight(.semibold))
+                        .frame(width: 44, height: 44)
+                        // Sin forma, un botón liso sólo se toca sobre el
+                        // dibujo: la cruz, no el círculo. Así no andaba.
+                        .contentShape(.circle)
+                }
+                .buttonStyle(.plain)
+                .glassEffect(.regular.interactive(), in: .circle)
+                .accessibilityLabel("Cerrar el asistente")
+                .accessibilityHint("Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.")
+                .accessibilityHidden(!isOpen)
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 12)
+        .padding(.top, onDrag == nil ? 12 : 19)
+        .padding(.bottom, 4)
+        .frame(maxWidth: .infinity)
+        // La manija y el arrastre van detrás, en toda la franja. Puesto
+        // sobre la franja misma, VoiceOver le daba su tamaño al título y a
+        // la X. Y VoiceOver no para en la manija: una hoja del sistema le
+        // cobraba una parada de "Sheet Grabber" antes de todo. Para cerrar
+        // está la X.
+        .background(alignment: .top) {
+            if onDrag != nil {
+                ZStack(alignment: .top) {
+                    Color.clear
+                    Capsule()
+                        .fill(.secondary.opacity(0.5))
+                        .frame(width: 36, height: 5)
+                        .padding(.top, 8)
+                }
+                .contentShape(.rect)
+                .gesture(
+                    DragGesture(minimumDistance: 6)
+                        .onChanged { onDrag?($0, false) }
+                        .onEnded { onDrag?($0, true) }
+                )
+                .accessibilityElement(children: .ignore)
+                .accessibilityHidden(true)
+            }
+        }
     }
 
     @ViewBuilder
@@ -168,7 +239,7 @@ struct AssistantPanel: View {
     }
 
     private func placeFocus() {
-        guard settled, placedAt != assistant.turns.count else { return }
+        guard isOpen, settled, placedAt != assistant.turns.count else { return }
         placedAt = assistant.turns.count
         // "Otra cosa": al campo, a escribir. Con el teclado sólo no alcanzaba:
         // el cursor de VoiceOver se quedaba en la conversación.
@@ -210,6 +281,9 @@ struct AssistantPanel: View {
                     mine ? AnyShapeStyle(.tint.opacity(0.15)) : AnyShapeStyle(Color(.secondarySystemBackground)),
                     in: RoundedRectangle(cornerRadius: 14, style: .continuous)
                 )
+                // Sólido debajo: sobre el vidrio, el celeste translúcido
+                // dejaba ver la página a través del texto.
+                .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .frame(maxWidth: .infinity, alignment: mine ? .trailing : .leading)
             if !mine { Spacer(minLength: 40) }
         }
@@ -221,16 +295,20 @@ struct AssistantPanel: View {
     }
 
     private var composer: some View {
-        HStack(spacing: 10) {
+        // Una sola cápsula, con Enviar adentro, como en Mensajes: el campo
+        // blanco al lado de un botón gris suelto se veía como dos cosas sin
+        // relación.
+        HStack(alignment: .bottom, spacing: 6) {
             // El texto de ayuda más oscuro que el gris de siempre: con poca
-            // vista, el gris claro parecía un campo desactivado.
+            // vista, el gris claro parecía un campo desactivado. Y fijo, no
+            // `.secondary`: sobre el vidrio ese gris se aclara todavía más.
             Group {
                 // Una contraseña pedida se escribe tapada: ni en pantalla ni
                 // letra por letra en voz alta.
                 if assistant.awaitingSecret {
-                    SecureField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? "").foregroundStyle(.secondary))
+                    SecureField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? "").foregroundStyle(Color(.secondaryLabel)))
                 } else {
-                    TextField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? "¿Qué querés hacer?").foregroundStyle(.secondary), axis: .vertical)
+                    TextField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? "¿Qué querés hacer?").foregroundStyle(Color(.secondaryLabel)), axis: .vertical)
                         .lineLimit(1...3)
                 }
             }
@@ -239,11 +317,7 @@ struct AssistantPanel: View {
                 .accessibilityFocused($focused, equals: "campo")
                 .submitLabel(.send)
                 .onSubmit(send)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(Color(.tertiarySystemFill), in: Capsule())
-                // Con borde: sin él, con poca vista el campo no se distinguía.
-                .overlay(Capsule().strokeBorder(Color.secondary, lineWidth: 1))
+                .padding(.vertical, 11)
                 .accessibilityLabel("Pedido")
                 // La pista dice lo que va a pasar con lo escrito: con un dato
                 // pedido, que va directo al campo de la página.
@@ -252,13 +326,22 @@ struct AssistantPanel: View {
 
             Button(action: send) {
                 Image(systemName: "arrow.up.circle.fill")
-                    .font(.title2)
+                    .font(.title)
+                    .symbolRenderingMode(.hierarchical)
             }
             .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty || assistant.working)
+            .padding(.bottom, 5)
             .accessibilityLabel("Enviar")
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
+        .padding(.leading, 18)
+        .padding(.trailing, 6)
+        // Sólido: sobre el vidrio, un relleno translúcido se perdía.
+        .background(Color(.systemBackground), in: Capsule())
+        // Con borde: sin él, con poca vista el campo no se distinguía.
+        .overlay(Capsule().strokeBorder(Color(.systemGray3), lineWidth: 1))
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 12)
     }
 
     private func send() {

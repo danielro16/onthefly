@@ -12,10 +12,18 @@ import WebKit
 /// sesión, resolver un captcha, navegar— es lo mismo que el asistente ve.
 struct WebPageView: UIViewRepresentable {
     let webView: WKWebView
+    /// Lo que el vidrio de abajo tapa. La página pasa por debajo, pero su
+    /// zona visible termina arriba de él.
+    var coveredBottom: CGFloat = 0
 
     func makeUIView(context: Context) -> WKWebView {
         webView
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        let insets = UIEdgeInsets(top: 0, left: 0, bottom: coveredBottom, right: 0)
+        if uiView.obscuredContentInsets != insets {
+            uiView.obscuredContentInsets = insets
+        }
+    }
 }

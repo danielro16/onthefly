@@ -151,7 +151,7 @@ class Panel:
         return arriba, abajo
 
     # Los botones del asistente mismo, que no son opciones de la conversación.
-    CROMO = {"Enviar", "Cerrar el asistente", "Abrir el asistente"}
+    CROMO = {"Enviar", "Cerrar el asistente", "Abrir el asistente", "Volver"}
 
     @staticmethod
     def opciones(nodos, cromo=False):

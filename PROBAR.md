@@ -67,7 +67,7 @@ Queda en triple clic del botón lateral. Prendés, probás, apagás.
 | **Rotor: dos dedos girando** | Cambiar modo de navegación |
 | Swipe arriba / abajo | Moverse según el rotor |
 | Dos dedos, swipe arriba | Leer todo desde arriba |
-| Dos dedos, Z | Volver a la página anterior |
+| Dos dedos, Z | Con el asistente abierto, cerrarlo; con la página sola, volver a la anterior |
 
 **Lo que hay que probar:** escuchar lo que el asistente dice mientras trabaja,
 llegar a los botones que ofrece, y pasar de la página a la conversación. Con
