@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: mercado libre
+  4 [txt] Buscando: mercado libre.
+  5 [txt] Estás en los resultados de «mercado libre». Los 3 más probables:
+  6 [H] Vos: Mercado Libre Argentina - Envíos Gratis en el día — www.mercadolibre.com.ar
+  7 [txt] Abriendo mercadolibre.com.ar.
+  8 [txt] Estás en la página principal de Mercado Libre, donde podés buscar y comprar productos, o gestionar tu cuenta y ventas.
+  9 [btn] Abrir «Ingresá lo que quieras encontrar»  (Primera de 5 opciones.)
+ 10 [btn] Abrir «Crear cuenta»
+ 11 [btn] Abrir «Ir a Categorías»
+ 12 [btn] Volver a los resultados
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 15 [btn] Enviar

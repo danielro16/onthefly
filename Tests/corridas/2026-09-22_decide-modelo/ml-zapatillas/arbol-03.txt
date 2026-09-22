@@ -1,0 +1,22 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: mercado libre
+  4 [txt] Buscando: mercado libre.
+  5 [txt] Estás en los resultados de «mercado libre». Los 3 más probables:
+  6 [H] Vos: Mercado Libre Argentina - Envíos Gratis en el día — www.mercadolibre.com.ar
+  7 [txt] Abriendo mercadolibre.com.ar.
+  8 [txt] Estás en la página principal de Mercado Libre, donde podés buscar y comprar productos, o gestionar tu cuenta y ventas.
+  9 [H] Vos: Buscar zapatillas con envío a cordoba
+ 10 [txt] Listo, escrito en Ingresá lo que quieras encontrar.
+ 11 [txt] Pulsando «Buscar».
+ 12 [txt] Estás en la página principal de Mercado Libre Argentina, donde podés buscar y comprar productos. Para encontrar tus zapatillas con envío a Córdoba, podés usar el buscador o ingresar tu ubicación para filtrar los resultados.
+ 13 [txt] La página cambió.
+ 14 [txt] El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella, y tiene opción de audio. Cuando esté resuelta, seguimos.
+ 15 [btn] Pulsar «Buscar»  (Primera de 6 opciones.)
+ 16 [btn] Abrir «Ingresá lo que quieras encontrar»
+ 17 [btn] Abrir «Ingresar ubicación»
+ 18 [btn] Abrir «GLAM DAYS ZAPATILLAS ¡HASTA 40% OFF! Ver ofertas»
+ 19 [btn] Volver a la portada
+ 20 [btn] Otra cosa
+ 21 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 22 [btn] Enviar

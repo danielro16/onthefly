@@ -1,0 +1,59 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>JEF — cómo se decide el primer pedido</title>
+<style>body{font-family:-apple-system,system-ui;margin:24px;background:#fff} h1{font-size:20px}</style></head>
+<body><h1>JEF — cómo se decide el primer pedido (hoy)</h1>
+<pre class="mermaid">
+flowchart TD
+    P(["La persona escribe o dicta su primer pedido<br/>ej.: «¿Cómo va a estar el tiempo mañana?»"])
+    P --> U{"¿Es una dirección?<br/>(tiene punto y no tiene espacios)"}:::decideCodigo
+    U -- sí --> O["Abre esa dirección"]:::codigo
+    U -- no --> G["<b>Gemini 3.1 Flash-Lite entiende la intención</b><br/>recibe: el pedido + dónde está la persona (ciudad)<br/>+ decisiones.json · todavía sin página<br/>hoy SIN razonar"]:::ia
+
+    G -- "no contesta" --> F["Busca la frase tal cual"]:::decideCodigo
+    G -- "ir / buscar<br/>(arma la búsqueda: «tiempo mañana Miami»)" --> B["Busca en Google<br/>con el país y el idioma del teléfono"]:::codigo
+    G -- "orientar" --> W["Bienvenida + 3 ejemplos"]:::fija
+    G -- "noPuedo" --> N["Dice qué no puede y qué sí<br/>(lo escribe el modelo)"]:::ia
+
+    B --> R{"¿Hay resultados?"}:::codigo
+    R -- no --> NR["«No encontré resultados»"]:::fija
+    R -- sí --> Q{"¿Pedía un dato?<br/>(lo marca Gemini)"}:::ia
+    Q -- "sí, y la página de Google lo trae" --> A["Gemini contesta con la página de Google<br/>+ los 3 primeros resultados como botones"]:::ia
+    Q -- "no, o no alcanza" --> T["«Estás en los resultados de…»<br/>los 3 primeros, en el orden de Google"]:::fija
+
+    A --> E(["La persona elige un resultado"])
+    T --> E
+    E --> S["Carga el sitio"]:::codigo
+    S --> X{"¿Prueba anti-robot?"}:::codigo
+    X -- sí --> C["Pide que la resuelva la persona<br/>y después sigue solo"]:::fija
+    X -- no --> K{"¿Quedaba algo del pedido?"}:::codigo
+    K -- "un dato" --> AN["Gemini lo contesta con el sitio"]:::ia
+    K -- "el resto de la tarea" --> G2["<b>Gemini decide de nuevo, ahora con la página</b><br/>texto + campos y botones numerados"]:::ia
+    K -- "nada" --> OR["Gemini cuenta dónde está<br/>y elige botones de la página"]:::ia
+
+    G2 -- "abrir algo de la página" --> J["Jev elige qué tocar (rápido)<br/>si duda o no está: Gemini reinterpreta"]:::jev
+    G2 -- "completar / enviar" --> FM["Escribe en el campo o aprieta el botón elegido"]:::codigo
+    J -- "no está en la página" --> NE["«No encuentro… ¿Lo busco en internet?»"]:::fija
+
+    AN --> BT(["Botones + «Otra cosa»"])
+    OR --> BT
+    FM --> OR
+    J --> OR
+    NE --> BT
+
+    subgraph Referencias
+        direction LR
+        L1["IA · Gemini"]:::ia
+        L2["IA · Jev"]:::jev
+        L3["Código que ejecuta"]:::codigo
+        L4["Código que decide o frase fija:<br/>lo que falta pasar al modelo"]:::decideCodigo
+        L5["Frase fija en castellano"]:::fija
+    end
+
+    classDef ia fill:#d6eaff,stroke:#1f6feb,color:#0b2a4a
+    classDef jev fill:#eadcff,stroke:#8250df,color:#2d1a4f
+    classDef codigo fill:#f0f0f0,stroke:#888,color:#222
+    classDef decideCodigo fill:#ffe3c2,stroke:#d4760a,color:#4a2600
+    classDef fija fill:#ffd9d9,stroke:#cf222e,color:#4a0a0a
+
+</pre>
+<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"; mermaid.initialize({startOnLoad:true, flowchart:{htmlLabels:true}});</script>
+</body></html>

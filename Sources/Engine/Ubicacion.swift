@@ -10,9 +10,10 @@ import MapKit
 /// Sin modelo y sin listas: quien quiere algo de otro país lo escribe —"banco
 /// galicia argentina"—, como en cualquier buscador.
 ///
-/// Sólo el país, en dos letras. Ni la ciudad ni las coordenadas salen de
-/// acá: para ordenar resultados alcanza, y es lo único que se le manda a un
-/// tercero.
+/// El país, en dos letras, va al buscador. La ciudad la recibe el modelo que
+/// decide qué hacer, para las búsquedas que dependen del lugar: con "tiempo
+/// mañana" y sólo el país, desde Miami salía el clima de España. Las
+/// coordenadas no salen de acá.
 @MainActor
 final class Ubicacion: NSObject, CLLocationManagerDelegate {
     static let shared = Ubicacion()
@@ -20,6 +21,9 @@ final class Ubicacion: NSObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
     /// El país de la ubicación real, cuando se sabe.
     private(set) var country: String?
+    /// Dónde está la persona, dicho como un lugar: "Miami, Florida, Estados
+    /// Unidos". Nil sin permiso de ubicación.
+    private(set) var place: String?
 
     /// El país para buscar: el de la ubicación, o el de Ajustes.
     static var countryForSearch: String? {
@@ -58,6 +62,9 @@ final class Ubicacion: NSObject, CLLocationManagerDelegate {
                 return
             }
             self.country = code
+            let address = places.first?.addressRepresentations
+            self.place = [address?.cityWithContext, address?.regionName]
+                .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", ")
             Registro.anotar("ubicacion", ["pais": code])
         }
     }
