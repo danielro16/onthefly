@@ -1,0 +1,21 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: clarín
+  4 [txt] Buscando: clarín.
+  5 [txt] Estás en los resultados de «clarín». Los 3 más probables:
+  6 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  7 [txt] Abriendo clarin.com.
+  8 [txt] Estás en la portada de Clarín. Los titulares principales son las primeras opciones.
+  9 [H] Vos: dame los titulares
+ 10 [txt] Los 4 primeros ya los dije. Titulares 5 a 7:
+ 11 [txt] 5. Trump afirmó que “Cuba caerá” y anunció un acuerdo con Irán luego de noviembre
+ 12 [txt] 6. Presupuesto, Discapacidad y renuncias: Karina Milei y Bullrich vuelven a verse las caras en la mesa política
+ 13 [txt] 7. La IA la confundió en un video de Ceuta y sufrió amenazas de muerte: “Arengaban a que me violen y tiren al mar”
+ 14 [btn] Abrir «Trump afirmó que “Cuba caerá” y anunció un acuerdo con Irán luego de noviembre»  (Primera de 6 opciones.)
+ 15 [btn] Abrir «Presupuesto, Discapacidad y renuncias: Karina Milei y Bullrich vuelven a verse las caras en la mesa…»
+ 16 [btn] Abrir «La IA la confundió en un video de Ceuta y sufrió amenazas de muerte: “Arengaban a que me violen y…»
+ 17 [btn] Seguir con los titulares
+ 18 [btn] Volver a los resultados
+ 19 [btn] Otra cosa
+ 20 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 21 [btn] Enviar

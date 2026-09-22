@@ -72,26 +72,19 @@ actor Router {
 
     enum RouterError: Error { case http(Int), transport(String), unusable }
 
-    private let apiKey: String
-    private let model: String
-    private let endpoint = URL(string: "https://ai-gateway.vercel.sh/v1/chat/completions")!
+    private let gemini: Gemini
     private let session: URLSession
 
+    /// Flash-Lite y no Flash: rutear es una decisión corta sobre un texto
+    /// corto. Por el gateway, 2.5 Flash-Lite; directo a Google, 3.1
+    /// Flash-Lite (ver `Gemini`). Medido con las 60 frases de prueba: unos
+    /// US$0,0003 por turno con 3.1.
     static func fromEnvironment() -> Router? {
-        guard
-            let key = Bundle.main.object(forInfoDictionaryKey: "AIGatewayAPIKey") as? String,
-            !key.isEmpty, key != "$(AI_GATEWAY_API_KEY)"
-        else { return nil }
-        return Router(apiKey: key)
+        Gemini.fromEnvironment(gateway: "google/gemini-2.5-flash-lite").map(Router.init)
     }
 
-    /// Flash-Lite y no Flash: rutear es una decisión corta sobre un texto
-    /// corto. Medido en precio de lista, entrada US$0,10 contra US$0,30 por
-    /// millón. Con el pedido y el estado —unos 300 tokens— el ruteo sale
-    /// alrededor de US$0,00005 por turno.
-    init(apiKey: String, model: String = "google/gemini-2.5-flash-lite") {
-        self.apiKey = apiKey
-        self.model = model
+    init(gemini: Gemini) {
+        self.gemini = gemini
         let config = URLSessionConfiguration.ephemeral
         config.timeoutIntervalForRequest = 15
         self.session = URLSession(configuration: config)
@@ -103,7 +96,9 @@ actor Router {
         Devolvés SÓLO JSON, sin texto alrededor, eligiendo UNA acción de esta lista:
 
         ir         — quiere ir a un sitio que nombra. target = el sitio, tal como lo nombró.
-        buscar     — quiere buscar algo. target = qué buscar, sin muletillas.
+        buscar     — quiere buscar algo. target = qué buscar, sin muletillas. Si la página
+                     tiene su propio buscador, el asistente busca ahí: buscar algo nunca es
+                     completar.
         abrir      — quiere abrir algo de lo que la página ya ofrece (una nota, un resultado,
                      una sección). reference = cómo lo nombró: "la segunda", "el del paro",
                      "la de Milei". NO inventes una dirección: sólo repetí cómo lo nombró.
@@ -111,7 +106,8 @@ actor Router {
         seguir     — quiere que siga leyendo desde donde iba.
         resumir    — quiere un resumen de lo que está abierto.
         responder  — hace una pregunta sobre lo que la página dice. question = la pregunta limpia.
-        completar  — quiere que se escriba algo en un campo. field = cómo nombró el campo,
+        completar  — quiere que se escriba un dato suyo en un campo de un formulario (DNI,
+                     usuario, contraseña, nombre, mail). field = cómo nombró el campo,
                      value = qué escribir, reconstruido de lo que dictó ("arroba" → @,
                      "punto com" → .com, un número dictado con espacios va junto).
         enviar     — quiere enviar el formulario.
@@ -151,9 +147,11 @@ actor Router {
           en mercado libre"): es buscar, con target = las dos cosas juntas ("mar del plata
           wikipedia"). El buscador lleva directo a la página; ir a Y y buscar ahí son dos pasos
           y se pierde X en el camino.
-        - Si está en un sitio y pide ir a una sección o un tema que ese sitio tiene ("llevame
-          a deportes" estando en un diario, "los resultados" estando en un buscador), es
-          abrir — reference = cómo lo nombró —, no ir ni buscar: la saca del sitio donde está.
+        - Si está en un sitio y pide una sección, un tema o un trámite que puede estar en ese
+          sitio ("llevame a deportes" estando en un diario, "sacar un turno" estando en una obra
+          social, "los resultados" estando en un buscador), es abrir — reference = cómo lo
+          nombró —, no ir ni buscar: buscar la saca del sitio donde está. El asistente lo busca
+          en la página y, si no está, le ofrece buscarlo afuera.
         - Si buscar sale de una pregunta que sigue la conversación, target tiene que decir de
           qué se habla: completalo con el tema de la página donde está o de lo que pidió antes.
           Una búsqueda sin tema devuelve cualquier cosa. Usá SÓLO las palabras de la persona y
@@ -188,11 +186,6 @@ actor Router {
 
     func decide(_ request: String, state: String) async throws -> Decision {
         let body: [String: Any] = [
-            "model": model,
-            // Razonar acá no aporta y cuesta: es una clasificación corta.
-            // Medido con Flash: con el razonamiento puesto se comía 481 de
-            // 500 tokens pensando y devolvía JSON cortado.
-            "reasoning": ["enabled": false],
             "max_tokens": 200,
             "response_format": ["type": "json_object"],
             "messages": [
@@ -200,11 +193,7 @@ actor Router {
                 ["role": "user", "content": "PIDIÓ: \(request)\n\nDÓNDE ESTÁ: \(state)"],
             ],
         ]
-        var request = URLRequest(url: endpoint)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        let request = try gemini.request(body)
 
         var data = Data()
         for attempt in 0..<3 {

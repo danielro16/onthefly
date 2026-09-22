@@ -1,0 +1,25 @@
+{"t": 1790092851.970247, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones"}
+{"pais": "AR", "tipo": "ubicacion", "t": 1790092852.387621}
+{"pais": "AR", "tipo": "ubicacion", "t": 1790092852.387955}
+{"tipo": "turno", "texto": "http://localhost:56712/captcha.html", "t": 1790092858.817155, "quien": "persona"}
+{"tipo": "botones", "opciones": [], "t": 1790092858.818516}
+{"tipo": "turno", "texto": "Abriendo localhost.", "t": 1790092858.8188748, "quien": "jef"}
+{"tipo": "voz", "texto": "Abriendo localhost.", "cola": false, "t": 1790092858.8191419}
+{"t": 1790092858.8612242, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones"}
+{"t": 1790092861.282913, "tipo": "pagina", "titulo": "Verificación de seguridad", "texto": "PÁGINA: localhost — Verificación de seguridad\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.\nContinuar\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.", "url": "http://localhost:56712/captcha.html"}
+{"tipo": "botones", "opciones": [], "t": 1790092861.28384}
+{"t": 1790092861.284093, "tipo": "turno", "texto": "El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, seguimos.", "quien": "jef"}
+{"t": 1790092861.284432, "cola": false, "tipo": "voz", "texto": "El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, seguimos."}
+{"opciones": ["Ir a la prueba", "Ya la resolví", "Otra cosa"], "t": 1790092861.284603, "tipo": "botones"}
+{"titulo": "Auriculares bluetooth", "url": "http://localhost:56712/resuelto.html", "texto": "PÁGINA: localhost — Auriculares bluetooth\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nAuriculares bluetooth\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499\nAuriculares Vincha Bluetooth con Micrófono $24.990\nAuriculares con Cancelación de Ruido $89.900\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499, Auriculares Vincha Bluetooth con Micrófono $24.990, Auriculares con Cancelación de Ruido $89.900", "t": 1790092872.060277, "tipo": "pagina"}
+{"quien": "jef", "texto": "Listo, ya pasamos la verificación.", "t": 1790092872.061434, "tipo": "turno"}
+{"cola": false, "texto": "Listo, ya pasamos la verificación.", "t": 1790092872.0638251, "tipo": "voz"}
+{"t": 1790092872.0640311, "opciones": [], "tipo": "botones"}
+{"texto": "Estás en la tienda de auriculares bluetooth. Hay tres modelos disponibles con envío gratis, ordenados de menor a mayor precio: los In Ear Básicos a $12.499, los de Vincha con Micrófono a $24.990 y los que tienen Cancelación de Ruido a $89.900.", "quien": "jef", "tipo": "turno", "t": 1790092874.20454}
+{"texto": "Estás en la tienda de auriculares bluetooth. Hay tres modelos disponibles con envío gratis, ordenados de menor a mayor precio: los In Ear Básicos a $12.499, los de Vincha con Micrófono a $24.990 y los que tienen Cancelación de Ruido a $89.900.", "tipo": "voz", "cola": true, "t": 1790092874.2053041}
+{"t": 1790092874.2067518, "opciones": ["Leer la página", "Resumir la página", "Volver a «Verificación de seguridad»", "Otra cosa"], "tipo": "botones"}
+{"t": 1790092890.879446, "tipo": "turno", "quien": "persona", "texto": "¿cuánto sale el más barato?"}
+{"tipo": "botones", "t": 1790092890.879782, "opciones": []}
+{"quien": "jef", "tipo": "turno", "t": 1790092893.457329, "texto": "El más barato cuesta $12.499 y se trata del modelo de auriculares In Ear Bluetooth básicos."}
+{"tipo": "voz", "t": 1790092893.4578528, "cola": false, "texto": "El más barato cuesta $12.499 y se trata del modelo de auriculares In Ear Bluetooth básicos."}
+{"opciones": ["¿Cuánto salen los de vincha?", "Leer la página", "Resumir la página", "Volver a «Verificación de seguridad»", "Otra cosa"], "t": 1790092893.458991, "tipo": "botones"}

@@ -1,0 +1,24 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: quiero sacar un turno en pami
+  4 [txt] Buscando: pami.
+  5 [txt] Estás en los resultados de «pami». Los 3 más probables:
+  6 [txt] Cuando elijas, sigo con «sacar un turno».
+  7 [H] Vos: INSSJP - Instituto Nacional de Servicios Sociales para Jubilados y ... — www.pami.org.ar
+  8 [txt] Abriendo pami.org.ar.
+  9 [txt] Estás en www.pami.org.ar.
+ 10 [txt] Buscando: sacar un turno.
+ 11 [txt] Estás en los resultados de «sacar un turno». Los 3 más probables:
+ 12 [H] Vos: Solicitar turnos en ANSES - Argentina.gob.ar — www.argentina.gob.ar
+ 13 [txt] Abriendo argentina.gob.ar.
+ 14 [txt] Esta página te permite solicitar un turno para realizar trámites en las oficinas de ANSES de forma gratuita. Tené en cuenta que para PAMI el trámite debe realizarse directamente a través de sus canales oficiales.
+ 15 [H] Vos: Abrir «Pedir turno»
+ 16 [txt] Abriendo «Pedir turno».
+ 17 [txt] Esta página pertenece al sistema de turnos de ANSES. No es un sitio de PAMI, pero desde aquí podés gestionar turnos para trámites de jubilaciones y pensiones, o consultar uno ya existente.
+ 18 [btn] Abrir «CONSULTAR TURNO»  (Primera de 5 opciones.)
+ 19 [btn] Abrir «Trámites Jubilados y Pensionados»
+ 20 [btn] Abrir «Reprogramación»
+ 21 [btn] Volver a «Solicitar turnos en ANSES»
+ 22 [btn] Otra cosa
+ 23 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 24 [btn] Enviar

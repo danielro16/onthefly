@@ -552,7 +552,7 @@ final class Assistant {
 
         case .enviar:
             guard let page = reader.page,
-                  let form = Self.pageForm(page)
+                  let form = Self.pageForm(page, filled: filledFields)
                     ?? page.actions.first(where: { $0.kind == .form && !($0.fields ?? []).isEmpty })
             else { say("Acá no hay un formulario para enviar."); return }
             // Lo pidió la persona, así que se aprieta: en el Banco Nación
@@ -1518,7 +1518,7 @@ final class Assistant {
             return
         }
         // El botón del formulario: lo tocó la persona, así que se aprieta.
-        if action.id == Self.submitID, let form = reader.page.flatMap(Self.pageForm) {
+        if action.id == Self.submitID, let page = reader.page, let form = Self.pageForm(page, filled: filledFields) {
             say("Pulsando «\(form.submit ?? action.label)».")
             await reader.submit(form)
             working = false
@@ -2263,7 +2263,7 @@ final class Assistant {
     /// como el DNI: lo pidió Daniel. Y su botón, con el nombre que le da la página: en el Banco Nación,
     /// con DNI y usuario escritos, no había cómo tocar «Continuar».
     static func formOptions(_ page: ExtractedPage, except filled: Set<String> = []) -> [Action] {
-        guard let form = pageForm(page) else { return [] }
+        guard let form = pageForm(page, filled: filled) else { return [] }
         let fillable = (form.fields ?? []).filter {
             $0.type != "hidden" && $0.type != "checkbox" && !isChallenge($0) && !filled.contains($0.id)
         }
@@ -2277,9 +2277,13 @@ final class Assistant {
         return options
     }
 
-    /// El formulario que ofrece `formOptions`, para cuando se toca su botón.
-    static func pageForm(_ page: ExtractedPage) -> Action? {
-        page.actions.first { $0.kind == .form && !isSearch($0) && !($0.fields ?? []).isEmpty }
+    /// El formulario que ofrece `formOptions`, para cuando se toca su botón:
+    /// en el que ya se escribió algo —también un buscador: en Mercado Libre
+    /// quedaba escrito y sin forma de apretar «Buscar»—, o si no, el primero
+    /// que no es de búsqueda.
+    static func pageForm(_ page: ExtractedPage, filled: Set<String> = []) -> Action? {
+        page.actions.first { $0.kind == .form && ($0.fields ?? []).contains { filled.contains($0.id) } }
+            ?? page.actions.first { $0.kind == .form && !isSearch($0) && !($0.fields ?? []).isEmpty }
     }
 
     /// Volver a la página anterior y decir dónde se quedó. También lo usa el

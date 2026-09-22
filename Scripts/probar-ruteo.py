@@ -8,17 +8,26 @@ corresponde al momento en que fue dicha.
     ./Scripts/probar-ruteo.py            # las 60
     ./Scripts/probar-ruteo.py --breve    # solo el conteo
     ./Scripts/probar-ruteo.py --modelo google/gemini-3.1-flash-lite --json /tmp/x.json   # otro modelo
+    ./Scripts/probar-ruteo.py --google --modelo gemini-3.1-flash-lite   # directo a Google (GEMINI_API_KEY)
 """
 import json, re, os, sys, pathlib, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
+GOOGLE = "--google" in sys.argv
 KEY = next(l.split("=",1)[1].strip() for l in (RAIZ/".env").read_text().split("\n")
-           if l.startswith("AI_GATEWAY_API_KEY="))
+           if l.startswith("GEMINI_API_KEY=" if GOOGLE else "AI_GATEWAY_API_KEY="))
+URL = ("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions" if GOOGLE
+       else "https://ai-gateway.vercel.sh/v1/chat/completions")
+# Por millón de tokens, entrada y salida.
+PRECIOS = {"gemini-2.5-flash-lite": (0.10, 0.40), "gemini-3.1-flash-lite": (0.25, 1.50),
+           "gemini-2.5-flash": (0.30, 2.50), "gemini-3-flash-preview": (0.50, 3.00)}
 SRC = (RAIZ/"Sources/Intelligence/Router.swift").read_text()
 INSTR = re.search(r'private static let instructions = """\n(.*?)\n        """', SRC, re.S).group(1)
 INSTR = "\n".join(l[8:] if l.startswith(" "*8) else l for l in INSTR.split("\n"))
-MODELO = re.search(r'model: String = "([^"]+)"', SRC).group(1)
+# El de la app: por el gateway, el que Router.swift le pasa; directo, el de Gemini.swift.
+MODELO = (re.search(r'model: "(gemini-[^"]+)"', (RAIZ/"Sources/Intelligence/Gemini.swift").read_text()).group(1) if GOOGLE
+          else re.search(r'gateway: "([^"]+)"', SRC).group(1))
 if "--modelo" in sys.argv: MODELO = sys.argv[sys.argv.index("--modelo") + 1]
 
 ESTADOS = {
@@ -30,13 +39,16 @@ ESTADOS = {
 }
 
 def decidir(caso):
+    # Sin razonar, como en la app: el gateway lo apaga con "reasoning", Google
+    # con "reasoning_effort".
+    apagado = {"reasoning_effort": "none"} if GOOGLE else {"reasoning": {"enabled": False}}
     cuerpo = json.dumps({
-        "model": MODELO, "reasoning": {"enabled": False}, "max_tokens": 200,
+        "model": MODELO, **apagado, "max_tokens": 200,
         "response_format": {"type": "json_object"},
         "messages": [{"role":"system","content":INSTR},
                      {"role":"user","content":f"PIDIÓ: {caso['frase']}\n\nDÓNDE ESTÁ: {ESTADOS[caso['momento']]}"}],
     }).encode()
-    req = urllib.request.Request("https://ai-gateway.vercel.sh/v1/chat/completions", data=cuerpo,
+    req = urllib.request.Request(URL, data=cuerpo,
           headers={"Authorization":f"Bearer {KEY}","Content-Type":"application/json"})
     import time
     for intento in range(5):
@@ -78,7 +90,8 @@ if "--json" in sys.argv:
 tiempos = sorted(s[1]["_s"] for s in ok if "_s" in s[1])
 if tiempos:
     print(f"tiempo por decisión: mediana {tiempos[len(tiempos)//2]} s · peor {tiempos[-1]} s")
-costo = tin*0.10e-6 + tout*0.40e-6
+entrada, salida = PRECIOS.get(MODELO.split("/")[-1], (0.10, 0.40))
+costo = tin*entrada*1e-6 + tout*salida*1e-6
 print(f"\n{len(ok)} de {len(casos)} ruteados · {tin} tokens entrada / {tout} salida · US$ {costo:.5f}")
 if ok:
     # Por turno REAL: sobre los que contestaron, no sobre los 60. Dividir por

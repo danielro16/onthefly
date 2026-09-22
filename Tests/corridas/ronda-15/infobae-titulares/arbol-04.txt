@@ -1,0 +1,22 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: abrí infobae
+  4 [txt] Buscando: infobae.
+  5 [txt] Estás en los resultados de «infobae». Los 3 más probables:
+  6 [H] Vos: Hacemos periodismo - Infobae — www.infobae.com
+  7 [txt] Abriendo infobae.com.
+  8 [txt] Estás en la portada de Infobae, el sitio de noticias. Los titulares principales son las primeras opciones.
+  9 [H] Vos: ¿qué titulares hay?
+ 10 [txt] Titulares 1 a 3:
+ 11 [txt] 1. Rubio no descartó un diálogo de EEUU con Irán en Nueva York: “El presidente está abierto a reunirse con todos”
+ 12 [txt] 2. Jornada de apertura en la Asamblea General de las Naciones Unidas
+ 13 [txt] 3. Estados Unidos, Dinamarca y Groenlandia firmarán este martes el acuerdo que reforzará la seguridad en el territorio ártico
+ 14 [H] Vos: Abrir «Rubio no descartó un diálogo de EEUU con Irán en Nueva York: “El presidente está abierto a reunirse…»
+ 15 [txt] Abriendo.
+ 16 [txt] Estás en la portada de Infobae. Estos son los titulares principales: los rebeldes hutíes aseguran controlar el paso de Bab el-Mandeb a pesar de la ofensiva saudita; comienza la Asamblea General de la ONU con líderes mundiales debatiendo sobre guerras y tecnología; Trump calificó al régimen cubano de Estado fallido ante las Naciones Unidas; António Guterres inauguró la Asamblea con un llamado a la paz en Medio Oriente y una advertencia sobre la IA; Irán acelera en su Parlamento el proceso para abandonar el Tratado de No Proliferación Nuclear.
+ 17 [btn] Leer la nota  (Primera de 4 opciones.)
+ 18 [btn] Resumir la nota
+ 19 [btn] Volver a «Infobae EE.UU. | Últimas Noticias de Estados Unidos en…»
+ 20 [btn] Otra cosa
+ 21 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 22 [btn] Enviar

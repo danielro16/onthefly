@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: quiero comprar entradas de boca juniors
+  4 [txt] Buscando: entradas boca juniors.
+  5 [txt] Estás en los resultados de «entradas boca juniors». Los 3 más probables:
+  6 [txt] La compra la hacés vos: confirmar un pago no es algo que yo vaya a hacer en tu nombre.
+  7 [txt] Sí puedo buscarte el producto, leerte los precios y repasar el pedido antes de que toques comprar.
+  8 [H] Vos: Boca Juniors - Sitio Oficial — bocajuniors.autoentrada.com
+  9 [txt] Abriendo bocajuniors.autoentrada.com.
+ 10 [txt] Estás en el sitio oficial de venta de entradas de Boca Juniors. Podés realizar la compra de tus entradas directamente desde esta página, que también ofrece información sobre socios y el club.
+ 11 [btn] Ver las categorías de venta  (Primera de 6 opciones.)
+ 12 [btn] Abrir «Adidas»
+ 13 [btn] Abrir «Betsson»
+ 14 [btn] Abrir «DirecTV»
+ 15 [btn] Volver a los resultados
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar
