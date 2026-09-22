@@ -132,6 +132,12 @@ con Wikidata.
   página) y sólo si no está se busca en Google, con el nombre del sitio. Salvo
   que la persona nombre otro sitio: eso es ir.
 - **Los pop-ups de promoción los cierra JEF**, y dice qué decían.
+- **Los resultados orgánicos no se juzgan.** Si Google pone primero a un
+  intermediario, ese es el resultado: JEF no decide qué le conviene buscar a
+  la persona. Lo que sí hace: no contar los anuncios como resultados, darle
+  a cada botón lo que Google muestra (título, sitio y su descripción) para
+  que la persona decida, y que lo que JEF nombra al contestar esté entre los
+  botones.
 - **Anuncios en los resultados:** en Boca, los tres primeros botones eran
   anuncios de reventa ("Resultados patrocinados"); el filtro por direcciones
   de Google (`aclk`, `googleadservices`) dejó de andar. Lo reemplaza Jev
