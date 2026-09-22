@@ -1,0 +1,2 @@
+  1 [btn] Volver
+  2 [btn] Abrir el asistente  = clarin.com

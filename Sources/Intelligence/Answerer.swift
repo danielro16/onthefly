@@ -435,11 +435,24 @@ actor Answerer {
     /// orientación entera.
     static func figureAppears(_ figure: String, in page: String) -> Bool {
         if appears(figure, in: page, minimum: 1) { return true }
-        func grouped(_ text: String) -> String {
-            text.replacingOccurrences(of: "(?<=\\d)[.\\s\u{00A0}\u{202F}\u{2009}](?=\\d{3}(?!\\d))", with: "",
-                                      options: .regularExpression)
+        // Se comparan los números, no las palabras ni las unidades: el modelo
+        // dice "27 °C" donde la página escribe "27°", y "26 de septiembre"
+        // donde escribe "sáb 26". Exigir el texto igual tiraba respuestas
+        // buenas y la persona oía "eso no aparece en esta página". Lo que
+        // sigue sin poder pasar es que el número no esté en la página.
+        func values(_ text: String) -> [Double] {
+            // Sin separadores de miles: "1.535,00", "1 535.00" y "1535" son
+            // el mismo número, se escriba como se escriba en cada país.
+            let plain = text.replacingOccurrences(
+                of: "(?<=\\d)[.,\\s\u{00A0}\u{202F}\u{2009}](?=\\d{3}(?!\\d))", with: "",
+                options: .regularExpression)
+            return plain.matches(of: /\d+(?:[.,]\d+)?/)
+                .compactMap { Double(String($0.output).replacingOccurrences(of: ",", with: ".")) }
         }
-        return appears(grouped(figure), in: grouped(page), minimum: 1)
+        let wanted = values(figure)
+        guard !wanted.isEmpty else { return false }
+        let onPage = Set(values(page))
+        return wanted.allSatisfy(onPage.contains)
     }
 
     /// Si ese texto está de verdad en la página. Se comparan los espacios y

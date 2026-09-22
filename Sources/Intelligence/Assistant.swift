@@ -1504,7 +1504,12 @@ final class Assistant {
                 let name = action.label.dropFirst("Abrir «".count).dropLast()
                 say(name.count > 40 ? "Abriendo." : "Abriendo «\(name)».")
             } else {
-                say("Abriendo \(Self.bare(Self.unicode(URL(string: href)?.host() ?? "")) ?? action.label).")
+                // El sitio que dice el botón, no el de la dirección: la de
+                // un resultado de Google pasa por Google, y se oía
+                // "Abriendo google.com" para cualquier resultado.
+                let shown = action.label.components(separatedBy: " — ").last
+                let host = Self.bare(Self.unicode(URL(string: href)?.host() ?? ""))
+                say("Abriendo \(shown ?? host ?? action.label).")
             }
             reader.address = href
             await reader.go()

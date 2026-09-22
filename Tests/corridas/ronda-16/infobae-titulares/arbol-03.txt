@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: abrí infobae
+  4 [txt] Buscando: infobae.
+  5 [txt] Estás en los resultados de «infobae». Los 2 más probables:
+  6 [H] Vos: Infobae — www.infobae.com
+  7 [txt] Abriendo google.com.
+  8 [txt] Estás en la portada de Infobae. Los titulares principales son las primeras opciones.
+  9 [H] Vos: ¿qué titulares hay?
+ 10 [txt] En la portada de Infobae destacan las declaraciones de Trump sobre Irán, el viaje de Milei a Nueva York y el choque de Pity Álvarez. También informan sobre la llegada de los aviones F-16 a Argentina y la interna en el peronismo.
+ 11 [btn] ¿A cuánto cotiza el dólar blue?  (Primera de 5 opciones.)
+ 12 [btn] Leer los titulares
+ 13 [btn] Resumir la portada
+ 14 [btn] Volver a los resultados
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 17 [btn] Enviar

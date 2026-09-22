@@ -1,0 +1,19 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero sacar un turno en pami
+  4 [txt] Buscando: sacar turno en PAMI Buenos Aires.
+  5 [txt] Para sacar un turno en una agencia de PAMI, podés ingresar a la web oficial de turnos o usar la aplicación móvil Mi PAMI. También tenés la opción de llamar al 0800-999-1100, que atiende de 7 a 17 h, de lunes a viernes.
+  6 [H] Vos: Turnos Web - INSSJP — turnos.pami.org.ar
+  7 [txt] Abriendo google.com.
+  8 [txt] Estás en la página de turnos web de PAMI para agencias. Podés iniciar el trámite para un turno nuevo o gestionar los que ya tenés.
+  9 [H] Vos: Abrir «NUEVO TURNO»
+ 10 [txt] Tocando «NUEVO TURNO».
+ 11 [txt] Estás en la página de turnos de PAMI. Para continuar con el trámite, el formulario solicita que ingreses el número de documento y el número de afiliación de tu credencial, que consta de 14 dígitos.
+ 12 [H] Vos: Completar «Ingresar sólo números»
+ 13 [txt] ¿Qué pongo en Ingresar sólo números? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.
+ 14 [btn] Completar «Ingresar sólo números»  (Primera de 4 opciones.)
+ 15 [btn] Leer la página
+ 16 [btn] Volver a la portada
+ 17 [btn] Otra cosa
+ 18 [campo] Pedido  = Escribir: Ingresar sólo números  (Va directo al campo «Ingresar sólo números» de la página.)
+ 19 [btn] Enviar

@@ -1,0 +1,12 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: ¿cómo va a estar el tiempo mañana en córdoba?
+  4 [txt] Buscando: clima mañana en córdoba.
+  5 [txt] Mañana miércoles será un día soleado en Córdoba, con una temperatura mínima de 9 °C y una máxima que llegará a los 28 °C.
+  6 [btn] Tiempo en Córdoba. Clima a 14 días — www.meteored.com.ar  (Primera de 5 opciones.)
+  7 [btn] Tiempo diario en Córdoba, Córdoba, Argentina — www.accuweather.com
+  8 [btn] Tiempo en Córdoba mañana — www.meteored.com.ar
+  9 [btn] Ver más opciones (5)
+ 10 [btn] Otra cosa
+ 11 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 12 [btn] Enviar
