@@ -115,8 +115,10 @@ registrar sin serlo: es una señal que un sitio trucho no puede copiar. Se usa
 sólo a favor, nunca en contra (PAMI, Banco Nación y Correo Argentino son
 oficiales y no son `.gob`). Los datos salen de fuentes públicas por script
 (Public Suffix List, la lista oficial de `.gov` de EE. UU., `.int`,
-`.europa.eu`) a `dominios-oficiales.json`. Se dice en los resultados ("sitio
-del gobierno") sin reordenarlos, se usa en la salida y va como dato a Jev. Lo
+`.europa.eu`) a `dominios-oficiales.json`. El orden de Google se respeta
+siempre; si aparece un sitio de gobierno, puede subir en el ranking (cómo,
+queda para resolver más adelante, Daniel 2026-09-22). Se dice en los
+resultados ("sitio del gobierno"), se usa en la salida y va como dato a Jev. Lo
 oficial que no es gobierno (bancos, empresas, clubes) queda para más adelante,
 con Wikidata.
 
