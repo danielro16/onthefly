@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: ¿cómo va a estar el tiempo mañana en córdoba?
+  4 [txt] Buscando: tiempo mañana córdoba.
+  5 [txt] Estás en los resultados de «tiempo mañana córdoba». Los 3 más probables:
+  6 [H] Vos: El tiempo en Córdoba mañana - Meteored España — www.tiempo.com
+  7 [txt] Abriendo tiempo.com.
+  8 [txt] En tiempo.com.
+  9 [txt] Mañana en Córdoba el cielo va a estar soleado la mayor parte del día, con temperaturas de entre 19 °C y 37 °C, y el viento soplará desde el sur con rachas de hasta 24 km/h.
+ 10 [H] Vos: ¿va a llover?
+ 11 [txt] No. Mañana va a estar soleado en Córdoba, con cielos despejados la mayor parte del día, aunque con algunas nubes de madrugada.
+ 12 [btn] ¿Qué temperatura va a hacer?  (Primera de 5 opciones.)
+ 13 [btn] Leer la nota
+ 14 [btn] Resumir la nota
+ 15 [btn] Volver a los resultados
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar

@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: clarín
+  4 [txt] Buscando: clarín.
+  5 [txt] Estás en los resultados de «clarín». Los 3 más probables:
+  6 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  7 [txt] Abriendo clarin.com.
+  8 [txt] Estás en la portada de Clarín. Los titulares principales son las primeras opciones.
+  9 [H] Vos: Abrir «Quién es la jueza que a días de asumir benefició a un menor que atacó a un playero y critica en…»
+ 10 [txt] Abriendo.
+ 11 [txt] Esa nota es para suscriptores o pide iniciar sesión: el sitio me llevó a su página de ingreso.
+ 12 [btn] Volver a la portada  (Primera de 2 opciones.)
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 15 [btn] Enviar

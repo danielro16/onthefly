@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: abrí infobae
+  4 [txt] Buscando: infobae.
+  5 [txt] Estás en los resultados de «infobae». Los 3 más probables:
+  6 [H] Vos: Hacemos periodismo - Infobae — www.infobae.com
+  7 [txt] Abriendo infobae.com.
+  8 [txt] Estás en la portada de Infobae, con las últimas noticias de Estados Unidos. Los titulares principales son las primeras opciones.
+  9 [H] Vos: ¿qué titulares hay?
+ 10 [txt] La sección de Estados Unidos destaca que ese país, Dinamarca y Groenlandia firmarán un acuerdo de seguridad ártica el martes. También se menciona que hubo vuelos demorados por una falla en el control aéreo, tragedias como dos muertes por un helicóptero estrellado en Yosemite, y noticias curiosas como un pelícano herido que llegó a un laboratorio de Florida. En Argentina, se habla de Jorge Macri pidiendo juicio político para una jueza y Damián Arabia negando una ruptura entre Milei y Bullrich. La sección Mundo informa sobre una reunión constructiva entre Macron y Trump, y las amenazas de los hutíes a Turquía y Pakistán.
+ 11 [H] Vos: ¿Qué más hay de Venezuela?
+ 12 [txt] La página tiene tres noticias principales sobre Venezuela. Primero, que la ONU reclama al estado venezolano terminar con la censura y el bloqueo de medios. Luego, que uno de cada tres hogares venezolanos gasta más del 55% de su presupuesto en comida. Finalmente, que Delcy Rodríguez llegó a Estados Unidos para asistir a la Asamblea General de la ONU y se reunirá con Trump. También se menciona que la Fiscalía de Chile volvió a apuntar a Diosdado Cabello por el asesinato del exmilitar venezolano Ronald Ojeda.
+ 13 [btn] Leer los titulares  (Primera de 4 opciones.)
+ 14 [btn] Resumir la portada
+ 15 [btn] Volver a los resultados
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar

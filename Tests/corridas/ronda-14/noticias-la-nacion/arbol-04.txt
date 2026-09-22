@@ -1,0 +1,22 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: llevame a la nación
+  4 [txt] Buscando: la nación.
+  5 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  6 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  7 [txt] Abriendo lanacion.com.ar.
+  8 [txt] Estás en la portada de LA NACION, con las últimas noticias de Argentina y el mundo. Los titulares principales son las primeras opciones.
+  9 [H] Vos: dame los titulares
+ 10 [txt] Los 4 primeros ya los dije. Titulares 5 a 7:
+ 11 [txt] 5. Se oponen a dividir los juicios de Hotesur y Los Sauces por el riesgo de que Cristina y Máximo Kirchner sean absueltos
+ 12 [txt] 6. La aterradora frase de un acusado a la familia del asesinado: "Los dinosaurios que se comieron a su padre soy yo"
+ 13 [txt] 7. ¿Boxeo o artes marciales mixtas?. La hipótesis de una discusión trivial que derivó en el homicidio que conmueve a Colegiales
+ 14 [H] Vos: Abrir «Se oponen a dividir los juicios de Hotesur y Los Sauces por el riesgo de que Cristina y Máximo…»
+ 15 [txt] Abriendo.
+ 16 [txt] Estás en La Nación, en la portada. La fiscalía se opuso a dividir los juicios de Hotesur y Los Sauces por el riesgo de que Cristina y Máximo Kirchner sean absueltos.
+ 17 [btn] Leer la nota  (Primera de 4 opciones.)
+ 18 [btn] Resumir la nota
+ 19 [btn] Volver a la portada
+ 20 [btn] Otra cosa
+ 21 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 22 [btn] Enviar

@@ -1,0 +1,25 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: quiero sacar un turno en anses
+  4 [txt] Buscando: Anses.
+  5 [txt] Estás en los resultados de «Anses». Los 3 más probables:
+  6 [txt] Cuando elijas, sigo con «sacar un turno».
+  7 [H] Vos: ANSES - Argentina.gob.ar — www.argentina.gob.ar
+  8 [txt] Abriendo argentina.gob.ar.
+  9 [txt] Estás en Argentina.gob.ar.
+ 10 [txt] Buscando: sacar un turno.
+ 11 [txt] Estás en los resultados de «sacar un turno». Los 3 más probables:
+ 12 [txt] Buscando sacar un turno en lite.duckduckgo.com.
+ 13 [txt] Estás en el buscador DuckDuckGo, viendo resultados para sacar un turno. La opción para sacar turnos en ANSES es la número 2.
+ 14 [H] Vos: Abrir «Next Page >»
+ 15 [txt] Tocando «Next Page >».
+ 16 [txt] Estás en DuckDuckGo, una página de búsqueda. Acá hay un enlace a una guía para sacar turnos en ANSES, y otros para turnos del Registro de las Personas, del Grupo Oroño, del IESS, de la Fundación Favaloro, del Registro Civil de Tucumán, para actas de tránsito y para citas del Consulado de España.
+ 17 [H] Vos: Abrir «Cómo Sacar Turnos en ANSES - Argentino»
+ 18 [txt] Abriendo «Cómo Sacar Turnos en ANSES - Argentino».
+ 19 [txt] Estás en Argentino, en una verificación de seguridad.
+ 20 [btn] Leer la página  (Primera de 4 opciones.)
+ 21 [btn] Resumir la página
+ 22 [btn] Volver a los resultados
+ 23 [btn] Otra cosa
+ 24 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 25 [btn] Enviar

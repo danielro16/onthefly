@@ -1,0 +1,12 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: quiero entrar al home banking del banco nación
+  4 [txt] Buscando: home banking banco nación.
+  5 [txt] Estás en los resultados de «home banking banco nación». Los 3 más probables:
+  6 [btn] Banco de la Nación Argentina - Home banking — digital.bna.com.ar  (Primera de 5 opciones.)
+  7 [btn] Banco de la Nación Argentina — www.bna.com.ar
+  8 [btn] Home Banking — homebanking.bna.com.es
+  9 [btn] Ver más opciones (3)
+ 10 [btn] Otra cosa
+ 11 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 12 [btn] Enviar

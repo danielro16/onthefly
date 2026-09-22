@@ -1,0 +1,22 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: quiero sacar un turno en pami
+  4 [txt] Buscando: pami.
+  5 [txt] Estás en los resultados de «pami». Los 3 más probables:
+  6 [txt] Cuando elijas, sigo con «sacar un turno».
+  7 [H] Vos: INSSJP - Instituto Nacional de Servicios Sociales para Jubilados y ... — www.pami.org.ar
+  8 [txt] Abriendo pami.org.ar.
+  9 [txt] Estás en www.pami.org.ar.
+ 10 [txt] No es claro cuál. ¿Turno para Agencia? También encuentro Trámites Web.
+ 11 [H] Vos: Turno para Agencia
+ 12 [txt] Abriendo «Turno para Agencia».
+ 13 [txt] Abriendo NUEVO TURNO.
+ 14 [txt] Estás en el sitio de PAMI, en la página de ingreso para sacar turnos. Tenés que ingresar tu número de documento y el número de afiliación.
+ 15 [H] Vos: Completar «Ingresar sólo números»
+ 16 [txt] ¿Qué pongo en Ingresar sólo números? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.
+ 17 [btn] Completar «Ingresar sólo números»  (Primera de 4 opciones.)
+ 18 [btn] Leer la página
+ 19 [btn] Volver a la portada
+ 20 [btn] Otra cosa
+ 21 [campo] Pedido  = Escribir: Ingresar sólo números  (Va directo al campo «Ingresar sólo números» de la página.)
+ 22 [btn] Enviar
