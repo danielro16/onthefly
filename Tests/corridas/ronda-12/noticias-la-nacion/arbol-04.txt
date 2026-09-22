@@ -1,0 +1,21 @@
+  1 [H] Asistente
+  2 [H] Vos: llevame a la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de LA NACION, con las últimas noticias de Argentina y el mundo. Los titulares principales son las primeras opciones.
+  8 [H] Vos: dame los titulares
+  9 [txt] Los 4 primeros ya los dije. Titulares 5 a 7:
+ 10 [txt] 5. Las grandes cadenas dejaron sin audio a Trump tras el veto a CNN, Politico y MS NOW
+ 11 [txt] 6. A una semana del "Argentina Week" en París. Milei, a un medio francés: "Europa se está hundiendo, con un estado de bienestar perverso"
+ 12 [txt] 7. Ante inversores financieros, Caputo buscó dar certidumbre sobre el plan económico de cara a 2027
+ 13 [H] Vos: Abrir «Las grandes cadenas dejaron sin audio a Trump tras el veto a CNN, Politico y MS NOW»
+ 14 [txt] Abriendo.
+ 15 [txt] Estás en LA NACION, en una nota que trata sobre cómo las cadenas de televisión dejaron sin audio a Donald Trump en un evento, después de que él vetara a varios medios. Las cadenas decidieron no reemplazar a CNN en el pool televisivo de la Casa Blanca, luego de que la administración Trump le retirara el acceso. Hay un aviso que te sugiere agregar LA NACION como medio preferido en Google.
+ 16 [btn] Leer la nota  (Primera de 4 opciones.)
+ 17 [btn] Resumir la nota
+ 18 [btn] Volver a «Últimas noticias de Argentina y el mundo - LA NACION»
+ 19 [btn] Otra cosa
+ 20 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 21 [btn] Enviar

@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [H] Vos: clarín
+  3 [txt] Buscando: clarín.
+  4 [txt] Estás en los resultados de «clarín». Los 2 más probables:
+  5 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en la portada de Clarín. Los titulares principales son las primeras opciones.
+  8 [H] Vos: Abrir «Adorni trató de justificar su patrimonio: dijo que ganó casi US$ 600 mil con criptomonedas y que…»
+  9 [txt] Abriendo.
+ 10 [txt] Esa nota es para suscriptores o pide iniciar sesión: el sitio me llevó a su página de ingreso.
+ 11 [txt] La página cambió: ahora estás en la nota «Landing suscripciones», de www.clarin.com.
+ 12 [btn] Completar «Nombre*»  (Primera de 4 opciones.)
+ 13 [btn] Completar «Apellido*»
+ 14 [btn] Volver a «Noticias. Últimas noticias de Argentina y el Mundo | Clarín»
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 17 [btn] Enviar

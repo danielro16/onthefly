@@ -73,9 +73,11 @@ struct ExtractedPage: Codable, Sendable {
     /// es.wikipedia.org. El dominio es lo que la persona tipeó y lo que
     /// reconoce, así que gana.
     var displaySite: String {
-        let host = (URL(string: url)?.host()).map {
+        // Con sus letras: "tiempomañana.net", no "xn--tiempomaana-8db.net".
+        let host = (URL(string: url)?.host()).map(Assistant.unicode).map {
             $0.hasPrefix("www.") ? String($0.dropFirst(4)) : $0
         } ?? ""
+        let siteName = Assistant.unicode(self.siteName)
         guard !siteName.isEmpty else { return host }
         guard !host.isEmpty else { return siteName }
 

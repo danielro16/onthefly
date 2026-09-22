@@ -243,7 +243,9 @@ final class Assistant {
         defer { inTurn = false }
         // Un dato para un campo —un DNI— se muestra tapado: la pantalla la
         // puede ver cualquiera al lado.
-        let isValue = awaitingField != nil && Self.looksLikeValue(goal)
+        // Un botón nunca es el dato: tocar "Completar «Apellido*»" mientras se
+        // esperaba el nombre escribió "completá el campo Apellido*" en Nombre.
+        let isValue = awaitingField != nil && shown == nil && Self.looksLikeValue(goal)
         // Tapado y dicho en palabras: "•••••456" se leía como puntos.
         heard(isValue ? "\(awaitingField.map(Self.spoken) ?? "Dato") terminado en \(goal.suffix(3))" : shown ?? goal)
         offer = nil
@@ -263,7 +265,7 @@ final class Assistant {
         // suelto tenía que adivinarse de nuevo en la nube.
         if let field = awaitingField {
             awaitingField = nil
-            if Self.looksLikeValue(goal) {
+            if isValue {
                 working = true
                 reader.fill(field, with: goal)
                 try? await Task.sleep(for: .milliseconds(700))
@@ -1772,6 +1774,7 @@ final class Assistant {
                 return
             }
             if opensNote, let page = reader.page, Self.isWall(page) {
+                knownURL = page.url
                 say("Esa nota es para suscriptores o pide iniciar sesión: el sitio me llevó a su página de ingreso.")
                 offer = reader.canGoBack
                     ? Offer(goal: "", options: [.link(id: Self.backID, label: backLabel(reader), href: "", region: "main")])
@@ -2253,7 +2256,9 @@ final class Assistant {
             // modelo: en el banco decía "ingresá tu DNI" y el único botón era
             // "Recuperar usuario y contraseña".
             let waitingFor = Set(awaitingField.map { [$0.id] } ?? [])
-            let form = reader.page.map { Self.formOptions($0, except: filledFields.union(waitingFor)) } ?? []
+            // Salvo en un muro: el formulario de suscripción de Clarín no es
+            // un paso que alguien vino a dar.
+            let form = reader.page.flatMap { Self.isWall($0) ? nil : Self.formOptions($0, except: filledFields.union(waitingFor)) } ?? []
             var options = form + current.options.filter { option in !form.contains { $0.id == option.id } }
             // Volver, aunque las opciones las haya armado el modelo: sin él,
             // salir de una página equivocada obligaba a escribir.
@@ -2302,7 +2307,15 @@ final class Assistant {
            host.contains("duckduckgo.") || host.contains("google.") {
             return "Volver a los resultados"
         }
-        let title = back.title.trimmingCharacters(in: .whitespaces)
+        let path = URL(string: back.url)?.path ?? ""
+        if path.isEmpty || path == "/" { return "Volver a la portada" }
+        // Sin el nombre del sitio que los títulos llevan al final: "Solicitar
+        // turnos en ANSES | Argentina.gob.ar".
+        var title = back.title.trimmingCharacters(in: .whitespaces)
+        if let cut = title.range(of: "\\s[|–—-]\\s[^|–—-]+$", options: .regularExpression),
+           title.distance(from: title.startIndex, to: cut.lowerBound) >= 15 {
+            title = String(title[..<cut.lowerBound])
+        }
         return title.isEmpty ? "Volver a la página anterior" : "Volver a «\(Self.short(title, 60))»"
     }
 
@@ -2345,7 +2358,9 @@ final class Assistant {
             return out
         }
 
-        out += Self.formOptions(page, except: filledFields.union(awaitingField.map { [$0.id] } ?? []))
+        if !Self.isWall(page) {
+            out += Self.formOptions(page, except: filledFields.union(awaitingField.map { [$0.id] } ?? []))
+        }
 
         if readsHeadlines(page) {
             // Recién leídos, lo probable es abrir uno de ésos: son los que la
