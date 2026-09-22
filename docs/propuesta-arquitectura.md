@@ -120,6 +120,24 @@ del gobierno") sin reordenarlos, se usa en la salida y va como dato a Jev. Lo
 oficial que no es gobierno (bancos, empresas, clubes) queda para más adelante,
 con Wikidata.
 
+## Decisiones de Daniel (2026-09-22, después de F1)
+
+- **JEF no da orientaciones: propone los siguientes pasos, como botones.** Al
+  llegar, una línea de dónde se está y los botones; nada de describir la
+  página ni de explicar cómo se usa la app. La acción "orientar" del ruteador
+  pasa a ser "proponer los próximos pasos".
+- **Primero la página, después afuera.** Con una página abierta, lo pedido se
+  busca primero en ella (Jev: ¿está?, ¿cuál?; Gemini: contestar con la
+  página) y sólo si no está se busca en Google, con el nombre del sitio. Salvo
+  que la persona nombre otro sitio: eso es ir.
+- **Los pop-ups de promoción los cierra JEF**, y dice qué decían.
+- **Anuncios en los resultados:** en Boca, los tres primeros botones eran
+  anuncios de reventa ("Resultados patrocinados"); el filtro por direcciones
+  de Google (`aclk`, `googleadservices`) dejó de andar. Lo reemplaza Jev
+  juzgando "¿es un anuncio?" por resultado, con la sección donde está como
+  contexto, en cualquier idioma. Junto con la prioridad de los dominios
+  oficiales.
+
 ## Cuidados
 
 - **Referencias** ("la segunda", "esa"): las resuelve Gemini. Si apuntan a un
