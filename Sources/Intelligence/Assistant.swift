@@ -1308,6 +1308,14 @@ final class Assistant {
         }
     }
 
+    /// Una página que vende una suscripción. Su formulario no es un paso: el
+    /// de ingreso del banco sí lo es, y por eso no alcanza con `isWall`.
+    static func isSubscription(_ page: ExtractedPage) -> Bool {
+        if page.overlay?.kind == .paywall { return true }
+        let text = (page.url + " " + page.title).folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        return text.range(of: "suscri|subscri|paywall", options: .regularExpression) != nil
+    }
+
     /// Una página que tapa la nota que se quería leer: pedir suscripción,
     /// iniciar sesión, o un captcha.
     static func isWall(_ page: ExtractedPage) -> Bool {
@@ -2258,7 +2266,7 @@ final class Assistant {
             let waitingFor = Set(awaitingField.map { [$0.id] } ?? [])
             // Salvo en un muro: el formulario de suscripción de Clarín no es
             // un paso que alguien vino a dar.
-            let form = reader.page.flatMap { Self.isWall($0) ? nil : Self.formOptions($0, except: filledFields.union(waitingFor)) } ?? []
+            let form = reader.page.flatMap { Self.isSubscription($0) ? nil : Self.formOptions($0, except: filledFields.union(waitingFor)) } ?? []
             var options = form + current.options.filter { option in !form.contains { $0.id == option.id } }
             // Volver, aunque las opciones las haya armado el modelo: sin él,
             // salir de una página equivocada obligaba a escribir.
@@ -2358,7 +2366,7 @@ final class Assistant {
             return out
         }
 
-        if !Self.isWall(page) {
+        if !Self.isSubscription(page) {
             out += Self.formOptions(page, except: filledFields.union(awaitingField.map { [$0.id] } ?? []))
         }
 
