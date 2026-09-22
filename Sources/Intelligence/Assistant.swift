@@ -822,11 +822,26 @@ final class Assistant {
     /// Al final y no reordenados: con la región puesta el buscador igual dejó
     /// primera la Córdoba de España para "el tiempo mañana en Córdoba". Pero
     /// ordenar todo por país pasaba cualquier .ar por delante de Wikipedia.
-    static func ranked(_ request: String, among results: [Result], naming: Bool) -> [Result] {
-        // Lo oficial del país, primero. Para "sacar un turno en ANSES" el
-        // primer resultado era turnosanses.net, que no es ANSES: a alguien que
-        // toca siempre la primera opción, un sitio así le puede pedir datos.
-        let official = results.filter(isOfficial)
+    static func ranked(_ request: String, among found: [Result], naming: Bool) -> [Result] {
+        // Primero los que nombran más de lo pedido, y a igualdad, en el orden
+        // del buscador. Para "home banking banco nación" el buscador puso
+        // primero una página de argentina.gob.ar que explica qué es el home
+        // banking; "Banco de la Nación Argentina - Home banking" nombra las
+        // tres cosas pedidas.
+        let asked = stems(request)
+        func covers(_ result: Result) -> Int {
+            asked.intersection(stems(result.title + " " + result.host.replacingOccurrences(of: ".", with: " "))).count
+        }
+        let results = found.enumerated().sorted { a, b in
+            let (x, y) = (covers(a.element), covers(b.element))
+            return x != y ? x > y : a.offset < b.offset
+        }.map(\.element)
+        let top = results.map(covers).max() ?? 0
+        // Lo oficial del país, primero —si nombra lo pedido tanto como el
+        // mejor—. Para "sacar un turno en ANSES" el primer resultado era
+        // turnosanses.net, que no es ANSES: a alguien que toca siempre la
+        // primera opción, un sitio así le puede pedir datos.
+        let official = results.filter { isOfficial($0) && covers($0) >= top }
         // Los que se llaman como el organismo sin serlo —mianses.org,
         // turnosanses.net— van al final cuando el organismo está en la lista.
         let names = Set(official.flatMap { labels(of: $0.host) }.filter { $0.count >= 4 && $0 != "argentina" })
@@ -834,9 +849,10 @@ final class Assistant {
             guard let site = siteName(of: result.host) else { return false }
             return names.contains { site.contains($0) }
         }
-        let rest = results.filter { !isOfficial($0) && !borrows($0) }
+        let promoted = Set(official.map(\.href))
+        let rest = results.filter { !promoted.contains($0.href) && !borrows($0) }
         let byCountry = official + rest.filter { closer($0) > 0 } + rest.filter { closer($0) == 0 }
-            + results.filter { !isOfficial($0) && borrows($0) }
+            + results.filter { !promoted.contains($0.href) && borrows($0) }
         // Un sitio nombrado como PARTE del pedido es el que la persona pidió:
         // "wikipedia" en "mar del plata wikipedia". Va primero, antes que lo
         // oficial: con lo oficial adelante, la Municipalidad le ganaba a
@@ -850,8 +866,8 @@ final class Assistant {
         // Lo oficial va antes que cualquier coincidencia de nombre. Para
         // "turnos anses", turnosanses.net se llama EXACTAMENTE como el pedido
         // —es el truco de esos sitios— y le ganaba a argentina.gob.ar.
-        let others = byCountry.filter { $0.href != best.href && !isOfficial($0) }
-        return official + (isOfficial(best) ? [] : [best]) + others
+        let others = byCountry.filter { $0.href != best.href && !promoted.contains($0.href) }
+        return official + (promoted.contains(best.href) ? [] : [best]) + others
     }
 
     /// Lo que se encontró, como botones.

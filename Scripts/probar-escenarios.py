@@ -156,8 +156,14 @@ class Panel:
         # la página no aparece en el árbol que da axe.
         return [n for n in nodos if n.get("role") == "AXButton" and n.get("AXLabel") != "Enviar"]
 
-    def escribir(self, texto):
+    def escribir(self, texto, reintento=True):
         campo = next((n for n in self.sim.nodos() if n.get("AXLabel") == "Pedido"), None)
+        if not campo and reintento:
+            # Pasó una vez: el simulador mandó la app a segundo plano recién
+            # lanzada. Se la trae al frente y se reintenta.
+            correr(["xcrun", "simctl", "launch", self.sim.udid, APP])
+            time.sleep(3)
+            return self.escribir(texto, reintento=False)
         if not campo:
             raise RuntimeError("no encuentro el campo Pedido")
         marco = campo["frame"]
@@ -171,6 +177,12 @@ class Panel:
         self.sim.combinacion(25)  # ⌘V
         time.sleep(0.8)
         self.sim.tecla(40)        # enviar
+        time.sleep(0.5)
+        if reintento and not any(n.get("AXLabel") == "Pedido" for n in self.sim.nodos()):
+            # La app quedó atrás en medio del pegado: el pedido no llegó.
+            correr(["xcrun", "simctl", "launch", self.sim.udid, APP])
+            time.sleep(3)
+            return self.escribir(texto, reintento=False)
 
     def tocar(self, cual):
         """`cual` es un número (la enésima opción) o un pedazo de su etiqueta."""
