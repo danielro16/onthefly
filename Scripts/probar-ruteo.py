@@ -7,6 +7,7 @@ corresponde al momento en que fue dicha.
 
     ./Scripts/probar-ruteo.py            # las 60
     ./Scripts/probar-ruteo.py --breve    # solo el conteo
+    ./Scripts/probar-ruteo.py --modelo google/gemini-3.1-flash-lite --json /tmp/x.json   # otro modelo
 """
 import json, re, os, sys, pathlib, urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -18,6 +19,7 @@ SRC = (RAIZ/"Sources/Intelligence/Router.swift").read_text()
 INSTR = re.search(r'private static let instructions = """\n(.*?)\n        """', SRC, re.S).group(1)
 INSTR = "\n".join(l[8:] if l.startswith(" "*8) else l for l in INSTR.split("\n"))
 MODELO = re.search(r'model: String = "([^"]+)"', SRC).group(1)
+if "--modelo" in sys.argv: MODELO = sys.argv[sys.argv.index("--modelo") + 1]
 
 ESTADOS = {
  "sin-pagina":   "No hay ninguna página abierta todavía.",
@@ -39,9 +41,11 @@ def decidir(caso):
     import time
     for intento in range(5):
         try:
+            inicio = time.time()
             with urllib.request.urlopen(req, timeout=60) as r:
                 out = json.loads(r.read())
             d = json.loads(out["choices"][0]["message"]["content"])
+            d["_s"] = round(time.time() - inicio, 2)
             u = out.get("usage", {})
             return caso, d, u.get("prompt_tokens",0), u.get("completion_tokens",0)
         except Exception as e:
@@ -63,10 +67,17 @@ if "--breve" not in sys.argv:
         for caso, d in por_momento.get(momento, []):
             if d.get("_e"): print(f"  ERROR      {caso['frase'][:52]:54} {d['_e']}"); continue
             extra = " ".join(f"{k}={json.dumps(v,ensure_ascii=False)}" for k,v in d.items()
-                             if k not in ("action","_e") and v not in (None,"","null"))
+                             if k not in ("action","_e","_s") and v not in (None,"","null"))
             print(f"  {d.get('action','?'):10} {caso['frase'][:52]:54} {extra[:70]}")
 
 ok = [s for s in salidas if s[1].get("action") not in ("ERROR", None)]
+if "--json" in sys.argv:
+    destino = pathlib.Path(sys.argv[sys.argv.index("--json") + 1])
+    destino.write_text(json.dumps([{"frase": c["frase"], "quiere": c["quiere"], "momento": c["momento"], "decision": d}
+                                    for c, d, _, _ in salidas], ensure_ascii=False, indent=1))
+tiempos = sorted(s[1]["_s"] for s in ok if "_s" in s[1])
+if tiempos:
+    print(f"tiempo por decisión: mediana {tiempos[len(tiempos)//2]} s · peor {tiempos[-1]} s")
 costo = tin*0.10e-6 + tout*0.40e-6
 print(f"\n{len(ok)} de {len(casos)} ruteados · {tin} tokens entrada / {tout} salida · US$ {costo:.5f}")
 if ok:
