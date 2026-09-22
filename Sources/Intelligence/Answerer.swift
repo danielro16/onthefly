@@ -71,6 +71,14 @@ actor Answerer {
     /// el texto de la página y tiene prohibido agregar lo que sepa por fuera.
     /// Así funciona cualquier asistente que lee documentos. La verificación
     /// estricta queda donde un invento lastima: cifras, montos y fechas.
+    /// La fecha de hoy, dicha: "domingo 21 de septiembre de 2026".
+    static var today: String {
+        let format = DateFormatter()
+        format.locale = Locale(identifier: phoneLanguage)
+        format.dateFormat = "EEEE d 'de' MMMM 'de' y"
+        return format.string(from: Date())
+    }
+
     static func instructions(language: String) -> String {
         """
         Sos un asistente que le cuenta a una persona lo que dice la página web que tiene abierta.
@@ -91,6 +99,8 @@ actor Answerer {
         dice ("actualizado a las 11:03"). Las variaciones, sólo si las preguntan.
         Respondé en este idioma: \(language). Si la página está en otro idioma, contala igual en
         \(language).
+        Hoy es \(today). Una fecha que es hoy o ayer se dice "hoy" o "ayer", no con el número.
+        No escribas direcciones web ni dominios: nombrá el sitio.
 
         Si es una portada, contá las noticias o temas principales. Si es una nota, contá de qué
         trata. Si te hacen una pregunta, contestala directo.
@@ -264,7 +274,13 @@ actor Answerer {
             parte de los hechos: nunca las pegues a una noticia.
 
             Usá SÓLO el texto de la página. No agregues nada que sepas por fuera.
+            No escribas direcciones web ni dominios: nombrá el sitio.
             Hablá en: \(language).
+
+            Si la página es una lista de opciones parecidas (trámites, categorías, planes), no
+            elijas por la persona ni nombres opciones que no van a ser botones: decí cuántas hay,
+            nombrá las tres que mejor encajan con lo que vino a hacer, y que esas tres sean los
+            botones, en ese orden.
 
             Si figura LA PERSONA VINO A, eso manda: empezá diciendo si esta página sirve para eso y
             dónde, y la primera opción tiene que ser la que la acerca a eso (para "sacar un turno",

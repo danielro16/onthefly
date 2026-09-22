@@ -27,6 +27,9 @@ struct StreamEntry: Codable, Sendable, Identifiable {
     let href: String?
     /// Un titular: un link que además es encabezado.
     let level: Int?
+    /// En una tarjeta, el titular solo: `label` es la tarjeta entera, con
+    /// volanta, sección y firma.
+    let title: String?
     /// Con qué se lista una opción: las que comparten grupo son una lista;
     /// las que sólo se tocan, vecinas. Lo dice el DOM —el contenedor que
     /// repite su forma—, no una cuenta nuestra.

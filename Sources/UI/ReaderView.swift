@@ -189,6 +189,12 @@ final class ReaderModel {
         }
     }
 
+    /// A dónde lleva "Volver": el título y la dirección de la página anterior.
+    var backPlace: (title: String, url: String)? {
+        guard let item = engine.webView?.backForwardList.backItem else { return nil }
+        return (item.title ?? "", item.url.absoluteString)
+    }
+
     /// Vuelve a leer la página tal como está ahora.
     func reread() async {
         guard let page = try? await engine.reread() else { return }

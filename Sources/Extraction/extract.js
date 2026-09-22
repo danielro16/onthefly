@@ -2716,11 +2716,16 @@
       return title ? (rest ? title + ", " + rest : title) : (rest || imageName(el));
     }
 
-    function putCard(label, href, el, level, buttons) {
+    function putCard(label, href, el, level, buttons, title) {
       const before = entries.length;
       putLink(label, href, el, level, groupOf(el));
       // The same card twice is dropped whole, buttons included.
       const entry = entries.length > before ? entries[entries.length - 1] : null;
+      // The headline alone, apart from the card's whole text: read as a
+      // front page's headlines, Clarín's cards came with their kicker,
+      // section and byline — "…Presupuesto 2027, Otra salida del Gobierno,
+      // Política, Renunció el secretario…".
+      if (entry && title && title !== label) entry.title = clip(title.replace(/\s+/g, " ").trim(), 200);
       for (const button of buttons) {
         placed.add(button.id);
         if (entry && !button.unnamed) (entry.extras = entry.extras || []).push(button.id);
@@ -2751,6 +2756,7 @@
       if (!textOf(heading) || !opens(href) || isHidden(el)) return null;
       return {
         label: cardLabel(el, heading, buttons),
+        title: textOf(heading),
         href: href,
         level: HEADING_LEVEL[heading.tagName] || 2,
         buttons: buttons,
@@ -2828,7 +2834,7 @@
 
       const card = cardLink(el);
       if (card) {
-        putCard(card.label, card.href, el, card.level, card.buttons);
+        putCard(card.label, card.href, el, card.level, card.buttons, card.title);
         return;
       }
 
@@ -2926,7 +2932,7 @@
           const heading = el.querySelector("h1, h2, h3, h4, h5, h6, [role=heading]");
           const name = cardLabel(el, heading, held);
           if (name && !looksLikeCode(name)) {
-            putCard(name, href, el, heading ? (HEADING_LEVEL[heading.tagName] || 2) : 0, held);
+            putCard(name, href, el, heading ? (HEADING_LEVEL[heading.tagName] || 2) : 0, held, heading ? textOf(heading) : "");
           } else if (!saidLinks.has("|" + href)) {
             // No words and no named picture: the site's unnamed control.
             saidLinks.add("|" + href);
@@ -2989,6 +2995,16 @@
         ".tagline, .shortdescription, .hatnote, .dablink, .rellink, sup.reference, .mw-editsection, " +
         ".mw-empty-elt, .navbox, .ambox, .noprint, #toc, .toc, .mw-cite-backlink"
       ).forEach(function (el) { el.remove(); });
+      // The mobile skin folds every section after the introduction —
+      // hidden="until-found" — and Readability drops what is hidden: Mar del
+      // Plata ended "Fin de la nota" after four paragraphs, with Historia,
+      // Geografía and the rest never read. Unfolded and unwrapped, the
+      // article is one.
+      clone.querySelectorAll(".mw-parser-output [hidden]").forEach(function (el) { el.removeAttribute("hidden"); });
+      clone.querySelectorAll(".mw-parser-output section").forEach(function (section) {
+        while (section.firstChild) section.parentNode.insertBefore(section.firstChild, section);
+        section.remove();
+      });
     }
     const article = new Readability(clone, {
       charThreshold: 200,
