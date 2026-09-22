@@ -1,0 +1,19 @@
+  1 [H] Asistente
+  2 [H] Vos: buscá mar del plata en wikipedia
+  3 [txt] Buscando: mar del plata en wikipedia.
+  4 [txt] Estás en los resultados de «mar del plata en wikipedia». Los 3 más probables:
+  5 [H] Vos: Mar del Plata - Wikipedia, la enciclopedia libre — es.wikipedia.org
+  6 [txt] Abriendo es.wikipedia.org.
+  7 [txt] Estás en Wikipedia, en la página sobre Mar del Plata. Es una ciudad ubicada en el sudeste de la provincia de Buenos Aires, Argentina. Es la localidad balnearia más importante del país y el segundo destino turístico después de Buenos Aires. En 2022 tenía una población total de 644 234 habitantes.
+  8 [H] Vos: ¿cuándo se fundó?
+  9 [txt] Mar del Plata se fundó el 10 de febrero de 1874.
+ 10 [H] Vos: leeme la nota
+ 11 [txt] Párrafos 1 a 2 de 4:
+ 12 [txt] Mar del Plata es una ciudad ubicada en el sudeste de la provincia de Buenos Aires, Argentina, sobre la costa del mar argentino. Es la cabecera del partido de General Pueyrredón, un importante puerto, la localidad balnearia más importante del país y el segundo destino turístico después de Buenos Aires. En época estival su población puede aumentar en alrededor de un 301 %, por lo que cuenta con una gran oferta de infraestructura de hoteles y otros servicios. La autovía 2 la enlaza tras 404 km con Buenos Aires y se encuentra a 368 km de La Plata.
+ 13 [txt] Fue fundada con su nombre actual el 10 de febrero de 1874 por Patricio Peralta Ramos, en una estancia de su propiedad, sobre la base de la segunda de las tres extintas misiones jesuíticas de la Pampa, fundadas en la segunda mitad del siglo XVIII, denominada Nuestra Señora del Pilar de Puelches, que más tarde recibió el nombre de «Puerto de la Laguna de los Padres».
+ 14 [btn] Seguir leyendo  (Primera de 4 opciones.)
+ 15 [btn] Resumir la nota
+ 16 [btn] Volver a la página anterior
+ 17 [btn] Otra cosa
+ 18 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 19 [btn] Enviar

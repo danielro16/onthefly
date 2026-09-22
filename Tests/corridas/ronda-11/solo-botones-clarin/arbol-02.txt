@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [H] Vos: clarín
+  3 [txt] Buscando: clarín.
+  4 [txt] Estás en los resultados de «clarín». Los 3 más probables:
+  5 [H] Vos: Noticias. Últimas noticias de Argentina y el Mundo | Clarín — www.clarin.com
+  6 [txt] Abriendo clarin.com.
+  7 [txt] Estás en la portada de Clarín y sus titulares son: Los titulares principales son las primeras opciones.
+  8 [btn] Abrir «El Gobierno apunta a un gas contaminado como la causa del corte de luz que afectó a casi dos…»  (Primera de 6 opciones.)
+  9 [btn] Abrir «Renunció el secretario de Discapacidad en medio de la interna por los recortes del área en el…»
+ 10 [btn] Abrir «El Gobierno estima que por la visita del Papa se movilizarán 7 millones de personas y evalúa…»
+ 11 [btn] Abrir «Adorni trató de justificar su patrimonio: dijo que ganó casi US$ 600 mil con criptomonedas y que…»
+ 12 [btn] Volver a la página anterior
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 15 [btn] Enviar

@@ -1,0 +1,12 @@
+  1 [H] Asistente
+  2 [H] Vos: la nación
+  3 [txt] Buscando: la nación.
+  4 [txt] Estás en los resultados de «la nación». Los 3 más probables:
+  5 [H] Vos: Últimas noticias de Argentina y el mundo - LA NACION — www.lanacion.com.ar
+  6 [txt] Abriendo lanacion.com.ar.
+  7 [txt] Estás en la portada de LA NACION, con las últimas noticias de Argentina y el mundo. Los titulares principales son las primeras opciones.
+  8 [H] Vos: Otra cosa
+  9 [txt] ¿Qué otra cosa hacemos? Se puede escribir, o dictar con el micrófono del teclado.
+ 10 [btn] Volver a las opciones
+ 11 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 12 [btn] Enviar
