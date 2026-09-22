@@ -159,7 +159,9 @@ actor Router {
                 ["role": "user", "content": input],
             ],
         ]
-        let request = try gemini.request(body)
+        // Razonando: entender qué quiere la persona es lo único que lo
+        // merece (Daniel: "dejale al modelo que razone las intenciones").
+        let request = try gemini.request(body, thinking: true)
 
         var data = Data()
         for attempt in 0..<3 {

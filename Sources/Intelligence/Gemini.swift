@@ -37,26 +37,30 @@ struct Gemini: Sendable {
         return key
     }
 
-    /// El pedido con el modelo y sin razonar. Acá razonar no aporta y cuesta:
-    /// medido con Flash, se comía 481 de 500 tokens pensando y devolvía el
-    /// JSON cortado.
-    func body(_ body: [String: Any]) -> [String: Any] {
+    /// El pedido con el modelo y con razonamiento o sin él.
+    ///
+    /// `thinking` sólo para entender qué quiere la persona, que es donde
+    /// Daniel lo pidió: medido, cuesta 0,4 s más (1,0 contra 1,4 s) y decide
+    /// igual o mejor. Para redactar una respuesta no se usa: se midió con
+    /// Flash que gastaba 481 de 500 tokens pensando y devolvía el JSON
+    /// cortado.
+    func body(_ body: [String: Any], thinking: Bool = false) -> [String: Any] {
         var body = body
         body["model"] = model
         if direct {
-            body["reasoning_effort"] = "none"
+            body["reasoning_effort"] = thinking ? "low" : "none"
         } else {
-            body["reasoning"] = ["enabled": false]
+            body["reasoning"] = ["enabled": thinking]
         }
         return body
     }
 
-    func request(_ body: [String: Any]) throws -> URLRequest {
+    func request(_ body: [String: Any], thinking: Bool = false) throws -> URLRequest {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: self.body(body))
+        request.httpBody = try JSONSerialization.data(withJSONObject: self.body(body, thinking: thinking))
         return request
     }
 }
