@@ -444,7 +444,7 @@ final class Assistant {
     ) async {
         switch action {
         case .ir:
-            await arrive(decision.target ?? goal, on: reader, country: decision.country)
+            await arrive(decision.target ?? goal, on: reader)
 
         case .buscar:
             // Una pregunta con una página abierta se contesta primero con esa
@@ -486,7 +486,7 @@ final class Assistant {
                 return
             }
             if Self.isQuestion(goal) { pendingQuestion = goal }
-            await arrive(decision.target ?? goal, on: reader, country: decision.country)
+            await arrive(decision.target ?? goal, on: reader)
 
         case .abrir:
             // Una referencia —"la segunda", "el del paro"— se resuelve contra
@@ -764,8 +764,7 @@ final class Assistant {
     /// modelo que adivine un dominio — inventar "lanacion.com.ar" es fácil,
     /// inventar "bancoprovinciadesantafe.com.ar" es cómo se manda a alguien
     /// que no ve a un sitio que no es el suyo.
-    /// `country`: el país de lo pedido, si el ruteador lo sabe.
-    private func arrive(_ goal: String, on reader: ReaderModel, country: String? = nil) async {
+    private func arrive(_ goal: String, on reader: ReaderModel) async {
         working = true
         defer { working = false }
         // Con las tildes de la persona: el ruteador devolvía "clarin" y se
@@ -785,12 +784,8 @@ final class Assistant {
             return
         }
 
-        // Diciendo el país cuando no es el del teléfono: que se sepa por qué
-        // los resultados son de allá.
-        let phone = Locale.current.region?.identifier
-        let place = country.flatMap { $0 == phone ? nil : Locale.current.localizedString(forRegionCode: $0) }
-        say(place.map { "Buscando: \(goal), en \($0)." } ?? "Buscando: \(goal).")
-        reader.address = Self.searchURL(for: goal, country: country)
+        say("Buscando: \(goal).")
+        reader.address = Self.searchURL(for: goal)
         await reader.go()
         guard let found = reader.page.map(Self.results(of:)), !found.isEmpty else {
             // Pasa de verdad: en una consulta comercial la página trae
@@ -896,12 +891,11 @@ final class Assistant {
         /// Va el PAÍS y el idioma, nada más. Ni ciudad ni coordenadas: para
         /// ordenar resultados alcanza con eso, y es lo único que hace falta
         /// mandarle a un tercero.
-        /// `country`: el del pedido si el ruteador lo sabe —"banco nación"
-        /// es de Argentina aunque el teléfono esté en Estados Unidos—; si no,
-        /// el del teléfono.
-        func url(for query: String, country requested: String? = nil) -> String {
+        /// El país: el de donde está la persona. Ver `Ubicacion`.
+        @MainActor
+        func url(for query: String) -> String {
             let escaped = query.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? query
-            var country = (requested ?? Locale.current.region?.identifier ?? "US").lowercased()
+            var country = (Ubicacion.countryForSearch ?? "US").lowercased()
             // DuckDuckGo le dice "uk" al Reino Unido.
             if self == .duckduckgo, country == "gb" { country = "uk" }
             // El idioma del teléfono, no el de la app: ver `Answerer.language`.
@@ -931,7 +925,7 @@ final class Assistant {
         return query
     }
 
-    static func searchURL(for query: String, country: String? = nil) -> String { engine.url(for: query, country: country) }
+    static func searchURL(for query: String) -> String { engine.url(for: query) }
 
     /// Lo que en una página de buscador es de verdad un resultado.
     ///

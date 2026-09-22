@@ -364,6 +364,9 @@ struct ReaderView: View {
                 }
             }
         }
+        // El país para buscar: la ubicación, con el permiso que el sistema
+        // pide una vez; sin permiso, la región de Ajustes.
+        .task { Ubicacion.shared.start() }
         // "Ir a la prueba": la página entera, para poder resolverla.
         .onChange(of: model.assistant.pageFocusRequests) { _, _ in panelOpen = false }
         // Resuelta, el asistente vuelve: lo que sigue lo cuenta él.

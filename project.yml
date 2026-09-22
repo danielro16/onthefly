@@ -46,6 +46,7 @@ targets:
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
         AIGatewayAPIKey: $(AI_GATEWAY_API_KEY)
+        NSLocationWhenInUseUsageDescription: JEF usa el país donde estás para que las búsquedas den resultados de ahí. No guarda ni envía tu ubicación exacta.
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ai.jef.browser
