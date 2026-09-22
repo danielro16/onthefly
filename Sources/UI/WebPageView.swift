@@ -12,8 +12,8 @@ import WebKit
 /// sesión, resolver un captcha, navegar— es lo mismo que el asistente ve.
 struct WebPageView: UIViewRepresentable {
     let webView: WKWebView
-    /// Lo que el vidrio de abajo tapa. La página pasa por debajo, pero su
-    /// zona visible termina arriba de él.
+    /// Lo que la barra o el panel tapan. La página pasa por debajo, pero su
+    /// zona visible termina arriba de ellos.
     var coveredBottom: CGFloat = 0
 
     func makeUIView(context: Context) -> WKWebView {

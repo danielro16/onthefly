@@ -319,8 +319,8 @@ final class ReaderModel {
 /// quien ve y para lo que sólo la persona puede hacer —una contraseña, un
 /// captcha, el botón de pagar—.
 ///
-/// Como Safari: abajo flotan Volver y el buscador, de vidrio. Tocar el
-/// buscador levanta la conversación.
+/// Como Safari: abajo flotan Volver y el buscador. Tocar el buscador levanta
+/// la conversación.
 struct ReaderView: View {
     @State private var model = ReaderModel()
     /// El asistente a la vista. Cerrado, la página ocupa la pantalla entera
@@ -335,45 +335,48 @@ struct ReaderView: View {
     /// queda en pantalla y lo que lo vuelve a abrir.
     @AccessibilityFocusState private var barFocused: Bool
     @State private var barHeight: CGFloat = 0
-    /// El buscador y el panel son el mismo vidrio: al abrir, el buscador se
-    /// estira hasta ser el panel; al cerrar, el panel se encoge hasta ser el
-    /// buscador. Lo pidió Daniel: que se entienda de dónde sale y a dónde
+    /// El buscador y el panel son la misma superficie: al abrir, el buscador
+    /// se estira hasta ser el panel; al cerrar, el panel se encoge hasta ser
+    /// el buscador. Lo pidió Daniel: que se entienda de dónde sale y a dónde
     /// vuelve.
-    @Namespace private var glassSpace
+    @Namespace private var morph
+    @Environment(\.colorScheme) private var scheme
 
     private var hasPage: Bool { model.liveWebView != nil }
     private var open: Bool { panelOpen || !hasPage }
 
     private static let motion = Animation.spring(duration: 0.45, bounce: 0.14)
-    /// El vidrio de la barra y del panel, el mismo en los dos. Con algo del
-    /// fondo del sistema: el transparente dejaba leer la página debajo del
-    /// texto —con poca vista, ruido—, y sin tinte la barra era clara y el
-    /// panel oscuro, y al abrirse el vidrio pasaba de blanco a negro.
-    private static let glass = Glass.regular.tint(Color(.systemBackground).opacity(0.8))
 
     var body: some View {
         GeometryReader { screen in
             ZStack(alignment: .bottom) {
                 if let web = model.liveWebView {
-                    // Por debajo del vidrio, como en Safari. Lo que la barra
+                    // Por debajo de la barra, como en Safari. Lo que la barra
                     // o el panel tapan se le dice al WebView: lo fijo al pie
                     // de la página —un aviso de cookies, un botón de pagar—
                     // se acomoda arriba de ellos en vez de quedar debajo.
                     WebPageView(webView: web, coveredBottom: covered(in: screen))
                         .ignoresSafeArea(edges: .bottom)
                 }
-                // Sólo el vidrio va en el contenedor: lo que se pone adentro
-                // queda debajo del vidrio, borroso. La conversación va
-                // encima, en su propia capa.
-                GlassEffectContainer(spacing: 12) {
-                    ZStack(alignment: .bottom) {
-                        if hasPage, open {
-                            panelGlass(in: screen)
-                        }
-                        if hasPage, !panelOpen {
-                            bar
-                        }
-                    }
+                if hasPage {
+                    panelFrame(in: screen)
+                    // Una sola superficie, siempre puesta: con el chat abierto
+                    // tiene el marco del panel; cerrado, el del buscador. Al
+                    // cambiar, va de uno al otro. Con dos —una que se iba y
+                    // otra que llegaba— el fondo del panel desaparecía de
+                    // golpe y el texto se apagaba sin nada detrás.
+                    surface(surfaceShape)
+                        .matchedGeometryEffect(id: open ? "panel" : "buscador", in: morph, isSource: false)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                    // Siempre armada, apagada con el chat abierto: el marco
+                    // del buscador tiene que estar para que la superficie
+                    // vuelva a él.
+                    bar
+                        .opacity(panelOpen ? 0 : 1)
+                        .animation(panelOpen ? .easeOut(duration: 0.1) : .easeOut(duration: 0.2).delay(0.18), value: panelOpen)
+                        .allowsHitTesting(!panelOpen)
+                        .accessibilityHidden(panelOpen)
                 }
                 panel(in: screen)
             }
@@ -404,7 +407,7 @@ struct ReaderView: View {
     // MARK: - El panel
 
     /// La conversación. Sin página es la pantalla entera; con página, un
-    /// panel de vidrio que flota sobre ella.
+    /// panel que flota sobre ella.
     ///
     /// No es una hoja del sistema: una hoja se cierra sola cuando la página
     /// cambia, que es exactamente lo que el asistente hace, y le cobra a
@@ -424,10 +427,10 @@ struct ReaderView: View {
         .frame(maxWidth: .infinity)
         .frame(height: hasPage ? panelHeight(in: screen) : screen.size.height)
         .clipShape(.rect(topLeadingRadius: hasPage ? 34 : 0, topTrailingRadius: hasPage ? 34 : 0, style: .continuous))
-        // Al cerrar, lo de adentro se apaga enseguida y el vidrio se encoge
-        // solo hasta el buscador; al abrir, aparece cuando el vidrio ya se
+        // Al cerrar, lo de adentro se apaga enseguida y el fondo se encoge
+        // solo hasta el buscador; al abrir, aparece cuando el fondo ya se
         // estiró. Apagándose al mismo ritmo, el texto quedaba flotando sobre
-        // la página, sin vidrio detrás.
+        // la página, sin fondo detrás.
         .opacity(open ? 1 : 0)
         .scaleEffect(open ? 1 : 0.9, anchor: .bottom)
         .animation(open ? .easeOut(duration: 0.22).delay(0.12) : .easeOut(duration: 0.1), value: open)
@@ -439,16 +442,11 @@ struct ReaderView: View {
         .allowsHitTesting(open)
     }
 
-    /// El vidrio del panel, en su capa. Tiene el mismo marco que la
-    /// conversación que va encima.
-    private func panelGlass(in screen: GeometryProxy) -> some View {
-        // Arriba, redondeado; abajo, siguiendo la curva de la pantalla, como
-        // las hojas de iOS.
-        let shape = ConcentricRectangle(
-            topLeadingCorner: .fixed(34), topTrailingCorner: .fixed(34),
-            bottomLeadingCorner: .concentric(minimum: .fixed(34)), bottomTrailingCorner: .concentric(minimum: .fixed(34))
-        )
-        // Con el teclado arriba el vidrio termina en él; sin teclado, baja
+    /// El marco del panel, sin nada dibujado: es a donde va la superficie
+    /// con el chat abierto. El de la conversación, más lo que baja hacia el
+    /// borde de la pantalla.
+    private func panelFrame(in screen: GeometryProxy) -> some View {
+        // Con el teclado arriba el fondo termina en él; sin teclado, baja
         // hasta casi el borde de la pantalla.
         let keyboardUp = screen.safeAreaInsets.bottom > 100
         return Color.clear
@@ -456,8 +454,7 @@ struct ReaderView: View {
             .frame(height: panelHeight(in: screen))
             .background {
                 Color.clear
-                    .glassEffect(Self.glass, in: shape)
-                    .glassEffectID("asistente", in: glassSpace)
+                    .matchedGeometryEffect(id: "panel", in: morph)
                     .padding(.bottom, keyboardUp ? 0 : 8)
                     .ignoresSafeArea(.container, edges: .bottom)
             }
@@ -465,6 +462,34 @@ struct ReaderView: View {
             .offset(y: dragOffset(in: screen))
             .allowsHitTesting(false)
             .accessibilityHidden(true)
+    }
+
+    /// Abierto, arriba redondeado y abajo siguiendo la curva de la pantalla,
+    /// como las hojas de iOS; cerrado, la cápsula del buscador.
+    private var surfaceShape: ConcentricRectangle {
+        open
+            ? ConcentricRectangle(
+                topLeadingCorner: .fixed(34), topTrailingCorner: .fixed(34),
+                bottomLeadingCorner: .concentric(minimum: .fixed(34)), bottomTrailingCorner: .concentric(minimum: .fixed(34)))
+            : ConcentricRectangle(corners: .fixed(27))
+    }
+
+    /// La superficie de la barra y del panel, la misma en los dos, como la
+    /// de Safari: blanca en claro, gris muy oscuro en oscuro, con una sombra
+    /// suave que la despega de la página.
+    ///
+    /// Primero fue vidrio, y no sirvió: dejaba leer la página debajo del
+    /// texto —con poca vista, ruido— y cambiaba de claro a oscuro según lo
+    /// que tuviera detrás. Daniel: "si es blanco todo blanco, si es negro
+    /// todo negro".
+    private func surface(_ shape: some Shape) -> some View {
+        shape
+            .fill(Color(.secondarySystemGroupedBackground))
+            // Un borde apenas marcado: en claro, blanco sobre una página
+            // blanca, sólo la sombra no alcanzaba para ver dónde termina; en
+            // oscuro la sombra no se ve.
+            .overlay(shape.stroke(scheme == .dark ? Color.white.opacity(0.14) : Color.black.opacity(0.08), lineWidth: 1))
+            .shadow(color: .black.opacity(scheme == .dark ? 0 : 0.2), radius: 10, y: 2)
     }
 
     /// Arrastrado más allá de su altura mínima, el panel entero baja.
@@ -561,10 +586,7 @@ struct ReaderView: View {
                     .contentShape(.circle)
             }
             .buttonStyle(.plain)
-            .glassEffect(Self.glass.interactive(), in: .circle)
-            // Aparece en su lugar: saliendo del panel, nacía como un círculo
-            // grande en medio de la pantalla.
-            .glassEffectTransition(.materialize)
+            .background { surface(Circle()) }
             .disabled(!model.canGoBack)
             .accessibilityLabel("Volver")
 
@@ -589,8 +611,10 @@ struct ReaderView: View {
                 .contentShape(.capsule)
             }
             .buttonStyle(.plain)
-            .glassEffect(Self.glass.interactive(), in: .capsule)
-            .glassEffectID("asistente", in: glassSpace)
+            // La superficie la pone el ReaderView: es la misma del panel.
+            .background {
+                Color.clear.matchedGeometryEffect(id: "buscador", in: morph)
+            }
             .accessibilityLabel("Abrir el asistente")
             .accessibilityValue(model.assistant.working ? "Buscando" : (place ?? ""))
             .accessibilityFocused($barFocused)
@@ -599,8 +623,7 @@ struct ReaderView: View {
         .padding(.bottom, 4)
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { barHeight = $0 + 4 }
         // Con el teclado de un campo de la página, la barra queda detrás de
-        // él, como en Safari. Subiendo y bajando con el teclado, el texto y
-        // el vidrio se desacomodaban.
+        // él, como en Safari: no sube y baja con el teclado.
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 

@@ -103,7 +103,7 @@ struct AssistantPanel: View {
                         .contentShape(.circle)
                 }
                 .buttonStyle(.plain)
-                .glassEffect(.regular.interactive(), in: .circle)
+                .background(Color(.tertiarySystemFill), in: .circle)
                 .accessibilityLabel("Cerrar el asistente")
                 .accessibilityHint("Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.")
                 .accessibilityHidden(!isOpen)
@@ -284,12 +284,12 @@ struct AssistantPanel: View {
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .background(
-                    mine ? AnyShapeStyle(.tint.opacity(0.15)) : AnyShapeStyle(Color(.secondarySystemBackground)),
+                    // Gris sobre el blanco del panel, y en oscuro un gris
+                    // más claro que el panel: con el de antes, en oscuro,
+                    // el globo era del mismo color que el fondo.
+                    mine ? AnyShapeStyle(.tint.opacity(0.15)) : AnyShapeStyle(Color(.tertiarySystemGroupedBackground)),
                     in: RoundedRectangle(cornerRadius: 14, style: .continuous)
                 )
-                // Sólido debajo: sobre el vidrio, el celeste translúcido
-                // dejaba ver la página a través del texto.
-                .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .frame(maxWidth: .infinity, alignment: mine ? .trailing : .leading)
             if !mine { Spacer(minLength: 40) }
         }
@@ -306,8 +306,7 @@ struct AssistantPanel: View {
         // relación.
         HStack(alignment: .bottom, spacing: 6) {
             // El texto de ayuda más oscuro que el gris de siempre: con poca
-            // vista, el gris claro parecía un campo desactivado. Y fijo, no
-            // `.secondary`: sobre el vidrio ese gris se aclara todavía más.
+            // vista, el gris claro parecía un campo desactivado.
             Group {
                 // Una contraseña pedida se escribe tapada: ni en pantalla ni
                 // letra por letra en voz alta.
@@ -341,7 +340,6 @@ struct AssistantPanel: View {
         }
         .padding(.leading, 18)
         .padding(.trailing, 6)
-        // Sólido: sobre el vidrio, un relleno translúcido se perdía.
         .background(Color(.systemBackground), in: Capsule())
         // Con borde: sin él, con poca vista el campo no se distinguía.
         .overlay(Capsule().strokeBorder(Color(.systemGray3), lineWidth: 1))
