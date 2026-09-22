@@ -903,10 +903,19 @@ final class Assistant {
             // (/goto, /url) y escribe el sitio al final del título: "Título,
             // AccuWeather, https://www.accuweather.com". Sin esto se tiraban
             // todos, por ser links de Google.
+            // Y no siempre en el mismo orden: también "Bank of America,
+            // https://www.bankofamerica.com, Bank of America".
             if host.contains("google."), ["/goto", "/url"].contains(url.path),
-               let match = title.firstMatch(of: /^(.*),\s*[^,]+,\s*(https?:\/\/[^\s,›]+)/),
-               let shown = URL(string: String(match.2))?.host()?.lowercased() {
-                title = String(match.1)
+               let match = title.firstMatch(of: /https?:\/\/[^\s,›]+/),
+               let shown = URL(string: String(match.output))?.host()?.lowercased() {
+                var before = String(title[..<match.range.lowerBound])
+                    .trimmingCharacters(in: CharacterSet(charactersIn: ", "))
+                let after = title[match.range.upperBound...].trimmingCharacters(in: .whitespaces)
+                // Con la dirección al final, lo que la precede es el sitio.
+                if after.isEmpty || after.hasPrefix("›"), let comma = before.range(of: ", ", options: .backwards) {
+                    before = String(before[..<comma.lowerBound])
+                }
+                title = before
                 host = shown
                 site = Assistant.unicode(shown)
             }
@@ -922,7 +931,15 @@ final class Assistant {
             out.append(Result(title: clean, href: href, site: site))
         }
 
-        for link in links { consider(link.title, link.href) }
+        // En Google, los resultados son los que pasan por su salto; los
+        // links directos son botones del mapa ("Sitio web") o del recuadro
+        // de la empresa, y se colaban antes que el primer resultado.
+        func viaGoogle(_ href: String) -> Bool {
+            guard let url = URL(string: href), let host = url.host()?.lowercased() else { return false }
+            return host.contains("google.") && ["/goto", "/url"].contains(url.path)
+        }
+        let results = links.filter { viaGoogle($0.href) }
+        for link in results.isEmpty ? links : results { consider(link.title, link.href) }
         return out
     }
 
