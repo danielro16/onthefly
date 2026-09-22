@@ -1,0 +1,12 @@
+https://the-internet.herokuapp.com/login
+The Internet
+
+PÁGINA: the-internet.herokuapp.com — The Internet
+
+CONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):
+Login Page
+This is where you can log into the secure area. Enter tomsmith for the username and SuperSecretPassword! for the password. If the information is wrong you should see error messages.
+Powered by Elemental Selenium
+FORMULARIO que pide: Username, Password (contraseña) — botón «Login»
+Login Page
+This is where you can log into the secure area. Enter tomsmith for the username and SuperSecretPassword! for the password. If the information is wrong you should see error messages.

@@ -1,0 +1,14 @@
+https://the-internet.herokuapp.com/secure
+The Internet
+
+PÁGINA: the-internet.herokuapp.com — The Internet
+
+CONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):
+You logged into a secure area! ×
+Secure Area
+Welcome to the Secure Area. When you are done click logout below.
+Logout
+Powered by Elemental Selenium
+Secure Area
+Welcome to the Secure Area. When you are done click logout below.
+Logout

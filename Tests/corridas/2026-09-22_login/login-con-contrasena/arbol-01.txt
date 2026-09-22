@@ -1,0 +1,11 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: the-internet.herokuapp.com/login
+  4 [txt] Abriendo the-internet.herokuapp.com.
+  5 [txt] Estás en The Internet, en la página de inicio de sesión. Te pide un nombre de usuario y una contraseña para entrar al área segura.
+  6 [btn] Completar «Username»  (Primera de 4 opciones.)
+  7 [btn] Completar «Password»
+  8 [btn] Pulsar «Login»
+  9 [btn] Otra cosa
+ 10 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 11 [btn] Enviar

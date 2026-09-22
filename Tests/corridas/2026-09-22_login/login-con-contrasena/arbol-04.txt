@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, el botón Asistente.)
+  3 [H] Vos: the-internet.herokuapp.com/login
+  4 [txt] Abriendo the-internet.herokuapp.com.
+  5 [txt] Estás en The Internet, en la página de inicio de sesión. Te pide un nombre de usuario y una contraseña para entrar al área segura.
+  6 [H] Vos: Completar «Username»
+  7 [txt] ¿Qué pongo en Username? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.
+  8 [H] Vos: Username terminado en ith
+  9 [txt] Listo: quedó escrito en «Username», terminado en ith.
+ 10 [H] Vos: Completar «Password»
+ 11 [txt] ¿Qué pongo en Password? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.
+ 12 [btn] Pulsar «Login»  (Primera de 4 opciones.)
+ 13 [btn] Leer la página
+ 14 [btn] Resumir la página
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = Escribir: Password  (Va directo al campo «Password» de la página.)
+ 17 [btn] Enviar

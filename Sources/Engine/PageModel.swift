@@ -358,8 +358,8 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
             let label: String
         }
 
-        /// A password is the person's to type: the assistant never writes
-        /// one, and nothing here is stored, logged, or sent anywhere.
+        /// A password. It is written from the chat like any other field, but
+        /// it is never shown, logged, or sent to a model.
         var isSecure: Bool { type == "password" }
 
         /// A search box, by type or by what it calls itself. Typed as-is: no

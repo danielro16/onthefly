@@ -224,8 +224,16 @@ struct AssistantPanel: View {
         HStack(spacing: 10) {
             // El texto de ayuda más oscuro que el gris de siempre: con poca
             // vista, el gris claro parecía un campo desactivado.
-            TextField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? "¿Qué querés hacer?").foregroundStyle(.secondary), axis: .vertical)
-                .lineLimit(1...3)
+            Group {
+                // Una contraseña pedida se escribe tapada: ni en pantalla ni
+                // letra por letra en voz alta.
+                if assistant.awaitingSecret {
+                    SecureField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? "").foregroundStyle(.secondary))
+                } else {
+                    TextField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? "¿Qué querés hacer?").foregroundStyle(.secondary), axis: .vertical)
+                        .lineLimit(1...3)
+                }
+            }
                 .textFieldStyle(.plain)
                 .focused($writing)
                 .accessibilityFocused($focused, equals: "campo")

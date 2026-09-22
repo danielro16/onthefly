@@ -1,0 +1,45 @@
+{"t": 1790091218.9973922, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones"}
+{"t": 1790091219.530212, "tipo": "ubicacion", "pais": "AR"}
+{"pais": "AR", "tipo": "ubicacion", "t": 1790091219.53076}
+{"t": 1790091225.4856339, "texto": "the-internet.herokuapp.com/login", "tipo": "turno", "quien": "persona"}
+{"opciones": [], "tipo": "botones", "t": 1790091225.487382}
+{"t": 1790091225.487997, "texto": "Abriendo the-internet.herokuapp.com.", "tipo": "turno", "quien": "jef"}
+{"t": 1790091225.4882631, "texto": "Abriendo the-internet.herokuapp.com.", "cola": false, "tipo": "voz"}
+{"tipo": "botones", "t": 1790091225.569654, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"tipo": "pagina", "url": "https://the-internet.herokuapp.com/login", "texto": "PÁGINA: the-internet.herokuapp.com — The Internet\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nLogin Page\nThis is where you can log into the secure area. Enter tomsmith for the username and SuperSecretPassword! for the password. If the information is wrong you should see error messages.\nPowered by Elemental Selenium\nFORMULARIO que pide: Username, Password (contraseña) — botón «Login»\nLogin Page\nThis is where you can log into the secure area. Enter tomsmith for the username and SuperSecretPassword! for the password. If the information is wrong you should see error messages.", "titulo": "The Internet", "t": 1790091228.9489632}
+{"tipo": "botones", "t": 1790091228.949421, "opciones": []}
+{"texto": "Estás en The Internet, en la página de inicio de sesión. Te pide un nombre de usuario y una contraseña para entrar al área segura.", "tipo": "turno", "quien": "jef", "t": 1790091230.7568278}
+{"texto": "Estás en The Internet, en la página de inicio de sesión. Te pide un nombre de usuario y una contraseña para entrar al área segura.", "tipo": "voz", "cola": true, "t": 1790091230.758401}
+{"t": 1790091230.759094, "opciones": ["Completar «Username»", "Completar «Password»", "Pulsar «Login»", "Otra cosa"], "tipo": "botones"}
+{"tipo": "botones", "t": 1790091237.7617888, "opciones": []}
+{"texto": "Completar «Username»", "quien": "persona", "tipo": "turno", "t": 1790091237.762374}
+{"tipo": "botones", "t": 1790091237.762619, "opciones": []}
+{"quien": "jef", "t": 1790091238.504703, "texto": "¿Qué pongo en Username? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.", "tipo": "turno"}
+{"t": 1790091238.505443, "texto": "¿Qué pongo en Username? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.", "cola": false, "tipo": "voz"}
+{"t": 1790091238.5057712, "tipo": "botones", "opciones": ["Completar «Password»", "Pulsar «Login»", "Leer la página", "Otra cosa"]}
+{"texto": "Username terminado en ith", "t": 1790091247.620613, "quien": "persona", "tipo": "turno"}
+{"tipo": "botones", "opciones": [], "t": 1790091247.621331}
+{"t": 1790091248.368326, "tipo": "turno", "texto": "Listo: quedó escrito en «Username», terminado en ith.", "quien": "jef"}
+{"t": 1790091248.3699, "cola": false, "texto": "Listo: quedó escrito en «Username», terminado en ith.", "tipo": "voz"}
+{"opciones": ["Completar «Password»", "Pulsar «Login»", "Leer la página", "Otra cosa"], "tipo": "botones", "t": 1790091248.37022}
+{"tipo": "botones", "t": 1790091256.40197, "opciones": []}
+{"quien": "persona", "texto": "Completar «Password»", "t": 1790091256.402626, "tipo": "turno"}
+{"tipo": "botones", "t": 1790091256.4027638, "opciones": []}
+{"tipo": "turno", "texto": "¿Qué pongo en Password? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.", "t": 1790091257.1884809, "quien": "jef"}
+{"texto": "¿Qué pongo en Password? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.", "tipo": "voz", "t": 1790091257.18909, "cola": false}
+{"t": 1790091257.189577, "opciones": ["Pulsar «Login»", "Leer la página", "Resumir la página", "Otra cosa"], "tipo": "botones"}
+{"texto": "Password escrita", "quien": "persona", "t": 1790091267.3724651, "tipo": "turno"}
+{"opciones": [], "tipo": "botones", "t": 1790091267.373362}
+{"texto": "Listo: quedó escrita en «Password».", "tipo": "turno", "quien": "jef", "t": 1790091268.0769238}
+{"texto": "Listo: quedó escrita en «Password».", "cola": false, "tipo": "voz", "t": 1790091268.0781999}
+{"t": 1790091268.07902, "tipo": "botones", "opciones": ["Pulsar «Login»", "Leer la página", "Resumir la página", "Otra cosa"]}
+{"tipo": "botones", "t": 1790091276.094792, "opciones": []}
+{"quien": "persona", "tipo": "turno", "texto": "Pulsar «Login»", "t": 1790091276.095103}
+{"quien": "jef", "tipo": "turno", "texto": "Pulsando «Login».", "t": 1790091276.09549}
+{"cola": false, "tipo": "voz", "texto": "Pulsando «Login».", "t": 1790091276.095683}
+{"tipo": "pagina", "url": "https://the-internet.herokuapp.com/secure", "titulo": "The Internet", "texto": "PÁGINA: the-internet.herokuapp.com — The Internet\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nYou logged into a secure area! ×\nSecure Area\nWelcome to the Secure Area. When you are done click logout below.\nLogout\nPowered by Elemental Selenium\nSecure Area\nWelcome to the Secure Area. When you are done click logout below.\nLogout", "t": 1790091278.558498}
+{"t": 1790091278.559238, "tipo": "botones", "opciones": []}
+{"quien": "jef", "tipo": "turno", "texto": "Estás en el sitio The Internet, en un área segura. Acá se te da la bienvenida y tenés la opción de cerrar sesión.", "t": 1790091281.853039}
+{"cola": true, "tipo": "voz", "texto": "Estás en el sitio The Internet, en un área segura. Acá se te da la bienvenida y tenés la opción de cerrar sesión.", "t": 1790091281.8542352}
+{"opciones": ["Abrir «Logout»"], "tipo": "botones", "t": 1790091281.85493}
+{"opciones": ["Abrir «Logout»", "Volver a «The Internet»", "Otra cosa"], "tipo": "botones", "t": 1790091281.857667}

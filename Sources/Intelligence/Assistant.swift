@@ -160,8 +160,14 @@ final class Assistant {
     /// El campo cuyo valor se le pidió a la persona: lo próximo que escriba
     /// va ahí. Ver `ask`.
     private var awaitingField: Action.Field? {
-        didSet { awaiting = awaitingField.map(Self.spoken) }
+        didSet {
+            awaiting = awaitingField.map(Self.spoken)
+            awaitingSecret = awaitingField?.isSecure == true
+        }
     }
+    /// Si el dato que se espera es una contraseña: el campo de escribir la
+    /// tapa, como cualquier campo de contraseña de iOS.
+    private(set) var awaitingSecret = false
     /// El nombre del campo que espera su dato, para que el campo de escribir
     /// lo diga en vez de "¿Qué querés hacer?".
     private(set) var awaiting: String?
@@ -248,9 +254,14 @@ final class Assistant {
         // puede ver cualquiera al lado.
         // Un botón nunca es el dato: tocar "Completar «Apellido*»" mientras se
         // esperaba el nombre escribió "completá el campo Apellido*" en Nombre.
-        let isValue = awaitingField != nil && shown == nil && Self.looksLikeValue(goal)
-        // Tapado y dicho en palabras: "•••••456" se leía como puntos.
-        heard(isValue ? "\(awaitingField.map(Self.spoken) ?? "Dato") terminado en \(goal.suffix(3))" : shown ?? goal)
+        // Con una contraseña pedida, todo lo que se escribe es la contraseña:
+        // si no pareciera un dato, iría al ruteador en la nube.
+        let secret = awaitingField?.isSecure == true && shown == nil
+        let isValue = secret || (awaitingField != nil && shown == nil && Self.looksLikeValue(goal))
+        // Tapado y dicho en palabras: "•••••456" se leía como puntos. La
+        // contraseña, sin ninguna letra.
+        let name = awaitingField.map(Self.spoken) ?? "Dato"
+        heard(secret ? "\(name) escrita" : isValue ? "\(name) terminado en \(goal.suffix(3))" : shown ?? goal)
         offer = nil
         touched = []
         lastDone = nil
@@ -279,7 +290,9 @@ final class Assistant {
                 lastRequest = previousRequest
                 // Sin repetir el dato entero: un DNI dicho en voz alta en la
                 // calle no. Las tres últimas cifras alcanzan para confirmarlo.
-                say("Listo: quedó escrito en «\(Self.spoken(field))», terminado en \(goal.suffix(3)).")
+                say(field.isSecure
+                    ? "Listo: quedó escrita en «\(Self.spoken(field))»."
+                    : "Listo: quedó escrito en «\(Self.spoken(field))», terminado en \(goal.suffix(3)).")
                 return
             }
         }
@@ -539,17 +552,13 @@ final class Assistant {
 
         case .enviar:
             guard let page = reader.page,
-                  let form = page.actions.first(where: { $0.kind == .form && !($0.fields ?? []).isEmpty })
+                  let form = Self.pageForm(page)
+                    ?? page.actions.first(where: { $0.kind == .form && !($0.fields ?? []).isEmpty })
             else { say("Acá no hay un formulario para enviar."); return }
-            // La lista blanca de siempre: se envía sólo cuando se puede
-            // PROBAR que es una búsqueda. Un botón que dice "Continuar" y
-            // cobra pasa cualquier lista negra.
-            guard Self.isSearch(form) else {
-                say("Esto no lo envío yo: puede cobrar, contratar o dar de alta algo. El botón «\(form.submit ?? "enviar")» queda para vos.")
-                return
-            }
+            // Lo pidió la persona, así que se aprieta: en el Banco Nación
+            // "Continuar" quedaba sin forma de tocarlo desde acá.
             working = true
-            say("Enviando.")
+            say("Pulsando «\(form.submit ?? "enviar")».")
             await reader.submit(form)
             working = false
             await landed(reader)
@@ -655,14 +664,6 @@ final class Assistant {
         guard let field = named else {
             let names = fields.map(Self.spoken).prefix(4).joined(separator: ", ")
             say("No encuentro ese campo. Los de esta página son: \(names).")
-            return
-        }
-        guard !field.isSecure else {
-            // Una contraseña no se dicta y no se escribe por interpretación.
-            // Pero la persona tiene que saber que la tarea sigue: se queda en
-            // la página, escribe, y volvemos.
-            say("La contraseña la escribís vos: ése es el único campo que no toco.")
-            say("Te dejo en el formulario. Cuando entres, volvé acá y seguimos.")
             return
         }
         // Un desafío de imagen no se completa por más que sea un campo de
@@ -1046,7 +1047,8 @@ final class Assistant {
             || name.range(of: "^[a-z]+[A-Z_][A-Za-z0-9_]*$", options: .regularExpression) != nil
         if !code, !name.isEmpty { return name }
         // El cartel que la página le puso al lado vale más que su id.
-        let fallback = field.value.isEmpty ? "" : field.value
+        // Salvo una contraseña: lo que tiene escrito es la contraseña.
+        let fallback = field.isSecure ? "" : field.value
         if !fallback.isEmpty { return fallback }
         switch field.type {
         case "email":    return "correo"
@@ -1515,6 +1517,14 @@ final class Assistant {
             await summarize(page)
             return
         }
+        // El botón del formulario: lo tocó la persona, así que se aprieta.
+        if action.id == Self.submitID, let form = reader.page.flatMap(Self.pageForm) {
+            say("Pulsando «\(form.submit ?? action.label)».")
+            await reader.submit(form)
+            working = false
+            await landed(reader)
+            return
+        }
 
         // "Ver más opciones" no lleva a ningún lado: trae los que quedaron.
         if action.id == Self.moreID {
@@ -1846,8 +1856,7 @@ final class Assistant {
         guard action.kind == .form else { return nil }
         let fields = action.fields ?? []
         // El primero que todavía está vacío: es donde va lo que se pidió.
-        return fields.first { $0.value.isEmpty && !$0.isSecure && $0.type != "checkbox" }
-            ?? fields.first { !$0.isSecure }
+        return fields.first { $0.value.isEmpty && $0.type != "checkbox" } ?? fields.first
     }
 
     /// Contesta una pregunta sobre lo que la página dice.
@@ -2049,6 +2058,7 @@ final class Assistant {
     static let readID = "jef-leer"
     static let summaryID = "jef-resumir"
     static let continueID = "jef-seguir"
+    static let submitID = "jef-enviar-formulario"
     static let backID = "jef-volver"
     static let otherID = "jef-otra-cosa"
 
@@ -2249,17 +2259,27 @@ final class Assistant {
 
     /// Un formulario que no es de búsqueda —el ingreso de un banco— se
     /// completa: ése es el paso que sigue, y no había forma de darlo sin
-    /// saber escribir el pedido justo. La contraseña no: ésa es de la persona.
+    /// saber escribir el pedido justo. La contraseña también, desde el chat
+    /// como el DNI: lo pidió Daniel. Y su botón, con el nombre que le da la página: en el Banco Nación,
+    /// con DNI y usuario escritos, no había cómo tocar «Continuar».
     static func formOptions(_ page: ExtractedPage, except filled: Set<String> = []) -> [Action] {
-        guard let form = page.actions.first(where: { $0.kind == .form && !isSearch($0) && !($0.fields ?? []).isEmpty })
-        else { return [] }
+        guard let form = pageForm(page) else { return [] }
         let fillable = (form.fields ?? []).filter {
-            $0.type != "hidden" && !$0.isSecure && $0.type != "checkbox" && !isChallenge($0) && !filled.contains($0.id)
+            $0.type != "hidden" && $0.type != "checkbox" && !isChallenge($0) && !filled.contains($0.id)
         }
-        return fillable.prefix(2).map { field in
+        var options: [Action] = fillable.prefix(2).map { field in
             let name = spoken(field)
             return .link(id: askPrefix + "completá el campo \(name)", label: "Completar «\(name)»", href: "", region: "main")
         }
+        if let button = form.submit?.trimmingCharacters(in: .whitespacesAndNewlines), !button.isEmpty {
+            options.append(.link(id: submitID, label: "Pulsar «\(button)»", href: "", region: "main"))
+        }
+        return options
+    }
+
+    /// El formulario que ofrece `formOptions`, para cuando se toca su botón.
+    static func pageForm(_ page: ExtractedPage) -> Action? {
+        page.actions.first { $0.kind == .form && !isSearch($0) && !($0.fields ?? []).isEmpty }
     }
 
     /// Volver a la página anterior y decir dónde se quedó. También lo usa el
@@ -2591,12 +2611,7 @@ final class Assistant {
             let fields = (form.fields ?? []).filter { $0.type != "hidden" }
             let names = fields.map(Self.spoken).filter { !$0.isEmpty }
             say("Hay un formulario de \(fields.count) \(fields.count == 1 ? "campo" : "campos")\(names.isEmpty ? "" : ": " + names.prefix(4).joined(separator: ", ")).")
-            if fields.contains(where: \.isSecure) {
-                // Una contraseña no se dicta y no se manda sola.
-                say("Incluye una contraseña: ese campo queda sin completar.")
-            } else {
-                say("Indicar qué poner y lo completo.")
-            }
+            say("Indicar qué poner y lo completo.")
             return
         }
 
