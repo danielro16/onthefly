@@ -70,6 +70,60 @@ actor PageAnalyzer {
         }
     }
 
+    // MARK: - Anuncios en los resultados
+
+    private struct ResultsState: Encodable, Sendable {
+        struct Result: Encodable, Sendable {
+            let result: String
+            let before: String
+            let after: String
+        }
+        let results: [Result]
+    }
+
+    /// Qué tan probable es que cada resultado del buscador sea un anuncio
+    /// (índice → probabilidad). Jev lo juzga con lo que el buscador muestra
+    /// antes y después de cada uno —"Resultados patrocinados", "¿Por qué
+    /// este anuncio?", "Sponsored"—, en cualquier idioma y de cualquier
+    /// buscador. El filtro anterior miraba las direcciones de los anuncios de
+    /// Google, y dejó de andar cuando Google las cambió: en Boca, los tres
+    /// primeros botones eran reventa paga.
+    ///
+    /// Un solo pedido con todos los resultados: medio segundo. Un pedido por
+    /// resultado separaba mejor (en Boca, un anuncio dio 0,58 juntos y 0,92
+    /// solo), pero Daniel eligió el rápido: si se cuela un anuncio, se ofrece
+    /// como un resultado más. Nil si Jev no contestó a tiempo: los resultados
+    /// se ofrecen como vinieron.
+    func adProbabilities(_ results: [(result: String, before: String, after: String)]) async -> [Int: Double]? {
+        guard let criterios = Criterios.actuales, let pregunta = criterios.jev["anuncio"], !results.isEmpty else { return nil }
+        let items = Array(results.prefix(20))
+        let state = ResultsState(results: items.map { .init(result: $0.result, before: $0.before, after: $0.after) })
+        var questions: [String: JevClient.Question] = [:]
+        for index in items.indices {
+            questions["r\(index)"] = .boolean(
+                instructions: pregunta.instructions.replacingOccurrences(of: "{i}", with: "\(index)"),
+                whenTrue: pregunta.criteria?["true"], whenFalse: pregunta.criteria?["false"])
+        }
+        let jev = self.jev
+        let asked = questions
+        let answers: [String: JevClient.Answer]? = await withTaskGroup(of: [String: JevClient.Answer]?.self) { group in
+            group.addTask { try? await jev.evaluate(state: state, questions: asked).answers }
+            group.addTask {
+                try? await Task.sleep(for: criterios.esperaJev)
+                return nil
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first
+        }
+        guard let answers else { return nil }
+        var out: [Int: Double] = [:]
+        for index in items.indices {
+            if case .boolean(let probability)? = answers["r\(index)"] { out[index] = probability }
+        }
+        return out
+    }
+
     // MARK: - Controles sin nombre
 
     private struct ControlsState: Encodable, Sendable {

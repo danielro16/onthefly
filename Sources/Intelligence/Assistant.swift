@@ -632,6 +632,10 @@ final class Assistant {
         /// El sitio, cuando el link no lo dice: Google pasa por un salto
         /// suyo y el sitio viene escrito en el resultado.
         var site: String? = nil
+        /// Lo que el buscador muestra justo antes y justo después: donde dice
+        /// si es un anuncio, en su idioma. Para Jev, no para el código.
+        var before = ""
+        var after = ""
         /// Como se escribe, no como viaja: "tiempomañana.net" y no
         /// "xn--tiempomaana-8db.net", que es lo que se leía en voz alta.
         var host: String { site ?? Assistant.unicode(URL(string: href)?.host()?.lowercased() ?? "") }
@@ -724,7 +728,9 @@ final class Assistant {
         say("Buscando: \(goal).")
         reader.address = Self.searchURL(for: goal)
         await reader.go()
-        guard let found = reader.page.map(Self.results(of:)), !found.isEmpty else {
+        var (found, ads): ([Result], Int) = ([], 0)
+        if let page = reader.page { (found, ads) = await organic(page) }
+        guard !found.isEmpty else {
             // Pasa de verdad: en una consulta comercial la página trae
             // resultados y nosotros extraemos cero. Decirlo es mejor que
             // abrir cualquier cosa.
@@ -747,7 +753,7 @@ final class Assistant {
             return
         }
 
-        // Y acá no se elige. Se presenta.
+        // Y acá no se elige. Se presenta, sin los anuncios.
         //
         // Venía abriendo solo el resultado que podía PROBAR que era el sitio
         // nombrado, y esa prueba falló tres veces en una tarde: "anses" es
@@ -770,8 +776,35 @@ final class Assistant {
         // del Banco Nación alojada en vercel.app por encima del banco. Lo
         // decidió Daniel (2026-09-21): el orden es el del buscador, y la
         // persona elige entre los tres primeros.
-        present(found, for: goal)
+        present(found, for: goal, ads: ads)
     }
+
+    /// Los resultados del buscador sin los anuncios, en el orden del
+    /// buscador, y cuántos anuncios se sacaron.
+    ///
+    /// Jev juzga cada resultado (ver `PageAnalyzer.adProbabilities`); lo que
+    /// da anuncio por encima del umbral de `criterios.json` no se ofrece como
+    /// botón, pero se cuenta: filtrar no es esconder. Los orgánicos no se
+    /// juzgan: si Google pone primero a un intermediario, ese es el
+    /// resultado (Daniel). Si Jev no contesta a tiempo, van todos.
+    private func organic(_ page: ExtractedPage) async -> (results: [Result], ads: Int) {
+        if organicCache.url == page.url { return (organicCache.results, organicCache.ads) }
+        let found = Self.results(of: page)
+        guard let analyzer, !found.isEmpty else { return (found, 0) }
+        let limit = Criterios.actuales?.umbrales["anuncio"] ?? 1
+        guard let judged = await analyzer.adProbabilities(
+            found.map { (result: "\($0.title) — \($0.host)", before: $0.before, after: $0.after) })
+        else { return (found, 0) }
+        let ads = found.indices.filter { (judged[$0] ?? 0) >= limit }
+        Registro.anotar("anuncios", ["url": page.url, "sacados": ads.map { found[$0].host }])
+        let kept = found.indices.filter { !ads.contains($0) }.map { found[$0] }
+        organicCache = (page.url, kept, ads.count)
+        return (kept, ads.count)
+    }
+
+    /// Los de la última página de resultados: volver a ella no vuelve a
+    /// preguntar.
+    private var organicCache: (url: String, results: [Result], ads: Int) = ("", [], 0)
 
     /// Lo que se encontró, como botones.
     ///
@@ -781,7 +814,7 @@ final class Assistant {
     /// botón.
     /// `speak`: decirlos. Al volver a una lista ya escuchada, no: la persona
     /// ya los oyó, y releerlos era medio minuto de lo mismo.
-    private func present(_ results: [Result], for goal: String, speak: Bool = true) {
+    private func present(_ results: [Result], for goal: String, speak: Bool = true, ads: Int = 0) {
         pending = Array(results.dropFirst(Self.shownAtOnce))
         let shown = results.prefix(Self.shownAtOnce)
         // Cada resultado aparece una sola vez: como el botón que se toca,
@@ -791,7 +824,8 @@ final class Assistant {
         // vista.
         // Sin contar el total: contaba sitios y no resultados, y no
         // coincidía con lo que se ve en la página.
-        let found = "Estás en los resultados de «\(goal)»."
+        let skipped = ads == 0 ? "" : ads == 1 ? " Hay un anuncio: lo salteo." : " Hay \(ads) anuncios: los salteo."
+        let found = "Estás en los resultados de «\(goal)».\(skipped)"
         let intro = results.count == 1 ? "Es éste:" : "Los \(shown.count) más probables:"
         // Corta: con los anuncios en cola, una lista larga demora todo lo que
         // viene después. El título recortado y el dominio sin "www.".
@@ -889,24 +923,36 @@ final class Assistant {
     /// no prueba nada.
     static func results(of page: ExtractedPage) -> [Result] {
         var found: [(title: String, href: String)] = []
+        var context: [(before: String, after: String)] = []
         let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        for entry in page.stream ?? [] {
+        let actions = Dictionary(page.actions.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let stream = page.stream ?? []
+        // Lo que dice cada parada del recorrido, para darle a cada resultado
+        // lo que tiene al lado.
+        func text(_ index: Int) -> String {
+            guard stream.indices.contains(index) else { return "" }
+            let entry = stream[index]
+            let said = entry.block?.plainText ?? entry.label ?? entry.ref.flatMap { actions[$0]?.label ?? byID[$0]?.title } ?? ""
+            return String(said.prefix(120))
+        }
+        for (index, entry) in stream.enumerated() {
+            let around = (before: text(index - 1), after: text(index + 1))
             switch entry.kind {
             case "link":
-                if let label = entry.label, let href = entry.href { found.append((label, href)) }
+                if let label = entry.label, let href = entry.href { found.append((label, href)); context.append(around) }
             case "listing":
                 guard let listing = entry.ref.flatMap({ byID[$0] }) else { continue }
-                for item in listing.items { if let href = item.href { found.append((item.title, href)) } }
+                for item in listing.items { if let href = item.href { found.append((item.title, href)); context.append(around) } }
             default: continue
             }
         }
-        return results(from: found)
+        return results(from: found, context: context)
     }
 
     /// Los resultados de verdad entre los links de una página de buscador,
     /// en su orden. Aparte de la página para poder probarla contra búsquedas
     /// guardadas: ver Tests/buscador.
-    static func results(from links: [(title: String, href: String)]) -> [Result] {
+    static func results(from links: [(title: String, href: String)], context: [(before: String, after: String)] = []) -> [Result] {
         var out: [Result] = []
         var seen = Set<String>()
 
@@ -957,7 +1003,15 @@ final class Assistant {
             return host.contains("google.") && ["/goto", "/url"].contains(url.path)
         }
         let results = links.filter { viaGoogle($0.href) }
-        for link in results.isEmpty ? links : results { consider(link.title, link.href) }
+        for (index, link) in links.enumerated() where results.isEmpty || viaGoogle(link.href) {
+            let before = out.count
+            consider(link.title, link.href)
+            // Lo que el buscador muestra alrededor: para saber si es un anuncio.
+            if out.count > before, context.indices.contains(index) {
+                out[out.count - 1].before = context[index].before
+                out[out.count - 1].after = context[index].after
+            }
+        }
         return out
     }
 
@@ -2227,8 +2281,9 @@ final class Assistant {
         }
 
         if let query = Self.searchQuery(of: page) {
-            // En la página del buscador lo probable es uno de los resultados.
-            let found = Self.results(of: page)
+            // En la página del buscador lo probable es uno de los resultados:
+            // los ya filtrados, sin anuncios, si son de esta página.
+            let found = organicCache.url == page.url ? organicCache.results : Self.results(of: page)
             for (index, result) in found.prefix(3).enumerated() {
                 out.append(.link(id: "res-\(index)-\(result.host)", label: "\(result.title) — \(result.host)",
                                  href: result.href, region: "main"))
@@ -2377,7 +2432,7 @@ final class Assistant {
         knownURL = page.url
         if let query = Self.searchQuery(of: page) {
             say("De vuelta en los resultados de «\(query)».")
-            present(Self.results(of: page), for: query, speak: false)
+            present(await organic(page).results, for: query, speak: false)
             return
         }
         offer = nil
@@ -2465,9 +2520,9 @@ final class Assistant {
         // notas, puedo leer una", el vocabulario de la página de la que se
         // venía, con los resultados como texto. Lo vio Daniel en el simulador.
         if let query = Self.searchQuery(of: page) {
-            let found = Self.results(of: page)
+            let (found, ads) = await organic(page)
             if !found.isEmpty {
-                present(found, for: query)
+                present(found, for: query, ads: ads)
                 return
             }
         }
