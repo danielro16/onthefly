@@ -1507,7 +1507,7 @@ final class Assistant {
                 // El sitio que dice el botón, no el de la dirección: la de
                 // un resultado de Google pasa por Google, y se oía
                 // "Abriendo google.com" para cualquier resultado.
-                let shown = action.label.components(separatedBy: " — ").last
+                let shown = action.label.components(separatedBy: " — ").last.flatMap(Self.bare)
                 let host = Self.bare(Self.unicode(URL(string: href)?.host() ?? ""))
                 say("Abriendo \(shown ?? host ?? action.label).")
             }
