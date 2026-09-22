@@ -60,6 +60,12 @@ final class Assistant {
     /// cierra y lo vuelve a abrir no está avanzando: está oscilando, y quien
     /// no ve sólo escucha que pasan cosas.
     private var touched: Set<String> = []
+    /// El formulario cuyo botón se ofreció para que lo toque la mano: el que
+    /// se aprieta al tocar "Pulsar «…»". Ver `submitAsked`.
+    private var pendingSubmit: Action?
+    /// Lo que Gemini marcó como ruido al llegar a esta página, por id: no se
+    /// sugiere. Jev lo sigue viendo al navegar. Ver `arrived`.
+    private var noisy: (url: String, ids: Set<String>) = ("", [])
 
     /// Cuántos pasos puede dar sin que la persona vuelva a hablar.
     ///
@@ -359,7 +365,7 @@ final class Assistant {
                 // después entrame a la de Milei". Descartarlo en silencio era
                 // uno de los errores que la medición encontró. Si se quedó
                 // esperando un dato, el segundo espera: enviar sin el dato no.
-                if let next = decision.then, !working, awaitingField == nil {
+                if let next = decision.then, Self.chains(decision.action, next), !working, awaitingField == nil {
                     await carry(next, of: decision, goal: goal, on: reader)
                 }
                 // Y lo que falta de la tarea, ahora que ya hay otra página.
@@ -391,6 +397,16 @@ final class Assistant {
         await run(goal, on: reader, steps: Self.maxSteps)
     }
 
+    /// Si el segundo pedido de una frase se hace a continuación del primero.
+    /// Dos navegaciones seguidas no: "ir" a Mercado Libre y después "buscar"
+    /// con el mismo destino buscaba dos veces lo mismo, y la persona oía
+    /// "Buscando: mercado libre" dos veces. Lo que falta de la tarea va en
+    /// `rest`, que se decide de nuevo en la otra página.
+    static func chains(_ action: Router.Action, _ next: Router.Action) -> Bool {
+        let moves: Set<Router.Action> = [.ir, .buscar, .abrir, .volver]
+        return !(moves.contains(action) && moves.contains(next))
+    }
+
     /// Cuántas veces se puede re-rutear una misma tarea en un turno.
     ///
     /// Tres: alcanza para "entrar a ANSES → turnos → solicitar" y corta
@@ -417,6 +433,12 @@ final class Assistant {
             working = false
             guard let decision else { return }
             await carry(decision.action, of: decision, goal: goal, on: reader)
+            // El segundo pedido de la frase, como en `ask`: "completar" y
+            // "enviar" es buscar con el buscador del sitio, y acá se perdía —
+            // en Mercado Libre quedaba escrito y sin buscar.
+            if let next = decision.then, Self.chains(decision.action, next), !working, awaitingField == nil {
+                await carry(next, of: decision, goal: goal, on: reader)
+            }
             guard let more = decision.rest, !more.isEmpty, more != goal else { return }
             goal = more
         }
@@ -434,7 +456,7 @@ final class Assistant {
         var out: [FormControl] = []
         for form in page.actions where form.kind == .form && !(form.fields ?? []).isEmpty {
             for field in (form.fields ?? []) where field.type != "hidden" {
-                let name = spoken(field) + (field.isSecure ? " (contraseña)" : "")
+                let name = spoken(field) + (field.isSecure ? " (secreto)" : "")
                 out.append(FormControl(label: "campo «\(name)»", form: form, field: field))
             }
             if let button = form.submit?.trimmingCharacters(in: .whitespacesAndNewlines), !button.isEmpty {
@@ -531,10 +553,7 @@ final class Assistant {
             // ejemplo de sus propias instrucciones— y eso fue lo contestado.
             // El contexto de la pregunta anterior ya viaja aparte. Y por dónde
             // va la lectura, que no está en la página: "¿cuánto falta?".
-            let progress = readingProgress(page).map {
-                "\n(La persona está escuchando la lectura de esta página: va por el bloque \($0.at) de \($0.of).)"
-            } ?? ""
-            await reply(goal + progress, about: page)
+            await reply(goal, about: page, reading: readingProgress(page).map { "at block \($0.at) of \($0.of)" })
             working = false
 
         case .completar:
@@ -542,13 +561,9 @@ final class Assistant {
 
         case .enviar:
             guard let page = reader.page,
-                  let form = control(decision)?.form ?? Self.pageForm(page, filled: filledFields)
+                  let form = control(decision)?.form ?? pageForm(page)
             else { say("Acá no hay un formulario para enviar."); return }
-            working = true
-            say("Pulsando «\(form.submit ?? "enviar")».")
-            await reader.submit(form)
-            working = false
-            await landed(reader)
+            await submitAsked(form, on: reader)
 
         case .volver:
             await goBack(on: reader)
@@ -590,7 +605,10 @@ final class Assistant {
             askToSolve(page, image: true)
             return
         }
-        guard let value = decision.value, !value.isEmpty else {
+        // El valor tiene que estar en lo que dijo la persona: el modelo que lo
+        // propone ve la página, y una página no puede dictar qué se escribe.
+        // Si no está —o lo transformó—, se le pregunta en vez de escribirlo.
+        guard let value = decision.value, !value.isEmpty, personSaid(value, goal: goal) else {
             // Y queda esperándolo, con el cursor en el campo de escribir.
             awaitingField = field
             say("¿Qué pongo en \(Self.spoken(field))? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.")
@@ -1010,10 +1028,8 @@ final class Assistant {
         let code = name.contains("$") || name.contains("ctl00")
             || name.range(of: "^[a-z]+[A-Z_][A-Za-z0-9_]*$", options: .regularExpression) != nil
         if !code, !name.isEmpty { return name }
-        // El cartel que la página le puso al lado vale más que su id.
-        // Salvo una contraseña: lo que tiene escrito es la contraseña.
-        let fallback = field.isSecure ? "" : field.value
-        if !fallback.isEmpty { return fallback }
+        // Nunca lo que el campo tiene escrito: ese nombre viaja al modelo y al
+        // registro, y lo escrito puede ser un DNI, un correo o una tarjeta.
         switch field.type {
         case "email":    return "correo"
         case "tel":      return "teléfono"
@@ -1345,12 +1361,10 @@ final class Assistant {
         do {
             // Sin repetir la presentación: al llegar a una nota ya se dijo de
             // qué trata, y el resumen era lo mismo con otras palabras.
-            let heard = saidHere.url == page.url && !saidHere.text.isEmpty
-                ? " La persona ya escuchó esto: «\(saidHere.text)». No lo repitas: contá lo que falta (lo que sigue, el contexto, lo que dicen los involucrados)."
-                : ""
-            guard let answer = try await answerer.answer(
-                "Resumí esta página en dos frases, con los hechos concretos: qué pasó, quién, cuándo, las cifras. Si es una cobertura en vivo, lo último que informa. Nada de describir la página («informa sobre…»): los hechos.\(heard)", about: text
-            ) else {
+            // Lo que ya escuchó de esta página va como dato del prompt
+            // "resumir", no como una frase agregada a un pedido.
+            let heard = saidHere.url == page.url && !saidHere.text.isEmpty ? saidHere.text : nil
+            guard let answer = try await answerer.summary(of: text, alreadySaid: heard) else {
                 readTheOpening()
                 return
             }
@@ -1473,12 +1487,33 @@ final class Assistant {
             await summarize(page)
             return
         }
-        // El botón del formulario: lo tocó la persona, así que se aprieta.
-        if action.id == Self.submitID, let page = reader.page, let form = Self.pageForm(page, filled: filledFields) {
+        // El botón del formulario: lo tocó la persona, así que se aprieta. El
+        // que se le ofreció, si fue por un pedido; si no, el de la página.
+        if action.id == Self.submitID, let page = reader.page, let form = pendingSubmit ?? pageForm(page) {
+            pendingSubmit = nil
             say("Pulsando «\(form.submit ?? action.label)».")
             await reader.submit(form)
             working = false
             await landed(reader)
+            return
+        }
+
+        // "Completar «…»": se pregunta el dato y va directo a ese campo de la
+        // página, sin pasar por ningún modelo.
+        if action.id.hasPrefix(Self.fillPrefix), let page = reader.page {
+            working = false
+            let id = String(action.id.dropFirst(Self.fillPrefix.count))
+            guard let field = page.actions.lazy.compactMap(\.fields).joined().first(where: { $0.id == id }) else {
+                say("Ese campo ya no está en la página.")
+                return
+            }
+            if Self.isChallenge(field) {
+                askToSolve(page, image: true)
+                return
+            }
+            awaitingField = field
+            say("¿Qué pongo en \(Self.spoken(field))? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.")
+            inputRequests += 1
             return
         }
 
@@ -1767,9 +1802,9 @@ final class Assistant {
             say("No pude preparar lo que hay que escribir. Probar de nuevo.")
             return
         }
-        guard let found else {
-            // Sin el dato en el pedido, se le pregunta, como al tocar
-            // "Completar".
+        guard let found, personSaid(found.value, goal: goal) else {
+            // Sin el dato en el pedido —o con uno que la persona no dijo—, se
+            // le pregunta, como al tocar "Completar".
             awaitingField = field
             say("¿Qué pongo en \(Self.spoken(field))? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.")
             inputRequests += 1
@@ -1780,30 +1815,83 @@ final class Assistant {
         filledFields.insert(field.id)
         say("Listo, escrito en \(Self.spoken(field)).")
         if found.send {
-            say("Pulsando «\(form.submit ?? "enviar")».")
-            await reader.submit(form)
-            await landed(reader)
+            working = false
+            await submitAsked(form, on: reader)
         }
     }
 
-    /// Si este formulario sólo busca. Ya no decide si se envía —eso lo
-    /// decide la persona o el modelo—: sólo evita ofrecer "Completar" con el
-    /// buscador del encabezado en cada página.
+    /// Si este formulario es un buscador, según el estándar: todos sus campos
+    /// lo son (`type=search`, teclado de búsqueda, dentro del hito de
+    /// búsqueda) o el formulario está en ese hito. Un buscador se envía
+    /// solo cuando la persona lo pide; lo demás pasa por `submitAsked`.
+    ///
+    /// Antes lo adivinaban dos listas de palabras en castellano e inglés
+    /// ("buscar", "continuar", "pagar"…): en cualquier otro idioma no
+    /// reconocían nada. Un buscador que el HTML no declara se trata como un
+    /// formulario común, y ahí juzga Jev.
     static func isSearch(_ form: Action) -> Bool {
         let fields = (form.fields ?? []).filter { $0.type != "hidden" }
         guard !fields.isEmpty else { return false }
-        // Una contraseña nunca es una búsqueda.
+        // Un dato secreto nunca es una búsqueda.
         guard !fields.contains(where: \.isSecure) else { return false }
-
-        let committing = "pagar|comprar|confirmar|enviar|suscrib|registr|crear cuenta|aceptar|continuar|siguiente|finalizar|reservar|checkout|pay|buy|submit|sign ?up|subscribe"
-        let searching = "^(buscar|buscá|busca|search|filtrar|aplicar filtros|ver resultados|mostrar|consultar|go)\\b"
-        let label = (form.submit ?? "").trimmingCharacters(in: .whitespaces)
-        if label.range(of: committing, options: [.regularExpression, .caseInsensitive]) != nil { return false }
-
-        // Todos sus campos son de búsqueda, o su botón dice que busca.
+        if form.region == "search" { return true }
         let fillable = fields.filter { $0.type != "checkbox" && $0.type != "radiogroup" }
-        if !fillable.isEmpty, fillable.allSatisfy(\.isSearch) { return true }
-        return label.range(of: searching, options: [.regularExpression, .caseInsensitive]) != nil
+        return !fillable.isEmpty && fillable.allSatisfy(\.isSearch)
+    }
+
+    /// Apretar el botón de un formulario porque la persona lo pidió, por voz
+    /// o escribiendo, sin tocarlo.
+    ///
+    /// Un buscador se aprieta. Lo demás lo juzga Jev con la pregunta
+    /// "¿compromete?" de `criterios.json`: por debajo del umbral se aprieta;
+    /// por encima, si Jev duda o si no contesta a tiempo, el botón queda
+    /// ofrecido con el nombre que le da la página y lo aprieta la mano. La
+    /// voz pide; la mano confirma lo que compromete.
+    private func submitAsked(_ form: Action, on reader: ReaderModel) async {
+        let label = form.submit?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !Self.isSearch(form) {
+            var risk: Double?
+            if let analyzer, let page = reader.page {
+                working = true
+                risk = await analyzer.commits(button: label, form: form, page: page)
+                working = false
+            }
+            Registro.anotar("compromete", ["boton": label, "p": risk.map { String(format: "%.2f", $0) } ?? "sin respuesta"])
+            let limit = Criterios.actuales?.umbrales["compromete"] ?? 0
+            guard let risk, risk < limit else {
+                pendingSubmit = form
+                say(label.isEmpty
+                    ? "Ese botón puede confirmar algo: queda abajo, para tocarlo."
+                    : "«\(label)» puede confirmar algo: queda abajo, para tocarlo.")
+                offer = Offer(goal: "", options: [.link(id: Self.submitID, label: "Pulsar «\(label.isEmpty ? "enviar" : label)»", href: "", region: "main")])
+                return
+            }
+        }
+        working = true
+        say("Pulsando «\(label.isEmpty ? "enviar" : label)».")
+        await reader.submit(form)
+        working = false
+        await landed(reader)
+    }
+
+    /// Si la persona dijo ese valor: en este pedido, en el anterior o en la
+    /// tarea que sigue. "Buscame auriculares" y después "¿cuánto sale el más
+    /// barato?": lo que se escribe salió de ella, un turno antes. Nunca de la
+    /// página.
+    private func personSaid(_ value: String, goal: String) -> Bool {
+        [goal, previousRequest, runningTask].compactMap { $0 }.contains { Self.said(value, in: $0) }
+    }
+
+    /// Si lo que se va a escribir en un campo lo dijo la persona. Se compara
+    /// sin espacios ni signos, en cualquier escritura: "12 345 678" es
+    /// "12345678". Lo que no aparece —el modelo lo transformó, o lo sacó de
+    /// la página— no se escribe sin preguntar.
+    static func said(_ value: String, in request: String) -> Bool {
+        func bare(_ text: String) -> String {
+            String(text.lowercased().unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }.map(Character.init))
+        }
+        let wanted = bare(value)
+        return !wanted.isEmpty && bare(request).contains(wanted)
     }
 
     /// El campo que este destino representa, si lo es.
@@ -1820,7 +1908,7 @@ final class Assistant {
     /// lo redacta el modelo y lo respalda con una cita literal que se
     /// verifica contra la página. Si la cita no aparece, no se dice nada:
     /// para quien no ve, una invención sin verificar es indetectable.
-    private func reply(_ question: String, about page: ExtractedPage) async {
+    private func reply(_ question: String, about page: ExtractedPage, reading: String? = nil) async {
         guard let answerer else {
             say("No puedo contestar preguntas en esta versión, pero sí navegar.")
             return
@@ -1831,7 +1919,7 @@ final class Assistant {
             return
         }
         do {
-            guard let answer = try await answerer.answer(question, about: text, previous: previousRequest) else {
+            guard let answer = try await answerer.answer(question, about: text, previous: previousRequest, reading: reading) else {
                 say("Eso no aparece en esta página.")
                 searchInstead = question
                 return
@@ -1905,21 +1993,21 @@ final class Assistant {
         // ingreso del banco el asistente no podía decir qué campos había.
         for form in page.actions where form.kind == .form && !(form.fields ?? []).isEmpty {
             let fields = (form.fields ?? []).filter { $0.type != "hidden" }
-                .map { $0.isSecure ? "\(spoken($0)) (contraseña)" : spoken($0) }
+                .map { $0.isSecure ? "\(spoken($0)) (secreto)" : spoken($0) }
             guard !fields.isEmpty else { continue }
-            let button = form.submit.map { " — botón «\($0)»" } ?? ""
-            content.append("FORMULARIO que pide: \(fields.joined(separator: ", "))\(button)")
+            let button = form.submit.map { " — button «\($0)»" } ?? ""
+            content.append("FORM asking for: \(fields.joined(separator: ", "))\(button)")
         }
         // Un artículo no pasa por el recorrido: su texto vive en los bloques.
         if content.count < 8 {
             for block in page.blocks where !block.plainText.isEmpty { content.append(block.plainText) }
         }
 
-        var out = "PÁGINA: \(page.displaySite) — \(page.sectionTitle)\n\n"
-        out += "CONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\n"
+        var out = "PAGE: \(page.displaySite) — \(page.sectionTitle)\n\n"
+        out += "PAGE CONTENT (what the person came for):\n"
         out += content.joined(separator: "\n").prefix(20000)
         if !chrome.isEmpty {
-            out += "\n\nMENÚ, AVISOS Y DATOS AL PASO DEL SITIO (no es el contenido, pero se puede preguntar por esto):\n"
+            out += "\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\n"
             out += chrome.joined(separator: "\n").prefix(3000)
         }
         return metric(out)
@@ -1942,7 +2030,10 @@ final class Assistant {
             for match in regex.matches(in: out, range: NSRange(location: 0, length: source.length)) {
                 result += source.substring(with: NSRange(location: last, length: match.range.location - last))
                 let number = source.substring(with: match.range(at: 1)).replacingOccurrences(of: ",", with: ".")
-                result += Double(number).map(transform) ?? source.substring(with: match.range)
+                // El original, antes: capturado por el `??`, NSString no es
+                // Sendable y la compilación Release no archivaba.
+                let original = source.substring(with: match.range)
+                result += Double(number).map(transform) ?? original
                 last = match.range.location + match.range.length
             }
             out = result + source.substring(from: last)
@@ -1957,7 +2048,7 @@ final class Assistant {
             ? String(format: "%.1f mm", $0 * 25.4).replacingOccurrences(of: ".", with: ",")
             : "\(whole($0 * 25.4)) mm" }
         convert("(\\d+(?:[.,]\\d+)?)\\s?mi\\b") { "\(whole($0 * 1.609)) km" }
-        return "(Esta página venía en medidas de Estados Unidos; acá están pasadas a °C, km/h, mm y km.)\n" + out
+        return "(This page came in US units; here they are converted to °C, km/h, mm and km.)\n" + out
     }
 
     /// Qué se abre, en qué orden: los titulares primero, después el resto de
@@ -1970,29 +2061,18 @@ final class Assistant {
         // Del resto, sólo lo que está en el contenido: "Ya tenés tu tarjeta
         // 365?" y "Correo electrónico" salían como opciones de una nota.
         let chrome: Set<String> = ["header", "banner", "nav", "navigation", "footer", "contentinfo"]
-        // Ni pagar, ni suscribirse, ni bajar una app: en Clarín se sugería
-        // suscribirse, y en el banco, la app — que no se usa desde acá.
-        // Ni reproductores: "Escuchar nota" o "Reproducir audio" harían sonar
-        // algo encima de VoiceOver.
-        var paying = "suscri|subscri|premium|comprar|pagar|descarg|app store|google play|apple store|abrir app|abrir la app"
-            + "|escuchar|reproducir|podcast|compartir|imprimir|guardar"
-        // Ni iniciar sesión, salvo que la persona haya venido a eso: en una
-        // nota del Papa se ofrecía "Abrir «Iniciar sesión»".
-        // Sólo en un diario, donde es ruido. En un banco, ingresar es lo
-        // principal: en bna.com.ar faltaba "Home Banking" entre las opciones.
-        let flatGoal = (goal ?? "").folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
-        let news = isArticle(page) || headlines.count >= 8
-        if news, flatGoal.range(of: "cuenta|sesion|ingres|entrar|login|home ?banking|usuario|clave", options: .regularExpression) == nil {
-            paying += "|iniciar sesion|inicia sesion|ingresar|ingresa a tu|mi cuenta|registrate|crear cuenta|log ?in|sign ?in"
-        }
-        // Cinco letras y no doce: "Pedir turno" tiene once, y era justo el
-        // botón que servía en la página de turnos de ANSES.
+        // Qué no se sugiere —pagar, suscribirse, la app, reproductores, el
+        // "Iniciar sesión" de un diario— ya no lo deciden listas de palabras
+        // en castellano: lo decide Gemini al llegar, con la definición de
+        // ruido de `criterios.json`, en cualquier idioma. Acá queda sólo lo
+        // que dice el estándar (la región) y que la etiqueta exista: un largo
+        // mínimo de letras dejaba afuera «時刻表».
         func useful(_ action: Action) -> Bool {
-            action.label.count >= 5 && !chrome.contains(action.region)
-                && action.label.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
-                    .range(of: paying, options: .regularExpression) == nil
+            !action.label.trimmingCharacters(in: .whitespaces).isEmpty && !chrome.contains(action.region)
         }
-        let rest = all.filter { !headlines.contains(tidy($0.label)) && useful($0) }
+        // Los formularios entran todos, estén donde estén: el del boletín
+        // vive en el pie, y para no ofrecerlo Gemini tiene que verlo.
+        let rest = all.filter { !headlines.contains(tidy($0.label)) && (useful($0) || $0.kind == .form) }
         // Y los enlaces que viven adentro de un párrafo —"Ingresá a Solicitud
         // de turnos"—, que no son controles sueltos y no entraban.
         var seen = Set(all.compactMap(\.href))
@@ -2007,13 +2087,27 @@ final class Assistant {
                 if useful(action), seen.insert(link.href).inserted { inline.append(action) }
             }
         }
-        return Array((first + rest + inline).prefix(40))
+        let list = Array((first + rest + inline).prefix(40))
+        // Y ningún formulario queda afuera por el corte: lo que Gemini no ve,
+        // no lo puede marcar como ruido.
+        return list + all.filter { $0.kind == .form && !list.contains($0) }
+    }
+
+    /// Cómo se le nombra un candidato a Gemini. Un formulario, con lo que
+    /// pide y su botón: por el nombre solo no se sabe si es un boletín.
+    static func described(_ action: Action) -> String {
+        guard action.kind == .form else { return action.label }
+        let fields = (action.fields ?? []).filter { $0.type != "hidden" }.map(spoken).joined(separator: ", ")
+        let button = action.submit.map { " — button «\($0)»" } ?? ""
+        return "FORM «\(action.label)» asking for: \(fields)\(button)"
     }
 
     static let readID = "jef-leer"
     static let summaryID = "jef-resumir"
     static let continueID = "jef-seguir"
     static let submitID = "jef-enviar-formulario"
+    /// "Completar «…»": lo que sigue es el id del campo.
+    static let fillPrefix = "jef-completar:"
     static let backID = "jef-volver"
     static let otherID = "jef-otra-cosa"
 
@@ -2042,7 +2136,7 @@ final class Assistant {
             let waitingFor = Set(awaitingField.map { [$0.id] } ?? [])
             // Salvo en un muro: el formulario de suscripción de Clarín no es
             // un paso que alguien vino a dar.
-            let form = reader.page.flatMap { Self.isSubscription($0) ? nil : Self.formOptions($0, except: filledFields.union(waitingFor)) } ?? []
+            let form = reader.page.flatMap { Self.isSubscription($0) ? nil : Self.formOptions($0, except: filledFields.union(waitingFor), skipping: noiseIDs(of: $0)) } ?? []
             var options = form + current.options.filter { option in !form.contains { $0.id == option.id } }
             // Volver, aunque las opciones las haya armado el modelo: sin él,
             // salir de una página equivocada obligaba a escribir.
@@ -2143,7 +2237,7 @@ final class Assistant {
         }
 
         if !Self.isSubscription(page) {
-            out += Self.formOptions(page, except: filledFields.union(awaitingField.map { [$0.id] } ?? []))
+            out += Self.formOptions(page, except: filledFields.union(awaitingField.map { [$0.id] } ?? []), skipping: noiseIDs(of: page))
         }
 
         if readsHeadlines(page) {
@@ -2217,14 +2311,23 @@ final class Assistant {
     /// saber escribir el pedido justo. La contraseña también, desde el chat
     /// como el DNI: lo pidió Daniel. Y su botón, con el nombre que le da la página: en el Banco Nación,
     /// con DNI y usuario escritos, no había cómo tocar «Continuar».
-    static func formOptions(_ page: ExtractedPage, except filled: Set<String> = []) -> [Action] {
-        guard let form = pageForm(page, filled: filled) else { return [] }
+    static func formOptions(_ page: ExtractedPage, except filled: Set<String> = [], skipping noise: Set<String> = []) -> [Action] {
+        guard let form = pageForm(page, filled: filled, skipping: noise) else { return [] }
         let fillable = (form.fields ?? []).filter {
             $0.type != "hidden" && $0.type != "checkbox" && !isChallenge($0) && !filled.contains($0.id)
         }
-        var options: [Action] = fillable.prefix(2).map { field in
-            let name = spoken(field)
-            return .link(id: askPrefix + "completá el campo \(name)", label: "Completar «\(name)»", href: "", region: "main")
+        // Cada campo por su id: antes el botón era un pedido escrito
+        // ("completá el campo …") y dos campos con el mismo cartel —en PAMI,
+        // afiliación y documento decían los dos «Ingresar sólo números»—
+        // quedaban como el mismo botón. Si se llaman igual, se dice cuál es.
+        let shown = Array(fillable.prefix(2))
+        let names = shown.map(spoken)
+        var options: [Action] = shown.enumerated().map { index, field in
+            let name = names[index]
+            let twins = names.filter { $0 == name }.count
+            let place = names[..<index].filter { $0 == name }.count + 1
+            let label = twins > 1 ? "Completar «\(name)» (\(place) de \(twins))" : "Completar «\(name)»"
+            return .link(id: fillPrefix + field.id, label: label, href: "", region: "main")
         }
         if let button = form.submit?.trimmingCharacters(in: .whitespacesAndNewlines), !button.isEmpty {
             options.append(.link(id: submitID, label: "Pulsar «\(button)»", href: "", region: "main"))
@@ -2236,9 +2339,21 @@ final class Assistant {
     /// en el que ya se escribió algo —también un buscador: en Mercado Libre
     /// quedaba escrito y sin forma de apretar «Buscar»—, o si no, el primero
     /// que no es de búsqueda.
-    static func pageForm(_ page: ExtractedPage, filled: Set<String> = []) -> Action? {
+    /// `noise`: los formularios que Gemini marcó como ruido al llegar —el del
+    /// boletín en Meteored— no se ofrecen.
+    static func pageForm(_ page: ExtractedPage, filled: Set<String> = [], skipping noise: Set<String> = []) -> Action? {
         page.actions.first { $0.kind == .form && ($0.fields ?? []).contains { filled.contains($0.id) } }
-            ?? page.actions.first { $0.kind == .form && !isSearch($0) && !($0.fields ?? []).isEmpty }
+            ?? page.actions.first { $0.kind == .form && !isSearch($0) && !noise.contains($0.id) && !($0.fields ?? []).isEmpty }
+    }
+
+    /// El de esta página, con lo que ya se escribió y sin lo que es ruido.
+    private func pageForm(_ page: ExtractedPage) -> Action? {
+        Self.pageForm(page, filled: filledFields, skipping: noiseIDs(of: page))
+    }
+
+    /// Lo que Gemini marcó como ruido en esta página, si es ésta.
+    private func noiseIDs(of page: ExtractedPage) -> Set<String> {
+        noisy.url == page.url ? noisy.ids : []
     }
 
     /// Volver a la página anterior y decir dónde se quedó. También lo usa el
@@ -2335,6 +2450,8 @@ final class Assistant {
         // "no soy un robot", seguían ofreciéndose "Suscribirme a Meli+" y
         // "Configurar cookies" de la portada.
         offer = nil
+        // Y el botón ofrecido para la mano también era de la otra página.
+        pendingSubmit = nil
         knownURL = page.url
         // Un captcha es el único aviso que es un muro: detrás no hay nada que
         // contar hasta que alguien lo resuelva.
@@ -2364,20 +2481,20 @@ final class Assistant {
         // ahí abajo. Un aviso de suscripción no impide leer.
         var text = Self.saying(page)
         if let overlay = page.overlay {
-            text = "HAY UN AVISO ENCIMA DE LA PÁGINA (\(overlay.kind.title)): \(overlay.text)\n\n" + text
+            text = "A NOTICE COVERS THE PAGE (\(overlay.kind.rawValue)): \(overlay.text)\n\n" + text
         }
         let candidates = Self.candidates(of: page, goal: lastRequest)
         // En una portada, los titulares que se nombran y los botones son los
         // mismos porque los elige el código: los primeros de la página. Dejando
         // que el modelo eligiera los botones por número, nombraba unos y
         // ofrecía otros.
-        let lead = readsHeadlines(page) ? Array(Self.headlines(of: page).prefix(4)) : []
-        let spoken = lead.map(Self.dekick)
+        var lead = readsHeadlines(page) ? Array(Self.headlines(of: page).prefix(4)) : []
+        var spoken = lead.map(Self.dekick)
         working = true
         var orientation: Answerer.Orientation?
         do {
             orientation = try await answerer.orient(
-                page: text, candidates: candidates.map(\.label), goal: lastRequest, frontPage: !lead.isEmpty
+                page: text, candidates: candidates.map(Self.described), goal: lastRequest, frontPage: !lead.isEmpty
             )
         } catch {
             // Por qué se cayó a la descripción: en una prueba pasó en Clarín
@@ -2386,6 +2503,17 @@ final class Assistant {
         }
         working = false
         guard let orientation else { describe(page); return }
+        // Lo que Gemini llamó ruido: por id, para esta página. No se sugiere
+        // —tampoco su formulario—, pero Jev lo sigue viendo al navegar.
+        noisy = (page.url, Set(orientation.noise.compactMap { candidates.indices.contains($0 - 1) ? candidates[$0 - 1].id : nil }))
+        let noisyLabels = orientation.noise.compactMap { candidates.indices.contains($0 - 1) ? candidates[$0 - 1].label : nil }
+        Registro.anotar("ruido", ["url": page.url, "elementos": noisyLabels])
+        // Tampoco entre los titulares, que elige el código: en StubHub, con
+        // cara de portada, los "titulares" eran partidos de Miami que Gemini
+        // ya había marcado como ruido, y se decían igual.
+        let noisyTitles = Set(noisyLabels.map(Self.tidy))
+        lead = lead.filter { !noisyTitles.contains(Self.tidy($0)) }
+        spoken = lead.map(Self.dekick)
 
         remember(orientation.text, on: page)
         if lead.isEmpty {

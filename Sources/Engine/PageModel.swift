@@ -144,6 +144,26 @@ struct ExtractedPage: Codable, Sendable {
     }
 }
 
+extension ExtractedPage {
+    /// La misma página, con nombre para los controles que no lo tenían: los
+    /// que JEF nombró (id → nombre). La próxima lectura los trae de la página
+    /// misma, donde quedaron escritos; esto es para no esperarla.
+    func naming(_ labels: [String: String]) -> ExtractedPage {
+        ExtractedPage(ok: ok, url: url, title: title, byline: byline, siteName: siteName, excerpt: excerpt, lang: lang,
+                      blocks: blocks, actions: actions.map { $0.named(labels[$0.id]) }, groups: groups,
+                      listings: listings, stream: stream, overlay: overlay, stats: stats)
+    }
+}
+
+extension Action {
+    /// Este control con el nombre que le puso JEF, si no tenía.
+    func named(_ label: String?) -> Action {
+        guard let label, unnamed == true else { return self }
+        return Action(id: id, kind: kind, label: label, href: href, fields: fields, submit: submit, notices: notices,
+                      region: region, unnamed: nil, hints: hints, cluster: cluster, primary: primary, fresh: fresh)
+    }
+}
+
 /// A cluster of related actions, as the extractor groups them.
 struct ActionGroup: Codable, Sendable, Identifiable {
     let id: String
@@ -318,6 +338,10 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
     /// encabezar una lista: "Botón sin nombre" como opción de login es ruido
     /// nuestro encima del ruido del sitio.
     let unnamed: Bool?
+    /// Lo que el HTML dice de un control sin nombre —el símbolo que dibuja,
+    /// su clase, su id, los nombres de su ícono—: las pistas con que Jev
+    /// elige qué tipo de control es. Ver `ReaderModel.nameUnnamed`.
+    var hints: String?
 
     /// What makes this action the same action on a later reading: its
     /// label, and for a form, its fields. Picking "DNI" added three date
@@ -358,15 +382,23 @@ struct Action: Codable, Sendable, Identifiable, Hashable {
             let label: String
         }
 
-        /// A password. It is written from the chat like any other field, but
-        /// it is never shown, logged, or sent to a model.
-        var isSecure: Bool { type == "password" }
+        /// The WHATWG autofill token the page declared, if any.
+        var autocomplete: String?
+        /// A password, a one-time code or a card, by the HTML standard (see
+        /// `isSecret` in extract.js). Its value never comes out of the page.
+        var secret: Bool?
+        /// A search box, by the HTML standard: `type=search`, a search
+        /// keyboard, or inside the search landmark (see extract.js).
+        var search: Bool?
 
-        /// A search box, by type or by what it calls itself. Typed as-is: no
-        /// capital letter the page did not ask for, no autocorrected city.
-        var isSearch: Bool {
-            type == "search" || name.range(of: "busc|search|query|consult", options: [.regularExpression, .caseInsensitive]) != nil
-        }
+        /// Written from the chat like any other field, but never shown,
+        /// logged, or sent to a model.
+        var isSecure: Bool { type == "password" || secret == true }
+
+        /// Typed as-is: no capital letter the page did not ask for, no
+        /// autocorrected city. Decided by the standard, never by the name:
+        /// a name is words, in whatever language the site speaks.
+        var isSearch: Bool { type == "search" || search == true }
     }
 
 }

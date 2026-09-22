@@ -18,6 +18,7 @@ final class ReaderModel {
         // que la página cambia: es lo que decide si hay a dónde volver.
         didSet {
             canGoBack = engine.canGoBack
+            if case .loaded(let page) = state { nameUnnamed(in: page) }
             #if DEBUG
             // Lo que el asistente tiene delante, tal cual se lo pasa al
             // modelo: es contra esto que una prueba verifica lo que dijo.
@@ -41,8 +42,12 @@ final class ReaderModel {
     /// página se carga tal como es; esto es lo único que se le agrega.
     let assistant: Assistant
 
+    /// Jev, también para nombrar los controles que la página dejó sin nombre.
+    private let analyzer: PageAnalyzer?
+
     init() {
         let analyzer = JevClient.fromEnvironment().map(PageAnalyzer.init)
+        self.analyzer = analyzer
         self.assistant = Assistant(analyzer: analyzer)
         engine.onPageChanged = { [weak self] result in
             self?.pageChangedOnItsOwn(result)
@@ -51,6 +56,41 @@ final class ReaderModel {
     }
 
     private var watching: Task<Void, Never>?
+
+    /// Los controles sin nombre que ya se intentaron nombrar en esta
+    /// dirección: otra lectura de la misma página no vuelve a preguntar.
+    private var namingTried: (url: String, ids: Set<String>) = ("", [])
+
+    /// Nombra los controles que la página dejó sin nombre.
+    ///
+    /// Jev elige el tipo por las pistas del HTML (`criterios.json`), el
+    /// nombre sale de `nombres.json` en el idioma de la persona, y se escribe
+    /// en la página, donde VoiceOver lo lee. Desde ahí el control tiene
+    /// nombre para todos —la persona, las opciones, Jev al navegar—. Lo que
+    /// Jev no sabe con confianza queda sin
+    /// nombre. Los nombres se ponen en la página que la app ya tiene; la
+    /// próxima lectura los trae de la página misma, donde quedaron escritos.
+    private func nameUnnamed(in page: ExtractedPage) {
+        if namingTried.url != page.url { namingTried = (page.url, []) }
+        let pending = page.actions.filter {
+            $0.unnamed == true && !($0.hints ?? "").isEmpty && !namingTried.ids.contains($0.id)
+        }
+        guard let analyzer, !pending.isEmpty else { return }
+        namingTried.ids.formUnion(pending.map(\.id))
+        Task {
+            let kinds = await analyzer.kinds(ofUnnamed: pending.map { (hints: $0.hints ?? "", region: $0.region) })
+            var labels: [String: String] = [:]
+            for (index, kind) in kinds {
+                guard let label = Nombres.de(kind, idioma: Answerer.phoneLanguage) else { continue }
+                if await engine.name(actionID: pending[index].id, label: label) { labels[pending[index].id] = label }
+            }
+            Registro.anotar("nombres", ["url": page.url, "nombres": labels.values.sorted(), "sin_nombre": pending.count])
+            // En la página que la app ya tiene, sin releer: releer competía
+            // con una carga en curso y se salteaba en medio de un turno.
+            guard !labels.isEmpty, case .loaded(let current) = state, current.url == page.url else { return }
+            state = .loaded(current.naming(labels))
+        }
+    }
 
     /// Mientras hay una prueba anti-robot pendiente, la página se vuelve a
     /// mirar cada dos segundos.

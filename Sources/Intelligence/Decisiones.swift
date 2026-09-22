@@ -1,6 +1,7 @@
 import Foundation
 
-/// Las decisiones de Daniel, tal como están en `decisiones.json`.
+/// Las decisiones de Daniel, tal como están en `decisiones.json`. Van en
+/// todos los prompts de Gemini: ver `Prompts.sistema`.
 ///
 /// Lo pidió él (2026-09-22): las reglas no van en el código, van en un
 /// archivo que se le inyecta al modelo. El código lee la página y hace lo que
@@ -15,9 +16,4 @@ enum Decisiones {
         return list
     }()
 
-    /// Para sumar al final de las instrucciones de un modelo.
-    static var bloque: String {
-        guard !lista.isEmpty else { return "" }
-        return "\n\nDECISIONES QUE VALEN SIEMPRE:\n" + lista.map { "- \($0)" }.joined(separator: "\n")
-    }
 }

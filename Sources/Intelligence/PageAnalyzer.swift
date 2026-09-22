@@ -27,6 +27,114 @@ actor PageAnalyzer {
         self.jev = jev
     }
 
+    // MARK: - ¿Compromete?
+
+    private struct CommitState: Encodable, Sendable {
+        let button: String
+        let fields: [String]
+        let site: String
+        let title: String
+    }
+
+    /// Qué tan probable es que apretar este botón comprometa a la persona:
+    /// pagar, confirmar, mandar datos, darse de baja. Lo juzga Jev con la
+    /// pregunta de `criterios.json`, en cualquier idioma, con los campos del
+    /// formulario como contexto ("Continuar" junto a un número de tarjeta).
+    ///
+    /// Nil si no hay criterio, si Jev falla o si no contesta a tiempo: la
+    /// carrera de la arquitectura. Quien llama trata nil como "compromete":
+    /// ante la duda, el botón lo toca la mano.
+    func commits(button: String, form: Action, page: ExtractedPage) async -> Double? {
+        guard let criterios = Criterios.actuales, let pregunta = criterios.jev["compromete"] else { return nil }
+        let fields = (form.fields ?? []).filter { $0.type != "hidden" }.map { field in
+            "\(field.name) (\(field.type)\(field.autocomplete.map { ", \($0)" } ?? ""))"
+        }
+        let state = CommitState(button: button, fields: fields, site: page.displaySite, title: page.title)
+        let question = JevClient.Question.boolean(
+            instructions: pregunta.instructions,
+            whenTrue: pregunta.criteria?["true"], whenFalse: pregunta.criteria?["false"])
+        let jev = self.jev
+        return await withTaskGroup(of: Double?.self) { group in
+            group.addTask {
+                let result = try? await jev.evaluate(state: state, questions: ["compromete": question])
+                guard case .boolean(let probability)? = result?.answers["compromete"] else { return nil }
+                return probability
+            }
+            group.addTask {
+                try? await Task.sleep(for: criterios.esperaJev)
+                return nil
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first
+        }
+    }
+
+    // MARK: - Controles sin nombre
+
+    private struct ControlsState: Encodable, Sendable {
+        struct Control: Encodable, Sendable {
+            let hints: String
+            let region: String
+        }
+        let controls: [Control]
+    }
+
+    /// Lo ya decidido, por pistas y región: el mismo botón, en cada lectura
+    /// de la página, no se vuelve a preguntar. `.some(nil)`: Jev no supo.
+    private var knownKinds: [String: String?] = [:]
+
+    /// El tipo de cada control sin nombre —índice → tipo de `criterios.json`—,
+    /// sólo los que Jev eligió con la confianza del umbral y que no son
+    /// "other". Con la carrera: si Jev no contesta a tiempo, esos quedan sin
+    /// nombre y se vuelven a intentar en otra lectura.
+    ///
+    /// Medido con 30 controles en castellano, inglés, francés, alemán,
+    /// japonés y ruso: 28 bien, y los dos errores con confianza baja (0,35 y
+    /// 0,39), así que con el umbral no se nombran mal: quedan sin nombre.
+    func kinds(ofUnnamed controls: [(hints: String, region: String)]) async -> [Int: String] {
+        guard let criterios = Criterios.actuales, let preguntas = criterios.controles else { return [:] }
+        let limit = criterios.umbrales["nombre_control"] ?? 1
+        var result: [Int: String] = [:]
+        var pending: [Int] = []
+        for (index, control) in controls.enumerated() {
+            if let known = knownKinds[control.hints + "|" + control.region] {
+                if let kind = known { result[index] = kind }
+            } else {
+                pending.append(index)
+            }
+        }
+        guard !pending.isEmpty else { return result }
+        let batch = Array(pending.prefix(35))
+        let state = ControlsState(controls: batch.map { .init(hints: controls[$0].hints, region: controls[$0].region) })
+        var questions: [String: JevClient.Question] = [:]
+        for position in batch.indices {
+            questions["c\(position)"] = .choice(
+                instructions: preguntas.pregunta.replacingOccurrences(of: "{i}", with: "\(position)"),
+                options: preguntas.tipos)
+        }
+        let jev = self.jev
+        let asked = questions
+        let answers: [String: JevClient.Answer]? = await withTaskGroup(of: [String: JevClient.Answer]?.self) { group in
+            group.addTask { try? await jev.evaluate(state: state, questions: asked).answers }
+            group.addTask {
+                try? await Task.sleep(for: criterios.esperaJev)
+                return nil
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first
+        }
+        guard let answers else { return result }
+        for (position, index) in batch.enumerated() {
+            guard case .choice(let value, let probabilities, _)? = answers["c\(position)"] else { continue }
+            let sure = (probabilities[value] ?? 0) >= limit && value != "other"
+            knownKinds[controls[index].hints + "|" + controls[index].region] = .some(sure ? value : nil)
+            if sure { result[index] = value }
+        }
+        return result
+    }
+
     // MARK: - El asistente: a dónde ir
 
     /// Lo que el asistente decide en un paso.

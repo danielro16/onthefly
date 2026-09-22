@@ -638,16 +638,18 @@
       // screen reader says "multiplicación" or nothing at all.
       const nameless = !action.label || LONE_GLYPH.test(action.label);
       if (nameless && action.kind === "button" && element) {
-        const guess = inferredName(element);
-        if (guess) {
-          action.label = guess;
-        } else if (unnamed < 4) {
-          unnamed++;
-          action.label = "Botón sin nombre";
-          action.unnamed = true;
-        }
+        // No guessing here with the words of one language ("account" →
+        // "Mi cuenta", always in Spanish). The assistant names it: Jev picks
+        // its kind from these hints, the name comes in the person's
+        // language, and window.__jefName writes it back into the page.
+        const hints = controlHints(element);
+        if (!hints || unnamed >= 8) return;
+        unnamed++;
+        action.label = "";
+        action.unnamed = true;
+        action.hints = hints;
       }
-      if (!action.label || isNoise(action.label)) return;
+      if (!action.unnamed && (!action.label || isNoise(action.label))) return;
       // Controls the overlay owns are reported as its choices, not as page
       // actions. Listing them twice would also mean stamping one element with
       // two ids, and the second stamp wins: the action becomes unpressable.
@@ -1034,6 +1036,9 @@
         const fieldId = priorId(control, "data-jef-field", "f") || "f" + nextFieldId++;
         control.setAttribute("data-jef-field", fieldId);
 
+        // What the page declares the field holds, by the HTML standard
+        // (WHATWG autofill tokens): the same in every language.
+        const autocomplete = (control.getAttribute("autocomplete") || "").trim().toLowerCase();
         const field = {
           id: fieldId,
           name: name.trim(),
@@ -1041,8 +1046,19 @@
               : control.tagName === "TEXTAREA" ? "textarea"
               : type,
           required: control.hasAttribute("required"),
-          value: type === "checkbox" ? (control.checked ? "on" : "") : (control.value || ""),
+          // A password or a card number never leaves the page, not even
+          // into our own model of it.
+          value: type === "checkbox" ? (control.checked ? "on" : "")
+              : isSecret(type, autocomplete) ? ""
+              : (control.value || ""),
         };
+        if (autocomplete) field.autocomplete = autocomplete;
+        if (isSecret(type, autocomplete)) field.secret = true;
+        // A search box, by the standard: its type, the key its keyboard
+        // shows, or the search landmark it sits in.
+        if (type === "search" || /^search$/i.test(control.getAttribute("enterkeyhint") || "")
+            || /^search$/i.test(control.getAttribute("inputmode") || "")
+            || control.closest("[role=search], search")) field.search = true;
 
         // What the page holds against the field. The checkout's "Siguiente"
         // did nothing audible: the email was missing, the message sat
@@ -2101,26 +2117,25 @@
     return parts.join(" ");
   }
 
-  /// A guess at what an unnamed control does, from the words the page
-  /// used in its own markup. Weak evidence, but "Cerrar" beats silence
-  /// and beats discarding the only way out of a modal.
-  function inferredName(element) {
+  /// A field whose value must never be copied out of the page: a password,
+  /// a one-time code, a card. Decided by the HTML standard — the input type
+  /// and the WHATWG autofill tokens — never by what the field is called.
+  const SECRET_TOKENS = ["current-password", "new-password", "one-time-code",
+    "cc-number", "cc-csc", "cc-exp", "cc-exp-month", "cc-exp-year"];
+  function isSecret(type, autocomplete) {
+    if (type === "password") return true;
+    return (autocomplete || "").split(/\s+/).some(function (token) { return SECRET_TOKENS.indexOf(token) !== -1; });
+  }
+
+  /// What the markup says about a control that has no name: the glyph it
+  /// draws, its class and id, its title, and its icon's names (see
+  /// iconHint). Evidence for the model that names it, in whatever language
+  /// the site wrote its code. Not a name.
+  function controlHints(element) {
     if (!element) return "";
-    const glyph = textOf(element);
-    if (/^[×✕✖xX]$/.test(glyph)) return "Cerrar";
-    const hint = (String(element.className || "") + " " + (element.id || "") + " " + iconHint(element)).toLowerCase();
-    if (/close|cerrar|dismiss/.test(hint)) return "Cerrar";
-    if (/burger|hamburger|menu-?toggle|nav-?toggle|open-?menu/.test(hint)) return "Abrir el menú";
-    if (/search|buscar|lupa/.test(hint)) return "Buscar";
-    if (/\bback\b|volver|atras|atrás/.test(hint)) return "Volver";
-    if (/\bnext\b|siguiente|forward/.test(hint)) return "Siguiente";
-    if (/\bprev\b|anterior/.test(hint)) return "Anterior";
-    if (/play|reproducir/.test(hint)) return "Reproducir";
-    if (/^[+➕]$/.test(glyph) || /\badd\b|agregar|sumar/.test(hint)) return "Agregar";
-    if (/^[−-]$/.test(glyph) || /remove|quitar|restar/.test(hint)) return "Quitar";
-    if (/cart|carrito/.test(hint)) return "Carrito";
-    if (/account|cuenta|user|perfil/.test(hint)) return "Mi cuenta";
-    return "";
+    const parts = [textOf(element), String(element.className || ""), element.id || "",
+      element.getAttribute("title") || "", iconHint(element)];
+    return parts.map(function (p) { return String(p).trim(); }).filter(Boolean).join(" ").replace(/\s+/g, " ").slice(0, 200);
   }
 
   /* ---------------------------------------------------------------------
@@ -2220,30 +2235,11 @@
     if (window.__jefRepair === false) return { named: 0, quieted: 0, silenced: 0 };
     let named = 0, quieted = 0, silenced = 0;
 
-    // 1. Controls the page left without a name.
-    for (const el of document.querySelectorAll(REPAIRABLE)) {
-      // Our own writing does not count as the page having a name: if the
-      // element still carries exactly what we put there, we are free to
-      // reconsider it. If it carries something else, the page spoke and we
-      // step back.
-      const ours = el.getAttribute("data-jef-name");
-      const current = el.getAttribute("aria-label");
-      if (ours !== null && current !== null && current !== ours) {
-        el.removeAttribute("data-jef-name");
-        continue;
-      }
-      if (ours === null && spokenName(el)) continue;
-      if (isHidden(el)) continue;
-      const guess = inferredName(el);
-      // No honest guess means silence. Writing "Botón sin nombre" into the
-      // page would make VoiceOver say "Botón sin nombre, botón", which is
-      // noisier than what the site already does. The inventory may still
-      // report it that way to the assistant; the page stays quiet.
-      if (!guess) continue;
-      if (ours === guess && current === guess) continue;
-      el.setAttribute("aria-label", guess);
-      el.setAttribute("data-jef-name", guess);
-      named++;
+    // 1. Controls the page left without a name: named by the assistant,
+    //    in the person's language, through window.__jefName. What stays
+    //    here is stepping back when the page names one itself.
+    for (const el of document.querySelectorAll("[data-jef-name]")) {
+      if (el.getAttribute("aria-label") !== el.getAttribute("data-jef-name")) el.removeAttribute("data-jef-name");
     }
 
     // 2. Pictures with no alt at all. VoiceOver reads the file name, which
@@ -3249,6 +3245,17 @@ allowedVideoRegex: /^$/,
       return { ok: false, reason: "error", message: String((e && e.message) || e) };
     }
     return { ok: true };
+  };
+
+  /// The assistant's name for a control the page left unnamed, written
+  /// where VoiceOver reads it. Only while the page says nothing itself.
+  window.__jefName = function (id, label) {
+    const el = document.querySelector('[data-jef-id="' + String(id).replace(/[^A-Za-z0-9_-]/g, "") + '"]');
+    if (!el || !label) return false;
+    if (el.getAttribute("data-jef-name") === null && spokenName(el)) return false;
+    el.setAttribute("aria-label", label);
+    el.setAttribute("data-jef-name", label);
+    return true;
   };
 
   window.__jefFill = function (fieldId, value) {

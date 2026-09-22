@@ -295,6 +295,18 @@ final class HeadlessWebView: NSObject {
         return try await reextract(web)
     }
 
+    /// Escribe en la página el nombre que JEF le puso a un control que el
+    /// sitio dejó sin nombre, donde VoiceOver lo lee (ver `__jefName` en
+    /// extract.js). False si el control ya no está o la página lo nombró.
+    func name(actionID: String, label: String) async -> Bool {
+        guard let web = webView,
+              let encoded = try? JSONEncoder().encode([label]),
+              let array = String(data: encoded, encoding: .utf8)
+        else { return false }
+        let safeID = actionID.filter { $0.isLetter || $0.isNumber }
+        return (try? await web.evaluateJavaScript("window.__jefName('\(safeID)', \(array)[0])")) as? Bool ?? false
+    }
+
     /// Submits the form an action belongs to, then reports what happened.
     func submit(actionID: String) async throws -> ActivationOutcome {
         guard let web = webView else { throw ExtractionError.noSession }
