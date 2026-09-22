@@ -8,6 +8,9 @@
         "escribir": "llevame a la nación"
       },
       {
+        "boton": 1
+      },
+      {
         "escribir": "dame los titulares"
       },
       {
@@ -28,6 +31,9 @@
     "pasos": [
       {
         "escribir": "clarín"
+      },
+      {
+        "boton": 1
       },
       {
         "boton": 1
@@ -91,6 +97,9 @@
       },
       {
         "boton": 1
+      },
+      {
+        "boton": 1
       }
     ]
   },
@@ -101,6 +110,9 @@
     "pasos": [
       {
         "escribir": "entrá a mercado libre y buscame auriculares bluetooth"
+      },
+      {
+        "boton": 1
       },
       {
         "escribir": "¿cuánto sale el más barato?"
@@ -114,6 +126,9 @@
     "pasos": [
       {
         "escribir": "quiero entrar al home banking del banco nación"
+      },
+      {
+        "boton": 1
       },
       {
         "tocar": "DNI"
@@ -164,6 +179,9 @@
         "escribir": "la nación"
       },
       {
+        "boton": 1
+      },
+      {
         "tocar": "Otra cosa"
       },
       {
@@ -180,6 +198,9 @@
         "escribir": "abrí infobae"
       },
       {
+        "boton": 1
+      },
+      {
         "escribir": "¿qué titulares hay?"
       },
       {
@@ -194,6 +215,9 @@
     "pasos": [
       {
         "escribir": "quiero sacar un turno en pami"
+      },
+      {
+        "boton": 1
       },
       {
         "boton": 1
@@ -225,7 +249,35 @@
         "escribir": "llevame al seguimiento de correo argentino"
       },
       {
+        "boton": 1
+      },
+      {
         "escribir": "¿qué me pide para seguir el envío?"
+      }
+    ]
+  },
+  {
+    "id": "cerrar-asistente",
+    "persona": "Baja visión. A veces quiere mirar la página entera y tocarla ella misma.",
+    "objetivo": "Cerrar el asistente para ver la página en pantalla completa, volver a abrirlo y seguir pidiendo.",
+    "pasos": [
+      {
+        "escribir": "clarín"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "tocar": "Cerrar el asistente"
+      },
+      {
+        "esperar": 4
+      },
+      {
+        "tocar": "Abrir el asistente"
+      },
+      {
+        "escribir": "dame los titulares"
       }
     ]
   }

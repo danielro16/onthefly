@@ -68,6 +68,12 @@ actor Router {
         /// hay otra página abierta, que es donde recién se puede resolver.
         let rest: String?
         let limit: Limit?
+        /// Para `ir` y `buscar`: el país al que pertenece lo que se busca,
+        /// en dos letras ("AR"), si es claro. Se busca con la región de ese
+        /// país y no con la del teléfono: con un iPhone en Estados Unidos,
+        /// "banco nación" se buscaba como en Estados Unidos. Nil cuando lo
+        /// pedido no es de ningún país en particular.
+        var country: String? = nil
     }
 
     enum RouterError: Error { case http(Int), transport(String), unusable }
@@ -154,6 +160,11 @@ actor Router {
         - Si está en un sitio y pide ir a una sección o un tema que ese sitio tiene ("llevame
           a deportes" estando en un diario, "los resultados" estando en un buscador), es
           abrir — reference = cómo lo nombró —, no ir ni buscar: la saca del sitio donde está.
+        - Para ir y buscar, country = el código de dos letras del país al que pertenece lo que
+          pide, si es claro: un organismo, un banco, un diario, un trámite o una expresión de un
+          país. Puede no ser el país del teléfono: quien vive afuera pide cosas de su país.
+          Si lo que pide no es de ningún país en particular (un sitio mundial, un tema general),
+          country = null.
         - Si buscar sale de una pregunta que sigue la conversación, target tiene que decir de
           qué se habla: completalo con el tema de la página donde está o de lo que pidió antes.
           Una búsqueda sin tema devuelve cualquier cosa. Usá SÓLO las palabras de la persona y
@@ -169,6 +180,7 @@ actor Router {
         // después de "dólar blue" no tenía de qué hablar, y "¿cuándo se
         // fundó?" se buscaba sin decir qué.
         let before = previous.map { " Lo que pidió antes: «\($0)»." } ?? ""
+            + (Locale.current.region.map { " El teléfono está en la región \($0.identifier)." } ?? "")
         guard let page else { return "No hay ninguna página abierta todavía." + before }
         var parts: [String] = ["Está en «\(page.sectionTitle)», en \(page.displaySite)." + before]
         let headlines = Assistant.headlines(of: page).count
@@ -245,8 +257,16 @@ actor Router {
             value: text("value"),
             then: text("then").flatMap(Action.init(rawValue:)),
             rest: text("rest"),
-            limit: text("limit").flatMap(Self.limit(from:))
+            limit: text("limit").flatMap(Self.limit(from:)),
+            country: text("country").flatMap(Self.country(from:))
         )
+    }
+
+    /// Un país de verdad, en dos letras mayúsculas; si no, nil.
+    static func country(from raw: String) -> String? {
+        let code = raw.trimmingCharacters(in: .whitespaces).uppercased()
+        guard code.count == 2, Locale.Region(code).isISORegion else { return nil }
+        return code
     }
 
     /// El motivo, aflojando la exigencia.

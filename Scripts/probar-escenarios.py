@@ -150,11 +150,15 @@ class Panel:
                 abajo = marco["y"] - 8
         return arriba, abajo
 
+    # Los botones del asistente mismo, que no son opciones de la conversación.
+    CROMO = {"Enviar", "Cerrar el asistente", "Abrir el asistente"}
+
     @staticmethod
-    def opciones(nodos):
-        # En el panel, todo botón es una opción salvo "Enviar". El contenido de
-        # la página no aparece en el árbol que da axe.
-        return [n for n in nodos if n.get("role") == "AXButton" and n.get("AXLabel") != "Enviar"]
+    def opciones(nodos, cromo=False):
+        # En el panel, todo botón es una opción salvo los del asistente mismo.
+        # El contenido de la página no aparece en el árbol que da axe.
+        return [n for n in nodos if n.get("role") == "AXButton"
+                and (cromo or n.get("AXLabel") not in Panel.CROMO) and n.get("AXLabel") != "Enviar"]
 
     def escribir(self, texto, reintento=True):
         campo = next((n for n in self.sim.nodos() if n.get("AXLabel") == "Pedido"), None)
@@ -188,7 +192,7 @@ class Panel:
         """`cual` es un número (la enésima opción) o un pedazo de su etiqueta."""
         for _ in range(12):
             nodos = self.sim.nodos()
-            opciones = self.opciones(nodos)
+            opciones = self.opciones(nodos, cromo=not isinstance(cual, int))
             if isinstance(cual, int):
                 elegido = opciones[cual - 1] if 0 < cual <= len(opciones) else None
             else:
@@ -199,6 +203,10 @@ class Panel:
             arriba, abajo = self.limites(nodos)
             marco = elegido["frame"]
             y = marco["y"] + marco["height"] / 2
+            # Cerrar y Abrir están siempre a la vista: fuera del panel.
+            if elegido.get("AXLabel") in self.CROMO:
+                self.sim.tocar_punto(marco["x"] + marco["width"] / 2, y)
+                return elegido.get("AXLabel")
             if arriba + 4 <= y <= abajo - 4:
                 # Quieto antes de tocar: un toque sobre un panel que todavía
                 # frena sólo lo frena, y los jueces lo oyeron como "toqué y no

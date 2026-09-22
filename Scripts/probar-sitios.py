@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
-"""Prueba la elección de sitio del asistente contra búsquedas reales guardadas.
+"""Prueba las opciones que ofrece el asistente contra búsquedas reales guardadas.
 
-Compila las funciones de Assistant.swift que eligen entre resultados —las
-mismas, copiadas del archivo, no una reimplementación— y las corre sobre cada
-pedido de Tests/buscador/pedidos.json con los resultados que guardó
-Scripts/traer-resultados.py. Con el país fijo en Argentina.
+Compila la función de Assistant.swift que saca los resultados de la página del
+buscador —la misma, copiada del archivo, no una reimplementación— y la corre
+sobre cada pedido de Tests/buscador/pedidos.json con los resultados que guardó
+Scripts/traer-resultados.py.
 
     ./Scripts/probar-sitios.py
     ./Scripts/probar-sitios.py --lote Tests/buscador/otro   # otro lote (ver traer-resultados.py)
-    ./Scripts/probar-sitios.py --region US                  # con el teléfono en otra región
 
-Por cada pedido dice qué haría JEF: ir directo (a qué dirección) o mostrar la
-lista (y cuál queda primero), y si eso es el sitio esperado. Lo que no se
-admite nunca es ir directo a un sitio que no era.
+JEF ofrece los tres primeros en el orden del buscador. Por cada pedido dice si
+el sitio esperado es el primero y si está entre los tres.
 """
 import json
 import pathlib
@@ -28,12 +26,8 @@ LOTE = pathlib.Path(sys.argv[sys.argv.index("--lote") + 1]) if "--lote" in sys.a
 PEDIDOS = LOTE / "pedidos.json"
 RESULTADOS = LOTE / "resultados"
 
-FUNCIONES = [
-    "unicode", "punycode", "results(from", "isOfficial", "closer", "mentionsOtherCountry", "labels",
-    "siteName", "flatten", "stems", "depth", "distance", "words", "registered", "segments", "initials",
-    "isHosted", "keys", "imitates", "names", "phoneCode", "namedSite", "ranked", "named", "siteNamed", "bare",
-]
-CONSTANTES = ["countries", "suffixes", "fillers", "endings", "generic", "tasks", "numbers"]
+FUNCIONES = ["unicode", "punycode", "results(from", "flatten"]
+CONSTANTES: list[str] = []
 
 
 def extraer(fuente: str) -> str:
@@ -56,10 +50,7 @@ def extraer(fuente: str) -> str:
         texto = lineas[indice]
         partes.append(texto if texto.rstrip().endswith("]") else desde(indice, "    ]"))
     estructura = re.search(r"    struct Result: Sendable \{.*?\n    \}\n", fuente, re.S).group(0)
-    codigo = estructura + "\n" + "\n\n".join(partes)
-    # El país de la persona, fijo: la región de esta máquina no es la del caso.
-    region = sys.argv[sys.argv.index("--region") + 1] if "--region" in sys.argv else "AR"
-    return codigo.replace('Locale.current.region?.identifier ?? "AR"', f'"{region}"')
+    return estructura + "\n" + "\n\n".join(partes)
 
 
 PRINCIPAL = r"""
@@ -74,14 +65,8 @@ for pedido in pedidos {
     guard let datos = try? Data(contentsOf: URL(fileURLWithPath: archivo)),
           let crudos = try? JSONSerialization.jsonObject(with: datos) as? [[String: String]] else { continue }
     let links = crudos.map { (title: $0["titulo"] ?? "", href: $0["href"] ?? "") }
-    let resultados = Assistant.results(from: links)
-    let lista = Assistant.ranked(texto, among: resultados, naming: true)
-    var fila: [String: Any] = ["pedido": texto, "lista": lista.prefix(3).map { $0.href }]
-    if let directo = Assistant.namedSite(texto, among: resultados) {
-        fila["directo"] = directo.go
-        fila["sitio"] = directo.site.title
-    }
-    salida.append(fila)
+    let lista = Assistant.results(from: links)
+    salida.append(["pedido": texto, "lista": lista.prefix(3).map { $0.href }])
 }
 print(String(data: try! JSONSerialization.data(withJSONObject: salida), encoding: .utf8)!)
 """
@@ -121,36 +106,23 @@ def main() -> None:
                                  capture_output=True, text=True, check=True)
     filas = {f["pedido"]: f for f in json.loads(corrida.stdout)}
 
-    directos = equivocados = lista_ok = 0
+    total = primero = entre_tres = 0
     for entrada in pedidos:
         fila = filas.get(entrada["pedido"])
-        if not fila:
-            print(f"?  {entrada['pedido']}: sin resultados guardados")
+        if not fila or not entrada["sitio"]:
             continue
-        esperados = entrada["sitio"]
-        # Sin sitio esperado —Garbarino quebró—, lo correcto es la lista.
-        if not esperados:
-            bien = "directo" not in fila
-            equivocados += not bien
-            directos += not bien
-            print(f"{'· lista, sin sitio' if bien else '✘ DIRECTO SIN SITIO':24} {entrada['pedido']:30} → "
-                  f"{fila.get('directo') or (fila['lista'][0] if fila['lista'] else '')}")
-            continue
-        if "directo" in fila:
-            directos += 1
-            bien = dominio_ok(fila["directo"], esperados)
-            equivocados += not bien
-            marca = "✔ directo" if bien else "✘ DIRECTO A OTRO SITIO"
-            print(f"{marca:24} {entrada['pedido']:30} → {fila['directo']}")
-        else:
-            primero = fila["lista"][0] if fila["lista"] else ""
-            bien = dominio_ok(primero, esperados)
-            lista_ok += bien
-            marca = "· lista, 1.º bien" if bien else "· lista, 1.º OTRO"
-            print(f"{marca:24} {entrada['pedido']:30} → {primero}")
-    print(f"\n{directos} directos ({equivocados} a otro sitio) · {len(pedidos) - directos} con lista "
-          f"({lista_ok} con el sitio primero)")
-    sys.exit(1 if equivocados else 0)
+        total += 1
+        lista = fila["lista"]
+        uno = bool(lista) and dominio_ok(lista[0], entrada["sitio"])
+        tres = any(dominio_ok(h, entrada["sitio"]) for h in lista)
+        primero += uno
+        entre_tres += tres
+        if not uno:
+            marca = "· 2.º o 3.º" if tres else "✘ NO ESTÁ"
+            print(f"{marca:12} {entrada['pedido']:32} → 1.º {lista[0] if lista else '-'}")
+    print(f"\n{total} pedidos con sitio conocido · el correcto es el 1.º en {primero} · "
+          f"está entre los 3 ofrecidos en {entre_tres}")
+    sys.exit(0 if entre_tres == total else 1)
 
 
 if __name__ == "__main__":
