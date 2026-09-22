@@ -277,8 +277,15 @@ final class HeadlessWebView: NSObject {
         guard let web = webView, web.canGoBack else { throw ExtractionError.noSession }
         settle(.failure(CancellationError()))
         unconsumed = nil
+        navigationStarted = false
         web.goBack()
-        return try await nextPage()
+        // Volver dentro de la misma página —un menú que agregó un paso al
+        // historial— no carga nada, y esperar una carga era esperar hasta el
+        // tiempo límite: en el Banco Nación, "Volver" terminó en "No pude
+        // abrir esa página" con la página ahí. Sin navegación, se relee.
+        try? await Task.sleep(for: Self.navigationGrace)
+        if navigationStarted || web.isLoading { return try await nextPage() }
+        return try await reextract(web)
     }
 
     /// Reads the live page again, as it is now: after the person solved a

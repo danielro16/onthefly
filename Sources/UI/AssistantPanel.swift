@@ -10,6 +10,9 @@ struct AssistantPanel: View {
     @Bindable var assistant: Assistant
     var onAsk: (String) -> Void
     var onAccept: (Action) -> Void
+    /// Cerrar el asistente y dejar la página entera a la vista. Nil sin
+    /// página: antes de la primera carga no hay nada que mirar.
+    var onClose: (() -> Void)?
 
     @State private var text = ""
     @FocusState private var writing: Bool
@@ -45,6 +48,14 @@ struct AssistantPanel: View {
                 ProgressView()
                     .controlSize(.small)
                     .accessibilityLabel("Buscando")
+            }
+            // Volvió: sin él no había cómo usar la página misma —resolver una
+            // prueba anti-robot, escribir una contraseña—. Lo marcó Daniel.
+            if let onClose {
+                Button("Cerrar", action: onClose)
+                    .font(.body.weight(.semibold))
+                    .accessibilityLabel("Cerrar el asistente")
+                    .accessibilityHint("Deja la página entera a la vista. Para volver, el botón Asistente.")
             }
         }
         .padding(.horizontal, 20)

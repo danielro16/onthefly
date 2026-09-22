@@ -276,6 +276,13 @@ final class ReaderModel {
             state = .loaded(page)
         } catch {
             guard !Self.wasSuperseded(error) else { return }
+            // Si la carga no terminó pero la página está, se cuenta la que
+            // está en vez de decir que no se pudo.
+            if let page = try? await engine.reread() {
+                address = page.url
+                state = .loaded(page)
+                return
+            }
             state = .failed(error.localizedDescription)
         }
     }
@@ -312,6 +319,9 @@ final class ReaderModel {
 /// captcha, el botón de pagar—.
 struct ReaderView: View {
     @State private var model = ReaderModel()
+    /// El asistente a la vista. Cerrado, la página ocupa la pantalla entera
+    /// y queda el botón "Asistente" para volver.
+    @State private var panelOpen = true
 
     var body: some View {
         GeometryReader { screen in
@@ -328,15 +338,36 @@ struct ReaderView: View {
                 // Y con más de la mitad de la pantalla: la conversación es la
                 // app. En una franja de 380 puntos las respuestas se cortaban
                 // y los botones quedaban abajo, fuera de la vista.
-                AssistantPanel(
-                    assistant: model.assistant,
-                    onAsk: { goal in Task { await model.assistant.ask(goal, on: model) } },
-                    onAccept: { action in Task { await model.assistant.accept(action, on: model) } }
-                )
-                .frame(height: model.liveWebView == nil ? nil : max(380, screen.size.height * 0.55))
-                .background(.bar)
+                if panelOpen || model.liveWebView == nil {
+                    AssistantPanel(
+                        assistant: model.assistant,
+                        onAsk: { goal in Task { await model.assistant.ask(goal, on: model) } },
+                        onAccept: { action in Task { await model.assistant.accept(action, on: model) } },
+                        onClose: model.liveWebView == nil ? nil : { panelOpen = false }
+                    )
+                    .frame(height: model.liveWebView == nil ? nil : max(380, screen.size.height * 0.55))
+                    .background(.bar)
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                if !panelOpen, model.liveWebView != nil {
+                    Button { panelOpen = true } label: {
+                        Label("Asistente", systemImage: "bubble.left.and.bubble.right.fill")
+                            .font(.headline)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
+                            .background(.tint, in: Capsule())
+                            .foregroundStyle(.white)
+                    }
+                    .padding(20)
+                    .accessibilityLabel("Abrir el asistente")
+                }
             }
         }
+        // "Ir a la prueba": la página entera, para poder resolverla.
+        .onChange(of: model.assistant.pageFocusRequests) { _, _ in panelOpen = false }
+        // Resuelta, el asistente vuelve: lo que sigue lo cuenta él.
+        .onChange(of: model.assistant.panelRequests) { _, _ in panelOpen = true }
         // Salir es volver. Es el gesto con el que se sale de todo lo demás
         // en iOS.
         .accessibilityAction(.escape) {

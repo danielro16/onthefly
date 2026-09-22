@@ -255,6 +255,9 @@ actor Answerer {
             ya empezó, y se llega a muchas páginas seguidas.
             \(headlines)
             - Si es una nota: de qué trata, en dos frases.
+            - Si es la página principal de un banco, una tienda, una empresa o un organismo: qué es
+              y lo principal que se hace ahí (ingresar, trámites, comprar), en una frase. No tiene
+              titulares: sus promociones, banners y carruseles no se nombran, ni las cotizaciones.
             - Si es un formulario: qué pide.
             - Si nombrás un dato que la página da con un número (una cotización, un precio, una
               temperatura), decí el número: "el precio del dólar" sin el precio no le sirve a nadie.
