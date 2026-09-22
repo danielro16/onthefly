@@ -1,0 +1,23 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: llevame a la nación
+  4 [txt] Buscando: la nación.
+  5 [txt] Estás en los resultados de «la nación». Los 2 más probables:
+  6 [H] Vos: La Nación — www.lanacion.com.ar
+  7 [txt] Abriendo lanacion.com.ar.
+  8 [txt] Has llegado a la página principal de La Nación, que hoy presenta sus noticias más destacadas. Los titulares principales son las primeras opciones.
+  9 [H] Vos: dame los titulares
+ 10 [txt] Titulares 1 a 3:
+ 11 [txt] 1. "Una gran victoria en la Argentina". Milei coincidió con Trump en la sesión del Escudo de las Américas
+ 12 [txt] 2. Tras el boicot de la TV, Trump recurre a un clásico del manual de Hugo Chávez
+ 13 [txt] 3. La letra fina del proyecto Malvinas. El Gobierno pondera las diferencias con la ley actual, la forma de aplicación y los “derribos”
+ 14 [H] Vos: Abrir «Una gran victoria en la Argentina". Milei coincidió con Trump en la sesión del Escudo de las…»
+ 15 [txt] Abriendo.
+ 16 [txt] Estás en el diario La Nación, leyendo sobre la reciente participación del presidente Javier Milei en el encuentro del Escudo de las Américas junto a Donald Trump en Nueva York. Hay un aviso sobre aceptar condiciones que cubre parte de la pantalla.
+ 17 [H] Vos: resumime la nota
+ 18 [txt] Resumen de la nota: El presidente Milei anunció en la reunión que Argentina busca un rol proactivo en la seguridad hemisférica frente a desafíos como el narcoterrorismo y el crimen transnacional. El encuentro del Escudo de las Américas, integrado por 15 países, concluyó con acuerdos para cooperar en inversiones estratégicas y minerales críticos antes de la próxima intervención de Milei ante la ONU.
+ 19 [btn] Leer la nota  (Primera de 3 opciones.)
+ 20 [btn] Volver a la portada
+ 21 [btn] Otra cosa
+ 22 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 23 [btn] Enviar

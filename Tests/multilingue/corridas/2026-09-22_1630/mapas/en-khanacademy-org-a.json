@@ -1,0 +1,554 @@
+[
+ {
+  "text": "Select gift frequency [Select gift frequency]",
+  "kind": "form",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Dismiss banner.",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Open menu",
+  "kind": "button",
+  "region": "navigation",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "close",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Give now",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Schools & Districts",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play video: a student describes learning on Khan Academy",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Is Khan Academy really free?",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Do teachers already use Khan Academy?",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "How does Khan Academy support students at different levels?",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Does Khan Academy actually improve learning outcomes?",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "How does Khan Academy support schools and districts?",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Change language",
+  "kind": "button",
+  "region": "footer",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Cookie Preferences",
+  "kind": "button",
+  "region": "footer",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Khan Academy",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Search for courses, skills, and videos",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/search"
+ },
+ {
+  "text": "Math",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/math"
+ },
+ {
+  "text": "Test prep",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/test-prep"
+ },
+ {
+  "text": "English language arts (ELA)",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/ela"
+ },
+ {
+  "text": "Science",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/science"
+ },
+ {
+  "text": "Social studies",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/humanities"
+ },
+ {
+  "text": "Computing",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/computing"
+ },
+ {
+  "text": "Economics",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/economics-finance-domain"
+ },
+ {
+  "text": "Life skills",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/college-careers-more"
+ },
+ {
+  "text": "Partner courses",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/partner-content"
+ },
+ {
+  "text": "Khan for educators",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/khan-for-educators"
+ },
+ {
+  "text": "Khan Academy Districts (opens in a new tab)",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/schools"
+ },
+ {
+  "text": "Khan Kids for Schools (opens in a new tab)",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/kids"
+ },
+ {
+  "text": "Khan Academy for Teachers (opens in a new tab)",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/teachers"
+ },
+ {
+  "text": "Writing Coach (opens in a new tab)",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanmigo.ai",
+  "external": true,
+  "href": "https://www.khanmigo.ai/writingcoach"
+ },
+ {
+  "text": "About us",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about"
+ },
+ {
+  "text": "Impact",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/impact"
+ },
+ {
+  "text": "Leadership",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/leadership"
+ },
+ {
+  "text": "Supporters",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/supporters"
+ },
+ {
+  "text": "Blog (opens in a new tab)",
+  "kind": "link",
+  "region": "nav",
+  "domain": "blog.khanacademy.org",
+  "external": false,
+  "href": "https://blog.khanacademy.org/"
+ },
+ {
+  "text": "Share your story",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/stories"
+ },
+ {
+  "text": "Giving",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/giving"
+ },
+ {
+  "text": "Careers",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/careers"
+ },
+ {
+  "text": "Internships",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/internships"
+ },
+ {
+  "text": "Press (opens in a new tab)",
+  "kind": "link",
+  "region": "nav",
+  "domain": "support.khanacademy.org",
+  "external": false,
+  "href": "https://support.khanacademy.org/hc/en-us/articles/202483630"
+ },
+ {
+  "text": "Help center (opens in a new tab)",
+  "kind": "link",
+  "region": "nav",
+  "domain": "support.khanacademy.org",
+  "external": false,
+  "href": "https://support.khanacademy.org/hc/en-us"
+ },
+ {
+  "text": "Downloads",
+  "kind": "link",
+  "region": "nav",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/downloads"
+ },
+ {
+  "text": "Download the Khan Academy app on the App Store",
+  "kind": "link",
+  "region": "nav",
+  "domain": "itunes.apple.com",
+  "external": true,
+  "href": "https://itunes.apple.com/app/apple-store/id469863705?pt=698519&ct=website%20footer&mt=8"
+ },
+ {
+  "text": "Get the Khan Academy app on Google Play",
+  "kind": "link",
+  "region": "nav",
+  "domain": "play.google.com",
+  "external": true,
+  "href": "https://play.google.com/store/apps/details?id=org.khanacademy.android&referrer=utm_source%3Dwebsite%2520footer%26utm_medium%3Dwebsite%2520footer%26utm_campaign%3Dwebsite%2520footer"
+ },
+ {
+  "text": "support us",
+  "kind": "link",
+  "region": "footer",
+  "domain": "donate.khanacademy.org",
+  "external": false,
+  "href": "https://donate.khanacademy.org/campaign/580662/donate?c_src2=Webapp.footer"
+ },
+ {
+  "text": "U.S.",
+  "kind": "link",
+  "region": "footer",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "India",
+  "kind": "link",
+  "region": "footer",
+  "domain": "india.khanacademy.org",
+  "external": false,
+  "href": "https://india.khanacademy.org/"
+ },
+ {
+  "text": "Mexico",
+  "kind": "link",
+  "region": "footer",
+  "domain": "es.khanacademy.org",
+  "external": false,
+  "href": "https://es.khanacademy.org/"
+ },
+ {
+  "text": "Brazil",
+  "kind": "link",
+  "region": "footer",
+  "domain": "pt.khanacademy.org",
+  "external": false,
+  "href": "https://pt.khanacademy.org/"
+ },
+ {
+  "text": "Follow us on LinkedIn",
+  "kind": "link",
+  "region": "footer",
+  "domain": "linkedin.com",
+  "external": true,
+  "href": "https://www.linkedin.com/company/khan-academy"
+ },
+ {
+  "text": "Follow us on Facebook",
+  "kind": "link",
+  "region": "footer",
+  "domain": "facebook.com",
+  "external": true,
+  "href": "https://www.facebook.com/khanacademy"
+ },
+ {
+  "text": "Follow us on Instagram",
+  "kind": "link",
+  "region": "footer",
+  "domain": "instagram.com",
+  "external": true,
+  "href": "https://instagram.com/khanacademy"
+ },
+ {
+  "text": "Follow us on YouTube",
+  "kind": "link",
+  "region": "footer",
+  "domain": "youtube.com",
+  "external": true,
+  "href": "https://www.youtube.com/user/khanacademy"
+ },
+ {
+  "text": "Terms",
+  "kind": "link",
+  "region": "footer",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/docs/khan-academy-terms-of-service"
+ },
+ {
+  "text": "Privacy",
+  "kind": "link",
+  "region": "footer",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/privacy-policy"
+ },
+ {
+  "text": "Accessibility",
+  "kind": "link",
+  "region": "footer",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/accessibility-statement"
+ },
+ {
+  "text": "Cookie Notice",
+  "kind": "link",
+  "region": "footer",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/about/cookie-policy"
+ },
+ {
+  "text": "Donate",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "donate.khanacademy.org",
+  "external": false,
+  "href": "https://donate.khanacademy.org/campaign/580662/donate"
+ },
+ {
+  "text": "Student, Student learning on my own",
+  "kind": "link",
+  "region": "main",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/transfer-auth/start?continue=https%3A%2F%2Faccounts.khanacademy.org%2Fsignup%2Flearner%2Fbirthday%3Fcontinue%3Dhttps%253A%252F%252Fwww.khanacademy.org%252F"
+ },
+ {
+  "text": "Family, Supporting my child’s learning",
+  "kind": "link",
+  "region": "main",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/transfer-auth/start?continue=https%3A%2F%2Faccounts.khanacademy.org%2Fsignup%2Fparent%3Fcontinue%3Dhttps%253A%252F%252Fwww.khanacademy.org%252F"
+ },
+ {
+  "text": "Teacher, Educator with a classroom",
+  "kind": "link",
+  "region": "main",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/transfer-auth/start?continue=https%3A%2F%2Faccounts.khanacademy.org%2Fsignup%2Fteacher%3Fcontinue%3Dhttps%253A%252F%252Fwww.khanacademy.org%252F"
+ },
+ {
+  "text": "See our impact",
+  "kind": "link",
+  "region": "main",
+  "domain": "blog.khanacademy.org",
+  "external": false,
+  "href": "https://blog.khanacademy.org/research/"
+ },
+ {
+  "text": "Talk to our team",
+  "kind": "link",
+  "region": "main",
+  "domain": "cloud.e.khanacademy.org",
+  "external": false,
+  "href": "https://cloud.e.khanacademy.org/districts-demo-form"
+ },
+ {
+  "text": "Start for free",
+  "kind": "link",
+  "region": "main",
+  "domain": "khanacademy.org",
+  "external": false,
+  "href": "https://www.khanacademy.org/transfer-auth/start?continue=https%3A%2F%2Faccounts.khanacademy.org%2Fsignup%3Fcontinue%3Dhttps%253A%252F%252Fwww.khanacademy.org%252F"
+ },
+ {
+  "text": "Donate",
+  "kind": "link",
+  "region": "main",
+  "domain": "donate.khanacademy.org",
+  "external": false,
+  "href": "https://donate.khanacademy.org/campaign/783866/donate?c_src2=Webapp.lohp_donation_section"
+ },
+ {
+  "text": "Accept All Cookies",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Strictly Necessary Only",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Cookies Settings",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Close",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ }
+]

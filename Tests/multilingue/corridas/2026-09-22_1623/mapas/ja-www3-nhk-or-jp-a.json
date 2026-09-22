@@ -1,0 +1,282 @@
+[
+ {
+  "text": "インストール",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "閉じる",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "メニュー",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "ログイン",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "NHK ONE（エヌエイチケーワン）",
+  "kind": "link",
+  "region": "header",
+  "domain": "web.nhk",
+  "external": false,
+  "href": "https://www.web.nhk/"
+ },
+ {
+  "text": "エヌエイチケー",
+  "kind": "link",
+  "region": "footer",
+  "domain": "nhk.or.jp",
+  "external": true,
+  "href": "https://www.nhk.or.jp/"
+ },
+ {
+  "text": "NHKについて",
+  "kind": "link",
+  "region": "nav",
+  "domain": "nhk.or.jp",
+  "external": true,
+  "href": "https://www.nhk.or.jp/info/"
+ },
+ {
+  "text": "ご意見・お問い合わせ",
+  "kind": "link",
+  "region": "nav",
+  "domain": "nhk.or.jp",
+  "external": true,
+  "href": "https://www.nhk.or.jp/css/"
+ },
+ {
+  "text": "プライバシーセンター",
+  "kind": "link",
+  "region": "nav",
+  "domain": "nhk.or.jp",
+  "external": true,
+  "href": "https://www.nhk.or.jp/privacy/"
+ },
+ {
+  "text": "NHK ONE プライバシーノーティス",
+  "kind": "link",
+  "region": "nav",
+  "domain": "nhk.or.jp",
+  "external": true,
+  "href": "https://www.nhk.or.jp/privacy/notice/one"
+ },
+ {
+  "text": "NHK ONE アカウント プライバシーノーティス",
+  "kind": "link",
+  "region": "nav",
+  "domain": "nhk.or.jp",
+  "external": true,
+  "href": "https://www.nhk.or.jp/privacy/notice/account"
+ },
+ {
+  "text": "放送番組と著作権",
+  "kind": "link",
+  "region": "nav",
+  "domain": "nhk.or.jp",
+  "external": true,
+  "href": "https://www.nhk.or.jp/toppage/nhk_info/copyright.html"
+ },
+ {
+  "text": "本サービスの利用においてはインターネットサービス利用規約が適用されます",
+  "kind": "link",
+  "region": "nav",
+  "domain": "nhk.or.jp",
+  "external": true,
+  "href": "https://www.nhk.or.jp/rules/"
+ },
+ {
+  "text": "新着・注目",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/pl/news-nwa-latest-nationwide"
+ },
+ {
+  "text": "社会",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/genre/society"
+ },
+ {
+  "text": "政治",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/genre/politics"
+ },
+ {
+  "text": "経済",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/genre/business"
+ },
+ {
+  "text": "気象・災害",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/genre/disaster"
+ },
+ {
+  "text": "国際",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/genre/international"
+ },
+ {
+  "text": "科学・文化",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/genre/science-culture"
+ },
+ {
+  "text": "スポーツ",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/genre/sports"
+ },
+ {
+  "text": "暮らし",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/genre/life"
+ },
+ {
+  "text": "深掘り",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/dk/editorial-nwa-news-0000000001"
+ },
+ {
+  "text": "地域",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/sp/pl/editorial-nwa-0000000129"
+ },
+ {
+  "text": "動画・番組",
+  "kind": "link",
+  "region": "nav",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/video"
+ },
+ {
+  "text": "日米首脳会談",
+  "kind": "link",
+  "region": "main",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/pl/news-nwa-topic-nationwide-E0000000212"
+ },
+ {
+  "text": "天気予報・防災情報を確認する",
+  "kind": "link",
+  "region": "main",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/kishou-saigai"
+ },
+ {
+  "text": "台風",
+  "kind": "link",
+  "region": "main",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/pl/news-nwa-topic-nationwide-E0000000202"
+ },
+ {
+  "text": "気象",
+  "kind": "link",
+  "region": "main",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/pl/news-nwa-topic-nationwide-E0000000114"
+ },
+ {
+  "text": "大雨情報",
+  "kind": "link",
+  "region": "main",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/pl/news-nwa-topic-nationwide-E0000000587"
+ },
+ {
+  "text": "アメリカ",
+  "kind": "link",
+  "region": "main",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/pl/news-nwa-topic-nationwide-E0000000419"
+ },
+ {
+  "text": "千葉県",
+  "kind": "link",
+  "region": "main",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/pl/news-nwa-topic-nationwide-E0000000340"
+ },
+ {
+  "text": "東京都",
+  "kind": "link",
+  "region": "main",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/pl/news-nwa-topic-nationwide-E0000000341"
+ },
+ {
+  "text": "高市内閣",
+  "kind": "link",
+  "region": "main",
+  "domain": "news.web.nhk",
+  "external": false,
+  "href": "https://news.web.nhk/newsweb/pl/news-nwa-topic-nationwide-E0000000640"
+ },
+ {
+  "text": "確認しました / I understand",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ }
+]

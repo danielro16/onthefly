@@ -1,0 +1,21 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: entrá a mercado libre y buscame auriculares bluetooth
+  4 [txt] Buscando: mercado libre.
+  5 [txt] Estás en los resultados de «mercado libre». Los 2 más probables:
+  6 [txt] Buscando: mercado libre.
+  7 [txt] Estás en los resultados de «mercado libre». Los 3 más probables:
+  8 [txt] Cuando elijas, sigo con «auriculares bluetooth».
+  9 [H] Vos: Mercado Libre — www.mercadolibre.com.ar
+ 10 [txt] Abriendo mercadolibre.com.ar.
+ 11 [txt] Estás en www.mercadolibre.com.ar.
+ 12 [txt] Listo, escrito en Ingresá lo que quieras encontrar.
+ 13 [H] Vos: ¿cuánto sale el más barato?
+ 14 [txt] ¿Qué pongo en Ingresá lo que quieras encontrar? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.
+ 15 [txt] No sé a qué producto te referís. Por favor, buscá primero lo que querés comprar y después podré decirte cuál es el más barato.
+ 16 [btn] Pulsar «Buscar»  (Primera de 4 opciones.)
+ 17 [btn] Leer la página
+ 18 [btn] Volver a los resultados
+ 19 [btn] Otra cosa
+ 20 [campo] Pedido  = Escribir: Ingresá lo que quieras encontrar  (Va directo al campo «Ingresá lo que quieras encontrar» de la página.)
+ 21 [btn] Enviar

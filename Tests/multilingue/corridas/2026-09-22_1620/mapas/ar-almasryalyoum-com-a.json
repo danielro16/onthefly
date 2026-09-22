@@ -1,0 +1,1002 @@
+[
+ {
+  "text": "ابحث [ابحث]",
+  "kind": "form",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "بريدك الالكتروني [بريدك الالكتروني] أشترك",
+  "kind": "form",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "النسخة الإلكترونية E-PAPER",
+  "kind": "link",
+  "region": "nav",
+  "domain": "epaper.almasryalyoum.com",
+  "external": false,
+  "href": "https://epaper.almasryalyoum.com/"
+ },
+ {
+  "text": "المصري في الخليج",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryingulf.com",
+  "external": true,
+  "href": "https://www.almasryingulf.com/"
+ },
+ {
+  "text": "المصري اليوم PDF",
+  "kind": "link",
+  "region": "nav",
+  "domain": "pdf.almasryalyoum.com",
+  "external": false,
+  "href": "https://pdf.almasryalyoum.com/"
+ },
+ {
+  "text": "مسابقات و ألعاب",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/games/"
+ },
+ {
+  "text": "أيقونة المصري اليوم",
+  "kind": "link",
+  "region": "nav",
+  "domain": "icona.almasryalyoum.com",
+  "external": false,
+  "href": "https://icona.almasryalyoum.com/"
+ },
+ {
+  "text": "تسجيل الدخول",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/premium"
+ },
+ {
+  "text": "أخبار",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/3"
+ },
+ {
+  "text": "عرب وعالم",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/2"
+ },
+ {
+  "text": "رياضة",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/8"
+ },
+ {
+  "text": "فنون",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/10"
+ },
+ {
+  "text": "حوادث",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/7"
+ },
+ {
+  "text": "رأي",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/editor/list"
+ },
+ {
+  "text": "اقتصاد",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/4"
+ },
+ {
+  "text": "لايف ستايل",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/69"
+ },
+ {
+  "text": "تعليم",
+  "kind": "link",
+  "region": "nav",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/126"
+ },
+ {
+  "text": "الرئيسية",
+  "kind": "link",
+  "region": "footer",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "تحقيقات و حوارات",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/5"
+ },
+ {
+  "text": "المصري أوتو",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/86"
+ },
+ {
+  "text": "سياسة",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/78"
+ },
+ {
+  "text": "سياحة و طيران",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/22"
+ },
+ {
+  "text": "ثقافة",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/6"
+ },
+ {
+  "text": "علوم و تكنولوجيا",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/9"
+ },
+ {
+  "text": "منوعات",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/12"
+ },
+ {
+  "text": "عن الموقع",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/html/about-us"
+ },
+ {
+  "text": "الإعلانات",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/html/ads"
+ },
+ {
+  "text": "حقوق النشر",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/html/copyright"
+ },
+ {
+  "text": "سياسة النشر",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/html/publishing-policy"
+ },
+ {
+  "text": "اتصل بنا",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/html/contact-us"
+ },
+ {
+  "text": "Enlace sin nombre",
+  "kind": "link",
+  "region": "nav",
+  "domain": "facebook.com",
+  "external": true,
+  "href": "https://www.facebook.com/AlmasryAlyoum/"
+ },
+ {
+  "text": "Enlace sin nombre",
+  "kind": "link",
+  "region": "nav",
+  "domain": "youtube.com",
+  "external": true,
+  "href": "https://www.youtube.com/channel/UCP4rilfFKdjXRC1guWNZ85g"
+ },
+ {
+  "text": "Enlace sin nombre",
+  "kind": "link",
+  "region": "nav",
+  "domain": "x.com",
+  "external": true,
+  "href": "https://x.com/AlMasryAlYoum"
+ },
+ {
+  "text": "بيان مشترك بين «التمريض» وجامعة المنوفية بشأن واقعة الاعتداء على ممرضة",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365705"
+ },
+ {
+  "text": "بعد اجتماع 3 ساعات.. ماذا وراء التحرك الجديد بين أمريكا وإيران رغم فجوة المواقف؟",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365730"
+ },
+ {
+  "text": "تحركات حكومية لحل أزمة المعلمين المصريين المستغنى عنهم بالكويت",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365634"
+ },
+ {
+  "text": "وائل جمعة: تغيير موعد مباراة الأهلي وبترول أسيوط في كأس عاصمة مصر (خاص)",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365678"
+ },
+ {
+  "text": "«اللى يولع ع العام ينطفى فى العام».. أحمد العوضى يرد على متابع بسبب ياسمين عبدالعزيز (تفاصيل)",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365599"
+ },
+ {
+  "text": "«قعدت يوم كامل فى انترفيو».. سامر يكشف كواليس الدخول إلى مجتمعات «ديسكورد» الأكثر انتشارا بين جيلى زد وألفا",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365522"
+ },
+ {
+  "text": "> حشيش وآيس وصاعق كهربائي ومبلغ مالي.. قائمة الأحراز والمضبوطات في قضية زوج «سيدة مدينة نصر»",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365502"
+ },
+ {
+  "text": "> «لو عندك نظر الصقر».. اعثر على الاختلافات الـ 3 فى لغز «تنظيف المواعين»",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365602"
+ },
+ {
+  "text": "> «اعتذارك مرفوض».. رضوى الشربينى تهاجم أحمد العوضى بعد رسالته عن ياسمين عبدالعزيز",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365562"
+ },
+ {
+  "text": "أسعار الذهب",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/services/gold"
+ },
+ {
+  "text": "الدوري المصري",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/index?typeid=1&sectionid=8"
+ },
+ {
+  "text": "حرب إيران",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/tag/144240"
+ },
+ {
+  "text": "أسعار العملات",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/services/currency"
+ },
+ {
+  "text": "«المركزي الإماراتي» يوافق مبدئيًا على استحواذ «الأهلي المصري» على فروع «بنك مصر» بالإمارات",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365725"
+ },
+ {
+  "text": "الرئيس الأمريكي دونالد ترامب ونظيره الإيراني مسعود بزشكيان",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365709"
+ },
+ {
+  "text": "40 جنيهًا ارتفاعًا فى سعر كرتونة البيض",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365667"
+ },
+ {
+  "text": "«المركزي الإماراتي» يوافق مبدئيًا على استحواذ «الأهلي المصري» على فروع «بنك مصر» بالإمارات",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365646"
+ },
+ {
+  "text": "أسرة بورسعيد تروي لحظات الرعب بعد حادث الدهس: «تركنا على الأرض وفرّ» (فيديو)",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365514"
+ },
+ {
+  "text": "الربان المصري المتوفى السعيد عبد العزيز سلامة الذى استهدفت سفينته بالبحر الأسود",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365610"
+ },
+ {
+  "text": "طرح 98 وحدة سكنية بمدينة العلمين الجديدة بنظام «الإيجار المنتهى بالتمليك»",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365626"
+ },
+ {
+  "text": "نقص مدرسى الألمانى فى عدة محافظات",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365672"
+ },
+ {
+  "text": "وزير الخارجية يلتقي نظيره البولندي",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365724"
+ },
+ {
+  "text": "أحمد موسى - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365686"
+ },
+ {
+  "text": "عدسة المصرى اليوم",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/533"
+ },
+ {
+  "text": "جميع الأخبار",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/index?typeid=1"
+ },
+ {
+  "text": "> نقيب الموسيقيين يشكو أحمد عبدالعزيز بنقابة الإعلاميين «تفاصيل»",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365733"
+ },
+ {
+  "text": "> تقارير تكشف سبب غياب سيمينو عن قائمة غانا",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365732"
+ },
+ {
+  "text": "لامين يامال",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365668"
+ },
+ {
+  "text": "رسميًا.. الإعلان عن حكم مباراة مصر وأنجولا في تصفيات أمم أفريقيا",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365722"
+ },
+ {
+  "text": "منتخب مصر",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365706"
+ },
+ {
+  "text": "ميسي - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365712"
+ },
+ {
+  "text": "ديسكورد",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4364953"
+ },
+ {
+  "text": "عصام عبدالفتاح رئيس لجنة الحكام",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4364239"
+ },
+ {
+  "text": "إبراهيم المعلم",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4364238"
+ },
+ {
+  "text": "هل يرفع المركزي سعر الفائدة؟ خبراء: الأموال الساخنة وتراجع التضخم سيكونان الرقم الأهم في المعادلة - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365692"
+ },
+ {
+  "text": "طبيب يتعدى على ممرضة بمعهد الكبد في المنوفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365270"
+ },
+ {
+  "text": "نقيب المهندسين - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365262"
+ },
+ {
+  "text": "الجبهة الوطنية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365002"
+ },
+ {
+  "text": "ملتقى أولادنا",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365579"
+ },
+ {
+  "text": "انتصار - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365590"
+ },
+ {
+  "text": "أحمد العوضى وياسمين عبدالعزيز",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365726"
+ },
+ {
+  "text": "ذكرى رحيل عبد المنعم إبراهيم.. رحلة «عصفور الكوميديا» بين الضحك والدموع - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365586"
+ },
+ {
+  "text": "فيديوهات",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/553"
+ },
+ {
+  "text": "اليوم العالمي للزهايمر.. عادات يومية تساعد على تقليل خطر الإصابة",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/avideo/4365385"
+ },
+ {
+  "text": "ضياء رشوان: الرئيس السيسي وجه بتنظيم استخدام الأطفال للإنترنت",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/avideo/4365371"
+ },
+ {
+  "text": "يسرا: الناس بتختصر مهرجان الجونة في الريد كاربت.. لكننا بنشتغل طول السنة لتقديم مستوى عالمي",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/avideo/4365398"
+ },
+ {
+  "text": "&laquo;فكُّوه إلى كتل صخرية&raquo;.. تفاصيل أضخم عملية هندسية لإنقاذ معبد أبو سمبل من الغرق",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/avideo/4365407"
+ },
+ {
+  "text": "الرئيس الأمريكي دونالد ترامب - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365526"
+ },
+ {
+  "text": "انسحاب الوفد الكوبى - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365588"
+ },
+ {
+  "text": "ملك الأردن عبد الله الثانى بن الحسين- أرشيفية - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365576"
+ },
+ {
+  "text": "نتنياهو وممدانى",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365585"
+ },
+ {
+  "text": "الرئيس الأمريكى دونالد ترامب - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365600"
+ },
+ {
+  "text": "خدمات",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/143"
+ },
+ {
+  "text": "سعر الدولار اليوم",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365578"
+ },
+ {
+  "text": "شهادات ادخار بنك مصر 2026",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365589"
+ },
+ {
+  "text": "شهادات البنك الأهلي - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365604"
+ },
+ {
+  "text": "المصري Fact",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/135"
+ },
+ {
+  "text": "حقيقة فيديو اعتراض طائرة مسيرة بسماء مكة المكرمة",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4360944"
+ },
+ {
+  "text": "حقيقة صورة مدير المدرسة المُقال وهو يشارك فى تجديد المدرسة",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4355404"
+ },
+ {
+  "text": "حقيقة فيديو استهداف حاملة طائرات أمريكية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4354040"
+ },
+ {
+  "text": "استمارة الصف الثالث الإعدادي 2027",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365257"
+ },
+ {
+  "text": "المصروفات الدراسية 2026-2027",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365268"
+ },
+ {
+  "text": "التعليم العالي - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365098"
+ },
+ {
+  "text": "إنفوجرافيك",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/532"
+ },
+ {
+  "text": "مقارنة بين رواتب المعلمين لعامي 2024-2026",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/infographics/4356727"
+ },
+ {
+  "text": "نبيل فهمي لـ«المصري اليوم»: العالم العربي قادر على التقدم.. ومصلحته في أن يحدد مساره بنفسه",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/infographics/4356535"
+ },
+ {
+  "text": "نبيل فهمي لـ«المصري اليوم»: نحتاج الانتقال من الأقوال إلى الأفعال.. والعالم العربي أمام مسؤولية تاريخية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/infographics/4356534"
+ },
+ {
+  "text": "طلب زواج على مواقع التواصل من فتاة بورسعيدية يثير الجدل",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/infographics/4362838"
+ },
+ {
+  "text": "تركي آل الشيخ",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/infographics/4358733"
+ },
+ {
+  "text": "كلابشات - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365510"
+ },
+ {
+  "text": "مديرية أمن القليوبية - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365519"
+ },
+ {
+  "text": "سيدة خلف قضبان السجن - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365617"
+ },
+ {
+  "text": "جلسة محاكمة المتهمين فى قضية «جبهة النصرة»",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365597"
+ },
+ {
+  "text": "وهم بصري",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365676"
+ },
+ {
+  "text": "5 أبراج تتمتع بروح فكاهية وخفة ظل",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365707"
+ },
+ {
+  "text": "«السلطان حسن».. أكبر مساجد مصر عمارةً وأعلاها بنيانًا",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4364968"
+ },
+ {
+  "text": "دار الإفتاء - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365727"
+ },
+ {
+  "text": "الامساك",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365580"
+ },
+ {
+  "text": "الذكاء الاصطناعى والبشر - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365427"
+ },
+ {
+  "text": "الرئيس التنفيذي لشركة إنفيديا جينسن هوانج - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365558"
+ },
+ {
+  "text": "السيدة الصينية - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365595"
+ },
+ {
+  "text": "كاريكاتير",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/549"
+ },
+ {
+  "text": "توك شو",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/section/index/162"
+ },
+ {
+  "text": "قروض البنوك لتمويل المشروعات - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365636"
+ },
+ {
+  "text": "حسام الغمري",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365635"
+ },
+ {
+  "text": "الأزمات القلبية - صورة أرشيفية",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365659"
+ },
+ {
+  "text": "فى ظل الارتفاع العالمى فى أسعار البنزين لا تزال مبيعات السيارات الكهربائية تتزايد معدلاتها",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4363801"
+ },
+ {
+  "text": "ملحق سيارات المصرى اليوم",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4361429"
+ },
+ {
+  "text": "ملحق سيارات المصرى اليوم",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4361431"
+ },
+ {
+  "text": "إدوارد",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365688"
+ },
+ {
+  "text": "مهرجان ظفار الدولى للمسرح",
+  "kind": "link",
+  "region": "main",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/details/4365713"
+ },
+ {
+  "text": "المصري في الخليج",
+  "kind": "link",
+  "region": "footer",
+  "domain": "almasryalyoum.com",
+  "external": false,
+  "href": "https://www.almasryalyoum.com/news/index?typeid=1&sectionid=910"
+ }
+]

@@ -1,0 +1,866 @@
+[
+ {
+  "text": "Search",
+  "kind": "button",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Menu",
+  "kind": "button",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play video",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Language:",
+  "kind": "button",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Feedback",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Mayo Clinic",
+  "kind": "link",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Register/Log in",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/account"
+ },
+ {
+  "text": "Learn how we drive innovation",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/change-every-future"
+ },
+ {
+  "text": "Request appointment",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/appointments"
+ },
+ {
+  "text": "A. Find a disease or condition that starts with the letter A",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=A"
+ },
+ {
+  "text": "B. Find a disease or condition that starts with the letter B",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=B"
+ },
+ {
+  "text": "C. Find a disease or condition that starts with the letter C",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=C"
+ },
+ {
+  "text": "D. Find a disease or condition that starts with the letter D",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=D"
+ },
+ {
+  "text": "E. Find a disease or condition that starts with the letter E",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=E"
+ },
+ {
+  "text": "F. Find a disease or condition that starts with the letter F",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=F"
+ },
+ {
+  "text": "G. Find a disease or condition that starts with the letter G",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=G"
+ },
+ {
+  "text": "H. Find a disease or condition that starts with the letter H",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=H"
+ },
+ {
+  "text": "I. Find a disease or condition that starts with the letter I",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=I"
+ },
+ {
+  "text": "J. Find a disease or condition that starts with the letter J",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=J"
+ },
+ {
+  "text": "K. Find a disease or condition that starts with the letter K",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=K"
+ },
+ {
+  "text": "L. Find a disease or condition that starts with the letter L",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=L"
+ },
+ {
+  "text": "M. Find a disease or condition that starts with the letter M",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=M"
+ },
+ {
+  "text": "N. Find a disease or condition that starts with the letter N",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=N"
+ },
+ {
+  "text": "O. Find a disease or condition that starts with the letter O",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=O"
+ },
+ {
+  "text": "P. Find a disease or condition that starts with the letter P",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=P"
+ },
+ {
+  "text": "R. Find a disease or condition that starts with the letter R",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=R"
+ },
+ {
+  "text": "S. Find a disease or condition that starts with the letter S",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=S"
+ },
+ {
+  "text": "T. Find a disease or condition that starts with the letter T",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=T"
+ },
+ {
+  "text": "U. Find a disease or condition that starts with the letter U",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=U"
+ },
+ {
+  "text": "V. Find a disease or condition that starts with the letter V",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=V"
+ },
+ {
+  "text": "W. Find a disease or condition that starts with the letter W",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=W"
+ },
+ {
+  "text": "X. Find a disease or condition that starts with the letter X",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=X"
+ },
+ {
+  "text": "Y. Find a disease or condition that starts with the letter Y",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=Y"
+ },
+ {
+  "text": "Z. Find a disease or condition that starts with the letter Z",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=Z"
+ },
+ {
+  "text": "#. Find a disease or condition that starts with the letter #",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/index?letter=%23"
+ },
+ {
+  "text": "Why choose Mayo Clinic",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/patient-centered-care"
+ },
+ {
+  "text": "International services",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/international"
+ },
+ {
+  "text": "Explore all locations",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/locations"
+ },
+ {
+  "text": "Bone marrow transplant",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/tests-procedures/bone-marrow-transplant/care-at-mayo-clinic/pcc-20384858"
+ },
+ {
+  "text": "Brain aneurysm",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/brain-aneurysm/care-at-mayo-clinic/mac-20361689"
+ },
+ {
+  "text": "Brain tumor",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/brain-tumor/care-at-mayo-clinic/mac-20350092"
+ },
+ {
+  "text": "Breast cancer",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/breast-cancer/care-at-mayo-clinic/mac-20352479"
+ },
+ {
+  "text": "Colon cancer",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/colon-cancer/care-at-mayo-clinic/mac-20353678"
+ },
+ {
+  "text": "Congenital heart disease",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/adult-congenital-heart-disease/care-at-mayo-clinic/mac-20355464"
+ },
+ {
+  "text": "Glioma",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/glioma/care-at-mayo-clinic/mac-20350259"
+ },
+ {
+  "text": "Heart arrhythmia",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/heart-arrhythmia/care-at-mayo-clinic/mac-20350678"
+ },
+ {
+  "text": "Heart valve disease",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/heart-valve-disease/care-at-mayo-clinic/mac-20353736"
+ },
+ {
+  "text": "Living-donor transplant",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/tests-procedures/living-donor-transplant/care-at-mayo-clinic/pcc-20384790"
+ },
+ {
+  "text": "Lung transplant",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/care/lung-transplant"
+ },
+ {
+  "text": "Sarcoma",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/sarcoma/care-at-mayo-clinic/mac-20351051"
+ },
+ {
+  "text": "Testicular cancer",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/diseases-conditions/testicular-cancer-care/care-at-mayo-clinic/mac-20352994"
+ },
+ {
+  "text": "Give Today",
+  "kind": "link",
+  "region": "main",
+  "domain": "give.mayoclinic.org",
+  "external": false,
+  "href": "https://give.mayoclinic.org/give/616729?utm_source=devorgtilead&utm_medium=devweb&utm_campaign=devevergreen/#!/donation/checkout?&preset1=50&preset2=100&preset3=250&preset4=1000?currency=USD&amount=100&c_src=25R001WG1MWV90Z24B"
+ },
+ {
+  "text": "Find a doctor",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/appointments/find-a-doctor"
+ },
+ {
+  "text": "Explore careers",
+  "kind": "link",
+  "region": "nav",
+  "domain": "jobs.mayoclinic.org",
+  "external": false,
+  "href": "https://jobs.mayoclinic.org/"
+ },
+ {
+  "text": "Sign up for free e-newsletters",
+  "kind": "link",
+  "region": "nav",
+  "domain": "links.e.response.mayoclinic.org",
+  "external": false,
+  "href": "https://links.e.response.mayoclinic.org/preferencecenter"
+ },
+ {
+  "text": "About Mayo Clinic",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-mayo-clinic"
+ },
+ {
+  "text": "About this Site",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-this-site"
+ },
+ {
+  "text": "Contact Us",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-mayo-clinic/contact"
+ },
+ {
+  "text": "Health Information Policy",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-this-site/health-information-policy"
+ },
+ {
+  "text": "Medicare Accountable Care Organization (ACO)",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-mayo-clinic/aco"
+ },
+ {
+  "text": "Media Requests",
+  "kind": "link",
+  "region": "nav",
+  "domain": "newsnetwork.mayoclinic.org",
+  "external": false,
+  "href": "https://newsnetwork.mayoclinic.org/newsroom/"
+ },
+ {
+  "text": "News Network",
+  "kind": "link",
+  "region": "nav",
+  "domain": "newsnetwork.mayoclinic.org",
+  "external": false,
+  "href": "https://newsnetwork.mayoclinic.org/"
+ },
+ {
+  "text": "Price Transparency",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/billing-insurance/price-estimates/chargemaster"
+ },
+ {
+  "text": "Medical Professionals",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/medical-professionals"
+ },
+ {
+  "text": "AskMayoExpert",
+  "kind": "link",
+  "region": "nav",
+  "domain": "askmayoexpert.mayoclinic.org",
+  "external": false,
+  "href": "https://askmayoexpert.mayoclinic.org/"
+ },
+ {
+  "text": "Clinical Trials",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayo.edu",
+  "external": true,
+  "href": "https://www.mayo.edu/research/clinical-trials"
+ },
+ {
+  "text": "Mayo Clinic Alumni Association",
+  "kind": "link",
+  "region": "nav",
+  "domain": "alumniassociation.mayo.edu",
+  "external": true,
+  "href": "https://alumniassociation.mayo.edu/"
+ },
+ {
+  "text": "Refer a Patient",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/medical-professionals/provider-relations/refer-patient"
+ },
+ {
+  "text": "Businesses",
+  "kind": "link",
+  "region": "nav",
+  "domain": "businessdevelopment.mayoclinic.org",
+  "external": false,
+  "href": "https://businessdevelopment.mayoclinic.org/"
+ },
+ {
+  "text": "Executive Health Program",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/executive-health"
+ },
+ {
+  "text": "International Business Collaborations",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-mayo-clinic/international-business-collaborations"
+ },
+ {
+  "text": "Facilities & Real Estate",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-mayo-clinic/facilities-and-real-estate"
+ },
+ {
+  "text": "Supplier Information",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-mayo-clinic/supplier-information"
+ },
+ {
+  "text": "Students",
+  "kind": "link",
+  "region": "nav",
+  "domain": "college.mayo.edu",
+  "external": true,
+  "href": "https://college.mayo.edu/"
+ },
+ {
+  "text": "Admissions Requirements",
+  "kind": "link",
+  "region": "nav",
+  "domain": "college.mayo.edu",
+  "external": true,
+  "href": "https://college.mayo.edu/admissions-and-tuition/"
+ },
+ {
+  "text": "Degree Programs",
+  "kind": "link",
+  "region": "nav",
+  "domain": "college.mayo.edu",
+  "external": true,
+  "href": "https://college.mayo.edu/academics/"
+ },
+ {
+  "text": "Student & Faculty Portal",
+  "kind": "link",
+  "region": "nav",
+  "domain": "edlinkplus.mayo.edu",
+  "external": true,
+  "href": "https://edlinkplus.mayo.edu/"
+ },
+ {
+  "text": "Researchers",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayo.edu",
+  "external": true,
+  "href": "https://www.mayo.edu/research"
+ },
+ {
+  "text": "Research Faculty",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayo.edu",
+  "external": true,
+  "href": "https://www.mayo.edu/research/faculty"
+ },
+ {
+  "text": "Mayo Clinic in Arizona",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/patient-visitor-guide/arizona"
+ },
+ {
+  "text": "Mayo Clinic in Florida",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/patient-visitor-guide/florida"
+ },
+ {
+  "text": "Mayo Clinic in Minnesota",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/patient-visitor-guide/minnesota"
+ },
+ {
+  "text": "Mayo Clinic Health System",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinichealthsystem.org",
+  "external": true,
+  "href": "https://www.mayoclinichealthsystem.org/"
+ },
+ {
+  "text": "Mayo Clinic Healthcare",
+  "kind": "link",
+  "region": "main",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/uk"
+ },
+ {
+  "text": "Laboratories",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayo.edu",
+  "external": true,
+  "href": "https://www.mayo.edu/research/labs"
+ },
+ {
+  "text": "Appointments",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/international/contact"
+ },
+ {
+  "text": "Financial Services",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/international/costs-and-insurance"
+ },
+ {
+  "text": "Representative Offices",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/international/support/representative-offices"
+ },
+ {
+  "text": "Charitable Care & Financial Assistance",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/billing-insurance/financial-assistance"
+ },
+ {
+  "text": "Community Health Needs Assessment",
+  "kind": "link",
+  "region": "nav",
+  "domain": "communityengagement.mayoclinic.org",
+  "external": false,
+  "href": "https://www.communityengagement.mayoclinic.org/community-health-needs-assessment"
+ },
+ {
+  "text": "Financial Assistance Documents – Arizona",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/billing-insurance/financial-assistance/arizona-documents"
+ },
+ {
+  "text": "Financial Assistance Documents – Florida",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/billing-insurance/financial-assistance/florida-documents"
+ },
+ {
+  "text": "Financial Assistance Documents – Minnesota",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/billing-insurance/financial-assistance/minnesota-documents"
+ },
+ {
+  "text": "X",
+  "kind": "link",
+  "region": "nav",
+  "domain": "x.com",
+  "external": true,
+  "href": "https://x.com/mayoclinic"
+ },
+ {
+  "text": "YouTube",
+  "kind": "link",
+  "region": "nav",
+  "domain": "youtube.com",
+  "external": true,
+  "href": "https://www.youtube.com/user/mayoclinic"
+ },
+ {
+  "text": "Facebook",
+  "kind": "link",
+  "region": "nav",
+  "domain": "facebook.com",
+  "external": true,
+  "href": "https://www.facebook.com/MayoClinic"
+ },
+ {
+  "text": "LinkedIn",
+  "kind": "link",
+  "region": "nav",
+  "domain": "linkedin.com",
+  "external": true,
+  "href": "https://www.linkedin.com/company/mayo-clinic"
+ },
+ {
+  "text": "Instagram",
+  "kind": "link",
+  "region": "nav",
+  "domain": "instagram.com",
+  "external": true,
+  "href": "https://www.instagram.com/mayoclinic/"
+ },
+ {
+  "text": "Android App on Google Play",
+  "kind": "link",
+  "region": "nav",
+  "domain": "play.google.com",
+  "external": true,
+  "href": "https://play.google.com/store/apps/details?id=com.mayoclinic.patient&hl=en%27"
+ },
+ {
+  "text": "Apple Download on the App Store",
+  "kind": "link",
+  "region": "nav",
+  "domain": "apps.apple.com",
+  "external": true,
+  "href": "https://apps.apple.com/us/app/mayo-clinic/id523220194"
+ },
+ {
+  "text": "Terms and Conditions",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-this-site/terms-conditions-use-policy"
+ },
+ {
+  "text": "Privacy Policy",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-this-site/privacy-policy"
+ },
+ {
+  "text": "Notice of Privacy Practices",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mcforms.mayo.edu",
+  "external": true,
+  "href": "https://mcforms.mayo.edu/mc5200-mc5299/mc5256-01.pdf"
+ },
+ {
+  "text": "Notice of Nondiscrimination",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mcforms.mayo.edu",
+  "external": true,
+  "href": "https://mcforms.mayo.edu/mc2500-mc2599/mc2570-61.pdf"
+ },
+ {
+  "text": "Digital Accessibility Statement",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-this-site/accessibility-statement"
+ },
+ {
+  "text": "Advertising and Sponsorship Policy",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/about-this-site/advertising-sponsorship-policy"
+ },
+ {
+  "text": "Site Map",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/site-help/site-map"
+ },
+ {
+  "text": "Manage Cookies",
+  "kind": "link",
+  "region": "nav",
+  "domain": "mayoclinic.org",
+  "external": false,
+  "href": "https://www.mayoclinic.org/#"
+ }
+]

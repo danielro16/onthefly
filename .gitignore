@@ -26,3 +26,6 @@ Secrets.xcconfig
 Tests/corridas/**/*.jpg
 Tests/corridas/**/*.png
 build-device/
+
+# Caché de Python de los scripts de prueba
+__pycache__/

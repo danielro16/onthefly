@@ -1,0 +1,802 @@
+[
+ {
+  "text": "Menu",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Miami",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Sign in",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Dismiss",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Improve location precision",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Map Attribution",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Learn More",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "More",
+  "kind": "button",
+  "region": "footer",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "The Weather Company",
+  "kind": "link",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Sign in",
+  "kind": "link",
+  "region": "header",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/login"
+ },
+ {
+  "text": "Today Forecast",
+  "kind": "link",
+  "region": "nav",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/us/florida/city/miami/today"
+ },
+ {
+  "text": "News News",
+  "kind": "link",
+  "region": "nav",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/news"
+ },
+ {
+  "text": "Radar Radar",
+  "kind": "link",
+  "region": "nav",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/us/florida/city/miami/radar"
+ },
+ {
+  "text": "lightning Upgrade",
+  "kind": "link",
+  "region": "nav",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/subscribe?tpcc=mktg-localsuite-nav-subscribe"
+ },
+ {
+  "text": "See Details",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/activity-hub/running/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871"
+ },
+ {
+  "text": "The Weather Channel",
+  "kind": "link",
+  "region": "footer",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Weather Underground",
+  "kind": "link",
+  "region": "footer",
+  "domain": "wunderground.com",
+  "external": true,
+  "href": "https://www.wunderground.com/"
+ },
+ {
+  "text": "Storm Radar",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/storm-radar"
+ },
+ {
+  "text": "SnowCast",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/campaign/snowcast/beta"
+ },
+ {
+  "text": "Trust Center, External Link",
+  "kind": "link",
+  "region": "footer",
+  "domain": "trust.weather.com",
+  "external": false,
+  "href": "https://trust.weather.com/"
+ },
+ {
+  "text": "Terms of Use",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/privacy/terms-of-use"
+ },
+ {
+  "text": "Privacy Policy",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/privacy/privacy-policy"
+ },
+ {
+  "text": "Data Rights",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/data-rights"
+ },
+ {
+  "text": "Privacy Settings",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/privacy-settings"
+ },
+ {
+  "text": "Cookie Notice, External Link",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/en-US/privacy/privacy-policy#data-collection-technologies-and-consumer-choice"
+ },
+ {
+  "text": "Data Vendors",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/data-vendors"
+ },
+ {
+  "text": "AdChoices",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/services/ad-choices"
+ },
+ {
+  "text": "Accessibility Statement",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/accessibility-statement"
+ },
+ {
+  "text": "Community Guidelines, External Link",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/privacy/community-guidelines"
+ },
+ {
+  "text": "Facebook",
+  "kind": "link",
+  "region": "footer",
+  "domain": "facebook.com",
+  "external": true,
+  "href": "https://www.facebook.com/TheWeatherChannel"
+ },
+ {
+  "text": "Instagram",
+  "kind": "link",
+  "region": "footer",
+  "domain": "instagram.com",
+  "external": true,
+  "href": "http://instagram.com/weatherchannel"
+ },
+ {
+  "text": "Youtube",
+  "kind": "link",
+  "region": "footer",
+  "domain": "youtube.com",
+  "external": true,
+  "href": "http://www.youtube.com/user/TheWeatherChannel/"
+ },
+ {
+  "text": "Level Access",
+  "kind": "link",
+  "region": "footer",
+  "domain": "levelaccess.com",
+  "external": true,
+  "href": "https://www.levelaccess.com/a/the-weather-channel/?utm_source=theweatherchannelhomepage&utm_medium=iconlarge&utm_term=eachannelpage&utm_content=header&utm_campaign=theweatherchannel"
+ },
+ {
+  "text": "Hourly",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/us/florida/city/miami/hourbyhour"
+ },
+ {
+  "text": "10 Day",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/us/florida/city/miami/tenday"
+ },
+ {
+  "text": "Monthly",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/monthly/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871"
+ },
+ {
+  "text": "Allergies",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/us/florida/city/miami/allergy"
+ },
+ {
+  "text": "Air Quality",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/us/florida/city/miami/air-quality"
+ },
+ {
+  "text": "Cold & Flu",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/us/florida/city/miami/cold-flu"
+ },
+ {
+  "text": "Get the App",
+  "kind": "link",
+  "region": "main",
+  "domain": "app.appsflyer.com",
+  "external": true,
+  "href": "https://app.appsflyer.com/id295646461?pid=WWW&af_adset=floating-button&c=weather.com&deep_link_value=floating-button&af_ios_fallback=https%3A%2F%2Fweather.com%2F"
+ },
+ {
+  "text": "Current Conditions",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871"
+ },
+ {
+  "text": "Now, Mostly Cloudy Day, 88°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790108047"
+ },
+ {
+  "text": "5 pm, Cloudy, 87°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790110800"
+ },
+ {
+  "text": "6 pm, Cloudy, 85°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790114400"
+ },
+ {
+  "text": "7 pm, Cloudy, 82°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790118000"
+ },
+ {
+  "text": "8 pm, Cloudy, 80°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790121600"
+ },
+ {
+  "text": "9 pm, Cloudy, 80°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790125200"
+ },
+ {
+  "text": "10 pm, Cloudy, 79°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790128800"
+ },
+ {
+  "text": "11 pm, Showers, 45%, 79°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790132400"
+ },
+ {
+  "text": "12 am, Showers, 57%, 79°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790136000"
+ },
+ {
+  "text": "1 am, Showers, 58%, 78°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790139600"
+ },
+ {
+  "text": "2 am, Scattered Thunderstorms Night, 46%, 78°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790143200"
+ },
+ {
+  "text": "3 am, Scattered Thunderstorms Night, 49%, 78°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790146800"
+ },
+ {
+  "text": "4 am, Scattered Thunderstorms Night, 36%, 78°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790150400"
+ },
+ {
+  "text": "5 am, Cloudy, 78°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790154000"
+ },
+ {
+  "text": "6 am, Scattered Thunderstorms Night, 35%, 78°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790157600"
+ },
+ {
+  "text": "7 am, Scattered Thunderstorms Night, 42%, 79°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?t=1790161200"
+ },
+ {
+  "text": "Category 5 Hurricane Polo among most intense E. Pacific storms on record",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/2026/09/22/storms/hurricane/hurricane-polo-category5-rapid-intensification"
+ },
+ {
+  "text": "Our best stormy season book recommendations",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/atmosphere/reviews/best-storm-books-hurricane-season-reading-list"
+ },
+ {
+  "text": "State of emergency declared for California ahead of potentially historic El Niño",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/2026/09/21/news/state-of-emergency-declared-for-california-ahead-potentially-historic-el-nino"
+ },
+ {
+  "text": "Japan's Typhoon Dujuan kills at least 5, forces mass evacuation",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/2026/09/22/news/weather/typhoon-dujuan-japan-deaths"
+ },
+ {
+  "text": "What the fall equinox actually means",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/2026/09/21/science/weather-explainers/what-the-fall-equinox-actually-means"
+ },
+ {
+  "text": "Crash kills 2 helicopter pilots fighting Yosemite wildfire",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/2026/09/22/news/weather/crash-kills-2-helicopter-pilots-fighting-yosemite-wildfire"
+ },
+ {
+  "text": "Venezuela city unveils statue honoring hero rescue dog Tsunami",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/2026/09/22/news/trending/video/hero-dog-statue-venezuela"
+ },
+ {
+  "text": "Typhoon Dujuan kills at least 5, forces mass evacuation in Japan",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/2026/09/22/news/weather/video/typhoon-dujuan-japan-flooding-landslides-deaths"
+ },
+ {
+  "text": "Which US regions have the least dangerous weather?",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/2026/09/21/safety/video/safest-place-to-live-from-natural-disasters"
+ },
+ {
+  "text": "Mooving time: Cow gets airlifted out of quagmire by helicopter to safety",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/2026/09/21/science/nature/wild-animals/video/cow-vahine-helicopter-rescue"
+ },
+ {
+  "text": "Hurricane Season",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/news/hurricane"
+ },
+ {
+  "text": "El Niño",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/news/el-nino"
+ },
+ {
+  "text": "Fall Outlook",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/news/fall-outlook"
+ },
+ {
+  "text": "Tornadoes",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/news/tornadoes"
+ },
+ {
+  "text": "Health & Wellness",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/news/health-and-wellness"
+ },
+ {
+  "text": "Wildfires",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/news/wildfires"
+ },
+ {
+  "text": "Fall Travel",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/news/fall-travel"
+ },
+ {
+  "text": "Home & Garden",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/news/home-garden"
+ },
+ {
+  "text": "Tonight, Scattered Thunderstorms Night 58%, Scattered Thunderstorms, 77 °, 88 °",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/place.210733292/day-1"
+ },
+ {
+  "text": "Wed 23, Thunderstorms 67%, Thunderstorms, 76 °, 85 °",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/place.210733292/day-2"
+ },
+ {
+  "text": "Thu 24, Scattered Thunderstorms 58%, PM Thunderstorms, 76 °, 89 °",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/place.210733292/day-3"
+ },
+ {
+  "text": "Fri 25, Scattered Showers Day 45%, PM Showers, 74 °, 87 °",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/place.210733292/day-4"
+ },
+ {
+  "text": "Sat 26, Mostly Clear Day 24%, Mostly Sunny, 73 °, 86 °",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/place.210733292/day-5"
+ },
+ {
+  "text": "Sun 27, Partly Cloudy Day 23%, Partly Cloudy, 74 °, 85 °",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/place.210733292/day-6"
+ },
+ {
+  "text": "Mon 28, Partly Cloudy Day 24%, Partly Cloudy, 75 °, 85 °",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/place.210733292/day-7"
+ },
+ {
+  "text": "Next 10 Days",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/tenday/l/place.210733292"
+ },
+ {
+  "text": "Temperature Max, Temperature, 77 °, 88 °, Temperature 77° – 88°",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?metric=temperature"
+ },
+ {
+  "text": "Feels Like, Feels Like, 98 °",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?metric=feelsLike"
+ },
+ {
+  "text": "Wind, Wind, N, Wind direction icon 9 mph SSE",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?metric=wind"
+ },
+ {
+  "text": "humidity, Humidity, 66% High",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?metric=humidity"
+ },
+ {
+  "text": "Uv Index, UV Index, 3 Moderate",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?metric=uvIndex"
+ },
+ {
+  "text": "Air Quality, 20 Good",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?metric=airQuality"
+ },
+ {
+  "text": "Dew Point, Dew Point, 75°, Dew Point 75°, 30 80",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?metric=dewPoint"
+ },
+ {
+  "text": "pressure, Pressure, Pressure falling 29.89 in",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?metric=pressure"
+ },
+ {
+  "text": "Visibility, 10 mi, Visibility 10 of 10",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/hourbyhour/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871?metric=visibility"
+ },
+ {
+  "text": "Now",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/weather/radar/interactive/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871"
+ },
+ {
+  "text": "grass, Seasonal Allergies and Pollen Count Forecast, No pollen detected in your area, Chevron Right",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/forecast/allergy/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871"
+ },
+ {
+  "text": "Flu, Cold & Flu Forecast, Flu risk is high in your area, Chevron Right",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/forecast/cold-flu/l/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871"
+ },
+ {
+  "text": "camping, Camping, Poor, Chevron Right",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/activity-hub/camping/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871"
+ },
+ {
+  "text": "hiking, Hiking, Poor, Chevron Right",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/activity-hub/hiking/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871"
+ },
+ {
+  "text": "golf, Golf, Good, Chevron Right",
+  "kind": "link",
+  "region": "main",
+  "domain": "weather.com",
+  "external": false,
+  "href": "https://weather.com/activity-hub/golf/92cba1c3903ca3481419603edf4cce05fa6181189af9e61839ba3c941b378871"
+ },
+ {
+  "text": "Sponsored",
+  "kind": "link",
+  "region": "main",
+  "domain": "popup.taboola.com",
+  "external": true,
+  "href": "https://popup.taboola.com/en/?template=colorbox&utm_source=theweatherchannel&utm_medium=referral&utm_content=above-the-feed-premium-card-fp-delta-ad-ratio-9x16:Below%20Content%20Thumbnails%20-%20Today%20|%20Lazy%20Injected%201:"
+ },
+ {
+  "text": "The Weather Company",
+  "kind": "link",
+  "region": "footer",
+  "domain": "weathercompany.com",
+  "external": true,
+  "href": "https://www.weathercompany.com/"
+ }
+]

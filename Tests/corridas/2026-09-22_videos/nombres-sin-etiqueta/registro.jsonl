@@ -1,0 +1,35 @@
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790115494.119386}
+{"pais": "AR", "tipo": "ubicacion", "t": 1790115494.371644}
+{"t": 1790115494.3720021, "tipo": "ubicacion", "pais": "AR"}
+{"tipo": "turno", "quien": "persona", "texto": "http://localhost:8765/roto.html", "t": 1790115500.532584}
+{"opciones": [], "tipo": "botones", "t": 1790115500.533608}
+{"tipo": "turno", "quien": "jef", "texto": "Abriendo localhost.", "t": 1790115500.533753}
+{"t": 1790115500.533918, "tipo": "voz", "texto": "Abriendo localhost.", "cola": false}
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790115500.569866}
+{"titulo": "Página rota a propósito", "texto": "PAGE: localhost — Página rota a propósito\n\nPAGE CONTENT (what the person came for):\nDiario de prueba\nDeportes\n12 de octubre Buenos Aires Política\nSuscribirme al boletín\nTexto de relleno para que Readability encuentre algo que parsear. La prueba no depende de esto, pero el extractor corre su parse igual y conviene que no falle por una página sin prosa. Buenos Aires amaneció nublada y con una probabilidad de lluvia que nadie se tomó en serio hasta el mediodía.\nDiario de prueba\n12 de octubre Buenos Aires Política\nTexto de relleno para que Readability encuentre algo que parsear. La prueba no depende de esto, pero el extractor corre su parse igual y conviene que no falle por una página sin prosa. Buenos Aires amaneció nublada y con una probabilidad de lluvia que nadie se tomó en serio hasta el mediodía.", "t": 1790115502.9563398, "url": "http://localhost:8765/roto.html", "tipo": "pagina"}
+{"t": 1790115502.956816, "tipo": "botones", "opciones": []}
+{"nombres": ["Buscar", "Carrito", "Cerrar", "Menú"], "sin_nombre": 5, "url": "http://localhost:8765/roto.html", "tipo": "nombres", "t": 1790115503.410691}
+{"texto": "PAGE: localhost — Página rota a propósito\n\nPAGE CONTENT (what the person came for):\nDiario de prueba\nBuscar\nMenú\nCerrar\nCarrito\nDeportes\n12 de octubre Buenos Aires Política\nSuscribirme al boletín\nTexto de relleno para que Readability encuentre algo que parsear. La prueba no depende de esto, pero el extractor corre su parse igual y conviene que no falle por una página sin prosa. Buenos Aires amaneció nublada y con una probabilidad de lluvia que nadie se tomó en serio hasta el mediodía.", "titulo": "Página rota a propósito", "url": "http://localhost:8765/roto.html", "tipo": "pagina", "t": 1790115503.411288}
+{"elementos": ["Suscribirme al boletín"], "tipo": "ruido", "url": "http://localhost:8765/roto.html", "t": 1790115504.398789}
+{"quien": "jef", "texto": "Estás en el Diario de prueba, donde se informa que Buenos Aires amaneció nublada y con probabilidad de lluvia que no se tomó en serio hasta el mediodía.", "tipo": "turno", "t": 1790115504.399287}
+{"cola": true, "tipo": "voz", "t": 1790115504.399918, "texto": "Estás en el Diario de prueba, donde se informa que Buenos Aires amaneció nublada y con probabilidad de lluvia que no se tomó en serio hasta el mediodía."}
+{"opciones": ["Abrir «Deportes»", "Resumir contenido"], "tipo": "botones", "t": 1790115504.400525}
+{"opciones": ["Abrir «Deportes»", "Resumir contenido", "Otra cosa"], "tipo": "botones", "t": 1790115504.4009109}
+{"texto": "¿hay un botón para buscar?", "tipo": "turno", "quien": "persona", "t": 1790115522.815133}
+{"t": 1790115522.8153381, "tipo": "botones", "opciones": []}
+{"t": 1790115524.442348, "accion": "responder", "control": "", "target": "", "reference": "", "question": "hay un botón para buscar", "then": "", "tipo": "decision", "rest": ""}
+{"tipo": "turno", "t": 1790115525.529846, "quien": "jef", "texto": "Sí, el diario de prueba cuenta con un botón para buscar."}
+{"tipo": "voz", "cola": false, "t": 1790115525.530791, "texto": "Sí, el diario de prueba cuenta con un botón para buscar."}
+{"opciones": ["¿Qué secciones tiene el diario?", "¿Qué dice sobre el clima en Buenos Aires?", "Leer la página", "Resumir la página", "Otra cosa"], "tipo": "botones", "t": 1790115525.531888}
+{"quien": "persona", "t": 1790115532.921489, "texto": "abrí el carrito", "tipo": "turno"}
+{"tipo": "botones", "t": 1790115532.921814, "opciones": []}
+{"t": 1790115533.911322, "accion": "abrir", "control": "", "target": "", "reference": "Carrito", "question": "", "then": "", "tipo": "decision", "rest": ""}
+{"texto": "Abriendo «Carrito».", "tipo": "turno", "quien": "jef", "t": 1790115533.912212}
+{"texto": "Abriendo «Carrito».", "tipo": "voz", "cola": false, "t": 1790115533.9126601}
+{"tipo": "voz", "texto": "Carrito no cambió la página.", "cola": true, "t": 1790115534.982606}
+{"opciones": [], "tipo": "botones", "t": 1790115534.983158}
+{"elementos": ["Suscribirme al boletín"], "tipo": "ruido", "t": 1790115536.418546, "url": "http://localhost:8765/roto.html"}
+{"quien": "jef", "texto": "Te encuentras en la página de inicio de Diario de prueba. El acceso al carrito que buscas se encuentra en la opción número 4.", "tipo": "turno", "t": 1790115536.4194279}
+{"tipo": "voz", "cola": true, "texto": "Te encuentras en la página de inicio de Diario de prueba. El acceso al carrito que buscas se encuentra en la opción número 4.", "t": 1790115536.4200602}
+{"t": 1790115536.420407, "opciones": ["Abrir «Carrito»", "Resumir página"], "tipo": "botones"}
+{"t": 1790115536.420692, "opciones": ["Abrir «Carrito»", "Resumir página", "Otra cosa"], "tipo": "botones"}

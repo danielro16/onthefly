@@ -1,0 +1,1170 @@
+[
+ {
+  "text": "Search Amazon [Search Amazon] Go",
+  "kind": "form",
+  "region": "search",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Open All Categories Menu",
+  "kind": "button",
+  "region": "navigation",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Join Prime",
+  "kind": "button",
+  "region": "navigation",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Join Prime",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Leave feedback on Sponsored ad",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Leave feedback on Sponsored ad",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Leave feedback on Sponsored ad",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Leave feedback on Sponsored ad",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Leave feedback on Sponsored ad",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Top of page",
+  "kind": "button",
+  "region": "footer",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Choose a country/region for shopping. The current selection is United States.",
+  "kind": "button",
+  "region": "footer",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Amazon",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/ref=navm_hdr_logo"
+ },
+ {
+  "text": "Sign in ›",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/ap/signin?openid.return_to=https%3A%2F%2Fwww.amazon.com%2F%3F_encoding%3DUTF8%26ref_%3Dnavm_hdr_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=anywhere_v2_us&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0"
+ },
+ {
+  "text": "Cart",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/aw/c?ref_=navm_hdr_cart"
+ },
+ {
+  "text": "Early Prime Deals",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/primebigdealdays?ref_=navm_cs_td_pbdd_mw_mpl"
+ },
+ {
+  "text": "Video",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/video/storefront?ref_=navm_cs_prime_video"
+ },
+ {
+  "text": "Household, Health & Baby Care",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/browse.html?node=3760901&ref_=navm_cs_health_household"
+ },
+ {
+  "text": "Groceries",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/fmc/grocery-gateway?gsc=fe16aGPfFs46S&ref_=navm_cs_groceries"
+ },
+ {
+  "text": "Pharmacy",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pharmacy.amazon.com",
+  "external": false,
+  "href": "https://pharmacy.amazon.com/?nodl=0&ref_=navm_cs_pharmacy"
+ },
+ {
+  "text": "Prime",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/prime?ref_=navm_cs_prime"
+ },
+ {
+  "text": "Home",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/browse.html?node=1055398&ref_=navm_cs_home"
+ },
+ {
+  "text": "Registry & Gifting",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/registries?ref_=navm_cs_disco_registries"
+ },
+ {
+  "text": "Whole Foods",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/alm/storefront?almBrandId=VUZHIFdob2xlIEZvb2Rz&ref_=navm_cs_whole_foods"
+ },
+ {
+  "text": "New Releases",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/new-releases/?ref_=navm_cs_newreleases"
+ },
+ {
+  "text": "Music",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/music/player?ref_=navm_cs_music"
+ },
+ {
+  "text": "Works with Alexa",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/browse.html?node=73846268011&ref_=navm_cs_wwa"
+ },
+ {
+  "text": "Subscribe & Save",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/auto-deliveries/landing?ref_=navm_cs_nav_sns_mobile"
+ },
+ {
+  "text": "Best Sellers",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/bestsellers/?ref_=navm_cs_bestsellers"
+ },
+ {
+  "text": "Livestreams",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/live?ref_=navm_cs_amazonlive"
+ },
+ {
+  "text": "Books",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/browse.html?node=283155&ref_=navm_cs_books"
+ },
+ {
+  "text": "Electronics",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/browse.html?node=172282&ref_=navm_cs_electronics"
+ },
+ {
+  "text": "Gift Cards",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/browse.html?node=2238192011&ref_=navm_cs_gc"
+ },
+ {
+  "text": "Luxury",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/luxurystores?ref_=navm_cs_luxury_disb"
+ },
+ {
+  "text": "Handmade",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/browse.html?node=120955898011&ref_=navm_cs_handmade"
+ },
+ {
+  "text": "Everyday Essentials",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/everyday-essentials?ref_=navm_cs_ee"
+ },
+ {
+  "text": "Amazon Basics",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/947C6949-CF8E-4BD3-914A-B411DD3E4433?ref_=navm_cs_amazonbasics"
+ },
+ {
+  "text": "Health AI",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "health.amazon.com",
+  "external": false,
+  "href": "https://health.amazon.com/health-ai?ref_=navm_cs_health_ai"
+ },
+ {
+  "text": "Medical Care",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/browse.html?node=87565790011&ref_=navm_cs_all_health_ingress"
+ },
+ {
+  "text": "Sign in securely",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/ap/signin?openid.mode=checkid_setup&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.return_to=https%3A%2F%2Fwww.amazon.com%2Fref%3Dgw_sgn_ib%3F_encoding%3DUTF8%26pd_rd_w%3Dc7fbY%26content-id%3Damzn1.sym.8b17d5d4-f780-4476-bbb4-5d216813632d%26pf_rd_p%3D8b17d5d4-f780-4476-bbb4-5d216813632d%26pf_rd_r%3DXZZRBX8D21RRN4DB4XHP%26pd_rd_wg%3DpaB1G%26pd_rd_r%3De9645a41-ec3a-4574-8fa1-167cffa232b5&openid.assoc_handle=anywhere_v2_us&openid.pape.max_auth_age=0"
+ },
+ {
+  "text": "AmazonFresh",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b?node=10329849011&ref_=mh_navm_ftr_fresh"
+ },
+ {
+  "text": "Amazon Live",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/live?ref_=nav_ftr_amzn_live_m"
+ },
+ {
+  "text": "Registry & Gift List",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/registries?ref_=nav_footer_registry_giftlist_mobile"
+ },
+ {
+  "text": "Sell products on Amazon",
+  "kind": "link",
+  "region": "footer",
+  "domain": "sell.amazon.com",
+  "external": false,
+  "href": "https://sell.amazon.com/?ld=AZFSSOA-m_FTSELL-C&ref_=footer_soa_m"
+ },
+ {
+  "text": "Recalls and Product Safety Alerts",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/product-safety-alerts?ref_=footer_bsx_ypsa"
+ },
+ {
+  "text": "Your Orders",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/your-account/order-history?ref_=navm_ftr_yo"
+ },
+ {
+  "text": "Your Lists",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/hz/wishlist/ls/lol?ref_=navm_ftr_wl"
+ },
+ {
+  "text": "Find a Gift",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gcx/Gifts-for-Adults/gfhz/?ref_=navm_ftr_gf"
+ },
+ {
+  "text": "Browsing History",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/aw/ybh?ref_=navm_ftr_ybh"
+ },
+ {
+  "text": "Your Returns",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/your-returns?ingress=navm_footer&ref_=navm_ftr_returns"
+ },
+ {
+  "text": "Customer Service",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/help/customer/display.html?ref_=navm_ftr_cu"
+ },
+ {
+  "text": "Choose a language for shopping. Current selection is English.",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/customer-preferences/edit?from=mobile&ie=UTF8&preferencesReturnUrl=%2F&ref_=footer_lang"
+ },
+ {
+  "text": "Sign in",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/ap/signin?openid.return_to=https%3A%2F%2Fwww.amazon.com%2F%3F_encoding%3DUTF8%26ref_%3Dnav_m_foot_si&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=anywhere_v2_us&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0"
+ },
+ {
+  "text": "Conditions of Use",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/help/customer/display.html?nodeId=508088&ref_=navm_ftr_cou"
+ },
+ {
+  "text": "Privacy Notice",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/help/customer/display.html?ie=UTF8&nodeId=GX7NJQ4ZB8MHFRNJ&ref_=footer_privacy"
+ },
+ {
+  "text": "Consumer Health Data Privacy Disclosure",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/help/customer/display.html?ie=UTF8&nodeId=TnACMrGVghHocjL8KB&ref_=mobile_footer_consumer_health_data_privacy"
+ },
+ {
+  "text": "Your Ads Privacy Choices",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/privacyprefs?ref_=footer_iba"
+ },
+ {
+  "text": "PC",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/browse.html?node=541966&ref_=navm_cs_pc"
+ },
+ {
+  "text": "Shop kitchen appliances: Fig",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/1FD8DA4E-0904-4C18-8395-72B79A2971E7/?_encoding=UTF8&ingress=2&lp_context_asin=B0DQ6PP1ZV&lp_context_query=bella%20toaster%20slim&visitId=37c1dae4-8b2d-46c2-acb1-40d6f55e0f1a&store_ref=bl_ast_dp_brandlogo_sto&ref_=ast_bln&pd_rd_w=YwE15&content-id=amzn1.sym.17cb2ed0-b231-4a53-b035-b0dc94926771&pf_rd_p=17cb2ed0-b231-4a53-b035-b0dc94926771&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=paB1G&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5"
+ },
+ {
+  "text": "Refresh your home & kitchen",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=207316899011&ref_=home&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=fKRGi&content-id=amzn1.sym.70e37998-04a3-43bd-b302-15088a8cfc14&pf_rd_p=70e37998-04a3-43bd-b302-15088a8cfc14&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=paB1G&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "Fall dresses under $40",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Womens-Fashion/b/?_encoding=UTF8&ie=UTF8&node=7147440011&ref_=sv_sl_1&ref_=dress40&enabledRefinements=%5B%7B%22rid%22%3A%22category%22%2C%22ridType%22%3A%22browse%22%2C%22value%22%3A%22211622890011%22%2C%22type%22%3A%22browse%22%7D%2C%7B%22rid%22%3A%22p_36%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22value%22%3A%220-4000%22%2C%22type%22%3A%22SEARCH_CONSTRAINT%22%7D%2C%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=L1vh5&content-id=amzn1.sym.aa7377a7-640d-4198-926c-23c1f98d2be1&pf_rd_p=aa7377a7-640d-4198-926c-23c1f98d2be1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=paB1G&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "Create an account",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/ap/register?openid.mode=checkid_setup&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.return_to=https%3A%2F%2Fwww.amazon.com%2Fref%3Dgw_sgn_ib%3F_encoding%3DUTF8%26pd_rd_w%3Dc7fbY%26content-id%3Damzn1.sym.8b17d5d4-f780-4476-bbb4-5d216813632d%26pf_rd_p%3D8b17d5d4-f780-4476-bbb4-5d216813632d%26pf_rd_r%3DXZZRBX8D21RRN4DB4XHP%26pd_rd_wg%3DpaB1G%26pd_rd_r%3De9645a41-ec3a-4574-8fa1-167cffa232b5&openid.assoc_handle=anywhere_v2_us"
+ },
+ {
+  "text": "Explore device deals",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/events/devicedeals/?_encoding=UTF8&ref_=dealz_sod_see_more&pd_rd_w=WGBr2&content-id=amzn1.sym.6374726e-4a94-43d4-8718-122f0c46278c&pf_rd_p=6374726e-4a94-43d4-8718-122f0c46278c&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5"
+ },
+ {
+  "text": "Prime Big Deal Days is October 6-7",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/primebigdealdays"
+ },
+ {
+  "text": "Halloween deals you can't miss",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b?node=220434588011&pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk_cta"
+ },
+ {
+  "text": "15% off, Ends in 04:59:18, $20.39 $ 20 39, Typical price $23.99 $23.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/best-weightloss-gummies-sour-gluten-free-healthy-keto-snacks/dp/B0BN2BH53S?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0BN2BH53S&ref_=pd_hp_mw_btf_unk_B0BN2BH53S"
+ },
+ {
+  "text": "16% off, Limited time deal, $28.55 $ 28 55, Typical: $33.99 $33.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/LIMIROLER-Princess-Clothes-Birthday-Christmas/dp/B0DF2V6NHW?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0DF2V6NHW&ref_=pd_hp_mw_btf_unk_B0DF2V6NHW"
+ },
+ {
+  "text": "34% off, Ends in 02:34:18, $36.98 $ 36 98, List: $55.99 $55.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Astronaut-Toddlers-Classroom-Performance-Halloween/dp/B07WGXQN5X?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B07WGXQN5X&ref_=pd_hp_mw_btf_unk_B07WGXQN5X"
+ },
+ {
+  "text": "15% off, Ends in 02:54:18, $34.84 $ 34 84, List Price $40.99 $40.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Verceco-Renaissance-Sleeveless-Ankle-Banded-Accessories/dp/B0G4MFZ59K?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0G4MFZ59K&ref_=pd_hp_mw_btf_unk_B0G4MFZ59K"
+ },
+ {
+  "text": "20% off, Ends in 09:24:18, $22.37 $ 22 37, Typical price $27.99 $27.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Meland-Princess-Dress-Girls-Halloween/dp/B0FLC8ZZQT?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0FLC8ZZQT&ref_=pd_hp_mw_btf_unk_B0FLC8ZZQT"
+ },
+ {
+  "text": "10% off, Limited Prime deal, $15.38 $ 15 38, Typical price: $17.09 $17.09",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Fedio-Princess-Dress-Unicorn-Halloween/dp/B0DBQH46SK?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0DBQH46SK&ref_=pd_hp_mw_btf_unk_B0DBQH46SK"
+ },
+ {
+  "text": "18% off, Limited time deal, $19.79 $ 19 79, Typical: $23.99 $23.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Spooktacular-Creations-Banana-Costume-Standard/dp/B07H45M5TQ?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B07H45M5TQ&ref_=pd_hp_mw_btf_unk_B07H45M5TQ"
+ },
+ {
+  "text": "17% off, Limited time deal, $19.99 $ 19 99, Typical: $23.99 $23.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/DILUFUN-Dinosaur-Costume-Halloween-3-36months/dp/B0F98MJ46V?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0F98MJ46V&ref_=pd_hp_mw_btf_unk_B0F98MJ46V"
+ },
+ {
+  "text": "17% off, Limited time deal, $19.99 $ 19 99, Typical: $23.99 $23.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Meland-Mermaid-Dress-Girls-Princess/dp/B0C7QYH62Y?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0C7QYH62Y&ref_=pd_hp_mw_btf_unk_B0C7QYH62Y"
+ },
+ {
+  "text": "33% off, Limited time deal, $19.98 $ 19 98, List: $29.99 $29.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Disney-Toddler-Girls-Casual-Clothes/dp/B0FCXT78Z8?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0FCXT78Z8&ref_=pd_hp_mw_btf_unk_B0FCXT78Z8"
+ },
+ {
+  "text": "10% off, Limited time deal, $24.29 $ 24 29, Typical: $26.99 $26.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/HMPRT-Halloween-Storybook-Character-Costumes/dp/B0C8S78H5Y?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0C8S78H5Y&ref_=pd_hp_mw_btf_unk_B0C8S78H5Y"
+ },
+ {
+  "text": "10% off, Limited time deal, $33.24 $ 33 24, List: $36.93 $36.93",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Zhitunemi-Renaissance-Overdress-Accessory-Red-XL/dp/B07TQRVK3Q?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B07TQRVK3Q&ref_=pd_hp_mw_btf_unk_B07TQRVK3Q"
+ },
+ {
+  "text": "15% off, Ends in 10:14:18, $25.48 $ 25 48, List Price $29.99 $29.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/GIFTINBOX-Cat-Costume-Halloween-Costumes/dp/B0CBRLPDCL?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0CBRLPDCL&ref_=pd_hp_mw_btf_unk_B0CBRLPDCL"
+ },
+ {
+  "text": "19% off, Ends in 05:54:18, $18.69 $ 18 69, Typical price $22.99 $22.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Spooktacular-Creations-Monkey-Costume-Deluxe/dp/B075BN84WP?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B075BN84WP&ref_=pd_hp_mw_btf_unk_B075BN84WP"
+ },
+ {
+  "text": "19% off, Limited time deal, $28.49 $ 28 49, List: $34.99 $34.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/GIFTINBOX-Halloween-Costume-Animal-Onesie/dp/B0GY4DM191?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0GY4DM191&ref_=pd_hp_mw_btf_unk_B0GY4DM191"
+ },
+ {
+  "text": "10% off, Limited time deal, $32.39 $ 32 39, Typical: $35.99 $35.99",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/Princess-Dresses-Halloween-Costume-Accessories/dp/B0F8MJBN4N?pd_rd_w=3kUvH&content-id=amzn1.sym.fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_p=fa8e6e5d-8672-49fd-ac27-7572417f0bd1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&pd_rd_i=B0F8MJBN4N&ref_=pd_hp_mw_btf_unk_B0F8MJBN4N"
+ },
+ {
+  "text": "Hosting essentials Hosting essentials",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=211002423011&ref_=prem26_fall_gather_dt_cta&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=A2KRf&content-id=amzn1.sym.38fc3ab9-4115-4e19-92cd-a98d6c0782a1&pf_rd_p=38fc3ab9-4115-4e19-92cd-a98d6c0782a1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "Seasonal styles Seasonal styles",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=215475797011&ref_=prem26_fall_edit_dt_cta&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=A2KRf&content-id=amzn1.sym.38fc3ab9-4115-4e19-92cd-a98d6c0782a1&pf_rd_p=38fc3ab9-4115-4e19-92cd-a98d6c0782a1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "Top 100+ Top 100+",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=214283265011&ref_=prem26_fall_top100_dt_cta&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=A2KRf&content-id=amzn1.sym.38fc3ab9-4115-4e19-92cd-a98d6c0782a1&pf_rd_p=38fc3ab9-4115-4e19-92cd-a98d6c0782a1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "Cozy finds Cozy finds",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=211002427011&ref_=prem26_fall_comfort_dt_cta&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=A2KRf&content-id=amzn1.sym.38fc3ab9-4115-4e19-92cd-a98d6c0782a1&pf_rd_p=38fc3ab9-4115-4e19-92cd-a98d6c0782a1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "Explore seasonal picks",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=118268301011&ref_=hub&language=en_US&pd_rd_w=A2KRf&content-id=amzn1.sym.38fc3ab9-4115-4e19-92cd-a98d6c0782a1&pf_rd_p=38fc3ab9-4115-4e19-92cd-a98d6c0782a1&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5"
+ },
+ {
+  "text": "New markdowns on Shopbop New markdowns on Shopbop",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/8F0ADE8E-2EE5-44CB-B4A0-1D5FBD0F9D1C/?_encoding=UTF8&channel=NMDSept&pd_rd_w=5ihJr&content-id=amzn1.sym.5963c993-a7e1-4339-98a1-f09ec5da17b0&pf_rd_p=5963c993-a7e1-4339-98a1-f09ec5da17b0&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Women's Women's",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=220669051011&pd_rd_w=vtrE0&content-id=amzn1.sym.1a72348a-c83f-4139-90c5-b9ac702877a7&pf_rd_p=1a72348a-c83f-4139-90c5-b9ac702877a7&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Men's Men's",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=220669050011&pd_rd_w=vtrE0&content-id=amzn1.sym.1a72348a-c83f-4139-90c5-b9ac702877a7&pf_rd_p=1a72348a-c83f-4139-90c5-b9ac702877a7&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Kids Kids",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=220669052011&pd_rd_w=vtrE0&content-id=amzn1.sym.1a72348a-c83f-4139-90c5-b9ac702877a7&pf_rd_p=1a72348a-c83f-4139-90c5-b9ac702877a7&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "The reimagined sneaker shop",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&_encoding=UTF8&node=220669051011&pd_rd_w=vtrE0&content-id=amzn1.sym.1a72348a-c83f-4139-90c5-b9ac702877a7&pf_rd_p=1a72348a-c83f-4139-90c5-b9ac702877a7&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Shoes Shoes",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/s/?_encoding=UTF8&i=luxury&srs=222007109011&rh=n%3A18981045011%2Cn%3A222007109011%2Cn%3A20722800011%2Cn%3A20722919011&s=date-desc-rank&dc=&fs=true&ds=v1%3AMfVdNQEQb4CnjJcr%2Bgt9%2By9OFEpxl9NYeq1aJnly%2B6Y&qid=1790026400&rnid=20722800011&pd_rd_w=b7wju&content-id=amzn1.sym.17bf19b6-4a5f-4d21-880e-f4b2a6a8c715&pf_rd_p=17bf19b6-4a5f-4d21-880e-f4b2a6a8c715&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Suits & Blazers Suits & Blazers",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/s/?_encoding=UTF8&i=luxury&srs=222007109011&rh=n%3A18981045011%2Cn%3A222007109011%2Cn%3A20722800011%2Cn%3A20722812011%2Cn%3A20722867011&s=date-desc-rank&dc=&fs=true&ds=v1%3A%2BqVXXJ3JwtENSD1gqkbCyIDuSs%2BDbKqqJGMcgD1erPs&qid=1790026539&rnid=20722812011&pd_rd_w=b7wju&content-id=amzn1.sym.17bf19b6-4a5f-4d21-880e-f4b2a6a8c715&pf_rd_p=17bf19b6-4a5f-4d21-880e-f4b2a6a8c715&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Dresses Dresses",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/s/?_encoding=UTF8&i=luxury&srs=222007109011&rh=n%3A18981045011%2Cn%3A222007109011%2Cn%3A20722800011%2Cn%3A20722812011%2Cn%3A20722835011&s=date-desc-rank&dc=&fs=true&ds=v1%3AYdnqU9fmYUsxxI7p1wSp16O%2FuC299kelfvEqfb%2F%2FOvs&qid=1790026573&rnid=20722812011&pd_rd_w=b7wju&content-id=amzn1.sym.17bf19b6-4a5f-4d21-880e-f4b2a6a8c715&pf_rd_p=17bf19b6-4a5f-4d21-880e-f4b2a6a8c715&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Tops Tops",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/s/?_encoding=UTF8&i=luxury&srs=222007109011&rh=n%3A18981045011%2Cn%3A222007109011%2Cn%3A20722800011%2Cn%3A20722812011%2Cn%3A20722886011&s=date-desc-rank&dc=&fs=true&ds=v1%3AtdjrJCcvxVISONvTBAiEjyTAfhGz0lV2l1cpNUQcB4A&qid=1790026622&rnid=20722812011&pd_rd_w=b7wju&content-id=amzn1.sym.17bf19b6-4a5f-4d21-880e-f4b2a6a8c715&pf_rd_p=17bf19b6-4a5f-4d21-880e-f4b2a6a8c715&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Shop Amazon Luxury",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/s/?_encoding=UTF8&i=luxury&srs=222007109011&rh=n%3A222007109011&s=date-desc-rank&fs=true&ds=v1%3A%2BURCGIDxeHDL0iaNzYn3ZrJRJ55UcdO4kox4lzS2TIo&qid=1788209232&pd_rd_w=b7wju&content-id=amzn1.sym.17bf19b6-4a5f-4d21-880e-f4b2a6a8c715&pf_rd_p=17bf19b6-4a5f-4d21-880e-f4b2a6a8c715&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Sponsored Ad",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/?aaxitk=44424ad808abdc36b0b97fa94a455bbb&pd_rd_plhdr=t&aref=hvCTJoS1Yp"
+ },
+ {
+  "text": "Louis Vuitton Louis Vuitton",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/s/?_encoding=UTF8&i=luxury&bbn=121188125011&rh=n%3A20722894011%2Cp_123%3A423616&s=featured-rank&dc=&fs=true&ds=v1%3AUphRyGxMsATxLCrSsVZHFW0aq0lE7JNG8MbUqgcWRxk&_encoding=UTF8&qid=1790098163&rnid=85457740011&pd_rd_w=rLZlA&content-id=amzn1.sym.08fd264c-395c-4d67-8247-af48ae4ceb84&pf_rd_p=08fd264c-395c-4d67-8247-af48ae4ceb84&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Bottega Veneta Bottega Veneta",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/s/?_encoding=UTF8&i=luxury&bbn=121188125011&rh=n%3A20722894011%2Cp_123%3A330012&s=featured-rank&dc=&fs=true&_encoding=UTF8&qid=1790098199&rnid=85457740011&pd_rd_w=rLZlA&content-id=amzn1.sym.08fd264c-395c-4d67-8247-af48ae4ceb84&pf_rd_p=08fd264c-395c-4d67-8247-af48ae4ceb84&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Prada Prada",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/s/?_encoding=UTF8&i=luxury&bbn=121188125011&rh=n%3A20722894011%2Cp_123%3A358949&s=featured-rank&dc=&fs=true&_encoding=UTF8&qid=1790098234&rnid=85457740011&pd_rd_w=rLZlA&content-id=amzn1.sym.08fd264c-395c-4d67-8247-af48ae4ceb84&pf_rd_p=08fd264c-395c-4d67-8247-af48ae4ceb84&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Gucci Gucci",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/s/?_encoding=UTF8&i=luxury&bbn=121188125011&rh=n%3A20722894011%2Cp_123%3A359001&s=featured-rank&dc=&fs=true&_encoding=UTF8&qid=1790098260&rnid=85457740011&pd_rd_w=rLZlA&content-id=amzn1.sym.08fd264c-395c-4d67-8247-af48ae4ceb84&pf_rd_p=08fd264c-395c-4d67-8247-af48ae4ceb84&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Shop pre-loved pieces",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/s/?_encoding=UTF8&i=luxury&bbn=121188125011&rh=n%3A18981045011%2Cn%3A121188125011%2Cn%3A20722800011%2Cn%3A20722894011&s=featured-rank&dc=&fs=true&ds=v1%3AH8nIEwHhWxqTZ3Z%2BDFqKw6v41rOCJ31SUenFMwy0t8c&_encoding=UTF8&qid=1790098161&rnid=20722800011&pd_rd_w=rLZlA&content-id=amzn1.sym.08fd264c-395c-4d67-8247-af48ae4ceb84&pf_rd_p=08fd264c-395c-4d67-8247-af48ae4ceb84&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Footwear Footwear",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/3DFC3015-A539-4696-ABB6-BDE5F4519A12/?_encoding=UTF8&channel=SeptQuad_TBFTW&pd_rd_w=HI7J7&content-id=amzn1.sym.bdc2612b-903a-45f4-a71d-cff5d9f2fb53&pf_rd_p=bdc2612b-903a-45f4-a71d-cff5d9f2fb53&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Watches Watches",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/C91E561C-4355-4291-910C-6A4B535C00CB/?_encoding=UTF8&channel=SeptQuad_TBWAT&pd_rd_w=HI7J7&content-id=amzn1.sym.bdc2612b-903a-45f4-a71d-cff5d9f2fb53&pf_rd_p=bdc2612b-903a-45f4-a71d-cff5d9f2fb53&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Jewelry Jewelry",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/1DB19152-7A70-4DB8-B4BB-BAE125720C58/?_encoding=UTF8&channel=SeptQuad_TBJWL&pd_rd_w=HI7J7&content-id=amzn1.sym.bdc2612b-903a-45f4-a71d-cff5d9f2fb53&pf_rd_p=bdc2612b-903a-45f4-a71d-cff5d9f2fb53&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Handbags Handbags",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/1AC0D749-D925-46BC-84C8-F895141B7821/?_encoding=UTF8&channel=SeptQuad_TBHBG&pd_rd_w=HI7J7&content-id=amzn1.sym.bdc2612b-903a-45f4-a71d-cff5d9f2fb53&pf_rd_p=bdc2612b-903a-45f4-a71d-cff5d9f2fb53&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "See more from Tory Burch",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/98292A42-C01D-4A7A-BD0C-0A3A7B316EB8/?_encoding=UTF8&channel=SeptQuad_TBshopall&pd_rd_w=HI7J7&content-id=amzn1.sym.bdc2612b-903a-45f4-a71d-cff5d9f2fb53&pf_rd_p=bdc2612b-903a-45f4-a71d-cff5d9f2fb53&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Dresses Dresses",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/EE33D3A0-50DF-42D3-BE44-2EDA4E2550D9/?_encoding=UTF8&channel=dressesquad&pd_rd_w=Amzop&content-id=amzn1.sym.fa870a01-5053-45bb-a7a7-0395610378ee&pf_rd_p=fa870a01-5053-45bb-a7a7-0395610378ee&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Shoes Shoes",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/E8793AC7-E86F-4946-9DC0-1FF5F980E8A3/?_encoding=UTF8&channel=shoesquad&pd_rd_w=Amzop&content-id=amzn1.sym.fa870a01-5053-45bb-a7a7-0395610378ee&pf_rd_p=fa870a01-5053-45bb-a7a7-0395610378ee&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Handbags Handbags",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/615F7D2D-CB11-4EF5-B61A-C4D4333FA3FD/?_encoding=UTF8&channel=bagquad&pd_rd_w=Amzop&content-id=amzn1.sym.fa870a01-5053-45bb-a7a7-0395610378ee&pf_rd_p=fa870a01-5053-45bb-a7a7-0395610378ee&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "New Arrivals New Arrivals",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/A9784236-8EDB-4131-8AA0-23930A929812/?_encoding=UTF8&channel=newquad&pd_rd_w=Amzop&content-id=amzn1.sym.fa870a01-5053-45bb-a7a7-0395610378ee&pf_rd_p=fa870a01-5053-45bb-a7a7-0395610378ee&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Explore The Shop by Shopbop",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/E95456FC-8C5E-46A1-A247-AB3416AEF5EA/?_encoding=UTF8&channel=allquad&pd_rd_w=Amzop&content-id=amzn1.sym.fa870a01-5053-45bb-a7a7-0395610378ee&pf_rd_p=fa870a01-5053-45bb-a7a7-0395610378ee&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Makeup Makeup",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=222255127011&ref_=makeup&pd_rd_w=zRH19&content-id=amzn1.sym.e1e16b95-0e3e-49e2-8857-b7debcdc8a7f&pf_rd_p=e1e16b95-0e3e-49e2-8857-b7debcdc8a7f&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5"
+ },
+ {
+  "text": "Skincare Skincare",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=222255128011&ref_=skincare&pd_rd_w=zRH19&content-id=amzn1.sym.e1e16b95-0e3e-49e2-8857-b7debcdc8a7f&pf_rd_p=e1e16b95-0e3e-49e2-8857-b7debcdc8a7f&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5"
+ },
+ {
+  "text": "Hair care Hair care",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=222255133011&ref_=haircare&pd_rd_w=zRH19&content-id=amzn1.sym.e1e16b95-0e3e-49e2-8857-b7debcdc8a7f&pf_rd_p=e1e16b95-0e3e-49e2-8857-b7debcdc8a7f&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5"
+ },
+ {
+  "text": "Shop all Shop all",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=222252309011&pd_rd_w=zRH19&content-id=amzn1.sym.e1e16b95-0e3e-49e2-8857-b7debcdc8a7f&pf_rd_p=e1e16b95-0e3e-49e2-8857-b7debcdc8a7f&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "For her For her",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=221509749011&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&ref_=Her&pd_rd_w=CrcfK&content-id=amzn1.sym.5337299a-c539-428e-83c0-63b77f85b24f&pf_rd_p=5337299a-c539-428e-83c0-63b77f85b24f&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "For him For him",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=221509795011&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&ref_=Him&pd_rd_w=CrcfK&content-id=amzn1.sym.5337299a-c539-428e-83c0-63b77f85b24f&pf_rd_p=5337299a-c539-428e-83c0-63b77f85b24f&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "For kids For kids",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=221509757011&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&ref_=Kids&pd_rd_w=CrcfK&content-id=amzn1.sym.5337299a-c539-428e-83c0-63b77f85b24f&pf_rd_p=5337299a-c539-428e-83c0-63b77f85b24f&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "For teens For teens",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=221509809011&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&ref_=Teens&pd_rd_w=CrcfK&content-id=amzn1.sym.5337299a-c539-428e-83c0-63b77f85b24f&pf_rd_p=5337299a-c539-428e-83c0-63b77f85b24f&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "Shop all",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=221509845011&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&ref_=gifts&pd_rd_w=CrcfK&content-id=amzn1.sym.5337299a-c539-428e-83c0-63b77f85b24f&pf_rd_p=5337299a-c539-428e-83c0-63b77f85b24f&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5#dossier-asin-grid"
+ },
+ {
+  "text": "Step into Birkenstock Step into Birkenstock",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/6B7B2DA4-9D16-4696-8E2A-D6B82E0C3231/?_encoding=UTF8&pd_rd_w=gwcUe&content-id=amzn1.sym.a1fb02f5-0146-43c9-90b6-3bbfcce622a9&pf_rd_p=a1fb02f5-0146-43c9-90b6-3bbfcce622a9&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Candles Candles",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=220225500011&enabledRefinements=%5B%7B%22rid%22%3A%22category%22%2C%22ridType%22%3A%22browse%22%2C%22value%22%3A%22222072426011%22%2C%22type%22%3A%22browse%22%7D%2C%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=zcTD2&content-id=amzn1.sym.e751b10b-b9d3-4768-95a0-dcbfc333fb17&pf_rd_p=e751b10b-b9d3-4768-95a0-dcbfc333fb17&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk#dossier-asin-grid"
+ },
+ {
+  "text": "Blankets & pillows Blankets & pillows",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=220225500011&enabledRefinements=%5B%7B%22rid%22%3A%22category%22%2C%22ridType%22%3A%22browse%22%2C%22value%22%3A%22211622983011%22%2C%22type%22%3A%22browse%22%7D%2C%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=zcTD2&content-id=amzn1.sym.e751b10b-b9d3-4768-95a0-dcbfc333fb17&pf_rd_p=e751b10b-b9d3-4768-95a0-dcbfc333fb17&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk#dossier-asin-grid"
+ },
+ {
+  "text": "Lighting Lighting",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=220225500011&enabledRefinements=%5B%7B%22rid%22%3A%22category%22%2C%22ridType%22%3A%22browse%22%2C%22value%22%3A%22211622979011%22%2C%22type%22%3A%22browse%22%7D%2C%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=zcTD2&content-id=amzn1.sym.e751b10b-b9d3-4768-95a0-dcbfc333fb17&pf_rd_p=e751b10b-b9d3-4768-95a0-dcbfc333fb17&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk#dossier-asin-grid"
+ },
+ {
+  "text": "Front door decor Front door decor",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=220225500011&enabledRefinements=%5B%7B%22rid%22%3A%22category%22%2C%22ridType%22%3A%22browse%22%2C%22value%22%3A%22220660144011%22%2C%22type%22%3A%22browse%22%7D%2C%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=zcTD2&content-id=amzn1.sym.e751b10b-b9d3-4768-95a0-dcbfc333fb17&pf_rd_p=e751b10b-b9d3-4768-95a0-dcbfc333fb17&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk#dossier-asin-grid"
+ },
+ {
+  "text": "Shop all",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b/?_encoding=UTF8&node=220225500011&enabledRefinements=%5B%7B%22rid%22%3A%22p_n_availability%22%2C%22value%22%3A%222661600011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%2C%7B%22rid%22%3A%22p_n_condition-type%22%2C%22value%22%3A%226461716011%22%2C%22ridType%22%3A%22SEARCH_SHORT_ID%22%2C%22type%22%3A%22BROWSE_NODE%22%7D%5D&pd_rd_w=zcTD2&content-id=amzn1.sym.e751b10b-b9d3-4768-95a0-dcbfc333fb17&pf_rd_p=e751b10b-b9d3-4768-95a0-dcbfc333fb17&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk#dossier-asin-grid"
+ },
+ {
+  "text": "Men’s Men’s",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/D88C00AC-CB0B-44F5-8847-29AF9A057D8F/?_encoding=UTF8&channel=aepf26_1fm&pd_rd_w=JWUYT&content-id=amzn1.sym.e910b5fc-cddb-49ba-8035-79c05ed2efc4&pf_rd_p=e910b5fc-cddb-49ba-8035-79c05ed2efc4&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Women’s Women’s",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/57A5BE4B-6946-4CF4-9283-99D5CE7A7B97/?_encoding=UTF8&channel=aepf26_1fw&pd_rd_w=JWUYT&content-id=amzn1.sym.e910b5fc-cddb-49ba-8035-79c05ed2efc4&pf_rd_p=e910b5fc-cddb-49ba-8035-79c05ed2efc4&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Kids’ Kids’",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/46E660AB-9E6D-44A2-832B-7D81005B230D/?_encoding=UTF8&channel=aepf26_1fk&pd_rd_w=JWUYT&content-id=amzn1.sym.e910b5fc-cddb-49ba-8035-79c05ed2efc4&pf_rd_p=e910b5fc-cddb-49ba-8035-79c05ed2efc4&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Accessories Accessories",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/79190B10-D00F-42D9-80BC-252CFCAD5916/?_encoding=UTF8&channel=abpf26_4fe&pd_rd_w=JWUYT&content-id=amzn1.sym.e910b5fc-cddb-49ba-8035-79c05ed2efc4&pf_rd_p=e910b5fc-cddb-49ba-8035-79c05ed2efc4&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Shop Amazon Essentials",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/ED4B2AD1-489A-401F-A6A7-8D21CE8E0367/?_encoding=UTF8&ingress=0&visitId=ea1c852b-61e6-452e-895e-a0bf1873398e&channel=abpf26_4fe&pd_rd_w=JWUYT&content-id=amzn1.sym.e910b5fc-cddb-49ba-8035-79c05ed2efc4&pf_rd_p=e910b5fc-cddb-49ba-8035-79c05ed2efc4&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Women's Slides Women's Slides",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/389AD66B-B1DC-4C15-B45F-AEE81CCE7788/?_encoding=UTF8&pd_rd_w=4LNM8&content-id=amzn1.sym.36b81069-b01b-438d-94cc-6ad93e2800be&pf_rd_p=36b81069-b01b-438d-94cc-6ad93e2800be&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Men's Boots Men's Boots",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/9FDF6905-FFE0-4CD9-AAE8-A7E31B87578C/?_encoding=UTF8&pd_rd_w=4LNM8&content-id=amzn1.sym.36b81069-b01b-438d-94cc-6ad93e2800be&pf_rd_p=36b81069-b01b-438d-94cc-6ad93e2800be&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Men's Sneakers Men's Sneakers",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/40F88498-BECA-417D-8DEE-953219936D9A/?_encoding=UTF8&pd_rd_w=4LNM8&content-id=amzn1.sym.36b81069-b01b-438d-94cc-6ad93e2800be&pf_rd_p=36b81069-b01b-438d-94cc-6ad93e2800be&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Shop Birkenstocks on Zappos",
+  "kind": "link",
+  "region": "main",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/stores/page/6B7B2DA4-9D16-4696-8E2A-D6B82E0C3231/?_encoding=UTF8&ingress=0&visitId=0356c3f0-e526-4bf4-809b-f6c04afca716&pd_rd_w=4LNM8&content-id=amzn1.sym.36b81069-b01b-438d-94cc-6ad93e2800be&pf_rd_p=36b81069-b01b-438d-94cc-6ad93e2800be&pf_rd_r=XZZRBX8D21RRN4DB4XHP&pd_rd_wg=GWU6N&pd_rd_r=e9645a41-ec3a-4574-8fa1-167cffa232b5&ref_=pd_hp_mw_btf_unk"
+ },
+ {
+  "text": "Your Account",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/gp/aw/ya?ref_=navm_ftr_ya"
+ },
+ {
+  "text": "Gift Cards",
+  "kind": "link",
+  "region": "footer",
+  "domain": "amazon.com",
+  "external": false,
+  "href": "https://www.amazon.com/b?node=13245981011&ref_=navm_ftr_reg_gc"
+ }
+]

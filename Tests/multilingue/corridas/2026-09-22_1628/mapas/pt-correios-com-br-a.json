@@ -1,0 +1,90 @@
+[
+ {
+  "text": "Boletim aos Clientes",
+  "kind": "link",
+  "region": "main",
+  "domain": "correios.com.br",
+  "external": false,
+  "href": "https://www.correios.com.br/central-de-informacoes/boletim-aos-clientes"
+ },
+ {
+  "text": "Sala de Imprensa",
+  "kind": "link",
+  "region": "main",
+  "domain": "saladeimprensa.correios.com.br",
+  "external": false,
+  "href": "https://saladeimprensa.correios.com.br/"
+ },
+ {
+  "text": "Blog dos Correios",
+  "kind": "link",
+  "region": "main",
+  "domain": "blog.correios.com.br",
+  "external": false,
+  "href": "https://blog.correios.com.br/"
+ },
+ {
+  "text": "Clique aqui e conheça o Programa de Renegociação de Dívidas",
+  "kind": "link",
+  "region": "main",
+  "domain": "correios.com.br",
+  "external": false,
+  "href": "https://www.correios.com.br/central-de-informacoes/boletim-aos-clientes/programa-de-renegociacao-de-dividas-dos-correios"
+ },
+ {
+  "text": "Clique e acesse o Correios Celular",
+  "kind": "link",
+  "region": "main",
+  "domain": "correioscelular.com.br",
+  "external": true,
+  "href": "https://www.correioscelular.com.br/"
+ },
+ {
+  "text": "Quero falar com um consultor!",
+  "kind": "link",
+  "region": "main",
+  "domain": "c.correios.com.br",
+  "external": false,
+  "href": "https://c.correios.com.br/atendimentocomercial"
+ },
+ {
+  "text": "Clique e acesse o Certificado Digital",
+  "kind": "link",
+  "region": "main",
+  "domain": "c.correios.com.br",
+  "external": false,
+  "href": "https://c.correios.com.br/cardcertificadodigital"
+ },
+ {
+  "text": "Conheça o Sedex Hoje Conheça o Sedex 10 Conheça o Sedex 12",
+  "kind": "link",
+  "region": "main",
+  "domain": "correios.com.br",
+  "external": false,
+  "href": "https://www.correios.com.br/enviar/encomendas/nacional"
+ },
+ {
+  "text": "Acesse agora!",
+  "kind": "link",
+  "region": "main",
+  "domain": "maiscorreios.com.br",
+  "external": true,
+  "href": "https://www.maiscorreios.com.br/?utm_source=portal+home&amp;utm_medium=correios&amp;utm_campaign=banner+meio+de+pagina&amp;utm_term=mes+do+cliente"
+ },
+ {
+  "text": "Clique e saiba mais sobre o Correios Aqui",
+  "kind": "link",
+  "region": "main",
+  "domain": "correios.com.br",
+  "external": false,
+  "href": "https://www.correios.com.br/correios-para-chamar-de-seu/correios-para-chamar-de-seu"
+ },
+ {
+  "text": "Conheça!",
+  "kind": "link",
+  "region": "main",
+  "domain": "loja.correios.com.br",
+  "external": false,
+  "href": "https://loja.correios.com.br/produtos/item/852014074"
+ }
+]

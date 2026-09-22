@@ -1,0 +1,986 @@
+[
+ {
+  "text": "Desplegar menú",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "EL PAÍS",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/"
+ },
+ {
+  "text": "SUSCRÍBETE",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/suscripciones/digital/eucan/?prod=SUSDIGeucan&o=boton_cab&prm=suscrip_cabecera_el-pais&backURL=https%3A%2F%2Felpais.com%2Fus%2F#/campaign"
+ },
+ {
+  "text": "Iniciar sesión",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/subscriptions/#/sign-in?prod=REG&o=CABEP&prm=login_cabecera_el-pais&backURL=https%3A%2F%2Felpais.com%2Fus%2F"
+ },
+ {
+  "text": "En directo",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/internacional/2026-09-22/ultimas-noticias-de-la-asamblea-general-de-la-onu-en-directo.html"
+ },
+ {
+  "text": "Trump amenaza con aniquilar Irán en un discurso en la Asamblea General de la ONU con tintes electorales",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/internacional/2026-09-22/trump-amenaza-con-aniquilar-iran-en-un-discurso-en-la-asamblea-general-de-la-onu-con-tintes-electorales.html"
+ },
+ {
+  "text": "Delcy Rodríguez se acerca a Sánchez en la ONU y ambos acuerdan mantener el contacto sobre el futuro de Venezuela",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/espana/2026-09-22/sanchez-y-delcy-rodriguez-se-cruzan-en-la-onu-y-se-comprometen-a-mantener-el-contacto-sobre-el-futuro-de-venezuela.html"
+ },
+ {
+  "text": "Lula a Trump: “Brasil no se mete en el patio trasero de nadie”",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america/2026-09-22/lula-a-trump-brasil-no-se-mete-en-el-patio-trasero-de-nadie.html"
+ },
+ {
+  "text": "De un arsenal “inimaginable” a la paz en “ocho guerras”: bulos y exageraciones de Trump en su discurso ante la ONU",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-22/de-un-arsenal-inimaginable-a-la-paz-en-ocho-guerras-bulos-y-exageraciones-de-trump-en-su-discurso-ante-la-onu.html"
+ },
+ {
+  "text": "Estados Unidos construirá dos nuevas bases en Groenlandia tras el pacto de seguridad",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/internacional/2026-09-22/trump-firma-el-acuerdo-de-seguridad-con-dinamarca-y-groenlandia.html"
+ },
+ {
+  "text": "Los principales medios de EE UU se unen para oponerse al veto de Trump a CNN, MS NOW y Politico",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-22/los-principales-medios-de-estados-unidos-se-unen-para-defender-la-prensa-libre-de-los-ataques-del-gobierno.html"
+ },
+ {
+  "text": "Hayden Panettiere murió de una sobredosis accidental de fentanilo y otras cuatro drogas",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/entretenimiento/2026-09-22/hayden-panettiere-murio-de-una-sobredosis-accidental-de-fentanilo-y-otras-cuatro-drogas.html"
+ },
+ {
+  "text": "El huracán ‘Polo’ llega a categoría 5 y se mueve en paralelo a las costas del Pacífico mexicano",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/mexico/2026-09-22/el-huracan-polo-llega-a-categoria-5-y-se-mueve-en-paralelo-a-las-costas-del-pacifico-mexicano.html"
+ },
+ {
+  "text": "México se sube a la ola latinoamericana más severa contra los celulares en las escuelas",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/mexico/2026-09-22/mexico-se-sube-a-la-ola-latinoamericana-mas-severa-contra-los-celulares-en-las-escuelas.html"
+ },
+ {
+  "text": "Lo que estamos escuchando de los votantes latinos: los republicanos tienen las prioridades totalmente equivocadas",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-22/lo-que-estamos-escuchando-de-los-votantes-latinos-los-republicanos-tienen-las-prioridades-totalmente-equivocadas.html"
+ },
+ {
+  "text": "Cinco antiguos internos denuncian abusos sexuales de un cura español en un albergue de niños en Bolivia",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america/2026-09-22/cinco-antiguos-internos-denuncian-abusos-sexuales-de-un-cura-espanol-en-un-albergue-de-ninos-en-bolivia.html"
+ },
+ {
+  "text": "El precio del diésel en EE UU marca un nuevo máximo de 6,52 dólares",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/economia/2026-09-22/el-precio-del-diesel-en-ee-uu-marca-un-nuevo-maximo-de-652-dolares-ante-la-escasez-de-combustible-refinado.html"
+ },
+ {
+  "text": "OpenAI anuncia ahora que su IA ha resuelto más de 100 problemas históricos de las matemáticas, ¿qué futuro le queda a la",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/tecnologia/2026-09-22/openai-anuncia-ahora-que-su-ia-ha-resuelto-mas-de-100-problemas-historicos-de-las-matematicas-que-futuro-le-queda-a-la-disciplina.html"
+ },
+ {
+  "text": "Isabel Ferrer, paciente con alzhéimer: “No soy mi enfermedad”",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/espana/catalunya/2026-09-22/isabel-ferrer-paciente-con-alzheimer-no-soy-mi-enfermedad.html"
+ },
+ {
+  "text": "Taylor Swift anuncia el estreno de su nueva canción, ‘Patience Zero’",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/cultura/2026-09-22/taylor-swift-anuncia-el-estreno-de-su-nueva-cancion-patience-zero.html"
+ },
+ {
+  "text": "Destrucción silenciosa: los manglares siguen pagando el precio del auge camaronero en Ecuador",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america-futura/2026-09-22/destruccion-silenciosa-los-manglares-siguen-pagando-el-precio-del-auge-camaronero-en-ecuador.html"
+ },
+ {
+  "text": "El ‘influencer’ Clavicular, acusado de violar, drogar y emborrachar a una menor",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-22/el-influencer-clavicular-acusado-de-violar-drogar-y-emborrachar-a-una-menor.html"
+ },
+ {
+  "text": "Darth Vader convive con Picasso y Banksy: el ambicioso museo de George Lucas desembarca en Los Ángeles",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/entretenimiento/2026-09-22/darth-vader-convive-con-piccaso-y-banksy-el-ambicioso-museo-de-george-lucas-desembarca-en-los-angeles.html"
+ },
+ {
+  "text": "Los hutíes prosiguen su avance en Yemen y acarician el control total del estrecho de Bab el Mandeb",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/internacional/2026-09-22/los-huties-prosiguen-su-avance-en-yemen-y-acarician-el-control-total-del-estrecho-de-bab-el-mandeb.html"
+ },
+ {
+  "text": "El ministro de Exteriores de Irán y los enviados de Trump se reúnen en la ONU",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/internacional/2026-09-22/iran-se-muestra-dispuesto-a-reabrir-ormuz-si-trump-afloja-la-presion-militar-y-levanta-su-bloqueo.html"
+ },
+ {
+  "text": "De Tinder a las ‘Apps’ para correr: los móviles se convierten en un frente para reclutar, espiar y sabotear al enemigo",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/internacional/2026-09-22/de-tinder-a-las-apps-para-correr-los-moviles-se-convierten-en-un-frente-para-reclutar-espiar-y-sabotear-al-enemigo.html"
+ },
+ {
+  "text": "Putin militariza el Parlamento ruso",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/internacional/2026-09-22/putin-militariza-el-parlamento-ruso.html"
+ },
+ {
+  "text": "La Izquierda rompe la alternancia en Berlín y acaricia la alcaldía con la promesa de abaratar la vivienda",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/internacional/2026-09-22/la-izquierda-rompe-la-alternancia-en-berlin-y-acaricia-la-alcaldia-con-la-promesa-de-abaratar-la-vivienda.html"
+ },
+ {
+  "text": "Laura Chinchilla, expresidenta de Costa Rica: “Felipe González tiene mucha fisga”",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/internacional/2026-09-22/laura-chinchilla-expresidenta-de-costa-rica-felipe-gonzalez-tiene-mucha-fisga.html"
+ },
+ {
+  "text": "Antony Cahill (Visa): “Los pagos ejecutados por IA van más despacio de lo que esperábamos”",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/economia/2026-09-22/anthony-cahill-visa-los-pagos-ejecutados-por-ia-van-mas-despacio-de-lo-que-esperabamos.html"
+ },
+ {
+  "text": "El regalo inesperado de Donald Trump que impulsa a las grandes petroleras",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/economia/negocios/2026-09-22/el-regalo-inesperado-de-donald-trump-que-impulsa-a-las-grandes-petroleras.html"
+ },
+ {
+  "text": "Opinión",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/opinion/"
+ },
+ {
+  "text": "Editorial",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/opinion/editoriales/"
+ },
+ {
+  "text": "La responsabilidad de Merz",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/opinion/2026-09-22/la-responsabilidad-de-merz.html"
+ },
+ {
+  "text": "Reino Unido es parte del futuro de Europa",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/opinion/2026-09-22/reino-unido-es-parte-del-futuro-de-europa.html"
+ },
+ {
+  "text": "El lobo ya ha venido",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/opinion/2026-09-22/el-lobo-ya-ha-venido.html"
+ },
+ {
+  "text": "El Roto: aliados",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/opinion/2026-09-22/el-roto-aliados.html"
+ },
+ {
+  "text": "Polarización e impotencia",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/opinion/2026-09-22/polarizacion-e-impotencia.html"
+ },
+ {
+  "text": "Política frente al ruido",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/opinion/2026-09-22/politica-frente-al-ruido.html"
+ },
+ {
+  "text": "Francesca Thyssen: “La futura sede del museo no va a tener mi nombre”",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/cultura/2026-09-22/francesca-thyssen-coleccionista-la-futura-sede-del-museo-no-va-a-tener-mi-nombre-ya-he-superado-esa-etapa-de-vincular-mi-identidad-al-trabajo.html"
+ },
+ {
+  "text": "Muere Carlos Alonso, el pintor que tradujo la memoria de Argentina",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/argentina/2026-09-22/muere-el-pintor-carlos-alonso-el-maestro-que-tradujo-al-color-el-dolor-y-la-memoria-de-argentina.html"
+ },
+ {
+  "text": "Carlos Hipólito: “No creo que exista ningún placer culpable”",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/babelia/2026-09-22/carlos-hipolito-no-creo-que-exista-ningun-placer-culpable-el-placer-siempre-es-bueno.html"
+ },
+ {
+  "text": "El terror que usó el franquismo contra las chicas adolescentes llega al cine con ‘Ruega por nosotras’",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/cultura/cine/2026-09-22/el-terror-que-uso-el-franquismo-contra-las-chicas-adolescentes-llega-al-cine-con-ruega-con-nosotras.html"
+ },
+ {
+  "text": "Cómo Leo DiCaprio, Claire Danes y Baz Luhrmann reinventaron a Shakespeare",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/smoda/2026-09-22/el-milagro-de-romeo-julieta-como-leo-dicarpio-claire-danes-y-baz-luhrmann-reinventaron-a-shakespeare.html"
+ },
+ {
+  "text": "Gente",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/gente/"
+ },
+ {
+  "text": "Presley Gerber, el hijo de Cindy Crawford, murió de una sobredosis",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/entretenimiento/2026-09-21/presley-gerber-el-hijo-de-cindy-crawford-murio-de-una-sobredosis.html"
+ },
+ {
+  "text": "Vivir y comer a 63 grados: la ‘ameba de fuego’ rompe el récord de temperatura a la que prospera la vida compleja",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/ciencia/2026-09-22/vivir-y-comer-a-63-grados-la-ameba-de-fuego-rompe-el-record-de-temperatura-a-la-que-prospera-la-vida-compleja.html"
+ },
+ {
+  "text": "Cuando un amigo de la infancia despierta las versiones de nuestra personalidad que creíamos olvidadas",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/estilo-de-vida/2026-09-22/cuando-un-amigo-de-la-infancia-despierta-las-versiones-de-nuestra-personalidad-que-creiamos-olvidadas.html"
+ },
+ {
+  "text": "Redes sociales y el secuestro de la atención de los adolescentes",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/mamas-papas/expertos/2026-09-22/redes-sociales-y-el-secuestro-de-la-atencion-de-los-adolescentes.html"
+ },
+ {
+  "text": "¿Por qué todas las cremalleras llevan las letras YKK grabadas?",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/smoda/moda/2026-09-22/por-que-todas-las-cremalleras-llevan-las-letras-ykk-grabadas.html"
+ },
+ {
+  "text": "EL PAÍS Gastro",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/gastronomia/"
+ },
+ {
+  "text": "Pollo con verduras, aceitunas y limón: la receta que se prepara en una sola bandeja",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/gastronomia/el-comidista/2026-09-22/pollo-con-verduras-aceitunas-y-limon-la-receta-que-se-prepara-en-una-sola-bandeja.html"
+ },
+ {
+  "text": "El regreso del paté con costra: ¿qué hay detrás de la fiebre por la cocina viejuna?",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/gastronomia/2026-09-21/el-regreso-del-pate-con-costra-que-hay-detras-de-la-fiebre-por-la-cocina-viejuna.html"
+ },
+ {
+  "text": "América Futura",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america-futura/"
+ },
+ {
+  "text": "CAF",
+  "kind": "link",
+  "region": "header",
+  "domain": "caf.com",
+  "external": true,
+  "href": "https://www.caf.com/"
+ },
+ {
+  "text": "El secuestro de un guardabosques evidencia las invasiones de las áreas naturales de Guatemala",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america-futura/2026-09-21/el-secuestro-de-un-guardabosques-evidencia-el-problema-de-las-invasiones-de-las-areas-naturales-de-guatemala.html"
+ },
+ {
+  "text": "El fenómeno de ‘El Niño’ deja en evidencia la segregación y las brechas en el Gran Santiago de Chile",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america-futura/2026-09-20/el-fenomeno-de-el-nino-deja-en-evidencia-la-segregacion-y-las-brechas-en-el-gran-santiago-de-chile.html"
+ },
+ {
+  "text": "La Amazonia peruana experimenta cómo hacer negocios mientras mantiene sus bosques en pie",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america-futura/2026-09-19/la-amazonia-peruana-empieza-a-experimentar-como-hacer-negocios-mientras-mantiene-sus-bosques-en-pie.html"
+ },
+ {
+  "text": "República Dominicana: fuera del mapa del hambre crónica, pero aún con inseguridad alimentaria",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america-futura/2026-09-18/republica-dominicana-fuera-del-mapa-del-hambre-cronica-pero-aun-con-inseguridad-alimentaria.html"
+ },
+ {
+  "text": "Entra en vigor la regla con la que Trump busca limitar las ‘green cards’: estas son las claves para entenderla",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/migracion/2026-09-18/entra-en-vigor-la-regla-con-la-que-trump-busca-limitar-las-green-cards-estas-son-las-claves-para-entenderla.html"
+ },
+ {
+  "text": "Calendario de las elecciones de medio mandato de 2026 en Estados Unidos",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-03-09/calendario-de-las-elecciones-de-medio-mandato-de-2026-en-estados-unidos.html"
+ },
+ {
+  "text": "Los Tancol en Venezuela: detenidos y torturados para que se declaren guerrilleros",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america/2026-09-20/los-tancol-en-venezuela-detenidos-y-torturados-para-que-se-declaren-guerrilleros.html"
+ },
+ {
+  "text": "Howard Buffett, el granjero que será el “guardián” del legendario conglomerado de su padre",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-19/howard-buffett-el-granjero-que-sera-el-guardian-del-legendario-conglomerado-de-su-padre.html"
+ },
+ {
+  "text": "De Airbnb a refugio de gatos callejeros: dos millones de dólares por la casa de la infancia de Trump en Queens",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-19/de-airbnb-a-refugio-de-gatos-callejeros-dos-millones-de-dolares-por-la-casa-de-la-infancia-de-trump-en-queens.html"
+ },
+ {
+  "text": "El hostigamiento de los cobradores lleva al límite a los endeudados en Argentina: “Pensé en quitarme la vida”",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/argentina/2026-09-21/el-hostigamiento-de-los-cobradores-lleva-al-limite-a-los-endeudados-en-argentina-pense-en-quitarme-la-vida.html"
+ },
+ {
+  "text": "From Airbnb to stray cats: Trump’s childhood home in Queens sells for $2 million",
+  "kind": "link",
+  "region": "header",
+  "domain": "english.elpais.com",
+  "external": false,
+  "href": "https://english.elpais.com/usa/2026-09-21/from-airbnb-to-stray-cats-trumps-childhood-home-in-queens-sells-for-2-million.html"
+ },
+ {
+  "text": "Ferraris, Porsches, 17 guns and a United Arab Emirates residency card: The search of Alejandro Betancourt’s mansion in S",
+  "kind": "link",
+  "region": "header",
+  "domain": "english.elpais.com",
+  "external": false,
+  "href": "https://english.elpais.com/international/2026-09-21/ferraris-porsches-17-guns-and-a-united-arab-emirates-residency-card-the-search-of-alejandro-betancourts-mansion-in-spain.html"
+ },
+ {
+  "text": "Howard Buffett, the farmer who will guard his father’s business empire",
+  "kind": "link",
+  "region": "header",
+  "domain": "english.elpais.com",
+  "external": false,
+  "href": "https://english.elpais.com/economy-and-business/2026-09-21/howard-buffett-the-farmer-who-will-guard-his-fathers-business-empire.html"
+ },
+ {
+  "text": "Sally Field, the actress who fought abuse and escaped her demons through acting",
+  "kind": "link",
+  "region": "header",
+  "domain": "english.elpais.com",
+  "external": false,
+  "href": "https://english.elpais.com/culture/2026-09-21/sally-field-the-actress-who-fought-abuse-and-escaped-her-demons-through-acting.html"
+ },
+ {
+  "text": "Iberoamérica en democracia",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america/iberoamerica-democracia/"
+ },
+ {
+  "text": "OEI",
+  "kind": "link",
+  "region": "header",
+  "domain": "oei.int",
+  "external": true,
+  "href": "https://oei.int/"
+ },
+ {
+  "text": "¿El fin de los progresismos latinoamericanos?",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america/iberoamerica-democracia/2026-09-15/el-fin-de-los-progresismos-latinoamericanos.html"
+ },
+ {
+  "text": "Contrafrenos rotos",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america/iberoamerica-democracia/2026-09-08/contrafrenos-rotos.html"
+ },
+ {
+  "text": "El temor de la reescritura de la historia del Perú",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america/iberoamerica-democracia/2026-09-01/el-temor-de-la-reescritura-de-la-historia-del-peru.html"
+ },
+ {
+  "text": "El fin de las elecciones en un país que hacía años no podía elegir",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/america/iberoamerica-democracia/2026-08-18/el-fin-de-las-elecciones-en-un-pais-que-hacia-anos-no-podia-elegir.html"
+ },
+ {
+  "text": "Suscríbase al boletín de América",
+  "kind": "link",
+  "region": "header",
+  "domain": "plus.elpais.com",
+  "external": false,
+  "href": "https://plus.elpais.com/newsletters/lnp/1/346"
+ },
+ {
+  "text": "Americanas: historias con enfoque de género de la región",
+  "kind": "link",
+  "region": "header",
+  "domain": "plus.elpais.com",
+  "external": false,
+  "href": "https://plus.elpais.com/newsletters/lnp/1/407"
+ },
+ {
+  "text": "Trump, desde la Asamblea General de la ONU: “Tenemos una muy buena relación con México”",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/mexico/2026-09-22/trump-desde-la-asamblea-general-de-la-onu-tenemos-una-muy-buena-relacion-con-mexico.html"
+ },
+ {
+  "text": "En vivoSheinbaum pide precaución: “Muy atentos a la información de protección civil”",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/mexico/2026-09-22/el-huracan-polo-en-vivo.html"
+ },
+ {
+  "text": "California blinda las ‘midterms’ ante una posible injerencia de Trump",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-21/california-blinda-las-midterms-ante-una-posible-injerencia-de-trump.html"
+ },
+ {
+  "text": "Uno de los fenómenos literarios de la temporada francesa, acusado de usar IA en su último libro",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/cultura/2026-09-22/uno-de-los-fenomenos-literarios-de-la-temporada-francesa-acusado-de-usar-ia-en-su-ultimo-libro.html"
+ },
+ {
+  "text": "Raquel Peláez",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/autor/raquel-pelaez-pelaez/"
+ },
+ {
+  "text": "Ignacio Sánchez-Cuenca",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/autor/ignacio-sanchez-cuenca/"
+ },
+ {
+  "text": "Pilar Mera",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/autor/pilar-mera-costas/"
+ },
+ {
+  "text": "Juanjo Villalba",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/autor/juan-jose-villalba-colas/"
+ },
+ {
+  "text": "Amaia Odriozola",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/autor/amaia-odriozola-olloquiegui/"
+ },
+ {
+  "text": "Mikel López Iturriaga",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/autor/mikel-lopez-iturriaga/"
+ },
+ {
+  "text": "Abraham Rivera",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/autor/abraham-rivera-duque/"
+ },
+ {
+  "text": "Alonso Martínez",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/autor/jordi-alonso-martinez-yanez/"
+ },
+ {
+  "text": "A. Martínez",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/autor/el-pais/"
+ },
+ {
+  "text": "Patricia Vélez Santiago",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/autor/patricia-velez-santiago/"
+ },
+ {
+  "text": "Patricia Vélez Santiago",
+  "kind": "link",
+  "region": "main",
+  "domain": "english.elpais.com",
+  "external": false,
+  "href": "https://english.elpais.com/author/patricia-velez-santiago/"
+ },
+ {
+  "text": "Siga la actualidad de Chile en este boletín",
+  "kind": "link",
+  "region": "header",
+  "domain": "plus.elpais.com",
+  "external": false,
+  "href": "https://plus.elpais.com/newsletters/lnp/1/496"
+ },
+ {
+  "text": "Las grandes noticias y reportajes semanales de México",
+  "kind": "link",
+  "region": "header",
+  "domain": "plus.elpais.com",
+  "external": false,
+  "href": "https://plus.elpais.com/newsletters/lnp/1/348"
+ },
+ {
+  "text": "Pasatiempos en EL PAÍS",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/juegos/"
+ },
+ {
+  "text": "Autodefinido",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/juegos/autodefinido/diario/"
+ },
+ {
+  "text": "Heptagrama",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/juegos/heptagrama/"
+ },
+ {
+  "text": "Palabra secreta",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/juegos/palabra-secreta/diaria/"
+ },
+ {
+  "text": "Crucigrama para expertos",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/juegos/crucigramas/experto/"
+ },
+ {
+  "text": "Sudoku para expertos",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/juegos/sudokus/experto/"
+ },
+ {
+  "text": "Crucigrama Mambrino",
+  "kind": "link",
+  "region": "main",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/juegos/crucigramas/mambrino/"
+ },
+ {
+  "text": "LOS40 USA",
+  "kind": "link",
+  "region": "header",
+  "domain": "los40.us",
+  "external": true,
+  "href": "https://los40.us/"
+ },
+ {
+  "text": "U2 estrena los primeros segundos de su nueva canción: ‘Silence’",
+  "kind": "link",
+  "region": "main",
+  "domain": "los40.com",
+  "external": true,
+  "href": "https://los40.com/2026/09/22/u2-estrena-los-primeros-segundos-de-su-nueva-cancion-silence/?sdi=elpais_home_cardlos40"
+ },
+ {
+  "text": "Un colegio concertado de Madrid manda a la biblioteca una hora al día a los alumnos que no pagan el programa voluntario",
+  "kind": "link",
+  "region": "main",
+  "domain": "cadenaser.com",
+  "external": true,
+  "href": "https://cadenaser.com/cmadrid/2026/09/21/un-colegio-concertado-de-madrid-manda-a-la-biblioteca-una-hora-al-dia-a-los-alumnos-que-no-pagan-el-programa-voluntario-radio-madrid/?afl=elpais"
+ },
+ {
+  "text": "Habla Marcos Pascual (Bromas Aparte), autor del tema que ha puesto en órbita a la familia Caño: \"Es una pena que para la",
+  "kind": "link",
+  "region": "main",
+  "domain": "huffingtonpost.es",
+  "external": true,
+  "href": "https://www.huffingtonpost.es/virales/habla-marcos-pascual-bromas-aparte-autor-tema-puesto-orbita-familia-cano-es-pena-mayoria-sea-meme-f202609.html"
+ },
+ {
+  "text": "Carlos Espí: “Mourinho me pide que ayude a Mbappé”",
+  "kind": "link",
+  "region": "main",
+  "domain": "as.com",
+  "external": true,
+  "href": "https://as.com/futbol/seleccion/mourinho-me-pide-que-ayude-a-mbappe-f202609-n/?omnil=crossepportsup"
+ },
+ {
+  "text": "¿Una IA destructora de mundos?",
+  "kind": "link",
+  "region": "main",
+  "domain": "retinatendencias.com",
+  "external": true,
+  "href": "https://retinatendencias.com/negocios/una-ia-destructora-de-mundos/"
+ },
+ {
+  "text": "Todas las películas de Ridley Scott y dónde verlas",
+  "kind": "link",
+  "region": "main",
+  "domain": "as.com",
+  "external": true,
+  "href": "https://as.com/meristation/cine/reportajes/todas-las-peliculas-de-ridley-scott-y-donde-verlas-f202609-n/"
+ },
+ {
+  "text": "Lo más visto",
+  "kind": "link",
+  "region": "header",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/lo-mas-visto/us/"
+ },
+ {
+  "text": "Delcy Rodríguez, al aterrizar en Nueva York: “Venezuela estará en la ONU para…",
+  "kind": "link",
+  "region": "footer",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-21/delcy-rodriguez-al-aterrizar-en-nueva-york-venezuela-estara-en-la-onu-para-llevar-su-voz-y-defender-sus-principios.html#?rel=lom"
+ },
+ {
+  "text": "Presley Gerber, el hijo de Cindy Crawford, murió de una sobredosis",
+  "kind": "link",
+  "region": "footer",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/entretenimiento/2026-09-21/presley-gerber-el-hijo-de-cindy-crawford-murio-de-una-sobredosis.html#?rel=lom"
+ },
+ {
+  "text": "Muere Presley Gerber, hijo de Cindy Crawford, a los 27 años",
+  "kind": "link",
+  "region": "footer",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/entretenimiento/2026-09-21/muere-presley-gerber-hijo-de-cindy-crawford-a-los-27-anos.html#?rel=lom"
+ },
+ {
+  "text": "Ciudadanos de EE UU visitaron El Salvador y terminaron en las cárceles de…",
+  "kind": "link",
+  "region": "footer",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/migracion/2026-09-21/ciudadanos-de-ee-uu-visitaron-el-salvador-y-terminaron-en-las-carceles-de-bukele-dicen-que-es-parte-de-una-pandilla.html#?rel=lom"
+ },
+ {
+  "text": "Trump, a Mamdani: “Espero que sea un gran alcalde de Nueva York. Tiene…",
+  "kind": "link",
+  "region": "footer",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-21/trump-a-mamdani-espero-que-sea-un-gran-alcalde-de-nueva-york-tiene-potencia-para-ello.html#?rel=lom"
+ },
+ {
+  "text": "Las grandes televisiones no participarán en el ‘pool’ presidencial tras la…",
+  "kind": "link",
+  "region": "footer",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-21/cnn-ms-now-y-politico-demandan-a-trump-por-negarles-el-acceso-a-la-casa-blanca.html#?rel=lom"
+ },
+ {
+  "text": "Darth Vader convive con Picasso y Banksy: el ambicioso museo de George Lucas…",
+  "kind": "link",
+  "region": "footer",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/entretenimiento/2026-09-22/darth-vader-convive-con-piccaso-y-banksy-el-ambicioso-museo-de-george-lucas-desembarca-en-los-angeles.html#?rel=lom"
+ },
+ {
+  "text": "La política migratoria de Trump asfixia a los empresarios: “No hay gente para…",
+  "kind": "link",
+  "region": "footer",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/migracion/2026-09-21/la-politica-migratoria-de-trump-asfixia-a-los-empresarios-no-hay-gente-para-trabajar.html#?rel=lom"
+ },
+ {
+  "text": "Fotogalería | Las protestas en Austin tras el tiroteo del ICE",
+  "kind": "link",
+  "region": "footer",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-21/fotogaleria-las-protestas-en-austin-tras-el-tiroteo-del-ice.html#?rel=lom"
+ },
+ {
+  "text": "Suspenden temporalmente los vuelos en aeropuertos clave de la costa este de…",
+  "kind": "link",
+  "region": "footer",
+  "domain": "elpais.com",
+  "external": false,
+  "href": "https://elpais.com/us/2026-09-21/suspenden-temporalmente-los-vuelos-en-aeropuertos-clave-de-la-costa-este-de-estados-unidos-por-fallas-tecnicas.html#?rel=lom"
+ },
+ {
+  "text": "nuestros socios",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Ver nuestros 1032 socios",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Configuración: Configura tus consentimientos",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Aceptar: Aceptar nuestro procesamiento de datos y cerrar",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ }
+]

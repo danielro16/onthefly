@@ -1,0 +1,19 @@
+https://turnos.pami.org.ar/nuevo_turno_afiliado.php
+Ingreso - Turnos Web - INSSJP
+
+PAGE: turnos.pami.org.ar — Ingreso
+
+PAGE CONTENT (what the person came for):
+N° Documento
+Continuar
+VOLVER
+¿Dónde encuentro mi NÚMERO DE AFILIACIÓN?
+El número de afiliación son los 14 (catorce) dígitos que aparecen en la parte inferior de tu CREDENCIAL PAMI. Incluyendo los últimos dos dígitos sin la barra y sin espacios.
+credencial
+FORM asking for: Ingresar sólo números, Ingresar sólo números — button «»
+¿Dónde encuentro mi NÚMERO DE AFILIACIÓN?
+El número de afiliación son los 14 (catorce) dígitos que aparecen en la parte inferior de tu CREDENCIAL PAMI. Incluyendo los últimos dos dígitos sin la barra y sin espacios.
+
+SITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):
+Enlace sin nombre
+| Turnos

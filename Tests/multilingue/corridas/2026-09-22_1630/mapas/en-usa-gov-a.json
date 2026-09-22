@@ -1,0 +1,298 @@
+[
+ {
+  "text": "Here's how you know",
+  "kind": "button",
+  "region": "banner",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Español",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Menu",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Find benefits",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Government information",
+  "kind": "button",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "About us",
+  "kind": "button",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "For federal agencies",
+  "kind": "button",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "vote.gov",
+  "kind": "link",
+  "region": "header",
+  "domain": "vote.gov",
+  "external": true,
+  "href": "https://www.vote.gov/"
+ },
+ {
+  "text": "USAGov Logo",
+  "kind": "link",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "1-844-USAGOV1 (1-844-872-4681)",
+  "kind": "link",
+  "region": "footer",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/phone"
+ },
+ {
+  "text": "U.S. General Services Administration",
+  "kind": "link",
+  "region": "footer",
+  "domain": "gsa.gov",
+  "external": true,
+  "href": "https://www.gsa.gov/"
+ },
+ {
+  "text": "Accessibility policy",
+  "kind": "link",
+  "region": "nav",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/accessibility-policy"
+ },
+ {
+  "text": "Privacy and security policies",
+  "kind": "link",
+  "region": "nav",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/privacy-security"
+ },
+ {
+  "text": "FOIA requests",
+  "kind": "link",
+  "region": "nav",
+  "domain": "gsa.gov",
+  "external": true,
+  "href": "https://www.gsa.gov/reference/freedom-of-information-act-foia"
+ },
+ {
+  "text": "Check my voter registration",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/confirm-voter-registration"
+ },
+ {
+  "text": "Get or renew a passport",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/passport"
+ },
+ {
+  "text": "Get housing help",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/housing-help"
+ },
+ {
+  "text": "Find unclaimed money",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/unclaimed-money"
+ },
+ {
+  "text": "Voting and elections",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/voting-and-elections"
+ },
+ {
+  "text": "The U.S. and its government",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/about-the-us"
+ },
+ {
+  "text": "Complaints",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/complaints"
+ },
+ {
+  "text": "Disability services",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/disability-services"
+ },
+ {
+  "text": "Disasters and emergencies",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/disasters-and-emergencies"
+ },
+ {
+  "text": "Education",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/education"
+ },
+ {
+  "text": "Government benefits",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/benefits"
+ },
+ {
+  "text": "Health",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/health"
+ },
+ {
+  "text": "Immigration and U.S. citizenship",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/immigration-and-citizenship"
+ },
+ {
+  "text": "Innovation",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/innovation"
+ },
+ {
+  "text": "Jobs, labor laws, and unemployment",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/jobs-labor-laws-unemployment"
+ },
+ {
+  "text": "Laws and legal issues",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/laws-and-legal-issues"
+ },
+ {
+  "text": "Military and veterans",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/military-and-veterans"
+ },
+ {
+  "text": "Money and credit",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/money"
+ },
+ {
+  "text": "Scams and fraud",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/scams-and-fraud"
+ },
+ {
+  "text": "Small business",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/small-business"
+ },
+ {
+  "text": "Taxes",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/taxes"
+ },
+ {
+  "text": "Travel",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/travel"
+ },
+ {
+  "text": "Life events",
+  "kind": "link",
+  "region": "main",
+  "domain": "usa.gov",
+  "external": false,
+  "href": "https://www.usa.gov/life-events"
+ }
+]

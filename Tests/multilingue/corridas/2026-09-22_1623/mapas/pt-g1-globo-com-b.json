@@ -1,0 +1,1922 @@
+[
+ {
+  "text": "Menu",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Botão de login Conta Globo",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Eleições",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Mostrar mais conteúdos",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Prosseguir",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Pular para o conteúdo",
+  "kind": "link",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "atalho página home",
+  "kind": "link",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Últimas Notícias",
+  "kind": "link",
+  "region": "footer",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ultimas-noticias/"
+ },
+ {
+  "text": "destaques",
+  "kind": "link",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "região",
+  "kind": "link",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "vídeos",
+  "kind": "link",
+  "region": "nav",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "jogos",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/jogos/"
+ },
+ {
+  "text": "Eleições 2026",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/politica/eleicoes/2026/"
+ },
+ {
+  "text": "Guia de Compras",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/guia/guia-de-compras/"
+ },
+ {
+  "text": "Carros",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/carros/"
+ },
+ {
+  "text": "GloboNews",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/globonews/"
+ },
+ {
+  "text": "Blogs e Colunas",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/blogs-e-colunas/"
+ },
+ {
+  "text": "Webstories",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/webstories/"
+ },
+ {
+  "text": "Princípios editoriais",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/principios-editoriais-do-grupo-globo.html"
+ },
+ {
+  "text": "Sobre o g1",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/institucional/sobre-o-g1.ghtml"
+ },
+ {
+  "text": "App g1",
+  "kind": "link",
+  "region": "nav",
+  "domain": "especiais.g1.globo.com",
+  "external": false,
+  "href": "https://especiais.g1.globo.com/app-g1/"
+ },
+ {
+  "text": "Equipe",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/institucional/equipe-do-g1.ghtml"
+ },
+ {
+  "text": "Entre em contato",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/institucional/vc-no-g1-como-entrar-em-contato-enviar-videos-fotos-e-mensagens.ghtml"
+ },
+ {
+  "text": "Termos de uso do g1",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/institucional/termos-de-uso-do-g1.ghtml"
+ },
+ {
+  "text": "Política de privacidade",
+  "kind": "link",
+  "region": "nav",
+  "domain": "privacidade.globo.com",
+  "external": true,
+  "href": "https://privacidade.globo.com/privacy-policy/"
+ },
+ {
+  "text": "Receitas",
+  "kind": "link",
+  "region": "nav",
+  "domain": "receitas.globo.com",
+  "external": true,
+  "href": "https://receitas.globo.com/"
+ },
+ {
+  "text": "Globo.com",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globo.com",
+  "external": false,
+  "href": "https://www.globo.com/"
+ },
+ {
+  "text": "Carreiras Globo",
+  "kind": "link",
+  "region": "nav",
+  "domain": "vempraglobo.g.globo",
+  "external": true,
+  "href": "https://vempraglobo.g.globo/"
+ },
+ {
+  "text": "grupo globo",
+  "kind": "link",
+  "region": "nav",
+  "domain": "grupoglobo.globo.com",
+  "external": true,
+  "href": "http://grupoglobo.globo.com/"
+ },
+ {
+  "text": "Corpo de Rick e de outras 4 vítimas são retirados de área onde helicóptero caiu em SC",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/sc/santa-catarina/noticia/2026/09/22/corpos-de-mortos-em-queda-de-helicoptero-em-sc-sao-retirados-com-ajuda-de-cordas.ghtml"
+ },
+ {
+  "text": "MAURO FERREIRA: Rick alcançou sucesso no sertanejo ao pôr leveza no romantismo",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/musica/blog/mauro-ferreira/post/2026/09/22/em-dupla-com-renner-rick-fez-nome-no-universo-sertanejo-nos-anos-1990-ao-por-leveza-no-romantismo-do-genero.ghtml"
+ },
+ {
+  "text": "INFOGRÁFICO: veja rota de helicóptero e onde aeronave emitiu último sinal",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/sc/santa-catarina/noticia/2026/09/22/helicoptero-com-cantor-rick-desaparece-infografico.ghtml"
+ },
+ {
+  "text": "VÍDEO mostra destroços do helicóptero que levava o cantor Rick e mais 4",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/sc/santa-catarina/noticia/2026/09/22/veja-video-dos-destrocos-do-helicoptero-que-levava-o-cantor-rick-e-mais-quatro.ghtml"
+ },
+ {
+  "text": "Cantor viajava com empresário e mais 3 pessoas; veja todas as vítimas",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/sc/santa-catarina/noticia/2026/09/22/quem-sao-os-passageiros-de-helicoptero-que-desapareceu-em-sc-com-cantor-rick-e-empresario.ghtml"
+ },
+ {
+  "text": "Sócio de Rick foi convidado para voo, mas decidiu ir de carro até SC",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/sc/santa-catarina/noticia/2026/09/22/socio-cantor-rick-convidado-voo-helicoptero-decidiu-viajar-carro.ghtml"
+ },
+ {
+  "text": "Último show de Rick & Renner foi em festa de 15 anos em MT, Há 4 horas •Mato…",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mt/mato-grosso/noticia/2026/09/22/video-musica-filha-marcou-o-ultimo-show-de-rick-da-dupla-com-renner-em-festa-de-15-anos-em-mt.ghtml"
+ },
+ {
+  "text": "Rick e Renner tinham show marcado para esta quinta; dupla estava em turnê",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/musica/noticia/2026/09/22/rick-e-renner-tinham-show-marcado-para-esta-quinta-dupla-estava-em-turne-pelo-brasil.ghtml"
+ },
+ {
+  "text": "Rick foi rara voz negra no topo do sertanejo; entenda",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/sertanejo/noticia/2026/09/22/cantor-rick-foi-rara-voz-negra-no-topo-do-sertanejo-entenda-o-apagamento-historico-no-ritmo.ghtml"
+ },
+ {
+  "text": "Cantor completaria 60 anos em dezembro; relembre trajetória",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/to/tocantins/noticia/2026/09/22/cantor-rick-da-dupla-com-renner-morre.ghtml"
+ },
+ {
+  "text": "'Tá aqui': câmera flagra momento em que PM acha menino perdido em mata; VÍDEO",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/sp/sao-paulo/noticia/2026/09/22/video-camera-corporal-de-pm-registra-resgate-de-crianca-de-6-anos-perdida-na-mata-em-sp.ghtml"
+ },
+ {
+  "text": "Na ONU, Lula defende soberania e diz que Brasil 'não cabe no quintal de ninguém'",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/politica/noticia/2026/09/22/na-onu-lula-defende-soberania-em-meio-a-eleicao-no-brasil-e-tensao-com-governo-trump.ghtml"
+ },
+ {
+  "text": "5 frases de Lula na ONU que trazem recados a Trump",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/politica/noticia/2026/09/22/lula-onu-recados-trump.ghtml"
+ },
+ {
+  "text": "Veja recados de Lula ao Brasil, a Trump e à comunidade internacional",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/politica/noticia/2026/09/22/lula-na-onu-veja-recados-ao-publico-brasileiro-a-trump-e-a-comunidade-internacional.ghtml"
+ },
+ {
+  "text": "O que mudou nos 10 discursos de Lula na ONU ao longo do tempo",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/politica/noticia/2026/09/22/lula-discursos-onu.ghtml"
+ },
+ {
+  "text": "VÍDEO: Lula e Rubio se aproximam na ONU, mas não se cumprimentam",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mundo/noticia/2026/09/22/rubio-vai-ate-a-lula-em-plenario-da-assembleia-geral-da-onu.ghtml"
+ },
+ {
+  "text": "Diabo, sapato, 'bomba': relembre os momentos históricos da Assembleia Geral da ONU",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mundo/noticia/2026/09/22/diabo-sapato-bomba-relembre-os-momentos-polemicos-que-marcaram-a-assembleia-geral-da-onu.ghtml"
+ },
+ {
+  "text": "ANÁLISE: ONU vira palanque eleitoral para Lula e Trump com falas opostas",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mundo/blog/sandra-cohen/post/2026/09/22/lula-e-trump-levam-suas-campanhas-eleitorais-ao-plenario-da-onu.ghtml"
+ },
+ {
+  "text": "Trump anuncia na ONU que vai trocar nome de Inteligência Artificial",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mundo/noticia/2026/09/22/trump-anuncia-na-onu-que-vai-trocar-o-nome-de-inteligencia-artificial-para-super-inteligencia.ghtml"
+ },
+ {
+  "text": "Presidente dos EUA promete extinguir 'interferência' no Ocidente 'pela via militar, se preciso'",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mundo/noticia/2026/09/22/trump-discurso-assembleia-geral-onu-soberania-eua-extinguir-interferencia-hemisferio-ocidental.ghtml"
+ },
+ {
+  "text": "Vídeo em Alta, Polícia prende namorado de Isabelle Caracristi, universitária achada morta, Há 4 horas G1 CE, 1 min",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ce/ceara/video/policia-prende-namorado-de-isabelle-caracristi-universitaria-achada-morta-14983864.ghtml"
+ },
+ {
+  "text": "Após boicote de TVs, Trump faz discurso inaudível por falta de microfone; VÍDEO",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mundo/noticia/2026/09/22/video-apos-boicote-da-imprensa-trump-faz-discurso-inaudivel-por-falta-de-microfone.ghtml"
+ },
+ {
+  "text": "Trump, Dinamarca e Groenlândia assinam acordo sobre segurança da ilha",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mundo/noticia/2026/09/22/eua-dinamarca-e-groenlandia-assinam-acordo-de-seguranca.ghtml"
+ },
+ {
+  "text": "Reino Unido está 'pronto para fazer sua parte no Oriente Médio', diz premiê a Trump",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mundo/noticia/2026/09/22/premie-britanico-diz-a-trump-que-reino-unido-esta-pronto-para-fazer-a-sua-parte-no-oriente-medio.ghtml"
+ },
+ {
+  "text": "Candidatos ao Senado pelo RJ discutem universidades federais, SUS e emprego",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/rj/rio-de-janeiro/eleicoes/2026/noticia/2026/09/22/candidatos-ao-senado-pelo-rj-participam-de-debate-no-g1-veja-como-foi-o-encontro-das-13h.ghtml"
+ },
+ {
+  "text": "Outros 4 candidatos debateram emendas, retomada de territórios e relação entre poderes",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/rj/rio-de-janeiro/eleicoes/2026/noticia/2026/09/22/candidatos-ao-senado-pelo-rj-participam-de-debate-no-g1-veja-como-foi-o-encontro-das-9h.ghtml"
+ },
+ {
+  "text": "Fux é sorteado relator de ação sobre visitas da esposa de Moraes e Vorcaro ao Senado",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/politica/noticia/2026/09/22/apos-moraes-se-declarar-impedido-fux-e-sorteado-novo-relator-de-acao-que-pede-informacoes-ao-senado-sobre-visitas-de-viviane-e-vorcaro.ghtml"
+ },
+ {
+  "text": "Mendonça diz que Moraes distorceu teor de relatórios da PF para acusá-lo",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/politica/noticia/2026/09/22/mendonca-moraes.ghtml"
+ },
+ {
+  "text": "Relator, Dino defende que STF analise ação sobre emendas após eleições",
+  "kind": "link",
+  "region": "main",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/politica/noticia/2026/09/22/dino-diz-que-momento-adequado-de-stf-analisar-acao-sobre-emendas-e-depois-das-eleicoes.ghtml"
+ },
+ {
+  "text": "Primeira Página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/agronegocios/"
+ },
+ {
+  "text": "Agro de gente pra gente",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/agronegocios/agro-de-gente-pra-gente/"
+ },
+ {
+  "text": "Globo Rural",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/agronegocios/globo-rural/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/carnaval/2026/"
+ },
+ {
+  "text": "Rio de Janeiro",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/rj/rio-de-janeiro/carnaval/2026/"
+ },
+ {
+  "text": "São Paulo",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/sp/sao-paulo/carnaval/2026/"
+ },
+ {
+  "text": "Pernambuco",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/pernambuco/carnaval/2026/"
+ },
+ {
+  "text": "Minas Gerais",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mg/minas-gerais/carnaval/2026/"
+ },
+ {
+  "text": "Motos",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/carros/motos/"
+ },
+ {
+  "text": "dinheiro sobre rodas",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/carros/dinheiro-sobre-rodas/"
+ },
+ {
+  "text": "Primeira Página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ciencia/"
+ },
+ {
+  "text": "Viva Você",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ciencia-e-saude/viva-voce/"
+ },
+ {
+  "text": "Primeira Página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/"
+ },
+ {
+  "text": "Bitcoin",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/bitcoin/"
+ },
+ {
+  "text": "Calculadoras",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/calculadoras/"
+ },
+ {
+  "text": "Dólar",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/dolar/"
+ },
+ {
+  "text": "Educação Financeira",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/educacao-financeira/"
+ },
+ {
+  "text": "Imposto de Renda",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/imposto-de-renda/"
+ },
+ {
+  "text": "Mídia e Marketing",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/midia-e-marketing/"
+ },
+ {
+  "text": "Open banking",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/economia/open-banking/"
+ },
+ {
+  "text": "Primeira Página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/educacao/"
+ },
+ {
+  "text": "Enem",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/educacao/enem/2025/"
+ },
+ {
+  "text": "Guia de Carreiras",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/educacao/guia-de-carreiras/"
+ },
+ {
+  "text": "Simulado Enem",
+  "kind": "link",
+  "region": "nav",
+  "domain": "especiais.g1.globo.com",
+  "external": false,
+  "href": "https://especiais.g1.globo.com/educacao/enem/2023/simula/"
+ },
+ {
+  "text": "Teste Vocacional",
+  "kind": "link",
+  "region": "nav",
+  "domain": "especiais.g1.globo.com",
+  "external": false,
+  "href": "http://especiais.g1.globo.com/educacao/guia-de-carreiras/2017/teste-vocacional/"
+ },
+ {
+  "text": "Universidades",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/educacao/universidades.html"
+ },
+ {
+  "text": "Primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/empreendedorismo/"
+ },
+ {
+  "text": "pequenas empresas",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/empreendedorismo/pegn/"
+ },
+ {
+  "text": "Menos 30 Fest",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/empreendedorismo/menos30fest/"
+ },
+ {
+  "text": "Dia do Empreendedor",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/empreendedorismo/dia-do-empreendedor/"
+ },
+ {
+  "text": "Fato ou Fake",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/fato-ou-fake/"
+ },
+ {
+  "text": "Guia de compras",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/especiais/guia-de-compras/"
+ },
+ {
+  "text": "Inovação",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/inovacao/"
+ },
+ {
+  "text": "Loterias",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/loterias/"
+ },
+ {
+  "text": "Primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/meio-ambiente/"
+ },
+ {
+  "text": "Amazônia",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/meio-ambiente/amazonia/"
+ },
+ {
+  "text": "Globo Natureza​",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/meio-ambiente/globo-natureza/"
+ },
+ {
+  "text": "Sustentabilidade​",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/meio-ambiente/sustentabilidade/"
+ },
+ {
+  "text": "Monitor da Violência",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/monitor-da-violencia/"
+ },
+ {
+  "text": "Primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mundo/"
+ },
+ {
+  "text": "Guerra na Ucrânia",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mundo/ucrania-russia/"
+ },
+ {
+  "text": "Olha Que Legal",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/olha-que-legal/"
+ },
+ {
+  "text": "Primeira Página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/politica/"
+ },
+ {
+  "text": "Primeira Página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/"
+ },
+ {
+  "text": "Cinema",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/cinema/"
+ },
+ {
+  "text": "Diversidade",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/diversidade/"
+ },
+ {
+  "text": "Games",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/games/"
+ },
+ {
+  "text": "Música",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/musica/"
+ },
+ {
+  "text": "Tv e séries",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/tv-e-series/"
+ },
+ {
+  "text": "Circuito Sertanejo",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/musica/circuito-sertanejo/"
+ },
+ {
+  "text": "The Town",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pop-arte/musica/the-town/2025/"
+ },
+ {
+  "text": "Primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/saude/"
+ },
+ {
+  "text": "Bem Estar",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/saude/bem-estar/"
+ },
+ {
+  "text": "Coronavirus",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/saude/coronavirus/"
+ },
+ {
+  "text": "Tecnologia",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/tecnologia/"
+ },
+ {
+  "text": "Primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/trabalho-e-carreira/"
+ },
+ {
+  "text": "Concursos",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/trabalho-e-carreira/concursos/"
+ },
+ {
+  "text": "Vagas de emprego",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/trabalho-e-carreira/vagas-de-emprego/"
+ },
+ {
+  "text": "Primeira Página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/turismo-e-viagem/"
+ },
+ {
+  "text": "Descubra o Brasil",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/turismo-e-viagem/descubra-o-brasil/"
+ },
+ {
+  "text": "Soletra",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/jogos/soletra/"
+ },
+ {
+  "text": "Labirinto",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/jogos/labirinto/"
+ },
+ {
+  "text": "Combinado",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/jogos/combinado/"
+ },
+ {
+  "text": "Dito",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/jogos/dito/"
+ },
+ {
+  "text": "Palavras cruzadas",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/jogos/palavras-cruzadas/"
+ },
+ {
+  "text": "Palavras cruzadas mini",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/jogos/palavras-cruzadas-mini/"
+ },
+ {
+  "text": "Sudoku",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/jogos/sudoku/"
+ },
+ {
+  "text": "Caça-Palavras",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/jogos/caca-palavras/"
+ },
+ {
+  "text": "Assine Coquetel",
+  "kind": "link",
+  "region": "nav",
+  "domain": "assinecoquetel.com.br",
+  "external": true,
+  "href": "https://www.assinecoquetel.com.br/"
+ },
+ {
+  "text": "Casa",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/guia/guia-de-compras/casa/"
+ },
+ {
+  "text": "Celulares",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/guia/guia-de-compras/tecnologia/celulares/"
+ },
+ {
+  "text": "Lazer",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/guia/guia-de-compras/lazer/"
+ },
+ {
+  "text": "Moda e beleza",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/guia/guia-de-compras/moda-e-beleza/"
+ },
+ {
+  "text": "Presentes",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/guia/guia-de-compras/presentes/"
+ },
+ {
+  "text": "Tecnologia",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/guia/guia-de-compras/tecnologia/"
+ },
+ {
+  "text": "Mercado Pago",
+  "kind": "link",
+  "region": "nav",
+  "domain": "especiaispublicitarios.g1.globo.com",
+  "external": false,
+  "href": "https://especiaispublicitarios.g1.globo.com/vqt-mercado-pago/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/df/distrito-federal/"
+ },
+ {
+  "text": "bom dia df",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/df/distrito-federal/bom-dia-df/"
+ },
+ {
+  "text": "df1",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/df/distrito-federal/df1/"
+ },
+ {
+  "text": "df2",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/df/distrito-federal/df2/"
+ },
+ {
+  "text": "globo comunidade df",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/globo-comunidade-df/p/4504/"
+ },
+ {
+  "text": "df no campo",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/df/distrito-federal/df-no-campo/"
+ },
+ {
+  "text": "o que fazer no df",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/df/distrito-federal/o-que-fazer-no-distrito-federal/"
+ },
+ {
+  "text": "Moto Week",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/df/distrito-federal/moto-week/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/go/goias/"
+ },
+ {
+  "text": "bom dia go",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-go/p/5368/"
+ },
+ {
+  "text": "bom dia sábado",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-sabado-goias/p/11179/"
+ },
+ {
+  "text": "ja 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/ja-1a-edicao/p/5369/"
+ },
+ {
+  "text": "ja1 regiões",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/go/goias/videos-ja-1-regional/"
+ },
+ {
+  "text": "ja 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/ja-2a-edicao/p/5370/"
+ },
+ {
+  "text": "ja2 regiões",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/go/goias/videos-ja-2-regional/"
+ },
+ {
+  "text": "jornal do campo",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/jornal-do-campo-go/p/5372/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/go/"
+ },
+ {
+  "text": "mercado imobiliário",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/go/goias/mercado-imobiliario/"
+ },
+ {
+  "text": "Mato Grosso",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/mt/mato-grosso/"
+ },
+ {
+  "text": "bom dia mt",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-mt/p/5240/"
+ },
+ {
+  "text": "mt tv 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/mttv-1a-edicao-cuiaba/p/5246/"
+ },
+ {
+  "text": "mt rural",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/mt-rural/p/5232/"
+ },
+ {
+  "text": "mt tv 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/mttv-2a-edicao-cuiaba/p/5236/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/mt/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ms/mato-grosso-do-sul/"
+ },
+ {
+  "text": "bom dia ms",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-ms/p/5251/"
+ },
+ {
+  "text": "ms tv 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/mstv-1a-edicao-campo-grande/p/5244/"
+ },
+ {
+  "text": "ms tv 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/mstv-2a-edicao-campo-grande/p/5249/"
+ },
+ {
+  "text": "ms rural",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/ms-rural/p/5256/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "https://globoesporte.globo.com/ms/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/al/alagoas/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/al/"
+ },
+ {
+  "text": "Bahia",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ba/bahia/"
+ },
+ {
+  "text": "jornal da manhã",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/jornal-da-manha/p/5181/"
+ },
+ {
+  "text": "bahia meio dia",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bahia-meio-dia-salvador/p/5182/"
+ },
+ {
+  "text": "batv",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/batv-salvador/p/5195/"
+ },
+ {
+  "text": "bahia rural",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bahia-rural/p/5187/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/ba/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ce/ceara/"
+ },
+ {
+  "text": "bom dia ce",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-ceara/p/5289/"
+ },
+ {
+  "text": "cetv 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/cetv-1a-edicao-fortaleza/p/5290/"
+ },
+ {
+  "text": "cetv 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/cetv-2a-edicao/p/5292/"
+ },
+ {
+  "text": "ne rural",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/ne-rural-ceara/p/5294/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/ce/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ma/maranhao/"
+ },
+ {
+  "text": "bom dia mirante",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-mirante/p/5741/"
+ },
+ {
+  "text": "jmtv 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/jmtv-1a-edicao/p/5742/"
+ },
+ {
+  "text": "jmtv 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/jmtv-2a-edicao/p/5743/"
+ },
+ {
+  "text": "mirante rural",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/mirante-rural/p/5763/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/ma/"
+ },
+ {
+  "text": "daqui",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/daqui/p/10315/"
+ },
+ {
+  "text": "repórter mirante",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/reporter-mirante/p/5762/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pb/paraiba/"
+ },
+ {
+  "text": "bom dia paraíba",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-paraiba/p/5418/"
+ },
+ {
+  "text": "jpb 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/jpb-1a-edicao/p/5420/"
+ },
+ {
+  "text": "jpb 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/jpb-2a-edicao/p/5421/"
+ },
+ {
+  "text": "paraíba comunidade",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/paraiba-comunidade/p/5419/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/pb/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/pernambuco/"
+ },
+ {
+  "text": "bom dia pe",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/pernambuco/bom-dia-pe/"
+ },
+ {
+  "text": "ne1",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/pernambuco/ne1/"
+ },
+ {
+  "text": "ne2",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/pernambuco/ne2/"
+ },
+ {
+  "text": "espaço pe",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/pernambuco/espaco-pe/"
+ },
+ {
+  "text": "globo comunidade pe",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/pernambuco/globo-comunidade-pe/"
+ },
+ {
+  "text": "nordeste viver e preservar",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/nordeste-viver-e-preservar/p/5457/"
+ },
+ {
+  "text": "educação",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/pernambuco/educacao/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/pe/"
+ },
+ {
+  "text": "Praia limpa",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/pernambuco/especial-publicitario/praia-limpa/"
+ },
+ {
+  "text": "São João 2025",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/pernambuco/sao-joao/sao-joao-de-pernambuco-2025/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/caruaru-regiao/"
+ },
+ {
+  "text": "bom dia pe",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-pe/p/5453/"
+ },
+ {
+  "text": "abtv 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/ab-tv-1a-edicao/p/7646/"
+ },
+ {
+  "text": "abtv 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/ab-tv-2a-edicao/p/7647/"
+ },
+ {
+  "text": "globo comunidade",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/globo-comunidade-pe/p/5455/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/pe/caruaru-regiao/"
+ },
+ {
+  "text": "Paixão de Cristo",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/caruaru-regiao/paixao-de-cristo-em-nova-jerusalem/2025/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pe/petrolina-regiao/"
+ },
+ {
+  "text": "grtv 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/grtv-1a-edicao/p/7821/"
+ },
+ {
+  "text": "grtv 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/grtv-2a-edicao/p/7822/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/pe/petrolina-regiao/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/pi/piaui/"
+ },
+ {
+  "text": "bom dia piauí",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-piaui/p/7250/"
+ },
+ {
+  "text": "bom dia sábado",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-sabado-tv-clube/p/10945/"
+ },
+ {
+  "text": "pi tv 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/pitv-1a-edicao/p/7252/"
+ },
+ {
+  "text": "pi tv 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/pitv-2a-edicao/p/7253/"
+ },
+ {
+  "text": "clube rural",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/clube-rural/p/7254/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/pi/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/rn/rio-grande-do-norte/"
+ },
+ {
+  "text": "bom dia rn",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-rn/p/7059/"
+ },
+ {
+  "text": "rn tv 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/rn-tv-1a-edicao/p/7062/"
+ },
+ {
+  "text": "rn tv 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/rn-tv-2a-edicao/p/7060/"
+ },
+ {
+  "text": "inter tv rural",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/inter-tv-rural-rn/p/8690/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/rn/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/se/sergipe/"
+ },
+ {
+  "text": "bom dia se",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-sergipe/p/5658/"
+ },
+ {
+  "text": "setv 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/se-tv-1a-edicao/p/5664/"
+ },
+ {
+  "text": "setv 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/se-tv-2a-edicao/p/5665/"
+ },
+ {
+  "text": "estação agrícola",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/estacao-agricola/p/5663/"
+ },
+ {
+  "text": "esporte",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/se/"
+ },
+ {
+  "text": "primeira página",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ac/acre/"
+ },
+ {
+  "text": "bom dia amazônia",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ac/acre/videos-bom-dia-acre/"
+ },
+ {
+  "text": "jac 1ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ac/acre/videos-jornal-do-acre-1-edicao/"
+ },
+ {
+  "text": "jac 2ª edição",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ac/acre/videos-jornal-do-acre-2-edicao/"
+ },
+ {
+  "text": "Globo Esporte Acre",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoesporte.globo.com",
+  "external": true,
+  "href": "http://globoesporte.globo.com/ac/"
+ },
+ {
+  "text": "Amapá",
+  "kind": "link",
+  "region": "nav",
+  "domain": "g1.globo.com",
+  "external": false,
+  "href": "https://g1.globo.com/ap/amapa/"
+ },
+ {
+  "text": "bom dia amazônia",
+  "kind": "link",
+  "region": "nav",
+  "domain": "globoplay.globo.com",
+  "external": true,
+  "href": "https://globoplay.globo.com/bom-dia-amazonia-ap/p/7554/"
+ }
+]

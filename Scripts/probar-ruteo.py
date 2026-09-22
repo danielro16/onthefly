@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Corre las 60 intenciones contra el ruteador REAL.
 
-Saca las instrucciones de Router.swift tal como estan —si alguien las cambia
-alla, esto lo refleja— y le pide a cada frase una decision, con el estado que
-corresponde al momento en que fue dicha.
+Arma el prompt desde Sources/Intelligence/prompts.json con el mismo
+constructor que la app —si alguien lo cambia, esto lo refleja— y le pide a
+cada frase una decision, con el estado que corresponde al momento en que fue
+dicha.
 
     ./Scripts/probar-ruteo.py            # las 60
+    ./Scripts/probar-ruteo.py --google --corridas 3   # tres veces cada una, con puntaje
     ./Scripts/probar-ruteo.py --breve    # solo el conteo
     ./Scripts/probar-ruteo.py --modelo google/gemini-3.1-flash-lite --json /tmp/x.json   # otro modelo
     ./Scripts/probar-ruteo.py --google --modelo gemini-3.1-flash-lite   # directo a Google (GEMINI_API_KEY)
@@ -22,31 +24,33 @@ URL = ("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
 # Por millón de tokens, entrada y salida.
 PRECIOS = {"gemini-2.5-flash-lite": (0.10, 0.40), "gemini-3.1-flash-lite": (0.25, 1.50),
            "gemini-2.5-flash": (0.30, 2.50), "gemini-3-flash-preview": (0.50, 3.00)}
-SRC = (RAIZ/"Sources/Intelligence/Router.swift").read_text()
-INSTR = re.search(r'private static let instructions = """\n(.*?)\n        """', SRC, re.S).group(1)
-INSTR = "\n".join(l[8:] if l.startswith(" "*8) else l for l in INSTR.split("\n"))
-# El de la app: por el gateway, el que Router.swift le pasa; directo, el de Gemini.swift.
+# El prompt, armado desde prompts.json con el mismo constructor que la app
+# (Prompts.swift ↔ Scripts/prompts_gemini.py): lo que se prueba es lo que corre.
+sys.path.insert(0, str(RAIZ / "Scripts"))
+import prompts_gemini as P
+INSTR = P.sistema("ruteador", idioma="español")
+FORMATO = P.formato("ruteador")
 MODELO = (re.search(r'model: "(gemini-[^"]+)"', (RAIZ/"Sources/Intelligence/Gemini.swift").read_text()).group(1) if GOOGLE
-          else re.search(r'gateway: "([^"]+)"', SRC).group(1))
+          else re.search(r'gateway: "([^"]+)"', (RAIZ/"Sources/Intelligence/Router.swift").read_text()).group(1))
 if "--modelo" in sys.argv: MODELO = sys.argv[sys.argv.index("--modelo") + 1]
 
 ESTADOS = {
- "sin-pagina":   "No hay ninguna página abierta todavía.",
- "en-portada":   "Está en «Portada», en lanacion.com.ar. La página lista 42 titulares que se pueden abrir.",
- "en-nota":      "Está en «El dólar blue cerró a $1.550», en lanacion.com.ar. Es un texto largo: 14 párrafos. Le están leyendo este texto: va por el bloque 3 de 14.",
- "en-resultados":"Está en «turnos pasaporte», en lite.duckduckgo.com. Hay 8 elementos en listas.",
- "en-formulario":"Está en «Ingresar», en argentina.gob.ar. Hay un formulario con estos campos: usuario, clave, dni.",
+ "sin-pagina":   "No page is open yet.",
+ "en-portada":   "On «Portada», at lanacion.com.ar. The page lists 42 headlines that can be opened.",
+ "en-nota":      "On «El dólar blue cerró a $1.550», at lanacion.com.ar. It is a long text: 14 paragraphs. It is being read to them: at block 3 of 14.",
+ "en-resultados":"On «turnos pasaporte», at lite.duckduckgo.com. There are 8 items in lists.",
+ "en-formulario":"On «Ingresar», at argentina.gob.ar. There is a form with these fields: usuario, clave, dni.",
 }
 
 def decidir(caso):
-    # Sin razonar, como en la app: el gateway lo apaga con "reasoning", Google
-    # con "reasoning_effort".
-    apagado = {"reasoning_effort": "none"} if GOOGLE else {"reasoning": {"enabled": False}}
+    # Como en la app: el ruteador razona poco ("dejale al modelo que razone
+    # las intenciones", Daniel), con las decisiones de decisiones.json.
+    razonar = {"reasoning_effort": "low"} if GOOGLE else {"reasoning": {"enabled": True}}
     cuerpo = json.dumps({
-        "model": MODELO, **apagado, "max_tokens": 200,
-        "response_format": {"type": "json_object"},
+        "model": MODELO, **razonar, "max_tokens": 1000,
+        "response_format": FORMATO,
         "messages": [{"role":"system","content":INSTR},
-                     {"role":"user","content":f"PIDIÓ: {caso['frase']}\n\nDÓNDE ESTÁ: {ESTADOS[caso['momento']]}"}],
+                     {"role":"user","content":P.mensaje("ruteador", {"pedido": caso["frase"], "pagina": ESTADOS[caso["momento"]]})}],
     }).encode()
     req = urllib.request.Request(URL, data=cuerpo,
           headers={"Authorization":f"Bearer {KEY}","Content-Type":"application/json"})
@@ -66,8 +70,17 @@ def decidir(caso):
             time.sleep(3.0 * (intento + 1))
 
 casos = json.loads((RAIZ/"Tests/intenciones.json").read_text())["intenciones"]
-with ThreadPoolExecutor(max_workers=2) as pool:
-    salidas = list(pool.map(decidir, casos))
+CORRIDAS = int(sys.argv[sys.argv.index("--corridas") + 1]) if "--corridas" in sys.argv else 1
+with ThreadPoolExecutor(max_workers=6) as pool:
+    todas = list(pool.map(decidir, [c for c in casos for _ in range(CORRIDAS)]))
+salidas = todas[::CORRIDAS]
+
+def acierta(caso, d):
+    """Contra «espera»: la acción está entre las aceptables, y el segundo paso también, donde importa."""
+    espera = caso.get("espera")
+    if not espera or d.get("action") not in espera["accion"]:
+        return False
+    return d.get("then") in espera["then"] if "then" in espera else True
 
 tin = sum(s[2] for s in salidas); tout = sum(s[3] for s in salidas)
 por_momento = {}
@@ -87,6 +100,16 @@ if "--json" in sys.argv:
     destino = pathlib.Path(sys.argv[sys.argv.index("--json") + 1])
     destino.write_text(json.dumps([{"frase": c["frase"], "quiere": c["quiere"], "momento": c["momento"], "decision": d}
                                     for c, d, _, _ in salidas], ensure_ascii=False, indent=1))
+aciertos = sum(acierta(c, d) for c, d, _, _ in todas)
+estables = sum(len({(d.get("action"), d.get("then")) for c2, d, _, _ in todas if c2 is c}) == 1 for c in casos)
+print(f"\naciertos contra «espera»: {aciertos} de {len(todas)} ({aciertos/len(todas):.0%})"
+      + (f" · estables en las {CORRIDAS} corridas: {estables} de {len(casos)}" if CORRIDAS > 1 else ""))
+if "--breve" not in sys.argv:
+    for c in casos:
+        rs = [d for c2, d, _, _ in todas if c2 is c]
+        if not all(acierta(c, d) for d in rs):
+            print(f"  ✗ [{c['momento']}] «{c['frase'][:55]}» espera {c['espera']['accion']}: "
+                  + ", ".join(f"{d.get('action')}{'→'+str(d['then']) if d.get('then') else ''}" for d in rs))
 tiempos = sorted(s[1]["_s"] for s in ok if "_s" in s[1])
 if tiempos:
     print(f"tiempo por decisión: mediana {tiempos[len(tiempos)//2]} s · peor {tiempos[-1]} s")

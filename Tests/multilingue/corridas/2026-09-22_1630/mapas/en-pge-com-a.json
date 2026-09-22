@@ -1,0 +1,322 @@
+[
+ {
+  "text": "Menu",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Outages",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "signin",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Pay your bill",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Start or stop service",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Billing questions",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Do not sell my personal information opens as a modal",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "PG&E Logo",
+  "kind": "link",
+  "region": "header",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en.html"
+ },
+ {
+  "text": "Explore our Sustainability Report",
+  "kind": "link",
+  "region": "main",
+  "domain": "pgecorp.com",
+  "external": true,
+  "href": "https://www.pgecorp.com/sustainability/corporate-sustainability/corporate-sustainability-report-2026.html"
+ },
+ {
+  "text": "Update your alert preferences",
+  "kind": "link",
+  "region": "main",
+  "domain": "myaccount.pge.com",
+  "external": false,
+  "href": "https://myaccount.pge.com/myaccount/s/login/?language=en_US&ec=302&startURL=%2Fmyaccount%2Fs%2Fsettings%3Fvnt%3Dmyinfo"
+ },
+ {
+  "text": "Check out Currents Magazine",
+  "kind": "link",
+  "region": "main",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/newsroom/currents.html"
+ },
+ {
+  "text": "About PG&E",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/about.html"
+ },
+ {
+  "text": "Company Information",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/about/company-information.html"
+ },
+ {
+  "text": "Giving Locally",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/about/giving-locally.html"
+ },
+ {
+  "text": "Educational Resources",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/about/educational-resources.html"
+ },
+ {
+  "text": "First Responder Resources",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pgepublicsafety.my.site.com",
+  "external": true,
+  "href": "https://pgepublicsafety.my.site.com/firstresponder"
+ },
+ {
+  "text": "Careers",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "jobs.pge.com",
+  "external": false,
+  "href": "https://jobs.pge.com/"
+ },
+ {
+  "text": "PG&E Systems",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/about/pge-systems.html"
+ },
+ {
+  "text": "In Your Community",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/about/in-your-community.html"
+ },
+ {
+  "text": "News Releases",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/newsroom.html"
+ },
+ {
+  "text": "Corporate Sustainability",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/about/corporate-responsibility-and-sustainability.html"
+ },
+ {
+  "text": "Safety Action Center",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/newsroom/safety-action-center.html"
+ },
+ {
+  "text": "Contact Us",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/contact-us.html"
+ },
+ {
+  "text": "Help Center",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "help.pge.com",
+  "external": false,
+  "href": "https://help.pge.com/s/?language=en_US"
+ },
+ {
+  "text": "Site Feedback",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "forms.cloud.microsoft",
+  "external": true,
+  "href": "https://forms.cloud.microsoft/r/K1DDcA2YYm"
+ },
+ {
+  "text": "Doing Business with PG&E",
+  "kind": "link",
+  "region": "navigation",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/about/doing-business-with-pge.html"
+ },
+ {
+  "text": "Visit the CPUC's website",
+  "kind": "link",
+  "region": "main",
+  "domain": "cpuc.ca.gov",
+  "external": true,
+  "href": "https://www.cpuc.ca.gov/industries-and-topics/natural-gas/greenhouse-gas-cap-and-trade-program/california-climate-credit"
+ },
+ {
+  "text": "Facebook",
+  "kind": "link",
+  "region": "main",
+  "domain": "facebook.com",
+  "external": true,
+  "href": "https://www.facebook.com/pacificgasandelectric/?nr"
+ },
+ {
+  "text": "Twitter",
+  "kind": "link",
+  "region": "main",
+  "domain": "twitter.com",
+  "external": true,
+  "href": "https://twitter.com/pge4me"
+ },
+ {
+  "text": "LinkedIn",
+  "kind": "link",
+  "region": "main",
+  "domain": "linkedin.com",
+  "external": true,
+  "href": "https://www.linkedin.com/company/pacific-gas-and-electric-company"
+ },
+ {
+  "text": "YouTube",
+  "kind": "link",
+  "region": "main",
+  "domain": "youtube.com",
+  "external": true,
+  "href": "https://www.youtube.com/user/pgevideo"
+ },
+ {
+  "text": "Instagram",
+  "kind": "link",
+  "region": "main",
+  "domain": "instagram.com",
+  "external": true,
+  "href": "https://www.instagram.com/accounts/login/?next=/pacificgasandelectric/"
+ },
+ {
+  "text": "Accessibility",
+  "kind": "link",
+  "region": "main",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/accessibility.html"
+ },
+ {
+  "text": "Terms & Conditions",
+  "kind": "link",
+  "region": "main",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/privacy-center/disclosure.html"
+ },
+ {
+  "text": "Regulation",
+  "kind": "link",
+  "region": "main",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/regulation.html"
+ },
+ {
+  "text": "Privacy",
+  "kind": "link",
+  "region": "main",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/privacy-center.html"
+ },
+ {
+  "text": "Security",
+  "kind": "link",
+  "region": "main",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/about/company-information/vulnerability-disclosure-policy.html"
+ },
+ {
+  "text": "Sitemap",
+  "kind": "link",
+  "region": "main",
+  "domain": "pge.com",
+  "external": false,
+  "href": "https://www.pge.com/en/sitemap.html"
+ },
+ {
+  "text": "Reject All",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Accept All",
+  "kind": "button",
+  "region": "overlay",
+  "domain": "",
+  "external": false,
+  "href": ""
+ }
+]

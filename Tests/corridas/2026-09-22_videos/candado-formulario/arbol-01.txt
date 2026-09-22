@@ -1,0 +1,12 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: httpbin.org/forms/post
+  4 [txt] Abriendo httpbin.org.
+  5 [txt] Estás en la página de httpbin y este es el formulario para realizar tu pedido de pizza. Puedes completar tus datos de contacto, seleccionar los ingredientes y definir el horario de entrega antes de enviar el pedido.
+  6 [btn] Completar «Customer name:»  (Primera de 5 opciones.)
+  7 [btn] Completar «Telephone:»
+  8 [btn] Pulsar «Submit order»
+  9 [btn] Abrir «Customer name:»
+ 10 [btn] Otra cosa
+ 11 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 12 [btn] Enviar

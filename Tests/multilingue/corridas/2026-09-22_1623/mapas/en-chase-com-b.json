@@ -1,0 +1,690 @@
+[
+ {
+  "text": "Open side menu",
+  "kind": "button",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Open an account",
+  "kind": "button",
+  "region": "main",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Chase logo, links to Chase home",
+  "kind": "link",
+  "region": "header",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Sign in Opens overlay",
+  "kind": "link",
+  "region": "header",
+  "domain": "secure.chase.com",
+  "external": false,
+  "href": "https://secure.chase.com/"
+ },
+ {
+  "text": "checking account",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "personal.chase.com",
+  "external": false,
+  "href": "https://personal.chase.com/personal/checking"
+ },
+ {
+  "text": "Chase Total Checking ®",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/offers/total-checking-300"
+ },
+ {
+  "text": "Open a savings account",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "personal.chase.com",
+  "external": false,
+  "href": "https://personal.chase.com/personal/savings"
+ },
+ {
+  "text": "see interest rates",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/savings/bank-cd"
+ },
+ {
+  "text": "credit cards",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "creditcards.chase.com",
+  "external": false,
+  "href": "https://creditcards.chase.com/"
+ },
+ {
+  "text": "offer rewards",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "creditcards.chase.com",
+  "external": false,
+  "href": "https://creditcards.chase.com/rewards-credit-cards"
+ },
+ {
+  "text": "cash back",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "creditcards.chase.com",
+  "external": false,
+  "href": "https://creditcards.chase.com/cash-back-credit-cards"
+ },
+ {
+  "text": "free credit score",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/credit-cards/free-credit-score"
+ },
+ {
+  "text": "Buy a home",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/mortgage/mortgage-purchase"
+ },
+ {
+  "text": "refinance",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/mortgage/mortgage-refinance"
+ },
+ {
+  "text": "home equity line of credit (HELOC)",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/mortgage/refinance/equity"
+ },
+ {
+  "text": "today's mortgage rates",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/mortgage/mortgage-rates"
+ },
+ {
+  "text": "mortgage calculator",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/mortgage/calculators-resources/mortgage-calculator"
+ },
+ {
+  "text": "Education Center",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/mortgage/education/financing-a-home/heloc-draw-period"
+ },
+ {
+  "text": "mortgage preapproval",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/mortgage/mortgage-preapproval"
+ },
+ {
+  "text": "Chase Auto",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "autofinance.chase.com",
+  "external": false,
+  "href": "https://autofinance.chase.com/?offercode=WDXDPXXX02"
+ },
+ {
+  "text": "auto financing",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "autofinance.chase.com",
+  "external": false,
+  "href": "https://autofinance.chase.com/auto-finance/auto-loans?offercode=WDXDPXXX02"
+ },
+ {
+  "text": "payment calculator",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/auto/payment-calculator"
+ },
+ {
+  "text": "Chase Auto Education Center",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/auto/education?offercode=WDXDPXXX02"
+ },
+ {
+  "text": "Chase for Business",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/business"
+ },
+ {
+  "text": "business checking",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/business/banking/checking"
+ },
+ {
+  "text": "merchant services",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/business/payments"
+ },
+ {
+  "text": "small business loans",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/business/banking/loans"
+ },
+ {
+  "text": "business credit cards",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "creditcards.chase.com",
+  "external": false,
+  "href": "https://creditcards.chase.com/business-credit-cards"
+ },
+ {
+  "text": "business resource center",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/business/knowledge-center"
+ },
+ {
+  "text": "Chase Experiences",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/events/experiences"
+ },
+ {
+  "text": "US Open",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/events/us-open"
+ },
+ {
+  "text": "Madison Square Garden",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "msg.com",
+  "external": true,
+  "href": "https://www.msg.com/"
+ },
+ {
+  "text": "Chase Center",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/events/chase-center"
+ },
+ {
+  "text": "suite of security features",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/privacy-security"
+ },
+ {
+  "text": "help you protect",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/privacy-security/security/how-you-can-protect"
+ },
+ {
+  "text": "protect you",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/privacy-security/security/how-we-protect-you"
+ },
+ {
+  "text": "financial abuse",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/privacy-security/financial-abuse"
+ },
+ {
+  "text": "learn about the common tricks scammers are using",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/privacy-security/security/how-to-spot-scams"
+ },
+ {
+  "text": "report fraud",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/privacy-security/security/report-fraud"
+ },
+ {
+  "text": "Chase online",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Banking Education Center",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/banking/education"
+ },
+ {
+  "text": "Chase customer service",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/customer-service"
+ },
+ {
+  "text": "Chase complaints and feedback",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/complaints-feedback"
+ },
+ {
+  "text": "Chase Community Reinvestment Act Public File",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/about-chase/cra-public-file"
+ },
+ {
+  "text": "Invest on your own",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/investments/offers-700"
+ },
+ {
+  "text": "work with an advisor",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/investments/advisor-services"
+ },
+ {
+  "text": "products",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/investments/product-overview"
+ },
+ {
+  "text": "technology",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/investments/digital-capabilities"
+ },
+ {
+  "text": "investment education",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/investments/learning-and-insights"
+ },
+ {
+  "text": "Wealth Management Branch",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "jpmorganwealthmanagement.chase.com",
+  "external": false,
+  "href": "https://jpmorganwealthmanagement.chase.com/advisor"
+ },
+ {
+  "text": "features",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/investments/online-investing/self-directed/investing-features"
+ },
+ {
+  "text": "no everyday banking fees",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/checking/private-client#personalized-financial-relationship"
+ },
+ {
+  "text": "dedicated team",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/checking/private-client/team"
+ },
+ {
+  "text": "special perks and benefits",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/checking/private-client/perks"
+ },
+ {
+  "text": "Chase branch",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/locator"
+ },
+ {
+  "text": "Deposit Account Agreements",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/branch-disclosures"
+ },
+ {
+  "text": "Mobile Banking",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/mobile-banking"
+ },
+ {
+  "text": "Online Banking",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/online-banking"
+ },
+ {
+  "text": "Student Center",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/financial-goals/life-moments"
+ },
+ {
+  "text": "Zelle®",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/zelle"
+ },
+ {
+  "text": "Facebook",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "facebook.com",
+  "external": true,
+  "href": "https://www.facebook.com/chase"
+ },
+ {
+  "text": "Instagram",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "instagram.com",
+  "external": true,
+  "href": "https://instagram.com/chase"
+ },
+ {
+  "text": "X, formerly Twitter",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "twitter.com",
+  "external": true,
+  "href": "https://twitter.com/Chase"
+ },
+ {
+  "text": "YouTube",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "youtube.com",
+  "external": true,
+  "href": "https://www.youtube.com/chase"
+ },
+ {
+  "text": "LinkedIn",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "linkedin.com",
+  "external": true,
+  "href": "https://www.linkedin.com/company/chase?trk=company_logo"
+ },
+ {
+  "text": "Pinterest",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "pinterest.com",
+  "external": true,
+  "href": "https://www.pinterest.com/chase/"
+ },
+ {
+  "text": "J.P. Morgan",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "jpmorgan.com",
+  "external": true,
+  "href": "https://www.jpmorgan.com/global"
+ },
+ {
+  "text": "JPMorganChase",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "jpmorganchase.com",
+  "external": true,
+  "href": "https://www.jpmorganchase.com/"
+ },
+ {
+  "text": "Media Center",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "media.chase.com",
+  "external": false,
+  "href": "https://media.chase.com/"
+ },
+ {
+  "text": "Careers",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "careers.jpmorgan.com",
+  "external": true,
+  "href": "https://careers.jpmorgan.com/US/en/chase"
+ },
+ {
+  "text": "Site Map",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/sitemap"
+ },
+ {
+  "text": "Privacy",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/privacy-security/privacy/online-privacy-policy"
+ },
+ {
+  "text": "Terms of Use",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/terms-of-use"
+ },
+ {
+  "text": "Accessibility",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/digital/resources/accessibility"
+ },
+ {
+  "text": "AdChoices",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "optout.aboutads.info",
+  "external": true,
+  "href": "https://optout.aboutads.info/?c=2&lang=EN"
+ },
+ {
+  "text": "Give feedback",
+  "kind": "link",
+  "region": "contentinfo",
+  "domain": "survey.experience.chase.com",
+  "external": false,
+  "href": "https://survey.experience.chase.com/jfe/form/SV_0rBuvmGXX6OhYEJ"
+ },
+ {
+  "text": "Open an account",
+  "kind": "link",
+  "region": "main",
+  "domain": "account.chase.com",
+  "external": false,
+  "href": "https://account.chase.com/consumer/banking/seo?jp_aid_a=T_90462&jp_aid_p=chasehome_3/hero"
+ },
+ {
+  "text": "Credit cards",
+  "kind": "link",
+  "region": "main",
+  "domain": "creditcards.chase.com",
+  "external": false,
+  "href": "https://creditcards.chase.com/?CELL=6TKX"
+ },
+ {
+  "text": "Travel",
+  "kind": "link",
+  "region": "main",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/travel"
+ },
+ {
+  "text": "Savings",
+  "kind": "link",
+  "region": "main",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/savings"
+ },
+ {
+  "text": "Home loans",
+  "kind": "link",
+  "region": "main",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/mortgage"
+ },
+ {
+  "text": "Auto",
+  "kind": "link",
+  "region": "main",
+  "domain": "autofinance.chase.com",
+  "external": false,
+  "href": "https://autofinance.chase.com/auto-finance/home?offercode=WDXDPXXX01"
+ },
+ {
+  "text": "Investing",
+  "kind": "link",
+  "region": "main",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/personal/investments"
+ },
+ {
+  "text": "Commercial",
+  "kind": "link",
+  "region": "main",
+  "domain": "jpmorgan.com",
+  "external": true,
+  "href": "https://www.jpmorgan.com/commercial-banking"
+ },
+ {
+  "text": "Schedule a meeting",
+  "kind": "link",
+  "region": "main",
+  "domain": "chase.com",
+  "external": false,
+  "href": "https://www.chase.com/meeting-scheduler/getstarted"
+ },
+ {
+  "text": "Chase Credit Cards. See if you’re preapproved. Learn which Chase Credit Cards you’re preapproved for in just a few momen",
+  "kind": "link",
+  "region": "main",
+  "domain": "secure.chase.com",
+  "external": false,
+  "href": "https://secure.chase.com/web/oao/application/card?cfgCode=PREAPPROVEDCONCC_REACT&flowVersion=REACT&cellCode=6MP6&jp_aid_a=T_88267&jp_aid_p=chasehome_3/trip1#/origination/preapproved/index/index"
+ }
+]

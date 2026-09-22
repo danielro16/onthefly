@@ -1,0 +1,25 @@
+{"tipo": "botones", "t": 1790110617.2968311, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"pais": "AR", "tipo": "ubicacion", "t": 1790110617.521065}
+{"pais": "AR", "tipo": "ubicacion", "t": 1790110617.521367}
+{"t": 1790110623.873261, "quien": "persona", "texto": "httpbin.org/forms/post", "tipo": "turno"}
+{"tipo": "botones", "opciones": [], "t": 1790110623.874034}
+{"t": 1790110623.874174, "quien": "jef", "texto": "Abriendo httpbin.org.", "tipo": "turno"}
+{"t": 1790110623.874335, "texto": "Abriendo httpbin.org.", "tipo": "voz", "cola": false}
+{"tipo": "botones", "t": 1790110623.902285, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"texto": "PÁGINA: httpbin.org — Inicio\n\nCONTENIDO DE LA PÁGINA (esto es a lo que la persona vino):\nFORMULARIO que pide: Customer name:, Telephone:, E-mail address:, Pizza Size, Bacon, Extra Cheese, Onion, Mushroom, Preferred delivery time:, Delivery instructions: — botón «Submit order»", "t": 1790110626.321501, "titulo": "", "tipo": "pagina", "url": "https://httpbin.org/forms/post"}
+{"t": 1790110626.321724, "opciones": [], "tipo": "botones"}
+{"tipo": "ruido", "url": "https://httpbin.org/forms/post", "elementos": [], "t": 1790110627.469624}
+{"tipo": "turno", "quien": "jef", "texto": "Estás en el formulario de pedido de pizza, donde podés completar tus datos personales, elegir el tamaño, los ingredientes y el horario de entrega antes de confirmar la orden.", "t": 1790110627.469981}
+{"cola": true, "tipo": "voz", "texto": "Estás en el formulario de pedido de pizza, donde podés completar tus datos personales, elegir el tamaño, los ingredientes y el horario de entrega antes de confirmar la orden.", "t": 1790110627.47048}
+{"tipo": "botones", "t": 1790110627.470814, "opciones": ["Abrir «Customer name:»"]}
+{"opciones": ["Completar «Customer name:»", "Completar «Telephone:»", "Pulsar «Submit order»", "Abrir «Customer name:»", "Otra cosa"], "tipo": "botones", "t": 1790110627.471307}
+{"tipo": "turno", "t": 1790110635.708817, "quien": "persona", "texto": "poné Juan en el nombre y mandá el pedido"}
+{"t": 1790110635.709046, "opciones": [], "tipo": "botones"}
+{"then": "enviar", "accion": "completar", "question": "", "tipo": "decision", "rest": "", "target": "", "reference": "", "control": "1", "t": 1790110637.003268}
+{"quien": "jef", "t": 1790110637.717493, "texto": "Listo, escrito en Customer name:.", "tipo": "turno"}
+{"t": 1790110637.718484, "cola": false, "texto": "Listo, escrito en Customer name:.", "tipo": "voz"}
+{"t": 1790110638.459892, "tipo": "compromete", "p": "0.87", "boton": "Submit order"}
+{"quien": "jef", "t": 1790110638.460669, "tipo": "turno", "texto": "«Submit order» puede confirmar algo: queda abajo, para tocarlo."}
+{"t": 1790110638.461088, "tipo": "voz", "cola": true, "texto": "«Submit order» puede confirmar algo: queda abajo, para tocarlo."}
+{"tipo": "botones", "t": 1790110638.461244, "opciones": ["Pulsar «Submit order»"]}
+{"tipo": "botones", "t": 1790110638.461571, "opciones": ["Completar «Telephone:»", "Completar «E-mail address:»", "Pulsar «Submit order»", "Otra cosa"]}

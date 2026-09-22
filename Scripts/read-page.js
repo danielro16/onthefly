@@ -9,6 +9,7 @@
  *
  *   ./Scripts/read-page.js https://www.lanacion.com.ar
  *   ./Scripts/read-page.js https://... --json /tmp/pagina.json
+ *   ./Scripts/read-page.js https://www.lemonde.fr --locale fr-FR
  *   ./Scripts/read-page.js --all          # una línea por sitio de Tests/sites.txt
  *
  * `--all` es la red de regresión: cada arreglo del extractor es una regla
@@ -47,12 +48,12 @@ function loadPlaywright() {
   process.exit(2);
 }
 
-async function read(browser, url, waitMs) {
+async function read(browser, url, waitMs, locale) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
     isMobile: true,
     hasTouch: true,
-    locale: "es-AR",
+    locale,
     userAgent: IPHONE,
     // En la app el extractor entra como WKUserScript, que el CSP de la página
     // no bloquea. Acá entra por addScriptTag, que sí: sin esto DuckDuckGo
@@ -163,12 +164,14 @@ function print(payload) {
   const args = process.argv.slice(2);
   const flag = (name) => { const i = args.indexOf(name); return i === -1 ? null : args[i + 1]; };
   const waitMs = parseInt(flag("--wait") || "4000", 10);
+  // El idioma y el país con que se pide la página: el de la persona.
+  const locale = flag("--locale") || "es-AR";
   const all = args.includes("--all");
   const urls = all
     ? fs.readFileSync(SITES, "utf8").split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#"))
-    : args.filter((a, i) => !a.startsWith("--") && !(i > 0 && ["--json", "--wait"].includes(args[i - 1])));
+    : args.filter((a, i) => !a.startsWith("--") && !(i > 0 && ["--json", "--wait", "--locale"].includes(args[i - 1])));
   if (!urls.length) {
-    console.error("Uso: read-page.js <url> [--json archivo] [--wait ms]  |  read-page.js --all");
+    console.error("Uso: read-page.js <url> [--json archivo] [--wait ms] [--locale xx-YY]  |  read-page.js --all");
     process.exit(2);
   }
 
@@ -178,7 +181,7 @@ function print(payload) {
   try {
     for (const url of urls) {
       try {
-        const { payload, headlines } = await read(browser, url, waitMs);
+        const { payload, headlines } = await read(browser, url, waitMs, locale);
         console.log(summary(url, payload, headlines));
         if (!payload.ok) failed++;
         if (!all && payload.ok) print(payload);

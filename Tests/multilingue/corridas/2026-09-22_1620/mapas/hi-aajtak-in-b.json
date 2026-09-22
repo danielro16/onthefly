@@ -1,0 +1,1922 @@
+[
+ {
+  "text": "मेन्यू",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Later",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Allow",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Next slide",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Previous slide",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "Play",
+  "kind": "button",
+  "region": "body",
+  "domain": "",
+  "external": false,
+  "href": ""
+ },
+ {
+  "text": "About us",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatodaygroup.com",
+  "external": true,
+  "href": "https://www.indiatodaygroup.com/about-us.php"
+ },
+ {
+  "text": "Contact us",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatodaygroup.com",
+  "external": true,
+  "href": "https://www.indiatodaygroup.com/contact.php"
+ },
+ {
+  "text": "Advertise with us",
+  "kind": "link",
+  "region": "footer",
+  "domain": "specials.indiatoday.com",
+  "external": true,
+  "href": "https://specials.indiatoday.com/specials/popup/advertisewithus.htm"
+ },
+ {
+  "text": "Complaint Redressal",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/complain-redressal"
+ },
+ {
+  "text": "Investors",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/investor"
+ },
+ {
+  "text": "Rate Card",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/rate-card"
+ },
+ {
+  "text": "Privacy Policy",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatodaygroup.com",
+  "external": true,
+  "href": "https://www.indiatodaygroup.com/privacy-policy.html"
+ },
+ {
+  "text": "Terms and Conditions",
+  "kind": "link",
+  "region": "footer",
+  "domain": "specials.indiatoday.com",
+  "external": true,
+  "href": "https://specials.indiatoday.com/common/termsandconditions.phtml"
+ },
+ {
+  "text": "Correction Policy",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/fact-check/correction-policy"
+ },
+ {
+  "text": "Press Releases",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/prnewswire/prnewswire.html"
+ },
+ {
+  "text": "T&Cs for AajTak HD Contest",
+  "kind": "link",
+  "region": "footer",
+  "domain": "akm-img-a-in.tosshub.com",
+  "external": true,
+  "href": "https://akm-img-a-in.tosshub.com/aajtak/resource/smedia2/AT-HD-Media-Planners-Contest-T%26Cs-TVTN.pdf"
+ },
+ {
+  "text": "Vasant Valley",
+  "kind": "link",
+  "region": "footer",
+  "domain": "vasantvalley.org",
+  "external": true,
+  "href": "https://www.vasantvalley.org/"
+ },
+ {
+  "text": "India Today Education",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatoday.in",
+  "external": true,
+  "href": "https://www.indiatoday.in/education-today"
+ },
+ {
+  "text": "ITMI",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatoday.in",
+  "external": true,
+  "href": "https://www.indiatoday.in/itmi/"
+ },
+ {
+  "text": "Campus National Aptitude test",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtakcampus.in",
+  "external": true,
+  "href": "https://www.aajtakcampus.in/"
+ },
+ {
+  "text": "India Today Diaries",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatodaygroup.com",
+  "external": true,
+  "href": "https://www.indiatodaygroup.com/"
+ },
+ {
+  "text": "Thomson Press",
+  "kind": "link",
+  "region": "footer",
+  "domain": "thomsonpress.com",
+  "external": true,
+  "href": "https://www.thomsonpress.com/"
+ },
+ {
+  "text": "Cosmopolitan",
+  "kind": "link",
+  "region": "footer",
+  "domain": "cosmopolitan.in",
+  "external": true,
+  "href": "https://www.cosmopolitan.in/"
+ },
+ {
+  "text": "Reader's Digest",
+  "kind": "link",
+  "region": "footer",
+  "domain": "subscriptions.intoday.in",
+  "external": true,
+  "href": "https://subscriptions.intoday.in/readersdigest?utm_source=rdsubv1"
+ },
+ {
+  "text": "Music Today",
+  "kind": "link",
+  "region": "footer",
+  "domain": "musictoday.in",
+  "external": true,
+  "href": "https://www.musictoday.in/"
+ },
+ {
+  "text": "Time",
+  "kind": "link",
+  "region": "footer",
+  "domain": "subscriptions.intoday.in",
+  "external": true,
+  "href": "https://subscriptions.intoday.in/time?utm_source=ATWebsite"
+ },
+ {
+  "text": "Gadgets & Gizmos",
+  "kind": "link",
+  "region": "footer",
+  "domain": "subscriptions.intoday.in",
+  "external": true,
+  "href": "https://subscriptions.intoday.in/"
+ },
+ {
+  "text": "Sahitya Aaj Tak",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sahitya-aajtak/2024"
+ },
+ {
+  "text": "Agenda Aajtak",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/agenda-aajtak/2024"
+ },
+ {
+  "text": "India Today Conclave",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatodayconclave.com",
+  "external": true,
+  "href": "https://www.indiatodayconclave.com/"
+ },
+ {
+  "text": "India Today Woman's Summit",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatoday.in",
+  "external": true,
+  "href": "https://www.indiatoday.in/india-today-woman-summit"
+ },
+ {
+  "text": "India Today Youth Summit",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatoday.in",
+  "external": true,
+  "href": "https://www.indiatoday.in/mind-rocks-2017-delhi"
+ },
+ {
+  "text": "State Of The States Conclave",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatoday.in",
+  "external": true,
+  "href": "https://www.indiatoday.in/state-of-the-states/2016"
+ },
+ {
+  "text": "India Today Education Summit",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiatoday.in",
+  "external": true,
+  "href": "https://www.indiatoday.in/educationsummit"
+ },
+ {
+  "text": "Care Today",
+  "kind": "link",
+  "region": "footer",
+  "domain": "caretoday.in",
+  "external": true,
+  "href": "https://www.caretoday.in/"
+ },
+ {
+  "text": "India Content",
+  "kind": "link",
+  "region": "footer",
+  "domain": "indiacontent.in",
+  "external": true,
+  "href": "https://www.indiacontent.in/"
+ },
+ {
+  "text": "Headline Today",
+  "kind": "link",
+  "region": "footer",
+  "domain": "headlinestoday.in",
+  "external": true,
+  "href": "https://www.headlinestoday.in/"
+ },
+ {
+  "text": "Lucknow Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/uttar-pradesh/lucknow-choghadiya-today"
+ },
+ {
+  "text": "Kanpur Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/uttar-pradesh/kanpur-choghadiya-today"
+ },
+ {
+  "text": "Varanasi Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/uttar-pradesh/varanasi-choghadiya-today"
+ },
+ {
+  "text": "Dhanbad Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/jharkhand/dhanbad-choghadiya-today"
+ },
+ {
+  "text": "Siliguri Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/west-bengal/siliguri-choghadiya-today"
+ },
+ {
+  "text": "Bhopal Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/madhya-pradesh/bhopal-choghadiya-today"
+ },
+ {
+  "text": "Panipat Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/haryana/panipat-choghadiya-today"
+ },
+ {
+  "text": "Shimla Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/himachal-pradesh/shimla-choghadiya-today"
+ },
+ {
+  "text": "Chennai Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "http://aajtak.in/astrology/choghadiya/tamil-nadu/chennai-choghadiya-today"
+ },
+ {
+  "text": "Noida Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/uttar-pradesh/noida-choghadiya-today"
+ },
+ {
+  "text": "New Delhi Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/delhi/new-delhi-choghadiya-today"
+ },
+ {
+  "text": "Ahmedabad Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/gujarat/ahmedabad-choghadiya-today"
+ },
+ {
+  "text": "Mumbai Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/maharashtra/mumbai-choghadiya-today"
+ },
+ {
+  "text": "Jammu Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/jammu-and-kashmir/jammu-choghadiya-today"
+ },
+ {
+  "text": "Ghaziabad Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/uttar-pradesh/ghaziabad-choghadiya-today"
+ },
+ {
+  "text": "Guwahati Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/assam/guwahati-choghadiya-today"
+ },
+ {
+  "text": "Bhubaneswar Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/odisha/bhubaneswar-choghadiya-today"
+ },
+ {
+  "text": "Panaji Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/goa/panaji-choghadiya-today"
+ },
+ {
+  "text": "Jaipur Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/rajasthan/jaipur-choghadiya-today"
+ },
+ {
+  "text": "Hyderabad Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/telangana/hyderabad-choghadiya-today"
+ },
+ {
+  "text": "Bangalore Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/karnataka/bangalore-choghadiya-today"
+ },
+ {
+  "text": "Ranchi Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/jharkhand/ranchi-choghadiya-today"
+ },
+ {
+  "text": "Patna Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/bihar/patna-choghadiya-today"
+ },
+ {
+  "text": "Kolkata Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/west-bengal/kolkata-choghadiya-today"
+ },
+ {
+  "text": "Faridabad Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/haryana/faridabad-choghadiya-today"
+ },
+ {
+  "text": "Gurgaon Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/haryana/gurgaon-choghadiya-today"
+ },
+ {
+  "text": "Sitamarhi Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/bihar/sitamarhi-choghadiya-today"
+ },
+ {
+  "text": "Gaya Choghadiya",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/astrology/choghadiya/bihar/gaya-choghadiya-today"
+ },
+ {
+  "text": "iPhone 18",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/iphone"
+ },
+ {
+  "text": "Shri Krishna Chalisa",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/chalisa/shri-krishna-chalisa-2450443"
+ },
+ {
+  "text": "Shri Krishna Aarti",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/aarti/shri-krishna-aarti-2450462"
+ },
+ {
+  "text": "Hanuman Chalisa",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/chalisa/hanuman-chalisa-2445187"
+ },
+ {
+  "text": "Shiv Chalisa",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/chalisa/shri-shiva-chalisa-2478988"
+ },
+ {
+  "text": "Maa Gauri Chalisa",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/chalisa/maa-gauri-chalisa-2577106"
+ },
+ {
+  "text": "Maa Gauri Aarti",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/aarti/maa-gauri-aarti-2577140"
+ },
+ {
+  "text": "Durga Chalisa",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/chalisa/durga-chalisa-2443793"
+ },
+ {
+  "text": "Ganesh Chalisa",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/chalisa/ganesh-chalisa-2442933"
+ },
+ {
+  "text": "Shri Ganga Chalisa",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/chalisa/shri-ganga-chalisa-2450469"
+ },
+ {
+  "text": "Shri Ganga Aarti",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/aarti/shri-ganga-aarti-2450477"
+ },
+ {
+  "text": "Kalaratri Mata Ki Aarti",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/aarti/kalaratri-mata-ki-aarti-2502311"
+ },
+ {
+  "text": "Maa Chandraghanta Aarti",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/vrat-katha/chandraghanta-mata-aarti-2501340"
+ },
+ {
+  "text": "Maa Brahmacharini Aarti",
+  "kind": "link",
+  "region": "footer",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/aarti/brahmacharini-ji-ki-aarti-2501272"
+ },
+ {
+  "text": "Aaj Tak TV is now live in the USA. Click here to watch.",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/livetv?utm_source=topglobalnavigation&utm_medium=USLiveTVLink&utm_campaign=Live_TV_ticker"
+ },
+ {
+  "text": "ई-पेपर",
+  "kind": "link",
+  "region": "body",
+  "domain": "epaper.aajtak.in",
+  "external": false,
+  "href": "https://epaper.aajtak.in/?utm_source=Global+header&utm_medium=referral&utm_campaign=epaper"
+ },
+ {
+  "text": "বাংলা",
+  "kind": "link",
+  "region": "body",
+  "domain": "bangla.aajtak.in",
+  "external": false,
+  "href": "https://bangla.aajtak.in/"
+ },
+ {
+  "text": "India Today",
+  "kind": "link",
+  "region": "body",
+  "domain": "indiatoday.in",
+  "external": true,
+  "href": "https://www.indiatoday.in/"
+ },
+ {
+  "text": "इंडिया टुडे हिंदी",
+  "kind": "link",
+  "region": "body",
+  "domain": "indiatodayhindi.com",
+  "external": true,
+  "href": "https://www.indiatodayhindi.com/"
+ },
+ {
+  "text": "GNTTV",
+  "kind": "link",
+  "region": "body",
+  "domain": "gnttv.com",
+  "external": true,
+  "href": "https://www.gnttv.com/"
+ },
+ {
+  "text": "Malayalam",
+  "kind": "link",
+  "region": "body",
+  "domain": "malayalam.indiatoday.in",
+  "external": true,
+  "href": "https://malayalam.indiatoday.in/"
+ },
+ {
+  "text": "Business Today",
+  "kind": "link",
+  "region": "body",
+  "domain": "businesstoday.in",
+  "external": true,
+  "href": "https://www.businesstoday.in/"
+ },
+ {
+  "text": "Lallantop",
+  "kind": "link",
+  "region": "body",
+  "domain": "thelallantop.com",
+  "external": true,
+  "href": "https://www.thelallantop.com/"
+ },
+ {
+  "text": "NewsTak",
+  "kind": "link",
+  "region": "body",
+  "domain": "newstak.in",
+  "external": true,
+  "href": "https://www.newstak.in/"
+ },
+ {
+  "text": "UPTak",
+  "kind": "link",
+  "region": "body",
+  "domain": "uptak.in",
+  "external": true,
+  "href": "https://www.uptak.in/"
+ },
+ {
+  "text": "Sports Tak",
+  "kind": "link",
+  "region": "body",
+  "domain": "thesportstak.com",
+  "external": true,
+  "href": "https://thesportstak.com/"
+ },
+ {
+  "text": "KisanTak",
+  "kind": "link",
+  "region": "body",
+  "domain": "kisantak.in",
+  "external": true,
+  "href": "https://www.kisantak.in/"
+ },
+ {
+  "text": "MumbaiTak",
+  "kind": "link",
+  "region": "body",
+  "domain": "mumbaitak.in",
+  "external": true,
+  "href": "https://www.mumbaitak.in/"
+ },
+ {
+  "text": "BT Bazaar",
+  "kind": "link",
+  "region": "body",
+  "domain": "bazaar.businesstoday.in",
+  "external": true,
+  "href": "https://bazaar.businesstoday.in/"
+ },
+ {
+  "text": "Harper's Bazaar",
+  "kind": "link",
+  "region": "body",
+  "domain": "harpersbazaar.in",
+  "external": true,
+  "href": "https://www.harpersbazaar.in/"
+ },
+ {
+  "text": "Northeast",
+  "kind": "link",
+  "region": "body",
+  "domain": "indiatodayne.in",
+  "external": true,
+  "href": "https://www.indiatodayne.in/"
+ },
+ {
+  "text": "Brides Today",
+  "kind": "link",
+  "region": "body",
+  "domain": "bridestoday.in",
+  "external": true,
+  "href": "https://www.bridestoday.in/"
+ },
+ {
+  "text": "Reader’s Digest",
+  "kind": "link",
+  "region": "body",
+  "domain": "readersdigest.in",
+  "external": true,
+  "href": "https://www.readersdigest.in/"
+ },
+ {
+  "text": "Astro Tak",
+  "kind": "link",
+  "region": "body",
+  "domain": "astrotak.com",
+  "external": true,
+  "href": "https://www.astrotak.com/"
+ },
+ {
+  "text": "Pakwan Gali",
+  "kind": "link",
+  "region": "body",
+  "domain": "pakwangali.in",
+  "external": true,
+  "href": "https://www.pakwangali.in/?utm_source=aajtak_header&utm_medium=referral&utm_campaign=pakwan_gali"
+ },
+ {
+  "text": "aaj tak epaper in hindi",
+  "kind": "link",
+  "region": "body",
+  "domain": "epaper.aajtak.in",
+  "external": false,
+  "href": "https://epaper.aajtak.in/?utm_source=Menu+Icon&utm_medium=referral&utm_campaign=epaper"
+ },
+ {
+  "text": "Aajtak podcast",
+  "kind": "link",
+  "region": "body",
+  "domain": "podcasts.aajtak.in",
+  "external": false,
+  "href": "https://podcasts.aajtak.in/"
+ },
+ {
+  "text": "विटकॉफ से मिले ईरानी विदेश मंत्री अराघची, होर्मुज खोलने के लिए रखीं सख्त शर्तें",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/breakingnews/story/latest-breaking-news-in-hindi-23-september-2026-ntc-drmt-2650390-2026-09-23"
+ },
+ {
+  "text": "AajTak Hindi News as prefer us Source",
+  "kind": "link",
+  "region": "body",
+  "domain": "intdy.in",
+  "external": true,
+  "href": "https://intdy.in/atpref"
+ },
+ {
+  "text": "Follow us on",
+  "kind": "link",
+  "region": "body",
+  "domain": "intdy.in",
+  "external": true,
+  "href": "https://intdy.in/atgpro"
+ },
+ {
+  "text": "उठो अनारकली",
+  "kind": "link",
+  "region": "body",
+  "domain": "epaper.aajtak.in",
+  "external": false,
+  "href": "https://epaper.aajtak.in/2026-09-22/page-7/sports/29644/anarkali"
+ },
+ {
+  "text": "एशियन गेम्स",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/asian-games"
+ },
+ {
+  "text": "डोनाल्ड ट्रंप",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/donald-trump"
+ },
+ {
+  "text": "राष्ट्रीय फिल्म पुरस्कार",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/national-film-award"
+ },
+ {
+  "text": "जमुई कांड",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/jamui"
+ },
+ {
+  "text": "पीएम मोदी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/narendra-modi"
+ },
+ {
+  "text": "स्मृति मंधाना",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/smriti-mandhana"
+ },
+ {
+  "text": "IIT बॉम्बे",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/iit"
+ },
+ {
+  "text": "श्री वामन देव जी की आरती",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/aarti/shri-vaman-aarti-2650004"
+ },
+ {
+  "text": "परिवर्तिनी एकादशी व्रत कथा",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/vrat-katha/parivartini-ekadashi-vrat-katha-2649114"
+ },
+ {
+  "text": "राहुल गांधी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/rahul-gandhi"
+ },
+ {
+  "text": "परिवर्तिनी एकादशी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/search/parivartini-ekadashi"
+ },
+ {
+  "text": "ईरान",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/iran"
+ },
+ {
+  "text": "श्री गणेश जी आरती",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/aarti/ganesh-ji-ki-aarti-2437167"
+ },
+ {
+  "text": "हनुमान अंश",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/hanuman-ansh"
+ },
+ {
+  "text": "बिग बॉस",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/bigg-boss"
+ },
+ {
+  "text": "ममता बनर्जी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/mamta-banerjee"
+ },
+ {
+  "text": "दिशा सालियान",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/disha-salian"
+ },
+ {
+  "text": "यूपीआई",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/upi"
+ },
+ {
+  "text": "नेपाल बाढ़",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/nepal"
+ },
+ {
+  "text": "व्लादिमीर पुतिन",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/vladimir-putin"
+ },
+ {
+  "text": "स्ट्रेट ऑफ होर्मुज",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/strait-of-hormuz"
+ },
+ {
+  "text": "आईफोन डुओ",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/iphone-ultra-fold"
+ },
+ {
+  "text": "अखिलेश यादव",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/akhilesh-yadav"
+ },
+ {
+  "text": "जीडीपी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/gdp"
+ },
+ {
+  "text": "योगी आदित्यनाथ",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/yogi-adityanath"
+ },
+ {
+  "text": "सोलह सोमवार व्रत कथा",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/vrat-katha/solah-somvar-vrat-katha-2444301"
+ },
+ {
+  "text": "अमित शाह",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/amit-shah"
+ },
+ {
+  "text": "राम मंदिर",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/topic/ram-mandir"
+ },
+ {
+  "text": "पॉपुलर शो",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes"
+ },
+ {
+  "text": "21:59, शम्स ताहिर खान, चेतन से शादी के 2 महीने बाद स‍िया ने केतन से की थी सगाई? देखें वारदात",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/vardaat/video/pune-ketan-agarwal-murder-case-police-chargesheet-suspect-secret-marriage-of-siya-and-chetan-ytvd-2649973-2026-09-22"
+ },
+ {
+  "text": "44:28, अंजना ओम कश्यप, कॉलेजों में क्यों बढ़ रहे छात्रों के सुसाइड के मामले? देखें ब्लैक & व्हाइट",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/black-and-white/video/iit-bombay-suicide-reason-sahil-wakode-professor-surya-narayan-dulla-students-stress-vdot-2649439-2026-09-21"
+ },
+ {
+  "text": "23:58, राजीव ढौंडियाल, 2027 के चुनाव से पहले CM योगी ने चल दिया 'रोजगार' वाला दांव? देखें 7 तक",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/video/up-police-appointment-letters-distribution-cm-yogi-adityanath-assembly-election-2027-vdot-2648404-2026-09-20"
+ },
+ {
+  "text": "44:37, अंजना ओम कश्यप, हामिद अंसारी ने अपने बयान से क्या हिंदुओं का किया 'अपमान'? देखें हल्ला बोल",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/halla-bol/video/hamid-ansari-statement-controversy-hindu-right-wing-communalism-bjp-congress-vdot-2649356-2026-09-21"
+ },
+ {
+  "text": "47:48, साहिल जोशी, IIT बॉम्बे के साहिल सुसाइड केस में क्या SC/ST एक्ट सही? देखें दंगल",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/dangal/video/iit-mumbai-sahil-wakode-suicide-case-sc-st-act-against-accused-professor-vdoj-2650269-2026-09-22"
+ },
+ {
+  "text": "यूएस टॉप 10",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/world/us-top-10"
+ },
+ {
+  "text": "पंजाब आजतक",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/punjab-aajtak"
+ },
+ {
+  "text": "गुजरात आजतक",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/gujarat-aajtak"
+ },
+ {
+  "text": "मूवी मसाला",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/movie-masala"
+ },
+ {
+  "text": "दिल्ली: आनंद पर्वत में युवक की चाकू गोदकर हत्या, पुरानी रंजिश का शक",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/delhi/story/delhi-anand-parvat-18-year-old-kunal-dhingra-stabbed-to-death-cctv-ntc-drmt-rpti-2650393-2026-09-23"
+ },
+ {
+  "text": "मैथिली ठाकुर ने जमुई कांड पर नहीं दिया 'महिला सुरक्षा' पर ये बयान, पुराना है वीडियो",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/superfast?utm_source=Superfast_Internal&utm_medium=Home_page&utm_campaign=tracking"
+ },
+ {
+  "text": "और भी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/fact-check/story/fact-check-maithili-thakur-viral-video-on-jamui-harrasment-case-old-statement-ntc-drmt-rptc-2650392-2026-09-23"
+ },
+ {
+  "text": "राजस्थान: कांग्रेस की फिर करारी हार, 7 में से 6 निगम पर बने BJP के डिप्टी मेयर",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/rajasthan/story/rajasthan-local-body-elections-results-bjp-wins-6-seats-deputy-mayor-congress-ntc-drmt-rptc-2650384-2026-09-22"
+ },
+ {
+  "text": "घर में पूजा कराने आए 2 पंडितों समेत पत्नी की गोली मारकर हत्या, पुलिस ने आरोपी को दबोचा",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/uttar-pradesh/story/azamgarh-triple-murder-firing-during-puja-shambhupur-village-lclar-strc-2650352-2026-09-22"
+ },
+ {
+  "text": "कश्मीर पर तुर्की ने फिर अड़ाई टांग, UN में उठाया मुद्दा",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/world/story/turkey-president-erdogan-raises-kashmir-issue-at-un-general-assembly-ntc-acwi-dskc-2650371-2026-09-22"
+ },
+ {
+  "text": "10 Leak न्यूड क्लिप! ड्राइवर तक ने देखी, एक्ट्रेस ने उठाया ये कदम",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/entertainment/bollywood-news/photo/radhika-apte-on-anurag-kashyap-leaked-intimate-nude-clip-lands-her-in-trouble-locked-herself-petrified-tmova-2650337-2026-09-22"
+ },
+ {
+  "text": "डेढ़ किलो सोना और पांच किलो चांदी हवन में स्वाहा? MP में अद्भुत यज्ञ",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/madhya-pradesh/story/raisen-udaipura-dada-dhuni-darbar-grand-yagya-sant-shivanand-maharaj-world-record-lcln-strc-2650361-2026-09-22"
+ },
+ {
+  "text": "सरकार से बातचीत निकली बेनतीजा, 3 दिन की हड़ताल पर अड़े बैंक कर्मचारी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/business/story/bank-unions-strike-september-five-day-banking-pension-reform-ntc-acwi-dskc-2650363-2026-09-22"
+ },
+ {
+  "text": "मंगल-गुरु की युति से बना नीचभंग राजयोग, अक्टूबर में 4 राशियों को धन लाभ",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/news/story/mangal-guru-neechbhang-rajyog-2026-rashifal-lucky-zodiac-signs-predictions-in-hindi-vrishabh-kanya-dhanu-kumbh-tvisu-dskc-2650357-2026-09-22"
+ },
+ {
+  "text": "शॉर्ट वीडियो",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos"
+ },
+ {
+  "text": "जमुई मामले में गमछे के रंग पर सियासी बयानबाज़ी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/jamui-case-tejashwi-yadav-bjp-gamcha-politics-bihar-police-investigation-details-mmtm-2650355-2026-09-22"
+ },
+ {
+  "text": "रानी के दुख में साथ खड़े रहे SRK, मां को दी अंतिम विदाई",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/rani-mukerji-mother-krishna-mukerji-funeral-shah-rukh-khan-many-celebs-present-mmtm-2650354-2026-09-22"
+ },
+ {
+  "text": "72वें नेशनल फिल्म अवॉर्ड्स में यामी गौतम का जलवा",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/yami-gautam-national-film-award-article-370-aditya-dhar-emotional-scene-details-mmtm-2650351-2026-09-22"
+ },
+ {
+  "text": "ईरान को लेकर UNGA में ट्रंप का सख्त संदेश, बोले...",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/trump-unga-speech-iran-nuclear-weapons-us-iran-hormuz-details-mmtm-2650346-2026-09-22"
+ },
+ {
+  "text": "सड़क पर लड़की से बदसलूकी का आरोप, ऐसे जांच हुई तेज़",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/woman-assault-viral-video-dhenkanal-odisha-compared-jamui-case-police-investigation-mmtm-2650338-2026-09-22"
+ },
+ {
+  "text": "स्कूल में चिकन बिरयानी? CM विजय के नए प्लान पर चर्चा",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/tamilnadu-cm-vijay-chicken-biryani-mid-day-meal-scheme-government-school-mmtm-2650319-2026-09-22"
+ },
+ {
+  "text": "ट्रंप को अपनों ने ही घेरा! रिपब्लिकन पार्टी में बगावत?",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/trump-iran-war-republican-party-mike-rogers-ashley-hinson-us-midterm-elections-mmtm-2650328-2026-09-22"
+ },
+ {
+  "text": "शादी के 24 घंटे बाद Newlyweds की संदिग्ध मौत का मामला",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/newlywed-couple-death-after-marriage-siddharthnagar-up-police-investigation-details-mmtm-2650320-2026-09-22"
+ },
+ {
+  "text": "अजमेर जेल में कैदी पर हमला, पत्नी ने लगाए आरोप",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/ajmer-prisoner-allegation-wife-complaint-jail-attack-investigation-rajasthan-police-mmtm-2650300-2026-09-22"
+ },
+ {
+  "text": "राधा-कृष्ण संग झूमीं UP की मंत्री गुलाब देवी, देखें...",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/dance-radha-krishna-sambhal-gulab-devi-viral-video-details-mmtm-2650289-2026-09-22"
+ },
+ {
+  "text": "अखिलेश का 27000 वोट फॉर्मूला! 2027 जीतने का गणित समझें",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/akhilesh-yadav-mission-27000-votes-target-up-assembly-election-2027-strategy-mmtm-2650280-2026-09-22"
+ },
+ {
+  "text": "डायल 112 की गाड़ी के पेट्रोल में हेराफेरी का आरोप",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/bareilly-dial-112-petrol-fraud-police-suspended-cctv-up-police-investigation-mmtm-2650275-2026-09-22"
+ },
+ {
+  "text": "लिफ्ट के दरवाज़े खुलते रहे, शख्स करता रहा ऐसी हरकत",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/lift-urination-cctv-viral-video-indirapuram-ghaziabad-society-residents-complain-mmtm-2650229-2026-09-22"
+ },
+ {
+  "text": "होमगार्ड भर्ती दौड़ में मौत, गले में बोतल कैसे फंसी?",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/lucknow-homeguard-recruitment-yogendra-singh-death-postmortem-up-police-case-mmtm-2650223-2026-09-22"
+ },
+ {
+  "text": "नमक की खेती के बीच बनेगा ISRO का नया SSLV लॉन्च सेंटर",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/short-videos/video/isro-launch-centre-sslv-tamil-nadu-space-industry-workers-development-india-thoothukudi-mmtm-2650203-2026-09-22"
+ },
+ {
+  "text": "जमुई कांड: तेजस्वी ने भगवा से जोड़ा तो बीजेपी लेकर आई हरा गमछा!",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/bihar/story/jamui-eve-teasing-boy-girl-nandan-yadav-hare-ram-yadav-green-and-bhagwa-gahchha-ntcppl-dskc-2650303-2026-09-22"
+ },
+ {
+  "text": "06 555 दिन का FD निवेश... यहां बनेगा सबसे ज्यादा पैसा, धांसू है ब्याज",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/business/utility/photo/555-days-fd-scheme-benefits-check-city-union-bank-karnataka-bank-to-ubi-boi-interest-tutc-2650094-2026-09-22"
+ },
+ {
+  "text": "जोधपुर AIIMS के रेजिडेंट डॉक्टर ने किया सुसाइड, इंजेक्शन लगाकर दी जान",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/news/story/jodhpur-aiims-doctor-suicide-using-injection-ntc-acwi-rpti-2650330-2026-09-22"
+ },
+ {
+  "text": "यूपी के अफजल खान पर भोपाल में FIR, 'सौरभ राय' बनकर युवती को फंसाया",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/madhya-pradesh/story/bhopal-love-jihad-case-afzal-khan-fake-identity-saurabh-rai-mp-nagar-police-fir-lcln-dskc-2650377-2026-09-22"
+ },
+ {
+  "text": "संसद में जीरो हो जाएगी BSP, भाजपा को 8 सीट! राज्यसभा चुनाव का पूरा गणित",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/politics/story/uttar-pradesh-rajya-sabha-election-bsp-sp-bjp-ntcppl-dskc-2650350-2026-09-22"
+ },
+ {
+  "text": "UN में PAK का फिर से रोना-धोना, भारत ने खोल दी साजिश की पोल",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/news/story/indus-waters-treaty-pakistan-plan-un-security-council-india-ntcppl-dskc-2650365-2026-09-22"
+ },
+ {
+  "text": "नकली FASTag, फर्जी नंबर प्लेट और टोल-चालान से बचने का खेल... आरोपी गिरफ्तार",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/crime/news/story/up-stf-fake-fastag-fake-registration-number-toll-challan-racket-lucknow-pvzs-dskc-2650369-2026-09-22"
+ },
+ {
+  "text": "'ईरान से डील करूं या सफाया कर दूं, लेना है बड़ा फैसला', UNGA में बोले ट्रंप",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/world/story/donald-trump-united-nations-address-iran-war-ntcppl-dskc-2650334-2026-09-22"
+ },
+ {
+  "text": "प्लास्टिक स्टूल में क्यों होता है ये गोल छेद? वजह जानकर चौंक जाएंगे",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/lifestyle/news/story/why-plastic-stool-has-hole-in-center-science-and-reasons-stool-ke-beech-mein-ched-kyon-hota-hai-tvist-dskc-2649629-2026-09-22"
+ },
+ {
+  "text": "SSC परीक्षा में सेंटर तय करने वाली कंपनी पर एक्शन, दो डायरेक्टर गिरफ्तार",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/uttar-pradesh/story/up-stf-arrests-two-directors-access-infra-ssc-exam-fraud-ntc-ntyv-rpti-2650367-2026-09-22"
+ },
+ {
+  "text": "बांधवगढ़ में बढ़ा गौर का कुनबा, कान्हा नेशनल पार्क में लौट रहा वन भैंसा",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/madhya-pradesh/story/bandhavgarh-tiger-reserves-gaur-population-kanha-wild-buffalo-restoration-lcln-dskc-2650368-2026-09-22"
+ },
+ {
+  "text": "योगी आदित्यनाथ",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/uttar-pradesh/story/cm-yogi-jibe-at-samajwadi-party-during-job-appointment-letter-distribution-ceremony-lclam-utrat-dskc-2649873-2026-09-22"
+ },
+ {
+  "text": "IND-W vs SL-W Live Score",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/asian-games/story/india-women-vs-sri-lanka-women-live-score-asian-games-2026-ind-w-vs-sl-w-gold-medal-match-tspoa-dskc-2649635-2026-09-22"
+ },
+ {
+  "text": "श्री वामन चालीसा",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in%20https",
+  "external": true,
+  "href": "https://www.aajtak.in%20https//www.aajtak.in/religion/chalisa/shri-vaman-chalisa-2649998"
+ },
+ {
+  "text": "नेशनल फिल्म अवॉर्ड्स",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/entertainment/bollywood-news/story/national-film-awards-2026-live-updates-anant-nag-kartik-aaryan-yami-gautam-mammootty-tmovg-dskc-2650100-2026-09-22"
+ },
+ {
+  "text": "स्मृति मंधाना",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/cricket/story/smriti-mandhana-creates-history-11000-international-runs-asian-games-2026-tspoa-dskc-2649823-2026-09-22"
+ },
+ {
+  "text": "एशियन गेम्स 2026 लाइव",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/asian-games/story/asian-games-2026-day-3-live-updates-22-september-india-schedule-results-medal-tally-cricket-shooting-tspoa-aksp-2649486-2026-09-22"
+ },
+ {
+  "text": "आईआईटी बॉम्बे सुसाइड केस",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/education/news/story/iit-bombay-student-sahil-wakode-suicide-cctv-footage-investigation-ngix-dskc-2649858-2026-09-22"
+ },
+ {
+  "text": "वैभव सूर्यवंशी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/cricket/story/why-is-vaibhav-sooryavanshi-not-playing-in-india-vs-japan-one-off-t20-match-in-sano-aksp-dskc-2649857-2026-09-22"
+ },
+ {
+  "text": "India vs Japan Live Score",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/cricket/story/india-vs-japan-t20-live-score-and-commentary-ball-by-ball-from-sano-international-cricket-ground-aksp-dskc-2649594-2026-09-22"
+ },
+ {
+  "text": "प्रेमानंद महाराज",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/religion/news/story/premanand-maharaj-brahma-muhurta-routine-naam-jaap-sadhana-rules-tvisg-dskc-2649832-2026-09-22"
+ },
+ {
+  "text": "पूजा ददलानी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/entertainment/bollywood-news/story/shah-rukh-khan-performed-pooja-lalbaugcha-raja-wipes-face-with-manager-pooja-dadlani-dupatta-suhana-gauri-khan-tmovf-dskc-2649822-2026-09-22"
+ },
+ {
+  "text": "हनुमान अंश बॉक्स ऑफिस",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/entertainment/bollywood-news/story/hanuman-ansh-vs-vibe-vs-daayra-box-office-collection-monday-report-neem-karoli-baba-tmovj-dskc-2649604-2026-09-22"
+ },
+ {
+  "text": "केतन हत्याकांड",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/maharashtra/story/ketan-agarwal-murder-case-siya-father-also-expressed-suspicion-regarding-her-family-stating-that-charge-sheet-reveal-many-secrets-lcly-dskc-2649603-2026-09-22"
+ },
+ {
+  "text": "दरअसल 22 सितंबर Aaj Tak Cartoon of the Day",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/cartoon/darasal-22-september-2649407-2026-09-21"
+ },
+ {
+  "text": "खास पेशकश",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/us-page"
+ },
+ {
+  "text": "Enlace sin nombre",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/world/video/us-deals-severe-economic-blow-to-iranian-airlines-amid-tension-in-middle-east-vdoj-2650196-2026-09-22"
+ },
+ {
+  "text": "Chandigarh EET teachers protest",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/punjab-aajtak/video/bjp-hits-maan-government-gulzar-singh-suicide-drug-network-detail-chandigarh-eet-teachers-protest-vdoj-2650086-2026-09-22"
+ },
+ {
+  "text": "Surat to Rajkot Ganeshotsava",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/gujarat-aajtak/video/surat-to-rajkot-ganeshotsava-theme-based-ganesh-pandal-national-film-awards-statue-of-unity-in-gujarat-vdoj-2649868-2026-09-22"
+ },
+ {
+  "text": "Bollywood News",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/programmes/movie-masala/video/andaz-apna-apna-sequel-rashmika-mandana-mysaa-teaser-jailer-vidya-balan-first-look-vdoj-2649999-2026-09-22"
+ },
+ {
+  "text": "आंखो पर बांधी पट्टी, डॉक्टर भी बुलाए... मोबाइल की लत छुड़ाने के लिए नाटक",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/uttarakhand/story/uttarakhand-khatima-school-anti-mobile-activity-awareness-ntc-acwi-rptc-2650359-2026-09-22"
+ },
+ {
+  "text": "होंडा ने लॉन्च की 500 सीसी की CB500 बाइक, कीमत है इतनी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/auto/news/story/honda-cb500-launched-india-price-mileage-royal-enfield-rival-auaw-dskc-2649859-2026-09-22"
+ },
+ {
+  "text": "निकाय चुनाव में मिली हार पर कांग्रेस में हाहाकार, बीजेपी में भी शुरू हुआ मंथन",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/rajasthan/story/rajasthan-municipal-elections-2023-bjp-victory-congress-review-panchayat-preparations-ntcpvp-rptc-2650358-2026-09-22"
+ },
+ {
+  "text": "iQOO Z11 Lite मिलेगा सस्ता, ₹17,499 में 6500mAh बैटरी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/technology/tech-news/story/qoo-z11-lite-5g-4gb-64gb-price-17499-6500mah-battery-50mp-camera-ttecm-dskc-2650333-2026-09-22"
+ },
+ {
+  "text": "'मेरी चिंता सुशासन, जाति-धर्म नहीं...', जमुई कांड पर बोले सीएम सम्राट चौधरी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/bihar/story/jamui-minor-harassment-case-bihar-cm-samrat-chaudhary-police-action-arrests-ntcpvp-rpti-2650349-2026-09-22"
+ },
+ {
+  "text": "मणिपुर में 17 साल के नागा लड़के की संदिग्ध घात लगाकर हत्या",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/crime/news/story/manipur-tamenglong-naga-boy-nk-wiphenbou-kuki-militants-ambush-pvzs-dskc-2650375-2026-09-22"
+ },
+ {
+  "text": "दिल्ली में ड्रोन से होगी संपत्तियों की निगरानी, पारदर्शी होगा टैक्स असेसमेंट",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/delhi/story/delhi-drone-gis-3d-digital-twin-property-tax-assessment-ntcpvp-rptc-2650373-2026-09-22"
+ },
+ {
+  "text": "भारतीयों को किस तरह की नौकरियां लुभाती हैं?",
+  "kind": "link",
+  "region": "body",
+  "domain": "indiatodayhindi.com",
+  "external": true,
+  "href": "https://www.indiatodayhindi.com/national/story/young-indians-job-aspirations-salary-dignity-career-growth-1453958-2026-09-22?utm_source=at_hp&utm_medium=referral&utm_campaign=ithindiathome"
+ },
+ {
+  "text": "सिर्फ तीन महीने के भीतर तुकाराम मुंढे ने कैसे बदला महाराष्ट्र का फूड सेफ्टी पर...",
+  "kind": "link",
+  "region": "body",
+  "domain": "indiatodayhindi.com",
+  "external": true,
+  "href": "https://www.indiatodayhindi.com/state/story/tukaram-mundhe-maharashtra-food-safety-three-months-1454001-2026-09-22?utm_source=at_hp&utm_medium=referral&utm_campaign=ithindiathome"
+ },
+ {
+  "text": "इमरजेंसी पिल के इस्तेमाल पर सरकार क्यों दे रही नई चेतावनी?",
+  "kind": "link",
+  "region": "body",
+  "domain": "indiatodayhindi.com",
+  "external": true,
+  "href": "https://www.indiatodayhindi.com/feature/health/story/new-warnings-emergency-pill-correct-use-contraception-1453679-2026-09-22?utm_source=at_hp&utm_medium=referral&utm_campaign=ithindiathome"
+ },
+ {
+  "text": "और भी",
+  "kind": "link",
+  "region": "body",
+  "domain": "indiatodayhindi.com",
+  "external": true,
+  "href": "https://www.indiatodayhindi.com/?utm_source=at_hp&utm_medium=referral&utm_campaign=ithindiathome"
+ },
+ {
+  "text": "वीडियो",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/videos"
+ },
+ {
+  "text": "सपा-कांग्रेस गठबंधन पर रार, इमरान मसूद और इकरा हसन में तीखी बयानबाजी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/news/video/imran-masood-and-ikra-hasan-tension-rises-in-up-over-sp-congress-alliance-and-seat-sharing-ytvd-2649782-2026-09-22"
+ },
+ {
+  "text": "6:42",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/maharashtra/video/iit-bombay-student-suicide-controversy-deepens-over-dalit-student-sahil-death-ytvd-2649520-2026-09-22"
+ },
+ {
+  "text": "0:56",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/delhi/video/protest-erupts-in-delhi-after-minor-raped-in-sadar-bazar-locals-clash-with-police-ytvd-2649775-2026-09-22"
+ },
+ {
+  "text": "0:38",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/uttar-pradesh/video/lakhimpur-teacher-shot-dead-by-lover-who-then-commits-suicide-caught-in-cctv-ytvd-2649738-2026-09-22"
+ },
+ {
+  "text": "3:00",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/india/delhi/video/delhi-kalkaji-minor-gang-rape-case-suspect-arrested-after-police-encounter-ytvd-2649737-2026-09-22"
+ },
+ {
+  "text": "फोटो स्टोरी",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/photos"
+ },
+ {
+  "text": "ईरान में बैन, 16 साल बाद छोड़ा भारत, टॉपलेस हुई ईरानी एक्ट्रेस",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/entertainment/news/photo/irani-actress-mandana-karimi-topless-look-bold-bikini-photos-viral-left-india-life-changed-tmovf-2649984-2026-09-22"
+ },
+ {
+  "text": "नेपाल में सुरंगों की भूलभुलैया में लापता हजारों मजदूर, रेस्क्यू मुश्किल",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/science/photo/hydropower-tunnel-maze-of-nepal-langtang-lirung-glacier-collapse-2650276-2026-09-22"
+ },
+ {
+  "text": "माइलेज क्वीन्स! 2026 में इन कारों के दीवाने हुए लोग, हुई बंपर सेल",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/auto/news/photo/best-selling-cng-cars-h1-2026-ertiga-dzire-punch-nexon-auam-2649804-2026-09-22"
+ },
+ {
+  "text": "मनोरंजन",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/entertainment"
+ },
+ {
+  "text": "IAS का सपना छोड़ बनी सिंगर, कॉम्प्रोमाइज की डिमांड ने डुबोया करियर!",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/entertainment/bollywood-news/story/indian-idol-fame-singer-deepali-sahay-quit-ias-dream-struggled-19-years-asked-to-compromise-ar-rahman-gave-break-tmova-dskc-2640935-2026-09-22"
+ },
+ {
+  "text": "'ऐसे विज्ञापन न करें...' राष्ट्रपति ने इशारों में किसे दे डाली नसीहत?",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/entertainment/bollywood-news/story/president-droupadi-murmu-urges-film-stars-against-endorsing-harmful-health-products-tmovg-dskc-2650347-2026-09-22"
+ },
+ {
+  "text": "क्या धुरंधर को मिलेगा नेशनल अवॉर्ड? आदित्य धर ने दिया जवाब",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/entertainment/bollywood-news/story/aditya-dhar-hope-for-national-film-awards-dhurandhar-next-year-tmovg-dskc-2650327-2026-09-22"
+ },
+ {
+  "text": "बप्पा ने भरी एक्ट्रेस की सूनी गोद, 10 साल बाद दिए जुड़वा बेटे",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/entertainment/television/photo/divyanka-tripathi-emotional-ganpati-visarjan-twin-kids-took-blessings-danced-with-vivek-dahiya-tmovh-2649785-2026-09-22"
+ },
+ {
+  "text": "राज्यवार खबरें",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/uttar-pradesh"
+ },
+ {
+  "text": "Cockroach Janta Party's co-convenor Saurav Das was confronted by a mob of locals in Greater Noida, Uttar Pradesh. (Image",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/uttar-pradesh/story/cjp-saurabh-das-faced-backlash-by-locals-in-greater-noida-school-inspection-ntc-drmt-strc-2650396-2026-09-23"
+ },
+ {
+  "text": "जयंत की RLD के सामने 'पुराना लोकदल'! राहुल गांधी से मिले सुनील सिंह",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/uttar-pradesh/story/lokdal-joins-india-alliance-sunil-singh-meets-rahul-gandhi-ntcpvp-rpti-2650306-2026-09-22"
+ },
+ {
+  "text": "जुर्म",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/crime"
+ },
+ {
+  "text": "सिया ने धक्का दिया, चेतन ने मारी लात... केतन की खौफनाक मौत का सच",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/crime/news/story/sia-pushed-ketan-first-then-chetan-kicked-him-off-the-cliff-chargesheet-reveals-the-full-murder-plot-lclar-rptc-2650286-2026-09-22"
+ },
+ {
+  "text": "मुंबई में बुजुर्ग महिला से सोने की चेन झपटने वाला एक्टर गिरफ्तार",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/crime/news/story/mumbai-santacruz-gold-chain-snatching-actor-arrested-ashish-attarchand-sharma-pvzs-dskc-2650278-2026-09-22"
+ },
+ {
+  "text": "खेल",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports"
+ },
+ {
+  "text": "क्रिकेट में गोल्ड, बैडमिंटन में धमाका... हॉकी में भी 16-1 की धूम",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/asian-games/story/india-asian-games-day-3-results-cricket-badminton-hockey-tspok-dskc-2650313-2026-09-22"
+ },
+ {
+  "text": "3 साल से T20 से दूर, अब कप्तान बनकर लौटे, श्रीलंका ने चुनी टीम ये टीम",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/asian-games/story/sri-lanka-asian-games-2026-squad-sahan-arachchige-captain-dickwella-comeback-tspok-dskc-2650321-2026-09-22"
+ },
+ {
+  "text": "मैच हारे, लेकिन दिल जीत गए जापानी खिलाड़ी, द‍िया ये खास तोहफा",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/cricket/story/india-vs-japan-players-jersey-exchange-special-gesture-tspok-dskc-2650290-2026-09-22"
+ },
+ {
+  "text": "'मैं उन्हें देखना...', वैभव के ना खेलने से जापानी कप्तान न‍िराश",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/cricket/story/vaibhav-sooryavanshi-india-vs-japan-t20i-debut-japan-captain-kendel-kadowaki-fleming-disappointed-tspok-dskc-2650259-2026-09-22"
+ },
+ {
+  "text": "वाइड दी, फिर वापस! जापान के खिलाफ आखिरी ओवर में अंपायरिंग पर सवाल",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/sports/cricket/story/india-vs-japan-t20i-wide-decision-reversed-controversy-axar-patel-shreyas-iyer-tspok-dskc-2650202-2026-09-22"
+ },
+ {
+  "text": "लाइफस्टाइल",
+  "kind": "link",
+  "region": "body",
+  "domain": "aajtak.in",
+  "external": false,
+  "href": "https://www.aajtak.in/lifestyle"
+ }
+]

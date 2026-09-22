@@ -1,0 +1,14 @@
+http://localhost:8765/roto.html
+Página rota a propósito
+
+PAGE: localhost — Página rota a propósito
+
+PAGE CONTENT (what the person came for):
+Diario de prueba
+Deportes
+12 de octubre Buenos Aires Política
+Suscribirme al boletín
+Texto de relleno para que Readability encuentre algo que parsear. La prueba no depende de esto, pero el extractor corre su parse igual y conviene que no falle por una página sin prosa. Buenos Aires amaneció nublada y con una probabilidad de lluvia que nadie se tomó en serio hasta el mediodía.
+Diario de prueba
+12 de octubre Buenos Aires Política
+Texto de relleno para que Readability encuentre algo que parsear. La prueba no depende de esto, pero el extractor corre su parse igual y conviene que no falle por una página sin prosa. Buenos Aires amaneció nublada y con una probabilidad de lluvia que nadie se tomó en serio hasta el mediodía.
