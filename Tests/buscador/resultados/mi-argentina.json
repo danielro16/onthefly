@@ -1,0 +1,42 @@
+[
+ {
+  "titulo": "Ingresar | Mi Argentina",
+  "href": "https://mi.argentina.gob.ar/"
+ },
+ {
+  "titulo": "Mi Argentina | Argentina.gob.ar",
+  "href": "https://www.argentina.gob.ar/miargentina"
+ },
+ {
+  "titulo": "Mi Argentina - Trámites y servicios digitales oficiales",
+  "href": "https://ar.gobierno.org/mi-argentina/"
+ },
+ {
+  "titulo": "Mesa de ayuda de Mi Argentina | Argentina.gob.ar",
+  "href": "https://www.argentina.gob.ar/miargentina/mesadeayuda"
+ },
+ {
+  "titulo": "Registro | Mi Argentina",
+  "href": "https://id.argentina.gob.ar/registro/?next=/perfil/"
+ },
+ {
+  "titulo": "Mis Trámites - Trámites a Distancia",
+  "href": "https://tramitesadistancia.gob.ar/tramitesadistancia/tad-publico"
+ },
+ {
+  "titulo": "Descargá la APP y creá tu cuenta - Argentina.gob.ar",
+  "href": "https://www.argentina.gob.ar/miargentina/app"
+ },
+ {
+  "titulo": "Servicios disponibles - Argentina.gob.ar",
+  "href": "https://www.argentina.gob.ar/miargentina/servicios-disponibles"
+ },
+ {
+  "titulo": "Validá tu identidad digital - Argentina.gob.ar",
+  "href": "https://www.argentina.gob.ar/miargentina/validar-identidad"
+ },
+ {
+  "titulo": "Preguntas frecuentes sobre Mi Argentina",
+  "href": "https://www.argentina.gob.ar/miargentina/preguntasfrecuentes"
+ }
+]

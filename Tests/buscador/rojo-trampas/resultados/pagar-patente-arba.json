@@ -1,0 +1,42 @@
+[
+ {
+  "titulo": "Descarga de Boleta de Pago - ARBA",
+  "href": "https://www.arba.gov.ar/GuiaTramites/TramiteSeleccionado.asp?tramite=290&categ=37"
+ },
+ {
+  "titulo": "Consulta de Deuda - ARBA",
+  "href": "https://www.arba.gov.ar/GuiaTramites/TramiteSeleccionado.asp?tramite=267"
+ },
+ {
+  "titulo": "Inicio | ARBA",
+  "href": "https://web.arba.gov.ar/"
+ },
+ {
+  "titulo": "Medios de Pago - ARBA",
+  "href": "http://web.arba.gov.ar/medios-pago"
+ },
+ {
+  "titulo": "Descarga de Boleta de Pago impuesto Automotor | ARBA",
+  "href": "http://web.arba.gov.ar/descarga-de-boleta-de-pago-impuesto-automotor"
+ },
+ {
+  "titulo": "www.arba.gob.ar",
+  "href": "http://www.arba.gob.ar/"
+ },
+ {
+  "titulo": "Consulta de pagos - ARBA",
+  "href": "http://web.arba.gov.ar/consulta-de-pagos"
+ },
+ {
+  "titulo": "Automotores - ARBA",
+  "href": "https://www.arba.gov.ar/GuiaTramites/categoriaTramite.asp?categ=37"
+ },
+ {
+  "titulo": "Consulta de deuda Automotor - ARBA",
+  "href": "http://web.arba.gov.ar/consulta-de-deuda-automotor"
+ },
+ {
+  "titulo": "Seleccion&aacute lo que vas a pagar - ARBA",
+  "href": "https://app.arba.gov.ar/LiqPredet/InicioLiquidacion.do?imp=3&Frame=NO&origen=WEB"
+ }
+]

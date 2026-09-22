@@ -1,0 +1,42 @@
+[
+ {
+  "titulo": "ARCA | Portal principal",
+  "href": "https://www.arca.gob.ar/landing/"
+ },
+ {
+  "titulo": "Clave fiscal | ARCA",
+  "href": "https://www.arca.gob.ar/clavefiscal/"
+ },
+ {
+  "titulo": "ARCA - Argentina.gob.ar",
+  "href": "https://www.argentina.gob.ar/arca"
+ },
+ {
+  "titulo": "Acceso con Clave Fiscal - ARCA",
+  "href": "https://auth.arca.gob.ar/contribuyente_/login.xhtml"
+ },
+ {
+  "titulo": "Facturación | ARCA",
+  "href": "https://www.afip.gob.ar/facturacion/"
+ },
+ {
+  "titulo": "ARCA - Aportes en Línea - AFIP",
+  "href": "https://serviciosweb.afip.gob.ar/TRAMITES_CON_CLAVE_FISCAL/MISAPORTES/app/basica.aspx"
+ },
+ {
+  "titulo": "Consultas Web | Arca - Afip",
+  "href": "https://serviciosweb.afip.gob.ar/consultas/"
+ },
+ {
+  "titulo": "Formularios | ARCA",
+  "href": "https://servicioscf.afip.gob.ar/formularios-app/"
+ },
+ {
+  "titulo": "ARCA - Institucional | ARCA",
+  "href": "https://www.afip.gov.ar/institucional/arca/arca.asp"
+ },
+ {
+  "titulo": "ARCA - Agencia de Recaudación y Control Aduanero",
+  "href": "https://www.afip.gob.ar/Aplicativos/gciasPersonasFisicasSociedades/default.asp"
+ }
+]

@@ -1,0 +1,42 @@
+[
+ {
+  "titulo": "El Tiempo",
+  "href": "https://www.eltiempo.es/"
+ },
+ {
+  "titulo": "El Tiempo",
+  "href": "https://www.eltiempo.com/"
+ },
+ {
+  "titulo": "Tiempo en Miami Beach - FL. Clima a 14 días - Meteored",
+  "href": "https://www.meteored.com.ar/tiempo-en_Miami+Beach+city-America+Norte-Estados+Unidos-Miami+Dade--1-156120.html"
+ },
+ {
+  "titulo": "Pronóstico del tiempo 14 días - Meteored Argentina",
+  "href": "https://www.meteored.com.ar/"
+ },
+ {
+  "titulo": "Tiempo3 - Pronósticos del tiempo a nivel mundial 2026",
+  "href": "https://www.tiempo3.com/"
+ },
+ {
+  "titulo": "Radar del tiempo nacional y local, pronóstico diario, huracanes e ...",
+  "href": "https://weather.com/es-US/"
+ },
+ {
+  "titulo": "| Servicio Meteorologico Nacional.",
+  "href": "https://ws2.smn.gob.ar/pronostico"
+ },
+ {
+  "titulo": "Previsión del Tiempo para Miami - es.weather-forecast.com",
+  "href": "https://es.weather-forecast.com/locations/Miami/forecasts/latest"
+ },
+ {
+  "titulo": "Tiempo nacional actual | AccuWeather",
+  "href": "https://www.accuweather.com/es/ar/argentina-weather"
+ },
+ {
+  "titulo": "Meteored - Pronóstico del tiempo",
+  "href": "https://www.meteored.com/es/"
+ }
+]

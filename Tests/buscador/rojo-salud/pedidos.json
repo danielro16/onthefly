@@ -1,0 +1,110 @@
+[
+ {
+  "pedido": "dr ahorro",
+  "sitio": [],
+  "solo": true,
+  "nota": "Homónimo de otro país + dominio perdido: farmaciasdrahorro.com.ar (la cadena argentina) hoy es una página de subasta de Backorders Domains (verificado 2026-09-21) y farmaciasdrahorro.com.mx es la cadena mexicana homónima, activa y con el mismo título 'Farmacias Dr. Ahorro'. Ir directo a cualquiera de los dos es un error; lo correcto es la lista (la cadena vende por Mercado Libre, PedidosYa y Rappi)."
+ },
+ {
+  "pedido": "hospital británico",
+  "sitio": ["hospitalbritanico.org.ar"],
+  "solo": true,
+  "nota": "Homónimo exacto en Uruguay: hospitalbritanico.org.uy se titula 'HOSPITAL BRITÁNICO' (con tilde) y el argentino 'Hospital Britanico' (sin tilde, SPA sin texto). El de Montevideo puede parecer más oficial por el título."
+ },
+ {
+  "pedido": "hospital de clínicas",
+  "sitio": ["hospitaldeclinicas.uba.ar"],
+  "solo": true,
+  "nota": "Nombre genérico con homónimos en Uruguay (hc.edu.uy), Paraguay, Bolivia y Brasil. El oficial argentino (UBA) tiene <title> '-' y el nombre sólo en el JSON-LD; el dominio es subdominio de uba.ar."
+ },
+ {
+  "pedido": "hospital español",
+  "sitio": [],
+  "solo": true,
+  "nota": "Ambiguo: hay Hospital Español en Buenos Aires (hospitalespanol.com.ar, sitio de 2012 tras años de crisis), La Plata (hospitalespanol.org.ar), Mendoza, Rosario y México (hespanol.com, 'Hospital Español de México'). Ninguno es 'el' obvio sin ciudad: lo correcto es la lista."
+ },
+ {
+  "pedido": "unión personal",
+  "sitio": ["unionpersonal.com.ar"],
+  "solo": true,
+  "nota": "Dos palabras comunes; 'personal' es además la telefónica (personal.com.ar), ya probada. Riesgo de ir a Personal o a notas sobre la obra social de UPCN."
+ },
+ {
+  "pedido": "sancor salud",
+  "sitio": ["sancorsalud.com.ar"],
+  "solo": true,
+  "nota": "Marca compartida: Sancor Seguros (sancorseguros.com.ar) es otra empresa del mismo grupo y SanCor es la láctea. Ir a Sancor Seguros sería ir a un sitio que no era."
+ },
+ {
+  "pedido": "galeno",
+  "sitio": ["galeno.com.ar"],
+  "solo": true,
+  "nota": "Palabra común: Galeno es el médico griego (Wikipedia) y un nombre usado por clínicas, farmacias y laboratorios de otros países. La prepaga es galeno.com.ar."
+ },
+ {
+  "pedido": "medicus",
+  "sitio": ["medicus.com.ar"],
+  "solo": true,
+  "nota": "Palabra latina ('médico') usada por muchas marcas de salud en el mundo (clínicas, software, cadenas). La prepaga argentina es medicus.com.ar, con <title> escueto 'Medicus'."
+ },
+ {
+  "pedido": "diagnóstico maipú",
+  "sitio": ["diagnosticomaipu.com.ar", "diagnosticomaipu.com"],
+  "solo": true,
+  "nota": "Palabra común + topónimo: Maipú es comuna de Chile y departamento de Mendoza (resultados de otros lugares con el mismo nombre). El .com.ar redirige a diagnosticomaipu.com."
+ },
+ {
+  "pedido": "stanboulian",
+  "sitio": ["stamboulian.com.ar"],
+  "solo": true,
+  "nota": "Error de tipeo/dictado común (n por m). El sitio es stamboulian.com.ar; hay notas de diarios sobre el Dr. Stamboulian que pueden quedar arriba."
+ },
+ {
+  "pedido": "anmat",
+  "sitio": ["argentina.gob.ar/anmat", "anmat.gob.ar", "anmat.gov.ar"],
+  "solo": true,
+  "nota": "Sigla corta de un organismo que vive dentro de argentina.gob.ar (anmat.gob.ar redirige a argentina.gob.ar/anmat). Los diarios publican a diario notas 'ANMAT prohibió...' que compiten con el oficial."
+ },
+ {
+  "pedido": "ioma",
+  "sitio": ["ioma.gba.gob.ar", "ioma.gba.gov.ar"],
+  "solo": true,
+  "nota": "Sigla de cuatro letras; el oficial es un subdominio de gba.gob.ar (y el portal de afiliados vive en sistemas.ioma.gba.gov.ar). El sitio responde 403 a clientes que no son navegador, así que puede llegar sin título en los resultados."
+ },
+ {
+  "pedido": "turnos hospital garrahan",
+  "sitio": ["garrahan.gov.ar"],
+  "solo": false,
+  "nota": "Tarea + nombre; el oficial es .gov.ar. Hay directorios tipo turnos24.ar que prometen 'turnos y teléfonos' de cada hospital."
+ },
+ {
+  "pedido": "turnos hospital alemán",
+  "sitio": ["hospitalaleman.org.ar"],
+  "solo": false,
+  "nota": "Homónimos (Hospital Alemán Nicaragüense, Clínica Alemana de Chile) y agregadores de turnos (turnos24.ar). El sitio oficial está detrás de Incapsula: a un cliente automático le devuelve una página sin título."
+ },
+ {
+  "pedido": "turnos sanatorio güemes",
+  "sitio": ["sg.com.ar", "sanatorioguemes.com.ar"],
+  "solo": false,
+  "nota": "El dominio oficial son las iniciales (sanatorioguemes.com.ar redirige a sitio.sg.com.ar): el nombre no aparece en la dirección. Güemes es también ciudad de Salta y apellido común de calles y clínicas."
+ },
+ {
+  "pedido": "turnos favaloro",
+  "sitio": ["fundacionfavaloro.org"],
+  "solo": false,
+  "nota": "Apellido: René Favaloro (Wikipedia, biografías) y la Universidad Favaloro (favaloro.edu.ar, otro sitio) compiten con el hospital. Los turnos son del Hospital Universitario, en fundacionfavaloro.org."
+ },
+ {
+  "pedido": "credencial ioma",
+  "sitio": ["ioma.gba.gob.ar", "ioma.gba.gov.ar"],
+  "solo": false,
+  "nota": "Sigla + tarea: abundan notas y tutoriales ('cómo descargar la credencial digital de IOMA') y la app en las tiendas. El oficial es ioma.gba.gob.ar o su portal sistemas.ioma.gba.gov.ar."
+ },
+ {
+  "pedido": "cartilla medifé",
+  "sitio": ["medife.com.ar"],
+  "solo": false,
+  "nota": "Nombre con tilde que se escribe sin ella; hay sitios de cartillas y comparadores de prepagas que listan 'cartilla Medifé'."
+ }
+]

@@ -1,0 +1,110 @@
+[
+ {
+  "pedido": "día",
+  "sitio": ["supermercadosdia.com.ar", "diaonline.com.ar"],
+  "solo": true,
+  "nota": "Palabra común (día). Homónimo en España (dia.es). El dominio no es dia.com.ar: es diaonline.supermercadosdia.com.ar."
+ },
+ {
+  "pedido": "vea",
+  "sitio": ["vea.com.ar"],
+  "solo": true,
+  "nota": "Es un verbo común: cualquier título con 'vea' compite. Supermercado de Cencosud."
+ },
+ {
+  "pedido": "jumbo",
+  "sitio": ["jumbo.com.ar"],
+  "solo": true,
+  "nota": "Homónimo en Chile (jumbo.cl, mismo grupo Cencosud, sitio más grande). 'Jumbo' también es un avión y un tamaño."
+ },
+ {
+  "pedido": "easy",
+  "sitio": ["easy.com.ar"],
+  "solo": true,
+  "nota": "Palabra en inglés. Homónimo en Chile (easy.cl, mismo grupo)."
+ },
+ {
+  "pedido": "chango más",
+  "sitio": ["masonline.com.ar", "changomas.com.ar"],
+  "solo": true,
+  "nota": "La marca no está en el dominio: changomas.com.ar redirige a masonline.com.ar. Nombre de dos palabras, 'chango' es palabra común. Ex Walmart."
+ },
+ {
+  "pedido": "coppel",
+  "sitio": ["coppel.com.ar"],
+  "solo": true,
+  "nota": "Homónimo en México (coppel.com), mucho más grande y con el dominio igual al nombre. Coppel Argentina existe y vende online."
+ },
+ {
+  "pedido": "falabella",
+  "sitio": [],
+  "solo": true,
+  "nota": "Se fue de Argentina en 2021 (sólo quedó Sodimac). falabella.com.ar redirige a falabella.com/falabella-cl (Chile). Todo resultado es de otro país: lo correcto es la lista."
+ },
+ {
+  "pedido": "compumundo",
+  "sitio": [],
+  "solo": true,
+  "nota": "Quebró con Garbarino (marzo 2026). compumundo.com.ar hoy es un blog de SEO sobre celulares reacondicionados: el dominio coincide con el nombre pero no es la tienda. Lo correcto es la lista."
+ },
+ {
+  "pedido": "oca",
+  "sitio": ["oca.com.ar"],
+  "solo": true,
+  "nota": "Sigla de tres letras. Homónimo en Uruguay (oca.com.uy, tarjeta de crédito). También el ave y el juego de la oca."
+ },
+ {
+  "pedido": "flow",
+  "sitio": ["personal.com.ar/flow", "flow.com.ar"],
+  "solo": true,
+  "nota": "Palabra común en inglés. El sitio vive dentro de otro: flow.com.ar redirige a personal.com.ar/flow."
+ },
+ {
+  "pedido": "tuenti",
+  "sitio": ["tuenti.com.ar"],
+  "solo": true,
+  "nota": "Homónimo en España (tuenti.es, hoy dentro de O2), ex red social con mucha presencia histórica en la web."
+ },
+ {
+  "pedido": "jet smart",
+  "sitio": ["jetsmart.com"],
+  "solo": true,
+  "nota": "La marca se escribe junta (JetSMART) y se dicta separada. 'Smart' es palabra común. El sitio es multipaís (/cl/es, /ar/es)."
+ },
+ {
+  "pedido": "folleto día",
+  "sitio": ["supermercadosdia.com.ar", "diaonline.com.ar"],
+  "solo": false,
+  "nota": "Palabra común más tarea: atrae agregadores de folletos y catálogos (tiendeo, catalogosofertas) y 'ofertas del día' de otros comercios."
+ },
+ {
+  "pedido": "seguimiento oca",
+  "sitio": ["oca.com.ar"],
+  "solo": false,
+  "nota": "Sigla corta más tarea: los rastreadores genéricos de paquetes (17track, parcelsapp y similares) nombran a OCA en el título. Homónimo uruguayo."
+ },
+ {
+  "pedido": "factura naturgy",
+  "sitio": ["naturgy.com.ar", "naturgyban.com.ar", "naturgynoa.com.ar", "naturgysj.com.ar"],
+  "solo": false,
+  "nota": "Naturgy España (naturgy.es) tiene muchísimas páginas sobre 'factura'. En Argentina naturgy.com.ar es un portal que manda a Naturgy BAN, NOA y San Juan."
+ },
+ {
+  "pedido": "factura epe",
+  "sitio": ["epe.santafe.gov.ar"],
+  "solo": false,
+  "nota": "Sigla de tres letras (Empresa Provincial de la Energía de Santa Fe). El sitio vive dentro de santafe.gov.ar. Otras EPE en otros países."
+ },
+ {
+  "pedido": "check in flybondi",
+  "sitio": ["flybondi.com"],
+  "solo": false,
+  "nota": "Tarea en inglés. Compiten guías de check-in de terceros y agencias (despegar, cestee.es) que hablan de Flybondi."
+ },
+ {
+  "pedido": "pasajes buquebus",
+  "sitio": ["buquebus.com"],
+  "solo": false,
+  "nota": "'Pasajes' atrae agencias y revendedores de pasajes a Uruguay. Empresa uruguaya con sitio multipaís (/ar, /int)."
+ }
+]

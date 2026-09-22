@@ -1,0 +1,42 @@
+[
+ {
+  "titulo": "ARCA - Agencia de Recaudación y Control Aduanero - AFIP",
+  "href": "https://seti.afip.gob.ar/padron-puc-constancia-internet/ConsultaConstanciaAction.do"
+ },
+ {
+  "titulo": "AFIP",
+  "href": "https://seti.afip.gob.ar/padron-puc-constancia-internet/jsp/ConsultaActivEconomica.jsp"
+ },
+ {
+  "titulo": "AFIP",
+  "href": "https://seti.afip.gob.ar/padron-puc-constancia-internet/jsp/Constancia.jsp"
+ },
+ {
+  "titulo": "seti.afip.gov.ar",
+  "href": "https://seti.afip.gov.ar/padron-puc-constancia-internet/jsp/ConsultaActivEconomica.jsp"
+ },
+ {
+  "titulo": "Cuit Online: Busca CUIT o CUIL. Constancia de CUIT.",
+  "href": "https://www.cuitonline.com/"
+ },
+ {
+  "titulo": "ARCA | Portal principal - afip.gob.ar",
+  "href": "https://www.afip.gob.ar/landing/default.asp"
+ },
+ {
+  "titulo": "Arca | Cuit Digital - Afip",
+  "href": "https://serviciosweb.afip.gob.ar/publico/cuitOnline/InfoPersonal.aspx"
+ },
+ {
+  "titulo": "AFIP",
+  "href": "https://seti.afip.gob.ar/padron-puc-constancia-internet/jsp/CredencialEfector.jsp"
+ },
+ {
+  "titulo": "Constancia de Inscripción - ARCA - AFIP",
+  "href": "https://www.afip.gov.ar/genericos/cinscripcion/archivocompleto.asp"
+ },
+ {
+  "titulo": "AFIP",
+  "href": "https://seti.afip.gob.ar/padron-puc-consulta-internet/cuitDigital"
+ }
+]

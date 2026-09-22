@@ -1,0 +1,148 @@
+[
+ {
+  "pedido": "a24",
+  "sitio": [
+   "a24.com"
+  ],
+  "solo": true,
+  "nota": "Sigla alfanumérica de 3 caracteres; homónimo fuerte en inglés: A24 el estudio de cine de EE.UU. (a24films.com), con mucho peso en la web global."
+ },
+ {
+  "pedido": "jumbo",
+  "sitio": [
+   "jumbo.com.ar"
+  ],
+  "solo": true,
+  "nota": "Palabra común (avión, tamaño) y homónimo extranjero del mismo grupo: jumbo.cl (Chile) es más grande que el argentino."
+ },
+ {
+  "pedido": "easy",
+  "sitio": [
+   "easy.com.ar"
+  ],
+  "solo": true,
+  "nota": "Palabra común en inglés; homónimo del mismo grupo en Chile (easy.cl) y muchas marcas 'easy-algo'."
+ },
+ {
+  "pedido": "día",
+  "sitio": [
+   "supermercadosdia.com.ar"
+  ],
+  "solo": true,
+  "nota": "Una sola palabra común de 3 letras; el supermercado vive en diaonline.supermercadosdia.com.ar; imitador/homónimo español dia.es y diarios 'El Día'."
+ },
+ {
+  "pedido": "la voz",
+  "sitio": [
+   "lavoz.com.ar"
+  ],
+  "solo": true,
+  "nota": "Homónimos extranjeros: La Voz de Galicia (lavozdegalicia.es), La Voz de Michoacán, el programa de TV 'La Voz'. En Argentina es La Voz del Interior (Córdoba)."
+ },
+ {
+  "pedido": "la gaceta",
+  "sitio": [
+   "lagaceta.com.ar"
+  ],
+  "solo": true,
+  "nota": "Homónimos en España (gaceta.es, La Gaceta de Salamanca) y gacetas oficiales; en Argentina es La Gaceta de Tucumán."
+ },
+ {
+  "pedido": "el tiempo",
+  "sitio": [],
+  "solo": true,
+  "nota": "En Argentina es un pedido genérico (el pronóstico); no hay un sitio que sea 'el tiempo'. Ir directo a eltiempo.com (diario de Colombia) sería equivocado: lo correcto es la lista."
+ },
+ {
+  "pedido": "falabela",
+  "sitio": [],
+  "solo": true,
+  "nota": "Error de tipeo real (una sola l) y empresa que cerró en Argentina: falabella.com.ar hoy redirige a falabella.com/falabella-cl (Chile). No hay sitio argentino: lo correcto es la lista."
+ },
+ {
+  "pedido": "modo",
+  "sitio": [
+   "modo.com.ar"
+  ],
+  "solo": true,
+  "nota": "Palabra común (modo avión, modo oscuro); homónimo exacto en .com: modo.com es MODO Eyewear (anteojos, EE.UU.)."
+ },
+ {
+  "pedido": "utn",
+  "sitio": [
+   "utn.edu.ar"
+  ],
+  "solo": true,
+  "nota": "Sigla de 3 letras; homónimo: Universidad Técnica Nacional de Costa Rica (utn.ac.cr). Las regionales (frba.utn.edu.ar) caen dentro del dominio."
+ },
+ {
+  "pedido": "boletín oficial",
+  "sitio": [
+   "boletinoficial.gob.ar",
+   "boletinoficial.gov.ar"
+  ],
+  "solo": true,
+  "nota": "Nombre genérico de dos palabras con varios oficiales parecidos: provincia (boletinoficial.gba.gob.ar), ciudad (boletinoficial.buenosaires.gob.ar), BOE de España y resúmenes privados (boa.com.ar). El pedido sin jurisdicción es el nacional."
+ },
+ {
+  "pedido": "flow",
+  "sitio": [
+   "flow.com.ar",
+   "personal.com.ar/flow"
+  ],
+  "solo": true,
+  "nota": "Palabra común en inglés; flow.com.ar hoy redirige a personal.com.ar/flow (Personal ya se probó, pero la home de Personal no es Flow)."
+ },
+ {
+  "pedido": "consulta cuit afip",
+  "sitio": [
+   "afip.gob.ar",
+   "arca.gob.ar"
+  ],
+  "solo": false,
+  "nota": "La tarea lleva a agregadores muy bien posicionados (cuitonline.com y similares) que no son AFIP; la constancia oficial vive en seti.afip.gob.ar."
+ },
+ {
+  "pedido": "turnos vtv",
+  "sitio": [
+   "vtv.gba.gob.ar",
+   "suvtv.com.ar",
+   "buenosaires.gob.ar/vtv"
+  ],
+  "solo": false,
+  "nota": "Sigla con muchos imitadores de turnos; dos oficiales según jurisdicción: provincia (vtv.gba.gob.ar) y ciudad (buenosaires.gob.ar/vtv redirige a suvtv.com.ar, del Gobierno de la Ciudad)."
+ },
+ {
+  "pedido": "turnos registro automotor",
+  "sitio": [
+   "dnrpa.gov.ar"
+  ],
+  "solo": false,
+  "nota": "Nombre de tres palabras sin sigla; el oficial es la DNRPA (dnrpa.gov.ar, con .gov y no .gob) y hay gestorías y sitios de 'turnos y trámites' que lo imitan."
+ },
+ {
+  "pedido": "denuncia policía federal",
+  "sitio": [
+   "argentina.gob.ar/seguridad/pfa"
+  ],
+  "solo": false,
+  "nota": "Organismo dentro de argentina.gob.ar; la tarea 'denuncia' puede llevar a otros oficiales que no son la PFA (mpf.gob.ar, Policía de la Ciudad, denuncia de delitos informáticos)."
+ },
+ {
+  "pedido": "pagar patente arba",
+  "sitio": [
+   "arba.gov.ar"
+  ],
+  "solo": false,
+  "nota": "Sigla de 4 letras con .gov (no .gob); la tarea 'patente' puede llevar a AGIP de la Ciudad (agip.gob.ar) o a notas de diarios sobre vencimientos."
+ },
+ {
+  "pedido": "turnos ioma",
+  "sitio": [
+   "ioma.gba.gob.ar",
+   "ioma.gba.gov.ar"
+  ],
+  "solo": false,
+  "nota": "Sigla de 4 letras con imitadores de turnos muy bien posicionados (comocontratar.com.ar, sacarturno.com, contratar-turnoycita.com); el oficial vive bajo gba.gob.ar."
+ }
+]

@@ -1,0 +1,461 @@
+[
+ {
+  "pedido": "anses",
+  "sitio": [
+   "anses.gob.ar",
+   "argentina.gob.ar/anses"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "banco nación",
+  "sitio": [
+   "bna.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "banco provincia",
+  "sitio": [
+   "bancoprovincia.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "banco galicia",
+  "sitio": [
+   "bancogalicia.com",
+   "bancogalicia.com.ar",
+   "galicia.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "santander",
+  "sitio": [
+   "santander.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "bbva",
+  "sitio": [
+   "bbva.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "banco macro",
+  "sitio": [
+   "macro.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "banco ciudad",
+  "sitio": [
+   "bancociudad.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "mercado libre",
+  "sitio": [
+   "mercadolibre.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "mercado pago",
+  "sitio": [
+   "mercadopago.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "la nación",
+  "sitio": [
+   "lanacion.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "lanacion",
+  "sitio": [
+   "lanacion.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "la nasion",
+  "sitio": [
+   "lanacion.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "clarín",
+  "sitio": [
+   "clarin.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "infobae",
+  "sitio": [
+   "infobae.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "página 12",
+  "sitio": [
+   "pagina12.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "ámbito",
+  "sitio": [
+   "ambito.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "olé",
+  "sitio": [
+   "ole.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "tn",
+  "sitio": [
+   "tn.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "perfil",
+  "sitio": [
+   "perfil.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "el cronista",
+  "sitio": [
+   "cronista.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "afip",
+  "sitio": [
+   "afip.gob.ar",
+   "arca.gob.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "arca",
+  "sitio": [
+   "arca.gob.ar",
+   "afip.gob.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "pami",
+  "sitio": [
+   "pami.org.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "mi argentina",
+  "sitio": [
+   "argentina.gob.ar/miargentina",
+   "mi.argentina.gob.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "correo argentino",
+  "sitio": [
+   "correoargentino.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "andreani",
+  "sitio": [
+   "andreani.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "aerolíneas argentinas",
+  "sitio": [
+   "aerolineas.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "despegar",
+  "sitio": [
+   "despegar.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "trenes argentinos",
+  "sitio": [
+   "trenesargentinos.gob.ar",
+   "argentina.gob.ar/transporte/trenes"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "sube",
+  "sitio": [
+   "sube.gob.ar",
+   "argentina.gob.ar/sube"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "rappi",
+  "sitio": [
+   "rappi.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "pedidos ya",
+  "sitio": [
+   "pedidosya.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "farmacity",
+  "sitio": [
+   "farmacity.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "frávega",
+  "sitio": [
+   "fravega.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "garbarino",
+  "sitio": [],
+  "solo": true
+ },
+ {
+  "pedido": "coto",
+  "sitio": [
+   "cotodigital.com.ar",
+   "coto.com.ar",
+   "cotodigital3.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "carrefour",
+  "sitio": [
+   "carrefour.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "osde",
+  "sitio": [
+   "osde.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "swiss medical",
+  "sitio": [
+   "swissmedical.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "personal",
+  "sitio": [
+   "personal.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "movistar",
+  "sitio": [
+   "movistar.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "claro",
+  "sitio": [
+   "claro.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "edenor",
+  "sitio": [
+   "edenor.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "edesur",
+  "sitio": [
+   "edesur.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "metrogas",
+  "sitio": [
+   "metrogas.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "aysa",
+  "sitio": [
+   "aysa.com.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "uba",
+  "sitio": [
+   "uba.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "hospital italiano",
+  "sitio": [
+   "hospitalitaliano.org.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "wikipedia",
+  "sitio": [
+   "wikipedia.org"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "youtube",
+  "sitio": [
+   "youtube.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "netflix",
+  "sitio": [
+   "netflix.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "naranja x",
+  "sitio": [
+   "naranjax.com"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "migraciones",
+  "sitio": [
+   "migraciones.gob.ar",
+   "argentina.gob.ar/migraciones",
+   "argentina.gob.ar/interior/migraciones"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "renaper",
+  "sitio": [
+   "argentina.gob.ar/interior/renaper",
+   "renaper.gob.ar"
+  ],
+  "solo": true
+ },
+ {
+  "pedido": "home banking banco nación",
+  "sitio": [
+   "bna.com.ar"
+  ],
+  "solo": false
+ },
+ {
+  "pedido": "turnos anses",
+  "sitio": [
+   "anses.gob.ar",
+   "argentina.gob.ar/anses",
+   "argentina.gob.ar/servicio"
+  ],
+  "solo": false
+ },
+ {
+  "pedido": "clave fiscal afip",
+  "sitio": [
+   "afip.gob.ar",
+   "arca.gob.ar",
+   "argentina.gob.ar"
+  ],
+  "solo": false
+ },
+ {
+  "pedido": "turno pami",
+  "sitio": [
+   "pami.org.ar",
+   "argentina.gob.ar/pami"
+  ],
+  "solo": false
+ },
+ {
+  "pedido": "seguimiento correo argentino",
+  "sitio": [
+   "correoargentino.com.ar"
+  ],
+  "solo": false
+ },
+ {
+  "pedido": "factura edenor",
+  "sitio": [
+   "edenor.com"
+  ],
+  "solo": false
+ },
+ {
+  "pedido": "deportes la nación",
+  "sitio": [
+   "lanacion.com.ar"
+  ],
+  "solo": false
+ },
+ {
+  "pedido": "saldo sube",
+  "sitio": [
+   "argentina.gob.ar/sube",
+   "sube.gob.ar",
+   "argentina.gob.ar/noticias"
+  ],
+  "solo": false
+ }
+]

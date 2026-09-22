@@ -1,0 +1,144 @@
+[
+ {
+  "pedido": "icbc",
+  "sitio": [
+   "icbc.com.ar"
+  ],
+  "solo": true,
+  "nota": "Sigla corta con dos homónimos grandes y vivos: icbc.com (Insurance Corporation of British Columbia, Canadá) e icbc.com.cn (el banco en China). Sólo el .com.ar es el de acá."
+ },
+ {
+  "pedido": "ualá",
+  "sitio": [
+   "uala.com.ar"
+  ],
+  "solo": true,
+  "nota": "Misma marca opera en México (uala.mx) y Colombia, con título y descripción casi iguales. Ir a uala.mx es otro país."
+ },
+ {
+  "pedido": "openbank",
+  "sitio": [],
+  "solo": true,
+  "nota": "Openbank Argentina fue absorbido por Santander (2023) y openbank.com.ar ya no resuelve. openbank.es (España) está vivo y en español: ir directo ahí es el error. Lo correcto es la lista."
+ },
+ {
+  "pedido": "banco itaú",
+  "sitio": [],
+  "solo": true,
+  "nota": "Itaú Argentina pasó a Macro (fusión cerrada en 2024) y itau.com.ar ya no resuelve. Quedan vivos itau.com.uy (Uruguay) e itau.com.br, más notas de diarios sobre la fusión. Lo correcto es la lista."
+ },
+ {
+  "pedido": "banco columbia",
+  "sitio": [
+   "bancocolumbia.com.ar"
+  ],
+  "solo": true,
+  "nota": "Se confunde con Bancolombia (bancolombia.com, Colombia) y con Columbia (universidad, ropa). El oficial sólo responde por http y redirige a secure.bancocolumbia.com.ar."
+ },
+ {
+  "pedido": "banco hipotecario",
+  "sitio": [
+   "hipotecario.com.ar"
+  ],
+  "solo": true,
+  "nota": "Homónimo exacto en El Salvador (bancohipotecario.com.sv). El dominio argentino no lleva la palabra 'banco'."
+ },
+ {
+  "pedido": "cocos",
+  "sitio": [
+   "cocos.capital"
+  ],
+  "solo": true,
+  "nota": "Palabra común (fruta, islas Cocos) y TLD raro .capital; el sitio además corta con Cloudflare. La gente dice 'cocos' a secas por el broker."
+ },
+ {
+  "pedido": "lemon",
+  "sitio": [
+   "lemon.me"
+  ],
+  "solo": true,
+  "nota": "Palabra común en inglés con mil marcas homónimas; dominio .me. Pedido real de quien usa la billetera Lemon."
+ },
+ {
+  "pedido": "ppi",
+  "sitio": [
+   "portfoliopersonal.com"
+  ],
+  "solo": true,
+  "nota": "Sigla de tres letras (también Producer Price Index, pay-per-install, etc.) y el dominio no contiene la sigla."
+ },
+ {
+  "pedido": "cabal",
+  "sitio": [
+   "cabal.coop"
+  ],
+  "solo": true,
+  "nota": "Palabra común del castellano ('cabal', 'estar cabal'); dominio .coop. Cabal también opera en Paraguay dentro del mismo sitio."
+ },
+ {
+  "pedido": "tarjeta cencosud",
+  "sitio": [
+   "cencopay.ar",
+   "tarjetacencosud.com.ar"
+  ],
+  "solo": true,
+  "nota": "Renombrada: tarjetacencosud.com.ar redirige a cencopay.ar, así que el nombre pedido ya no está en el dominio. Homónimo vivo en Chile: tarjetacencosud.cl (Cencosud Scotiabank)."
+ },
+ {
+  "pedido": "superviel",
+  "sitio": [
+   "supervielle.com.ar"
+  ],
+  "solo": true,
+  "nota": "Error de tipeo o de dictado muy común de 'Supervielle'."
+ },
+ {
+  "pedido": "resumen tarjeta naranja",
+  "sitio": [
+   "naranjax.com",
+   "naranja.com"
+  ],
+  "solo": false,
+  "nota": "Nombre viejo de la marca (hoy Naranja X) y la búsqueda se llena de imitadores y blogs: infonaranja.com.ar, comunidadnaranja.ar, tuquejasuma.com, rankia. Sólo naranjax.com o subdominios de naranja.com (naranjaonline) son oficiales."
+ },
+ {
+  "pedido": "descuentos cuenta dni",
+  "sitio": [
+   "bancoprovincia.com.ar"
+  ],
+  "solo": false,
+  "nota": "Cuenta DNI vive dentro de bancoprovincia.com.ar/cuentadni y no tiene dominio propio. Los diarios publican notas de 'descuentos Cuenta DNI' todas las semanas y suelen ganarle al oficial."
+ },
+ {
+  "pedido": "promociones modo",
+  "sitio": [
+   "modo.com.ar"
+  ],
+  "solo": false,
+  "nota": "'modo' es una palabra común y 'promociones MODO' es tema de notas de diarios y agregadores de descuentos."
+ },
+ {
+  "pedido": "home banking credicoop",
+  "sitio": [
+   "bancocredicoop.coop"
+  ],
+  "solo": false,
+  "nota": "Dominio .coop sin .ar y la tarea 'home banking' atrae guías de terceros y apps falsas."
+ },
+ {
+  "pedido": "home banking bancor",
+  "sitio": [
+   "bancor.com.ar"
+  ],
+  "solo": false,
+  "nota": "'Bancor' también es el protocolo cripto (bancor.network) y la moneda de Keynes. Es el Banco de Córdoba."
+ },
+ {
+  "pedido": "cajeros red link",
+  "sitio": [
+   "redlink.com.ar"
+  ],
+  "solo": false,
+  "nota": "'link' es una palabra común y la tarea 'cajeros' trae mapas y listados de terceros en vez del sitio de la red."
+ }
+]

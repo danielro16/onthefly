@@ -1,0 +1,110 @@
+[
+ {
+  "pedido": "la voz",
+  "sitio": ["lavoz.com.ar"],
+  "solo": true,
+  "nota": "La Voz del Interior (Córdoba). Homónimos fuertes: La Voz de Galicia (lavozdegalicia.es), La Voz de San Justo, La Voz de Cádiz/Asturias/Michoacán, y el reality 'La Voz Argentina' de Telefe. Dos palabras comunes; el nombre completo del diario ni siquiera aparece en el pedido. lavoz.com.ar responde 403 de Cloudflare a curl: verificado por su robots.txt y búsqueda web."
+ },
+ {
+  "pedido": "los andes",
+  "sitio": ["losandes.com.ar"],
+  "solo": true,
+  "nota": "Diario de Mendoza. Homónimos: Universidad de los Andes (Colombia y Chile), la ciudad de Los Andes (Chile), el Club Atlético Los Andes (Lomas de Zamora), la cordillera en Wikipedia, Diario de los Andes (Venezuela)."
+ },
+ {
+  "pedido": "la capital",
+  "sitio": ["lacapital.com.ar"],
+  "solo": true,
+  "nota": "La Capital de Rosario, el más probable. Homónimo argentino: La Capital de Mar del Plata (lacapitalmdp.com), otro diario de verdad con el mismo nombre; además 'la capital' es frase común (CABA, capitales de países). Ir directo a lacapitalmdp.com cuenta como error: con dos diarios homónimos debería dudar."
+ },
+ {
+  "pedido": "el día",
+  "sitio": ["eldia.com"],
+  "solo": true,
+  "nota": "El Día de La Plata. Dos palabras comunísimas. Homónimos: El Día de Tenerife (eldia.es), El Día de República Dominicana, El Día de Gualeguaychú, El Día de Córdoba (España). El dominio es un .com genérico, sin .ar que lo ancle."
+ },
+ {
+  "pedido": "la gaceta",
+  "sitio": ["lagaceta.com.ar"],
+  "solo": true,
+  "nota": "La Gaceta de Tucumán. Homónimos en España: La Gaceta de Salamanca (lagacetadesalamanca.es) y La Gaceta (gaceta.es). También La Gaceta Salta, hermano pero otro diario, y 'gaceta' como boletín oficial genérico."
+ },
+ {
+  "pedido": "diario río negro",
+  "sitio": ["rionegro.com.ar"],
+  "solo": true,
+  "nota": "Diario de la Patagonia. El nombre es el de una provincia: el gobierno de Río Negro (rionegro.gov.ar) está a una letra de dominio y compite en los resultados; también el río, el departamento de Uruguay y el de Colombia. Ir al gobierno provincial es error."
+ },
+ {
+  "pedido": "el litoral",
+  "sitio": ["ellitoral.com"],
+  "solo": true,
+  "nota": "El Litoral de Santa Fe (ellitoral.com). Homónimo argentino directo: El Litoral de Corrientes (ellitoral.com.ar), mismo nombre y casi mismo dominio. 'Litoral' además es región geográfica. Ir directo a ellitoral.com.ar cuenta como error."
+ },
+ {
+  "pedido": "canal 13",
+  "sitio": ["eltrecetv.com.ar"],
+  "solo": true,
+  "nota": "eltrece de Buenos Aires. Homónimo de otro país: Canal 13 de Chile (13.cl), muy fuerte en buscadores; también canales 13 del interior. El pedido es sigla+número y el dominio oficial no contiene 'canal' ni '13'."
+ },
+ {
+  "pedido": "river plate",
+  "sitio": ["riverplate.com", "cariverplate.com.ar"],
+  "solo": true,
+  "nota": "Club Atlético River Plate; cariverplate.com.ar redirige a riverplate.com (verificado). Homónimos: River Plate de Montevideo (Uruguay), 'River Plate' como nombre en inglés del Río de la Plata (Wikipedia, batalla del Río de la Plata). Muchos sitios de hinchas y de reventa."
+ },
+ {
+  "pedido": "flow",
+  "sitio": ["flow.com.ar", "personal.com.ar/flow"],
+  "solo": true,
+  "nota": "Flow, el streaming de Personal/Telecom; flow.com.ar redirige a personal.com.ar/flow (verificado). Palabra común en inglés: la película animada 'Flow' (Oscar 2025), Flow del Caribe (Liberty), Power Automate (ex Microsoft Flow), 'flow' del trap. Una sola palabra, sin marca argentina en el pedido."
+ },
+ {
+  "pedido": "racing",
+  "sitio": ["racingclub.com.ar"],
+  "solo": true,
+  "nota": "Racing Club de Avellaneda. Palabra común en inglés (carreras, sim racing) y homónimos: Racing de Santander (España), Racing de Montevideo, Racing de Córdoba, RC Strasbourg, RC Lens. Una sola palabra."
+ },
+ {
+  "pedido": "cadena tres",
+  "sitio": ["cadena3.com"],
+  "solo": true,
+  "nota": "Cadena 3 de Córdoba con el número en letras, como lo deja el dictado por voz. Homónimo: Cadena Tres, canal de TV de México (Grupo Imagen). El dominio lleva el dígito, así que el nombre del pedido no coincide literal con el dominio."
+ },
+ {
+  "pedido": "telefe en vivo",
+  "sitio": ["telefe.com", "mitelefe.com"],
+  "solo": false,
+  "nota": "telefe.com redirige a mitelefe.com y la señal en vivo está en mitelefe.com/telefe-en-vivo (verificado). Peligro: sitios piratas de 'TV en vivo gratis' que se titulan 'Telefe en vivo', agregadores de canales, y el vivo de YouTube."
+ },
+ {
+  "pedido": "radio mitre en vivo",
+  "sitio": ["radiomitre.com.ar", "radiomitre.cienradios.com"],
+  "solo": false,
+  "nota": "radiomitre.com.ar redirige a radiomitre.cienradios.com (verificado): el sitio oficial vive en un subdominio de otra marca. Peligro: agregadores de radios (radios.com.ar, onlineradiobox, mytuner, radio.garden), que son justo lo inaceptable, y Mitre Córdoba."
+ },
+ {
+  "pedido": "entradas boca juniors",
+  "sitio": ["bocajuniors.com.ar", "bocajuniors.autoentrada.com"],
+  "solo": false,
+  "nota": "La venta oficial es bocajuniors.autoentrada.com ('Boca Juniors - Sitio Oficial', verificado) más Boca Socios en bocajuniors.com.ar. Imitador conocido que sale arriba en buscadores: entradasbocajuniors.com (reventa, título 'Entradas Boca Juniors - Reservá para La Bombonera'); también seatpick, footballticketsargentina y viagogo. Caso de estafa real."
+ },
+ {
+  "pedido": "socios river plate",
+  "sitio": ["riverplate.com", "cariverplate.com.ar", "somosriver.com"],
+  "solo": false,
+  "nota": "El trámite de socio está en riverplate.com (informacion-socios, registro-de-socios) y en somosriver.com, que según sus términos opera el Club Atlético River Plate (CUIT 30-52674844-8, verificado). Peligro: notas de diarios tipo 'cómo hacerse socio de River' (El Destape), gestorías y guías de terceros."
+ },
+ {
+  "pedido": "fúnebres la gaceta",
+  "sitio": ["lagaceta.com.ar"],
+  "solo": false,
+  "nota": "Los avisos fúnebres de La Gaceta de Tucumán están en funebres.lagaceta.com.ar (verificado, 'Fúnebres | La Gaceta'). La Gaceta de Salamanca también publica esquelas; hay receptorías de avisos que se hacen pasar por el diario. Pedido muy real entre gente mayor de Tucumán."
+ },
+ {
+  "pedido": "suscripción disney plus",
+  "sitio": ["disneyplus.com"],
+  "solo": false,
+  "nota": "Oficial: disneyplus.com (disneyplus.com/es-ar verificado: 'Disney+ Argentina'). Peligro: notas de diarios sobre precios ('cuánto cuesta Disney+ en Argentina'), revendedores de cuentas en Mercado Libre, comparadores de streaming. La marca se escribe 'Disney+' y el pedido dice 'plus'."
+ }
+]

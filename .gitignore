@@ -25,3 +25,4 @@ Secrets.xcconfig
 # Capturas de las corridas de prueba: quedan en disco, no en git (pesan).
 Tests/corridas/**/*.jpg
 Tests/corridas/**/*.png
+build-device/

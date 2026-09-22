@@ -8,9 +8,6 @@
         "escribir": "llevame a la nación"
       },
       {
-        "boton": 1
-      },
-      {
         "escribir": "dame los titulares"
       },
       {
@@ -31,9 +28,6 @@
     "pasos": [
       {
         "escribir": "clarín"
-      },
-      {
-        "boton": 1
       },
       {
         "boton": 1
@@ -97,9 +91,6 @@
       },
       {
         "boton": 1
-      },
-      {
-        "boton": 1
       }
     ]
   },
@@ -110,9 +101,6 @@
     "pasos": [
       {
         "escribir": "entrá a mercado libre y buscame auriculares bluetooth"
-      },
-      {
-        "boton": 1
       },
       {
         "escribir": "¿cuánto sale el más barato?"
@@ -126,9 +114,6 @@
     "pasos": [
       {
         "escribir": "quiero entrar al home banking del banco nación"
-      },
-      {
-        "boton": 1
       },
       {
         "tocar": "DNI"
@@ -179,13 +164,68 @@
         "escribir": "la nación"
       },
       {
-        "boton": 1
-      },
-      {
         "tocar": "Otra cosa"
       },
       {
         "escribir": "llevame a deportes"
+      }
+    ]
+  },
+  {
+    "id": "infobae-titulares",
+    "persona": "Ciega, usa VoiceOver todos los días. Lee Infobae, que JEF nunca probó.",
+    "objetivo": "Entrar a Infobae, escuchar los titulares y abrir uno.",
+    "pasos": [
+      {
+        "escribir": "abrí infobae"
+      },
+      {
+        "escribir": "¿qué titulares hay?"
+      },
+      {
+        "boton": 1
+      }
+    ]
+  },
+  {
+    "id": "pami-turno",
+    "persona": "74 años, jubilado, ciego hace cinco años. Afiliado a PAMI.",
+    "objetivo": "Sacar un turno con el médico de cabecera en PAMI.",
+    "pasos": [
+      {
+        "escribir": "quiero sacar un turno en pami"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "boton": 1
+      }
+    ]
+  },
+  {
+    "id": "entradas-boca",
+    "persona": "Hincha de Boca, ciego. Sabe que hay estafas con las entradas.",
+    "objetivo": "Llegar a la venta OFICIAL de entradas de Boca, sin caer en un revendedor.",
+    "pasos": [
+      {
+        "escribir": "quiero comprar entradas de boca juniors"
+      },
+      {
+        "boton": 1
+      }
+    ]
+  },
+  {
+    "id": "correo-seguimiento",
+    "persona": "Ciega, espera un paquete. Tiene el número de seguimiento.",
+    "objetivo": "Llegar al seguimiento de envíos de Correo Argentino.",
+    "pasos": [
+      {
+        "escribir": "llevame al seguimiento de correo argentino"
+      },
+      {
+        "escribir": "¿qué me pide para seguir el envío?"
       }
     ]
   }

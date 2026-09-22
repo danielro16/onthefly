@@ -148,6 +148,9 @@ final class Assistant {
     /// La tarea que se está siguiendo sola, para ofrecer buscarla en otro
     /// lado si una prueba anti-robot la corta.
     private var runningTask: String?
+    /// Lo que falta de la tarea después de llegar al sitio nombrado: con eso
+    /// pendiente, llegar no se orienta —JEF sigue él mismo—.
+    private var restAfter: String?
     static let solvedID = "jef-ya-resuelta"
     static let toTestID = "jef-ir-a-la-prueba"
 
@@ -346,7 +349,9 @@ final class Assistant {
             working = false
 
             if let decision {
+                restAfter = decision.rest
                 await carry(decision.action, of: decision, goal: goal, on: reader)
+                restAfter = nil
                 // El límite se dice aunque la acción sea otra. "Entrá a
                 // Mercado Libre y comprame pilas" vuelve como ir + comprar:
                 // se navega, Y se aclara qué parte no voy a hacer y hasta
@@ -365,7 +370,9 @@ final class Assistant {
                 // "Quiero entrar a ANSES y pedir un turno" aterrizaba en ANSES
                 // y el turno se perdía: el pedido no sobrevivía al viaje.
                 if let rest = decision.rest, !rest.isEmpty {
-                    if offer != nil {
+                    // Espera sólo si lo que quedó es una lista para elegir: al
+                    // sitio nombrado ya se llegó directo.
+                    if offer?.options.contains(where: { $0.id.hasPrefix("res-") }) == true {
                         // Se frenó a preguntar cuál resultado. La tarea espera
                         // a que la persona elija; seguir ahora sería resolver
                         // "pedir un turno" contra la página del buscador.
@@ -812,7 +819,33 @@ final class Assistant {
         // fue a parar es la peor versión de eso.
         //
         // Lo que la prueba de dominio sigue haciendo es ORDENAR: el que
-        // coincide va primero. Elegir no.
+        // coincide va primero.
+        //
+        // Salvo cuando se puede asegurar. Daniel lo decidió (2026-09-21):
+        // nombrado un sitio, se va directo a su página principal. La prueba
+        // es contra el dominio —ver `names`— y está medida contra búsquedas
+        // reales de sitios que las rondas no usan: Scripts/probar-sitios.py.
+        // Si no era, "Volver a los resultados" trae la lista.
+        if naming, let direct = Self.namedSite(goal, among: found) {
+            let site = Self.bare(Self.unicode(URL(string: direct.go)?.host() ?? "")) ?? direct.site.host
+            say("Abriendo \(site). Si no era, «Volver a los resultados» trae la lista.")
+            reader.address = direct.go
+            await reader.go()
+            // La portada armada con "www." puede no existir: entonces, la
+            // página que dio el buscador.
+            if case .failed = reader.state, direct.go != direct.site.href {
+                reader.address = direct.site.href
+                await reader.go()
+            }
+            if restAfter != nil, let page = reader.page, !Self.hasChallenge(page) {
+                // Con la tarea pendiente no se orienta: se sigue con ella.
+                knownURL = page.url
+                offer = nil
+                return
+            }
+            await landed(reader)
+            return
+        }
         present(Self.ranked(goal, among: found, naming: naming), for: goal)
     }
 
@@ -828,20 +861,29 @@ final class Assistant {
         // primero una página de argentina.gob.ar que explica qué es el home
         // banking; "Banco de la Nación Argentina - Home banking" nombra las
         // tres cosas pedidas.
-        let asked = stems(request)
+        let asked = keys(request)
         func covers(_ result: Result) -> Int {
-            asked.intersection(stems(result.title + " " + result.host.replacingOccurrences(of: ".", with: " "))).count
+            asked.intersection(keys(result.title + " " + result.host.replacingOccurrences(of: ".", with: " "))).count
         }
-        let results = found.enumerated().sorted { a, b in
+        // Con una sola palabra que cuente no se reordena: es ruido. Para
+        // "canal 13" subía una grilla de TV que decía "canal" por encima de
+        // eltrece, que el buscador ponía primero.
+        let sorted = asked.count < 2 ? found : found.enumerated().sorted { a, b in
             let (x, y) = (covers(a.element), covers(b.element))
             return x != y ? x > y : a.offset < b.offset
         }.map(\.element)
+        // Al final, las páginas de servicios gratuitos y los imitadores.
+        let hosted = sorted.filter { isHosted($0) || imitates($0, request) }
+        let results = sorted.filter { !isHosted($0) && !imitates($0, request) }
         let top = results.map(covers).max() ?? 0
         // Lo oficial del país, primero —si nombra lo pedido tanto como el
         // mejor—. Para "sacar un turno en ANSES" el primer resultado era
         // turnosanses.net, que no es ANSES: a alguien que toca siempre la
         // primera opción, un sitio así le puede pedir datos.
-        let official = results.filter { isOfficial($0) && covers($0) >= top }
+        // "Cerca" y no "igual": una sigla como VTV cuenta una palabra menos
+        // en el título oficial ("VTV | Provincia de Buenos Aires") que en el
+        // del imitador ("VTV…: Turnos, Tarifas").
+        let official = results.filter { isOfficial($0) && covers($0) > 0 && covers($0) >= top - 1 }
         // Los que se llaman como el organismo sin serlo —mianses.org,
         // turnosanses.net— van al final cuando el organismo está en la lista.
         let names = Set(official.flatMap { labels(of: $0.host) }.filter { $0.count >= 4 && $0 != "argentina" })
@@ -860,14 +902,15 @@ final class Assistant {
         // —turnosanses.net para "turnos anses"—, que es el truco de esos
         // sitios y va después de lo oficial.
         if let asked = siteNamed(within: request, among: results) {
-            return [asked] + byCountry.filter { $0.href != asked.href }
+            return [asked] + byCountry.filter { $0.href != asked.href } + hosted
         }
-        guard naming, let best = named(request, among: results), !borrows(best) else { return byCountry }
+        guard naming, let best = named(request, among: results), closer(best) > 0, !borrows(best)
+        else { return byCountry + hosted }
         // Lo oficial va antes que cualquier coincidencia de nombre. Para
         // "turnos anses", turnosanses.net se llama EXACTAMENTE como el pedido
         // —es el truco de esos sitios— y le ganaba a argentina.gob.ar.
         let others = byCountry.filter { $0.href != best.href && !promoted.contains($0.href) }
-        return official + (promoted.contains(best.href) ? [] : [best]) + others
+        return official + (promoted.contains(best.href) ? [] : [best]) + others + hosted
     }
 
     /// Lo que se encontró, como botones.
@@ -979,6 +1022,25 @@ final class Assistant {
     /// hubiéramos abierto el primero, abríamos cualquier cosa. La posición
     /// no prueba nada.
     static func results(of page: ExtractedPage) -> [Result] {
+        var found: [(title: String, href: String)] = []
+        let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        for entry in page.stream ?? [] {
+            switch entry.kind {
+            case "link":
+                if let label = entry.label, let href = entry.href { found.append((label, href)) }
+            case "listing":
+                guard let listing = entry.ref.flatMap({ byID[$0] }) else { continue }
+                for item in listing.items { if let href = item.href { found.append((item.title, href)) } }
+            default: continue
+            }
+        }
+        return results(from: found)
+    }
+
+    /// Los resultados de verdad entre los links de una página de buscador,
+    /// en su orden. Aparte de la página para poder probarla contra búsquedas
+    /// guardadas: ver Tests/buscador.
+    static func results(from links: [(title: String, href: String)]) -> [Result] {
         var out: [Result] = []
         var seen = Set<String>()
         var repeated = Set<String>()
@@ -1028,18 +1090,230 @@ final class Assistant {
             out.append(Result(title: clean, href: href))
         }
 
-        let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        for entry in page.stream ?? [] {
-            switch entry.kind {
-            case "link":
-                if let label = entry.label, let href = entry.href { consider(label, href) }
-            case "listing":
-                guard let listing = entry.ref.flatMap({ byID[$0] }) else { continue }
-                for item in listing.items { if let href = item.href { consider(item.title, href) } }
-            default: continue
+        for link in links { consider(link.title, link.href) }
+        return out
+    }
+
+    // MARK: - El sitio que se nombró
+
+    /// Una página alojada en un servicio gratuito —vercel.app, netlify,
+    /// github.io, blogspot—, que es donde viven las copias de bancos. Para
+    /// "banco nación", en un iPhone con región Estados Unidos, el primer
+    /// resultado ofrecido fue "Banco de la Nación — Banca por Internet" en
+    /// front-homebanking-bn-react.vercel.app. Nunca se va directo a una, y en
+    /// la lista van al final.
+    static func isHosted(_ result: Result) -> Bool {
+        let host = result.host
+        let platforms = [
+            "vercel.app", "netlify.app", "github.io", "gitlab.io", "pages.dev", "web.app", "firebaseapp.com",
+            "herokuapp.com", "onrender.com", "glitch.me", "repl.co", "replit.app", "blogspot.com", "wordpress.com",
+            "wixsite.com", "weebly.com", "godaddysites.com", "square.site", "webflow.io", "framer.app", "carrd.co",
+            "sites.google.com", "000webhostapp.com", "surge.sh", "fly.dev", "azurewebsites.net", "ngrok.io",
+            "ngrok-free.app", "workers.dev", "myshopify.com", "tumblr.com",
+        ]
+        return platforms.contains { host == $0 || host.hasSuffix("." + $0) }
+    }
+
+    /// Palabras que no nombran a nadie: "de" y "la" están en "Banco de la
+    /// Nación" y en cualquier otra cosa.
+    static let fillers: Set<String> = [
+        "la", "el", "los", "las", "de", "del", "y", "en", "a", "al", "sitio", "pagina", "web", "oficial",
+    ]
+
+    /// Lo que se hace en un sitio, no su nombre. Un dominio que junta una de
+    /// éstas con el nombre de otro —entradasbocajuniors.com, vtvturno.com,
+    /// turnosanses.net— es el truco de los imitadores.
+    static let tasks: Set<String> = [
+        "turno", "turnos", "tramite", "tramites", "entrada", "entradas", "pago", "pagos", "pagar", "factura",
+        "facturas", "resumen", "consulta", "consultas", "saldo", "seguimiento", "cita", "citas", "reserva",
+        "reservas", "boleto", "boletos", "pasaje", "pasajes", "descuento", "descuentos", "oferta", "ofertas",
+        "catalogo", "horario", "horarios", "precio", "precios", "info", "online", "gratis",
+    ]
+
+    /// Los números dictados en letras: "cadena tres" es cadena3.com.
+    static let numbers: [String: String] = [
+        "uno": "1", "dos": "2", "tres": "3", "cuatro": "4", "cinco": "5", "seis": "6", "siete": "7",
+        "ocho": "8", "nueve": "9", "diez": "10", "doce": "12", "trece": "13", "veinte": "20", "veinticuatro": "24",
+    ]
+
+    /// Las palabras que cuentan para ver cuánto de un pedido nombra un
+    /// título: también las siglas cortas —"vtv", "tn"—, que con cinco letras
+    /// de piso no contaban y dejaban ganar a vtvturno.com.
+    static func keys(_ text: String) -> Set<String> {
+        Set(words(text).filter { $0.count >= 3 && !fillers.contains($0) && !suffixes.contains($0) }
+            .map { $0.count >= 5 ? String($0.prefix(5)) : $0 })
+    }
+
+    /// Un imitador: su nombre junta una tarea con otra palabra del pedido.
+    static func imitates(_ result: Result, _ request: String) -> Bool {
+        guard let site = siteName(of: result.host) else { return false }
+        let said = words(request).filter { $0.count >= 3 && !fillers.contains($0) && !tasks.contains($0) }
+        return tasks.contains { $0.count >= 4 && site.contains($0) } && said.contains { site.contains($0) && site != $0 }
+    }
+
+    /// Las palabras de un texto, planas: "Banco de la Nación" → banco, de, la, nacion.
+    static func words(_ text: String) -> [String] {
+        text.split(whereSeparator: { !$0.isLetter && !$0.isNumber }).map { flatten(String($0)) }.filter { !$0.isEmpty }
+    }
+
+    /// El dominio registrado: "anses.gob.ar" de servicioswww.anses.gob.ar, con
+    /// el idioma adelante cuando lo hay: "es.wikipedia.org".
+    static func registered(_ host: String) -> String {
+        var parts = host.split(separator: ".").map(String.init)
+        var tail: [String] = []
+        while parts.count > 1, let last = parts.last, suffixes.contains(last) || endings.contains(last) {
+            tail.insert(parts.removeLast(), at: 0)
+        }
+        guard let name = parts.popLast() else { return host }
+        let domain = ([name] + tail).joined(separator: ".")
+        if let language = parts.last, ["es", "en", "pt", "fr", "it", "de", "ca"].contains(language) {
+            return language + "." + domain
+        }
+        return domain
+    }
+
+    /// Las partes de un título: "Banco de la Nación Argentina - Home banking".
+    static func segments(_ title: String) -> [String] {
+        title.components(separatedBy: CharacterSet(charactersIn: "|–—")).flatMap { $0.components(separatedBy: " - ") }
+            .map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+    }
+
+    /// Las iniciales de un nombre, sin las palabras que no nombran: "bna" de
+    /// "Banco de la Nación Argentina".
+    static func initials(_ text: String) -> String {
+        String(words(text).filter { !fillers.contains($0) }.compactMap(\.first))
+    }
+
+    /// Las palabras del pedido que este resultado nombra si ES el sitio que
+    /// la persona pidió; nil si no lo es o si no se puede asegurar. `host`:
+    /// lo nombra el host entero y no sólo el dominio — mi.argentina.gob.ar es
+    /// "mi argentina"; argentina.gob.ar, no.
+    ///
+    /// Dos pruebas, las dos contra el dominio, que es lo que no se puede
+    /// imitar desde el título. Por el nombre del dominio: lanacion es "la
+    /// nación", macro es "banco macro". O por el nombre que el sitio se da en
+    /// el título cuando el dominio son sus iniciales: bna.com.ar se titula
+    /// "Banco de la Nación Argentina". Una nota de Radio Mitre sobre el banco
+    /// nombra al banco y no es él; un sitio que se llama "mianses" contiene
+    /// "anses" y tampoco. Y nunca uno de otro país: "anses" es también la
+    /// agencia francesa de alimentos.
+    static func names(_ request: String, _ result: Result, tasksToo: Bool = false) -> (words: Set<String>, host: Bool)? {
+        guard closer(result) > 0, !isHosted(result), let site = siteName(of: result.host) else { return nil }
+        let said = words(request)
+        guard !said.isEmpty else { return nil }
+        let parts = labels(of: result.host)
+        let joined = parts.joined()
+        // Con los números en cifras también: "cadena tres" es cadena3.com.
+        let digits = said.map { numbers[$0] ?? $0 }
+        for variant in digits == said ? [said] : [said, digits] {
+            for size in stride(from: min(3, variant.count), through: 1, by: -1) {
+                for start in 0...(variant.count - size) {
+                    let piece = variant[start..<(start + size)]
+                    let gram = piece.joined()
+                    // Una sola palabra corta nombra sólo si es todo el pedido:
+                    // "tn" es TN, pero "de" no es nadie.
+                    guard size == variant.count || gram.count >= 5 else { continue }
+                    // Un nombre con una tarea adentro es el de un imitador,
+                    // salvo que no haya otro: "pago mis cuentas" es el sitio.
+                    guard tasksToo || size == 1 || !piece.contains(where: tasks.contains) else { continue }
+                    let named = Set(said[start..<(start + size)])
+                    if gram == site { return (named, false) }
+                    if parts.count > 1, gram == joined { return (named, true) }
+                }
             }
         }
-        return out
+        // Un error de tipeo, con margen angosto: "la nasion". Nunca con una
+        // tarea en el pedido: entradasbocajuniors.com "se parecía" a
+        // "entradas boca juniors" por ser exactamente eso.
+        let wanted = said.joined()
+        if wanted.count >= 6, tasksToo || !said.contains(where: tasks.contains),
+           distance(wanted, site) <= wanted.count / 6 { return (Set(said), false) }
+        let asked = Set(said.filter { !fillers.contains($0) })
+        guard !asked.isEmpty else { return nil }
+        for segment in segments(result.title) where !segment.contains(":") && !segment.contains("?") {
+            let own = words(segment)
+            let covered = asked.intersection(own)
+            guard own.count <= 7, covered.count >= min(2, asked.count), initials(segment) == site else { continue }
+            return (covered, false)
+        }
+        return nil
+    }
+
+    /// El idioma del teléfono, en dos letras.
+    static func phoneCode() -> String {
+        Locale.preferredLanguages.first.flatMap { Locale(identifier: $0).language.languageCode?.identifier } ?? "es"
+    }
+
+    /// El sitio que la persona nombró y la página a la que se va directo, si
+    /// se puede asegurar cuál es. Nil si hay duda: entonces se muestra la
+    /// lista, que es preferible a abrir un sitio que no era.
+    ///
+    /// Lo pidió Daniel: "si te estoy diciendo Banco Nación, priorizá Banco
+    /// Nación". Y cuando se nombra sólo el sitio, se va a su página
+    /// principal, no a la primera página suya que devolvió el buscador: para
+    /// "Anses" desde un teléfono con región Estados Unidos, esa primera era
+    /// una consulta de estudios con un código dibujado. Probado contra
+    /// búsquedas reales de 63 pedidos: Scripts/probar-sitios.py.
+    static func namedSite(_ request: String, among results: [Result]) -> (site: Result, go: String)? {
+        // El primero en el orden del buscador. Por país ganaban
+        // elcronista.ar sobre cronista.com y el login de farmacity.com.ar
+        // sobre farmacity.com.
+        let strict = results.firstIndex { names(request, $0) != nil }
+        guard let index = strict ?? results.firstIndex(where: { names(request, $0, tasksToo: true) != nil }),
+              let match = names(request, results[index], tasksToo: strict == nil) else { return nil }
+        let first = results[index]
+        let asked = Set(words(request).filter { !fillers.contains($0) })
+        let askedStems = stems(request)
+        // Más arriba, un resultado del país que se titula con todo lo pedido
+        // y no es éste: duda. "Tarjeta Cencosud" era primero en
+        // clientes.cencopay.ar —la tarjeta cambió de nombre— y el que se
+        // llamaba cencosud era el corporativo chileno.
+        let askedKeys = keys(request)
+        if results[..<index].contains(where: { other in
+            (closer(other) == 2 || isOfficial(other)) && !isHosted(other)
+                && registered(other.host) != registered(first.host)
+                && segments(other.title).contains { askedKeys.isSubset(of: keys($0)) }
+        }) { return nil }
+        // Un sitio del Estado antes, que habla de lo mismo, es duda: para
+        // "trenes argentinos" el primero era argentina.gob.ar y el que se
+        // llamaba igual, trenes-argentinos.com, no era el oficial.
+        if !isOfficial(first), results[..<index].contains(where: {
+            isOfficial($0) && !stems($0.title).isDisjoint(with: askedStems)
+        }) { return nil }
+        // El sitio es su dominio, sin idioma ni subdominio; o el host entero
+        // si es el host el que se llama como lo pedido.
+        func base(_ host: String) -> String {
+            let domain = registered(host)
+            // Sólo un idioma de verdad: "tn" en tn.com.ar es TN, no un idioma.
+            guard let dot = domain.firstIndex(of: "."),
+                  ["es", "en", "pt", "fr", "it", "de", "ca"].contains(String(domain[..<dot])),
+                  domain[domain.index(after: dot)...].contains(".")
+            else { return domain }
+            return String(domain[domain.index(after: dot)...])
+        }
+        let key = match.host ? first.host : base(first.host)
+        let mine = results.filter { (match.host ? $0.host : base($0.host)) == key }
+        // Lo que se pidió además del nombre —"home banking" en "home banking
+        // banco nación"— tiene que estar en el título de la página a la que
+        // se va; si ninguna lo tiene, no se puede asegurar a dónde.
+        let extra = stems(asked.subtracting(match.words).joined(separator: " "))
+        func covered(_ result: Result) -> Int { askedStems.intersection(stems(result.title)).count }
+        let best = mine.max { a, b in
+            covered(a) != covered(b) ? covered(a) < covered(b) : depth(a) > depth(b)
+        } ?? first
+        guard extra.isSubset(of: stems(best.title)) else { return nil }
+        guard extra.isEmpty else { return (best, best.href) }
+        // Sólo el nombre: la portada. La que dio el buscador si ya lo es;
+        // si no, "www." y el dominio, que medido responde en los sitios
+        // probados. El portal del prestador de PAMI o la inscripción del CBC
+        // no son la entrada de PAMI ni de la UBA.
+        let url = URL(string: best.href)
+        let atRoot = (url?.path ?? "/").split(separator: "/").isEmpty && url?.query == nil
+        if atRoot, best.host == key || best.host == "www." + key { return (best, best.href) }
+        if match.host { return (best, "https://\(key)/") }
+        let language = phoneCode()
+        if mine.contains(where: { $0.host.hasPrefix(language + ".") }) { return (best, "https://\(language).\(key)/") }
+        return (best, "https://www.\(key)/")
     }
 
     /// El resultado que ES el sitio que la persona nombró, si alguno lo es.
@@ -1258,7 +1532,7 @@ final class Assistant {
         // Meteored España" vive en tiempo.com; "Últimas noticias de Costa Rica
         // | La Nación", en nacion.com. En un dominio del país no se mira: un
         // diario argentino puede titular sobre Perú.
-        if ["com", "org", "net", "info", "app", "io", "edu", "int"].contains(last) {
+        if ["com", "org", "net", "info", "app", "io", "edu", "int"].contains(last) || generic.contains(last) {
             return mentionsOtherCountry(result.title, home: home) ? 0 : 1
         }
         return 0
@@ -1439,8 +1713,25 @@ final class Assistant {
         "ar", "es", "mx", "cl", "uy", "br", "us", "uk", "io", "app", "info",
     ]
 
+    /// Terminaciones que sólo cuentan al final: "cocos.capital" es Cocos,
+    /// "cabal.coop" es Cabal, "lemon.me" es Lemon, "anses.fr" es anses (de
+    /// Francia, cosa que decide el país y no el nombre).
+    static let endings: Set<String> = [
+        "capital", "coop", "me", "ai", "tv", "fm", "digital", "tech", "club", "xyz", "gg", "bank", "pro", "biz",
+        "ly", "lat", "finance", "money", "pe", "py", "bo", "ve", "ec", "cr", "do", "pa", "gt", "hn", "sv", "ni",
+        "cu", "pr", "fr", "de", "it", "pt", "cn", "kr", "jp", "ca", "au", "nz",
+    ]
+
+    /// Las de `endings` que no son de ningún país.
+    static let generic: Set<String> = [
+        "capital", "coop", "me", "ai", "tv", "fm", "digital", "tech", "club", "xyz", "gg", "bank", "pro", "biz",
+        "ly", "lat", "finance", "money",
+    ]
+
     static func labels(of host: String) -> [String] {
-        host.split(separator: ".").map(String.init)
+        var parts = host.split(separator: ".").map(String.init)
+        while parts.count > 1, let last = parts.last, endings.contains(last) { parts.removeLast() }
+        return parts
             .filter { !suffixes.contains($0) }
             .map(flatten)
             .filter { !$0.isEmpty }

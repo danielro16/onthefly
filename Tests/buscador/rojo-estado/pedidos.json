@@ -1,0 +1,159 @@
+[
+ {
+  "pedido": "agip",
+  "sitio": [
+   "agip.gob.ar"
+  ],
+  "solo": true,
+  "nota": "Sigla homónima de Agip, la marca de combustibles y lubricantes de Eni (Italia); también aparecen blogs contables que explican AGIP."
+ },
+ {
+  "pedido": "inta",
+  "sitio": [
+   "inta.gob.ar",
+   "argentina.gob.ar/inta"
+  ],
+  "solo": true,
+  "nota": "Homónimo: INTA de España (Instituto Nacional de Técnica Aeroespacial, inta.es). El oficial vive dentro de argentina.gob.ar."
+ },
+ {
+  "pedido": "senasa",
+  "sitio": [
+   "senasa.gob.ar",
+   "senasa.gov.ar",
+   "argentina.gob.ar/senasa"
+  ],
+  "solo": true,
+  "nota": "Homónimos en español: SENASA Perú (gob.pe/senasa) y SeNaSa República Dominicana. El oficial vive dentro de argentina.gob.ar."
+ },
+ {
+  "pedido": "anac",
+  "sitio": [
+   "anac.gob.ar",
+   "argentina.gob.ar/anac"
+  ],
+  "solo": true,
+  "nota": "Sigla de cuatro letras con homónimos fuertes: ANAC Brasil (gov.br/anac) y ANAC Portugal. El oficial vive dentro de argentina.gob.ar."
+ },
+ {
+  "pedido": "boletín oficial",
+  "sitio": [
+   "boletinoficial.gob.ar",
+   "boletinoficial.gov.ar"
+  ],
+  "solo": true,
+  "nota": "Palabras comunes: el BOE de España (Boletín Oficial del Estado) y los boletines provinciales y de CABA se llaman igual. Lo más probable en Argentina es el nacional."
+ },
+ {
+  "pedido": "poder judicial",
+  "sitio": [
+   "pjn.gov.ar",
+   "csjn.gov.ar"
+  ],
+  "solo": true,
+  "nota": "Genérico: Poder Judicial de Chile (pjud.cl), de Perú (pj.gob.pe) y los de cada provincia (scba, Córdoba, Mendoza). Lo más probable es el nacional; ante duda va la lista."
+ },
+ {
+  "pedido": "vtv",
+  "sitio": [
+   "vtv.gba.gob.ar",
+   "suvtv.com.ar",
+   "buenosaires.gob.ar/tramites/verificacion-tecnica-vehicular"
+  ],
+  "solo": true,
+  "nota": "Imitadores conocidos (vtvprovincia.com, vtvturno.com) y homónimo Venezolana de Televisión. Oficial de PBA y de CABA (buenosaires.gob.ar/vtv redirige a suvtv.com.ar)."
+ },
+ {
+  "pedido": "gba",
+  "sitio": [
+   "gba.gob.ar"
+  ],
+  "solo": true,
+  "nota": "Sigla de tres letras que es sobre todo Game Boy Advance (emuladores, ROMs). Si no puede asegurar, va la lista."
+ },
+ {
+  "pedido": "mi pba",
+  "sitio": [
+   "gba.gob.ar/gobierno/mipba"
+  ],
+  "solo": true,
+  "nota": "Casi igual a miBA (la cuenta de la Ciudad, buenosaires.gob.ar); es una app, así que compiten Google Play y App Store. Vive dentro de gba.gob.ar."
+ },
+ {
+  "pedido": "gobierno de la ciudad",
+  "sitio": [
+   "buenosaires.gob.ar"
+  ],
+  "solo": true,
+  "nota": "Genérico: Gobierno de la Ciudad de México (cdmx.gob.mx) se llama igual. En Argentina lo más probable es el GCBA."
+ },
+ {
+  "pedido": "gobierno de córdoba",
+  "sitio": [
+   "cba.gov.ar"
+  ],
+  "solo": true,
+  "nota": "Confusión con la Municipalidad de Córdoba (cordoba.gob.ar) y con Córdoba de España. El dominio oficial (cba.gov.ar) no contiene la palabra córdoba."
+ },
+ {
+  "pedido": "registro automotor",
+  "sitio": [
+   "dnrpa.gov.ar"
+  ],
+  "solo": true,
+  "nota": "Palabras comunes, dominio en sigla (DNRPA). Compiten gestorías, notas de diarios y registros de otros países."
+ },
+ {
+  "pedido": "cartilla ioma",
+  "sitio": [
+   "ioma.gba.gob.ar",
+   "ioma.gba.gov.ar"
+  ],
+  "solo": false,
+  "nota": "Agregadores de obras sociales (miobrasocial.com.ar), blogs y notas de La Nación explican la cartilla. La cartilla vive en sistemas.ioma.gba.gov.ar (con .gov). Desde EE. UU. el sitio da 403; se verificó con búsqueda web."
+ },
+ {
+  "pedido": "impuesto automotor arba",
+  "sitio": [
+   "arba.gov.ar"
+  ],
+  "solo": false,
+  "nota": "Muchas notas de diarios sobre vencimientos de patentes; la patente de CABA (AGIP) es el equivalente de otra jurisdicción."
+ },
+ {
+  "pedido": "actos públicos abc",
+  "sitio": [
+   "abc.gob.ar",
+   "abc.gov.ar"
+  ],
+  "solo": false,
+  "nota": "abc es también el diario ABC de España (abc.es) y ABC Color de Paraguay. Tarea típica de docentes bonaerenses."
+ },
+ {
+  "pedido": "licencia de conducir ansv",
+  "sitio": [
+   "argentina.gob.ar/seguridadvial"
+  ],
+  "solo": false,
+  "nota": "La licencia la emiten los municipios y CABA; compiten turnos de la Ciudad, gestores y notas. La ANSV vive dentro de argentina.gob.ar."
+ },
+ {
+  "pedido": "infracciones caba",
+  "sitio": [
+   "buenosaires.gob.ar"
+  ],
+  "solo": false,
+  "nota": "Compiten la consulta de infracciones de PBA (otra jurisdicción) y sitios privados de consulta de multas."
+ },
+ {
+  "pedido": "pasajes por discapacidad cnrt",
+  "sitio": [
+   "cnrt.gob.ar",
+   "argentina.gob.ar/cnrt",
+   "argentina.gob.ar/transporte/cnrt",
+   "argentina.gob.ar/servicio/reservar-pasajes-con-certificado-de-discapacidad"
+  ],
+  "solo": false,
+  "nota": "Muchas notas de diarios con el paso a paso (Crónica, InfoRegión) y noticias oficiales. cnrt.gob.ar redirige a argentina.gob.ar/transporte/cnrt."
+ }
+]

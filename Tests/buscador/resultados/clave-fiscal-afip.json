@@ -1,0 +1,42 @@
+[
+ {
+  "titulo": "Acceso con Clave Fiscal - ARCA - AFIP",
+  "href": "https://auth.afip.gob.ar/contribuyente_/login.xhtml"
+ },
+ {
+  "titulo": "Clave fiscal | ARCA - afip.gob.ar",
+  "href": "https://www.afip.gob.ar/claveFiscal/"
+ },
+ {
+  "titulo": "ARCA | Portal principal - afip.gob.ar",
+  "href": "https://www.afip.gob.ar/landing/default.asp"
+ },
+ {
+  "titulo": "Clave FIscal | ARCA - AFIP",
+  "href": "https://auth.afip.gov.ar/contribuyente_/menuEntidadAutenticante.xhtml"
+ },
+ {
+  "titulo": "Portal de Clave Fiscal",
+  "href": "https://portalcf.cloud.afip.gob.ar/portal/app/"
+ },
+ {
+  "titulo": "Obtener la clave fiscal - Ayuda - Clave fiscal | ARCA - afip.gob.ar",
+  "href": "https://www.afip.gob.ar/clavefiscal/ayuda/obtener-clave-fiscal.asp"
+ },
+ {
+  "titulo": "Recuperar la clave fiscal - Ayuda - Clave fiscal | ARCA - afip.gob.ar",
+  "href": "https://www.afip.gob.ar/clavefiscal/ayuda/recupera-clave-fiscal.asp"
+ },
+ {
+  "titulo": "Obtener la clave fiscal - Argentina.gob.ar",
+  "href": "https://www.argentina.gob.ar/servicio/obtener-la-clave-fiscal"
+ },
+ {
+  "titulo": "Clave FIscal | AFIP - Administración Federal de Ingresos Publicos",
+  "href": "https://auth.afip.gov.ar/contribuyente_/menu.xhtml"
+ },
+ {
+  "titulo": "Portal de Clave Fiscal",
+  "href": "https://portalcf.cloud.afip.gob.ar/portal/app/index-compat.html"
+ }
+]
