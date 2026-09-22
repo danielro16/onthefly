@@ -1620,6 +1620,26 @@ final class Assistant {
         defer { working = false }
         var first = true
 
+        /// Tocar lo elegido. False: el turno terminó acá.
+        func go(_ chosen: Action) async -> Bool {
+            // Oscilar no es avanzar.
+            guard touched.insert(chosen.id).inserted else {
+                say("Sin avance: doy vueltas sobre lo mismo. Probar con otras palabras.")
+                return false
+            }
+            // Un campo se llena, no se toca. Y lo que se escribe sale
+            // SÓLO de lo que la persona pidió: si un valor pudiera venir
+            // de la página, un sitio podría hacer que JEF escriba lo que
+            // se le antoje, y quien no ve no tendría cómo notarlo.
+            if let page = reader.page, let field = Self.field(named: chosen, in: page) {
+                await write(field, of: chosen, goal: goal, on: reader)
+                return false
+            }
+            say("Abriendo \(chosen.label).")
+            await reader.activate(chosen)
+            return true
+        }
+
         for _ in 0..<max(steps, 1) {
             guard let page = reader.page else {
                 say("Todavía no hay una página cargada.")
@@ -1647,6 +1667,23 @@ final class Assistant {
                 return
             }
 
+            // Cuando Jev no puede, Gemini reinterpreta: elige uno o pregunta
+            // entre dos o tres, con botones. Nil: tampoco encontró nada.
+            func rescue() async -> Action? {
+                guard let answerer,
+                      let found = try? await answerer.reinterpret(
+                          goal, options: options.map { "\($0.kind.rawValue): \($0.label)" }, page: Self.saying(page))
+                else { return nil }
+                if let index = found.choice { return options[index] }
+                if let question = found.question, !found.options.isEmpty {
+                    offer = Offer(goal: goal, options: found.options.map { options[$0] })
+                    say(question)
+                    asked = true
+                }
+                return nil
+            }
+            var asked = false
+
             let decision: PageAnalyzer.Step
             do {
                 decision = try await analyzer.nextStep(goal: goal, page: page, options: options)
@@ -1656,12 +1693,17 @@ final class Assistant {
                 say("Sin conexión. No puedo navegar a ningún lado.")
                 return
             } catch {
-                // Y sólo si fue la red. Con la página recién cargada, "dame
-                // los titulares" contestó "Sin conexión": lo que había fallado
-                // era otra cosa, y decir que no hay internet cuando hay hace
-                // que no se crea nada de lo que sigue.
-                say("No pude decidir a dónde ir desde acá. Se puede pedir de otra forma, o tocar una opción.")
-                failedTurn = true
+                // Jev falló: Gemini reinterpreta.
+                if let chosen = await rescue() {
+                    first = false
+                    guard await go(chosen) else { return }
+                    continue
+                }
+                if asked { return }
+                // Tampoco Gemini lo encontró: está en otro lado. Se ofrece
+                // buscarlo, con un botón.
+                say("No encuentro eso en esta página.")
+                searchInstead = goal
                 return
             }
 
@@ -1685,6 +1727,17 @@ final class Assistant {
                 return
 
             case .ask, .go where decision.confidence < Self.sureEnough:
+                // Jev duda: Gemini reinterpreta antes de preguntar a ciegas.
+                if let chosen = await rescue() {
+                    guard await go(chosen) else { return }
+                    continue
+                }
+                if asked { return }
+                if answerer != nil {
+                    say("No encuentro eso en esta página.")
+                    searchInstead = goal
+                    return
+                }
                 // Dos con el mismo nombre no son una elección: "¿Cuentas?
                 // También encuentro Cuentas" en el Banco Nación.
                 var named = Set<String>()
@@ -1692,7 +1745,7 @@ final class Assistant {
                     options.indices.contains(index) ? options[index] : nil
                 }.filter { named.insert(Self.flatten($0.label)).inserted }.prefix(2)
                 guard let first = candidates.first else {
-                    say("No encontré por dónde seguir para eso.")
+                    say("No encontré eso en esta página.")
                     return
                 }
                 offer = Offer(goal: goal, options: Array(candidates))
@@ -1708,28 +1761,10 @@ final class Assistant {
                     let index = decision.ranked.first,
                     options.indices.contains(index)
                 else {
-                    say("No encontré por dónde seguir para eso.")
+                    say("No encontré eso en esta página.")
                     return
                 }
-                let chosen = options[index]
-
-                // Oscilar no es avanzar.
-                guard touched.insert(chosen.id).inserted else {
-                    say("Sin avance: doy vueltas sobre lo mismo. Probar con otras palabras.")
-                    return
-                }
-
-                // Un campo se llena, no se toca. Y lo que se escribe sale
-                // SÓLO de lo que la persona pidió: si un valor pudiera venir
-                // de la página, un sitio podría hacer que JEF escriba lo que
-                // se le antoje, y quien no ve no tendría cómo notarlo.
-                if let field = Self.field(named: chosen, in: page) {
-                    await write(field, of: chosen, goal: goal, on: reader)
-                    return
-                }
-
-                say("Abriendo \(chosen.label).")
-                await reader.activate(chosen)
+                guard await go(options[index]) else { return }
             }
         }
 
