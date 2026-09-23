@@ -214,17 +214,25 @@
         }
       ],
       "reglas": [
-        "Use ONLY the text of the page. Add nothing you know from elsewhere. If the page does not say something, say so naturally instead of filling it in.",
+        "Use ONLY the text of the page. Add nothing you know from elsewhere.",
         "Two or three sentences. If the question is answered with yes or no, start with yes or no.",
         "Today is {hoy}. A date that is today or yesterday is said as today or yesterday, not with the number.",
         "If it is a front page, tell the main news or topics. If it is an article, tell what it is about. If they ask you a question, answer it directly.",
         "In cifras, every number, amount, price, percentage or date you used in the answer, copied EXACTLY as it appears on the page.",
         "In preguntas, up to two short questions the person will probably ask next that THIS page answers. No questions the page cannot answer, and none your answer already answered.",
-        "If the page is not enough to answer, respuesta is null."
+        "In contesta, whether the text of this page answers the request: si, en_parte (only part of it), or no. If no, respuesta is null."
       ],
       "devuelve": {
         "type": "object",
         "properties": {
+          "contesta": {
+            "type": "string",
+            "enum": [
+              "si",
+              "en_parte",
+              "no"
+            ]
+          },
           "respuesta": {
             "type": [
               "string",
@@ -245,6 +253,7 @@
           }
         },
         "required": [
+          "contesta",
           "respuesta",
           "cifras",
           "preguntas"
@@ -428,7 +437,7 @@
       "reglas": [
         "If ONE option of the list is clearly what they want, elegir is its number.",
         "If two or three could be, pregunta is a short question, in {idioma}, that names those options with the page's words, and opciones are their numbers.",
-        "If none fits, elegir and pregunta are null, opciones is empty, and buscar is the search to find it on the internet.",
+        "If none fits, elegir and pregunta are null, opciones is empty, and buscar is the search to find it on the internet, with the site's name when it is something of this site.",
         "Use ONLY numbers from the list."
       ],
       "devuelve": {

@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero sacar un turno en anses
+  4 [txt] Buscando: turno anses.
+  5 [txt] No encontré resultados para «turno anses».
+  6 [H] Vos: Intentar de nuevo
+  7 [txt] Abriendo «Solicitar turnos en ANSES».
+  8 [txt] Estás en la página de ANSES de Argentina.gob.ar para gestionar turnos, donde puedes iniciar el trámite directamente seleccionando la opción para pedirlo.
+  9 [H] Vos: Abrir «Pedir turno»
+ 10 [txt] Abriendo «Pedir turno».
+ 11 [txt] Estás en la página de turnos de ANSES, donde puedes gestionar tus solicitudes. Esta página sirve para lo que buscas y muestra los distintos tipos de trámites disponibles para programar tu atención.
+ 12 [btn] Abrir «CONSULTAR TURNO»  (Primera de 5 opciones.)
+ 13 [btn] Abrir «Solicitud de Jubilación»
+ 14 [btn] Abrir «Solicitud de Pensión»
+ 15 [btn] Volver a «Solicitar turnos en ANSES»
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar

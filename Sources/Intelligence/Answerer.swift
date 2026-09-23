@@ -25,6 +25,9 @@ actor Answerer {
         /// Lo que es probable que la persona pregunte después, y que esta
         /// misma página contesta: "¿Y el MEP?" después del blue.
         var questions: [String] = []
+        /// La página contesta sólo una parte: se dice, y se ofrece buscar el
+        /// resto afuera.
+        var partial = false
     }
 
     enum AnswerError: Error {
@@ -127,7 +130,11 @@ actor Answerer {
         guard let parsed = try await ask("contestar", [
             "anterior": previous, "pedido": question, "lectura": reading, "texto": page,
         ], maxTokens: 800) else { throw AnswerError.unusable }
-        guard let text = parsed["respuesta"] as? String, !text.isEmpty else { return nil }
+        // Si la página contesta lo decide un campo del esquema, no el texto:
+        // con "decilo con naturalidad" el modelo escribía "la página no
+        // menciona vuelos", y eso se tomaba como una respuesta.
+        let answers = parsed["contesta"] as? String
+        guard answers != "no", let text = parsed["respuesta"] as? String, !text.isEmpty else { return nil }
 
         // La verificación, donde importa. Un número inventado —un monto, un
         // precio, una fecha de vencimiento— es el invento que lastima, y es
@@ -140,7 +147,7 @@ actor Answerer {
         let questions = ((parsed["preguntas"] as? [String]) ?? [])
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty && $0.count <= 60 }
-        return Answer(text: text, quote: "", questions: Array(questions.prefix(2)))
+        return Answer(text: text, quote: "", questions: Array(questions.prefix(2)), partial: answers == "en_parte")
     }
 
     /// El resumen de una página. `alreadySaid`: lo que la persona ya escuchó

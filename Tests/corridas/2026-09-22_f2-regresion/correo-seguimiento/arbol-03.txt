@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: llevame al seguimiento de correo argentino
+  4 [txt] Buscando: seguimiento de correo argentino.
+  5 [txt] Estás en los resultados de «seguimiento de correo argentino». Los 3 más probables:
+  6 [H] Vos: Envíos e-commerce — www.correoargentino.com.ar
+  7 [txt] Abriendo correoargentino.com.ar.
+  8 [txt] Estás en el sitio de Correo Argentino, en la sección de seguimiento de envíos. Puedes consultar el estado de tu paquete ingresando el número de seguimiento en el formulario disponible.
+  9 [H] Vos: ¿qué me pide para seguir el envío?
+ 10 [txt] Para seguir tu envío en el Correo Argentino, debes ingresar el número de seguimiento correspondiente. La página especifica que debes escribir dicho número omitiendo puntos y espacios.
+ 11 [btn] ¿Dónde ingreso el código de seguimiento?  (Primera de 6 opciones.)
+ 12 [btn] ¿Cómo puedo contactar a atención al cliente?
+ 13 [btn] Completar «Número»
+ 14 [btn] Pulsar «Consultar»
+ 15 [btn] Volver a los resultados
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar

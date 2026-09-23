@@ -312,5 +312,24 @@
         "escribir": "abrí el carrito"
       }
     ]
+  },
+  {
+    "id": "primero-la-pagina",
+    "persona": "Lectora de diarios, ciega. Ya está en La Nación y pide cosas sin saber si están ahí.",
+    "objetivo": "Que lo que está en la página se conteste o se abra ahí mismo, y que lo que no está se busque afuera sin preguntar.",
+    "pasos": [
+      {
+        "escribir": "lanacion.com.ar"
+      },
+      {
+        "escribir": "¿a cuánto está el dólar?"
+      },
+      {
+        "escribir": "llevame a las noticias de economía"
+      },
+      {
+        "escribir": "buscame vuelos baratos a Madrid"
+      }
+    ]
   }
 ]

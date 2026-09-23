@@ -147,6 +147,41 @@ con Wikidata.
   contexto, en cualquier idioma. Junto con la prioridad de los dominios
   oficiales.
 
+## Hecho en F2 (2026-09-22)
+
+- **Anuncios:** Jev juzga todos los resultados en un solo pedido (medio
+  segundo). Un pedido por resultado separaba mejor —un anuncio dio 0,58
+  juntos y 0,92 solo—, pero Daniel eligió el rápido: si se cuela uno, se
+  ofrece como un resultado más. En Boca sacó los 5 anuncios y ningún
+  orgánico, y los botones quedaron en el orden de Google.
+- **Jev "¿cuál?/¿está?"** reemplaza a las cabezas `kind` y `move`, con las
+  mismas preguntas y el mismo armado que mide el banco (tandas de 35, final
+  entre los dos mejores de cada una, la carrera en cada ronda). Jev recibe
+  las palabras de la persona, no las del ruteador: "las noticias de
+  economía" llegaba como "Política y Economía", un título de la portada.
+- **Primero la página**, en el código y no en el prompt: con un sitio
+  abierto, "buscar" contesta con la página si es un dato, o abre lo que Jev
+  encuentra con confianza; si no, Google. "Abrir" que no está: Jev duda →
+  Gemini (`reinterpret`) mira la página —encuentra el link escondido en un
+  menú, o pregunta entre dos— y si tampoco está, se busca afuera solo, con
+  el nombre del sitio. En la página del buscador, o con el botón "Buscarlo en
+  internet", se va directo afuera.
+- **`reinterpret` queda** como el Gemini de la zona gris: el ruteador no ve
+  los links de la página, y es la única llamada de Gemini que los ve.
+- **Contestar dice si contesta** con un campo del esquema, `contesta`
+  (si / en_parte / no), en lugar de "si no alcanza, respuesta es null", que
+  chocaba con "si la página no lo dice, decilo con naturalidad": el modelo
+  escribía "la página no menciona vuelos" y eso se tomaba como respuesta.
+  Con `en_parte` se dice lo que hay y se ofrece buscar el resto. Probado
+  offline: 24 de 24.
+- **Probado y descartado:** un plan B del ruteador (`target` en abrir y
+  responder). De 14 casos, 2 servían, varios eran el sitio a secas y uno
+  copiaba una inyección ("abrí bco-seguro.net"). Responder vuelve a ofrecer
+  el botón: sus preguntas suelen ser sobre la página misma.
+- **Después de moverse, lo que no es un paso seguro es haber llegado**, y un
+  link a la misma dirección no es un paso: en La Nación daba vueltas por
+  /politica/ ("Ver más notas", ">Política").
+
 ## Cuidados
 
 - **Referencias** ("la segunda", "esa"): las resuelve Gemini. Si apuntan a un

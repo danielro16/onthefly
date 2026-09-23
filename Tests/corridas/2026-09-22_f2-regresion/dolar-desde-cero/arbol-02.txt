@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: ¿a cuánto está el dólar blue hoy?
+  4 [txt] Buscando: precio dólar blue hoy Buenos Aires.
+  5 [txt] El dólar blue cotiza hoy en Buenos Aires a $1.535 para la compra y $1.555 para la venta.
+  6 [H] Vos: Cotización del dólar, dólar blue y mayorista — www.cronista.com
+  7 [txt] Abriendo cronista.com.
+  8 [txt] Estás en la portada de El Cronista, donde el dólar blue cotiza a 1.555 pesos para la venta. Los titulares principales son las primeras opciones.
+  9 [btn] Abrir «Dólar Tarjeta $ 1.995,5 0.00%»  (Primera de 7 opciones.)
+ 10 [btn] Abrir «Dólar MEP $ 1.535,45 0.26%»
+ 11 [btn] Abrir «Dólar hoy y dólar blue hoy: cuál es la cotización del martes 22 de septiembre minuto a minuto»
+ 12 [btn] Abrir «HR Ratings ajusta pronóstico: por qué el PIB y el súper peso abren una oportunidad histórica antes…»
+ 13 [btn] Ver cotización dólar blue
+ 14 [btn] Volver a los resultados
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 17 [btn] Enviar

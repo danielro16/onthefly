@@ -268,7 +268,7 @@ def preguntar_a_jev(pedido: str, elementos: list[dict]) -> dict:
        revisar las mejores después, como en la documentación).
     """
     p, datos = PREGUNTAS["preguntas"], PREGUNTAS["datos"]
-    ninguno = {"none": "No item leads to what the person asked for."}
+    ninguno = p["cual"]["criteria"]
     partes: list[tuple[dict, float, int, str]] = []
 
     def una(estado: dict, preguntas: dict) -> tuple[dict, float, int, str]:

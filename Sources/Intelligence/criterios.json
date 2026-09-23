@@ -20,7 +20,8 @@
   "jev": {
     "cual": {
       "type": "choice",
-      "instructions": "Which item in `items` leads to what the person asked for in `request`? Pick the one a person would touch first to get it. Choose none if no item leads to it."
+      "instructions": "Which item in `items` leads to what the person asked for in `request`? Pick the one a person would touch first to get it. Choose none if no item leads to it.",
+      "criteria": {"none": "No item leads to what the person asked for."}
     },
     "esta": {
       "type": "boolean",

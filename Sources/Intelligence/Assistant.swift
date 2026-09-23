@@ -73,9 +73,9 @@ final class Assistant {
     /// exactamente lo que alguien que no ve no puede seguir.
     private static let maxSteps = 4
 
-    /// Por debajo de esto no toca: ofrece y espera. Es el umbral que separa
-    /// "sé a dónde ir" de "me parece" — ver la nota de arriba.
-    private static let sureEnough = 0.7
+    /// Por debajo de esto Jev no toca solo: decide Gemini y, si tampoco, la
+    /// persona. Medido con el banco multilingüe; vive en `criterios.json`.
+    private static var sureEnough: Double { Criterios.actuales?.umbrales["cual_confianza"] ?? 0.5 }
 
     /// Quien entiende el pedido. Ver `Router.swift` para por qué no es una
     /// lista de frases.
@@ -183,6 +183,10 @@ final class Assistant {
     private var nextQuestions: [String] = []
     /// Una pregunta que la página no contestó: se ofrece buscarla afuera.
     private var searchInstead: String?
+    /// Primero la página: con un sitio abierto, lo pedido se busca en él, y
+    /// sólo si no está, afuera (Daniel, 2026-09-22). False cuando la persona
+    /// ya pidió buscarlo afuera con el botón.
+    private var pageFirst = true
 
     init(
         analyzer: PageAnalyzer?,
@@ -212,6 +216,9 @@ final class Assistant {
 
     /// Un botón cuyo id empieza así es un pedido ya escrito.
     static let askPrefix = "jef-pedir:"
+    /// Igual, pero sin mirar antes la página: "Buscarlo en internet" se
+    /// ofrece porque en la página no estaba.
+    static let outsidePrefix = "jef-afuera:"
 
     /// Alcanza con uno de los dos. El ruteador solo ya sirve para llegar a
     /// algún lado desde la nada; el analizador es para elegir adentro de una
@@ -251,7 +258,7 @@ final class Assistant {
     /// `shown`: lo que queda escrito como dicho por la persona, cuando el
     /// pedido salió de un botón. "buscá en internet: …" no lo dijo nadie; lo
     /// que tocó fue "Buscarlo en internet".
-    func ask(_ goal: String, on reader: ReaderModel, shown: String? = nil) async {
+    func ask(_ goal: String, on reader: ReaderModel, shown: String? = nil, outside: Bool = false) async {
         let goal = goal.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !goal.isEmpty, !working else { return }
         inTurn = true
@@ -276,6 +283,7 @@ final class Assistant {
         pendingQuestion = nil
         nextQuestions = []
         searchInstead = nil
+        pageFirst = !outside
         previousRequest = lastRequest
         lastRequest = goal
         defer { closeTurn(on: reader) }
@@ -517,18 +525,24 @@ final class Assistant {
             await arrive(decision.target ?? goal, on: reader)
 
         case .buscar:
+            // Primero la página (Daniel, 2026-09-22): con un sitio abierto, lo
+            // pedido se busca en él —un dato, en lo que dice; un lugar, entre
+            // lo que se puede tocar— y sólo si no está, afuera. La página del
+            // buscador no es un sitio: ahí buscar es buscar de nuevo.
+            let query = decision.target ?? goal
+            if pageFirst, let page = reader.page, Self.searchQuery(of: page) == nil,
+               await foundHere(query, question: decision.question, goal: goal, on: reader) {
+                return
+            }
             // Si salió de una pregunta, se contesta en el sitio que elija.
-            // Buscar en el buscador del sitio, o contestar con la página
-            // abierta, ya no lo decide acá el código: lo decide el modelo,
-            // que ve la página (completar + enviar, o responder).
             if let question = decision.question { pendingQuestion = question }
-            await arrive(decision.target ?? goal, on: reader)
+            await arrive(query, on: reader)
 
         case .abrir:
             // Una referencia —"la segunda", "el del paro"— se resuelve contra
             // lo que la página ofrece de verdad. El modelo nombra; la lista
             // de destinos la pone la página, nunca él.
-            await run(decision.reference ?? goal, on: reader, steps: Self.maxSteps)
+            await run(decision.reference ?? goal, on: reader, steps: Self.maxSteps, said: goal)
 
         case .leer:
             guard let page = reader.page else { return }
@@ -1452,6 +1466,11 @@ final class Assistant {
             await ask(String(action.id.dropFirst(Self.askPrefix.count)), on: reader, shown: action.label)
             return
         }
+        if action.id.hasPrefix(Self.outsidePrefix) {
+            offer = nil
+            await ask(String(action.id.dropFirst(Self.outsidePrefix.count)), on: reader, shown: action.label, outside: true)
+            return
+        }
         offer = nil
         inTurn = true
         defer { inTurn = false }
@@ -1671,7 +1690,12 @@ final class Assistant {
         await run(chosen.goal, on: reader, steps: 1)
     }
 
-    private func run(_ goal: String, on reader: ReaderModel, steps: Int) async {
+    /// Caminar la página hacia lo pedido. `said`: el pedido con las palabras
+    /// de la persona, que es lo que juzgan Jev y Gemini; `goal`, lo que
+    /// nombró el ruteador, sirve para encontrar la opción por su nombre. Con
+    /// las del ruteador, "las noticias de economía" llegó como "Política y
+    /// Economía" —un título de la portada— y Jev eligió Política.
+    private func run(_ goal: String, on reader: ReaderModel, steps: Int, said: String? = nil) async {
         guard let analyzer else {
             say("El asistente no está configurado en esta versión.")
             return
@@ -1707,7 +1731,7 @@ final class Assistant {
                 say("Todavía no hay una página cargada.")
                 return
             }
-            let options = Self.options(of: page)
+            let options = Self.options(of: page).filter { Self.leadsAway($0, from: page) }
             guard !options.isEmpty else {
                 say("Esta página no ofrece nada que pueda abrir.")
                 return
@@ -1735,7 +1759,7 @@ final class Assistant {
             func rescue() async -> Action? {
                 guard let answerer,
                       let found = try? await answerer.reinterpret(
-                          goal, options: options.map { "\($0.kind.rawValue): \($0.label)" }, page: Self.saying(page))
+                          said ?? goal, options: options.map { "\($0.kind.rawValue): \($0.label)" }, page: Self.saying(page))
                 else { return nil }
                 elsewhere = found.search
                 if let index = found.choice { return options[index] }
@@ -1748,95 +1772,116 @@ final class Assistant {
             }
             var asked = false
             var elsewhere: String?
-            func notFound() {
-                say("No encuentro «\(Self.short(goal, 60))» en esta página. ¿Lo busco en internet?")
-                searchInstead = elsewhere ?? goal
-            }
 
-            let decision: PageAnalyzer.Step
-            do {
-                decision = try await analyzer.nextStep(goal: goal, page: page, options: options)
-            } catch JevClient.JevError.transport {
-                // Sin red no hay asistente, y eso se dice — no se disimula
-                // con un "no encontré nada".
-                say("Sin conexión. No puedo navegar a ningún lado.")
-                return
-            } catch {
-                // Jev falló: Gemini reinterpreta.
-                if let chosen = await rescue() {
-                    first = false
-                    guard await go(chosen) else { return }
-                    continue
-                }
-                if asked { return }
-                // Tampoco Gemini lo encontró: está en otro lado. Se ofrece
-                // buscarlo, con un botón (Daniel: "no encuentro X en esta
-                // página, te propongo buscarlo en la web, ¿lo hago?").
-                notFound()
-                return
-            }
+            // Cuál lleva a lo pedido, o ninguno: Jev, con la carrera.
+            let found = await analyzer.find(said ?? goal, among: options, site: page.url)
+            Self.note(found, for: said ?? goal, among: options)
 
-            // Una pregunta no se camina, se contesta — y se contesta DONDE
-            // LA PERSONA ESTÁ. Preguntar no puede moverte: enterarte de que
-            // cambiaste de página sin haberlo pedido es lo más desorientador
-            // que le podemos hacer a alguien que no ve.
-            //
-            // Se decide una sola vez, en el primer paso del turno: una vez
-            // que el asistente empezó a caminar, sigue caminando.
-            if first && decision.kind == .answer {
-                await reply(goal, about: page)
-                return
+            // Seguro de uno: se toca.
+            if let found, let index = found.choice, found.confidence >= Self.sureEnough {
+                first = false
+                guard await go(options[index]) else { return }
+                continue
             }
-            first = false
-
-            switch decision.move {
-            case .done:
+            // Ya se movió: lo que no es un paso seguro es haber llegado. Seguir
+            // preguntándole a Gemini daba vueltas por la sección —«Ver más
+            // notas», otra vez «Política»— en vez de contar dónde estaba.
+            guard first else { break }
+            // Ninguno lleva, y lo pedido está a la vista: es esta misma página.
+            if let found, found.choice == nil, found.confidence >= Self.sureEnough,
+               let here = found.here, here >= Criterios.actuales?.umbrales["esta_si"] ?? 1 {
                 working = false
                 await arrived(page)
                 return
-
-            case .ask, .go where decision.confidence < Self.sureEnough:
-                // Jev duda: Gemini reinterpreta antes de preguntar a ciegas.
-                if let chosen = await rescue() {
-                    guard await go(chosen) else { return }
-                    continue
-                }
-                if asked { return }
-                if answerer != nil {
-                    notFound()
-                    return
-                }
-                // Dos con el mismo nombre no son una elección: "¿Cuentas?
-                // También encuentro Cuentas" en el Banco Nación.
-                var named = Set<String>()
-                let candidates = decision.ranked.prefix(4).compactMap { index in
-                    options.indices.contains(index) ? options[index] : nil
-                }.filter { named.insert(Self.flatten($0.label)).inserted }.prefix(2)
-                guard let first = candidates.first else {
-                    say("No encontré eso en esta página.")
-                    return
-                }
-                offer = Offer(goal: goal, options: Array(candidates))
-                if candidates.count > 1 {
-                    say("No es claro cuál. ¿\(first.label)? También encuentro \(candidates[1].label).")
-                } else {
-                    say("No es claro cuál. ¿\(first.label)?")
-                }
-                return
-
-            case .go:
-                guard
-                    let index = decision.ranked.first,
-                    options.indices.contains(index)
-                else {
-                    say("No encontré eso en esta página.")
-                    return
-                }
-                guard await go(options[index]) else { return }
             }
+            // Jev no encontró a dónde ir, o duda: Gemini, con la página a la
+            // vista. Encuentra lo que Jev no vio —el link escondido en el menú
+            // de secciones— o dice cómo buscarlo afuera.
+            if let chosen = await rescue() {
+                first = false
+                guard await go(chosen) else { return }
+                continue
+            }
+            if asked { return }
+            // Sin Gemini, la persona: el que Jev prefería, como pregunta.
+            if answerer == nil, let index = found?.choice {
+                offer = Offer(goal: goal, options: [options[index]])
+                say("No es claro cuál. ¿\(options[index].label)?")
+                return
+            }
+            // No está en esta página, donde la persona lo pidió: se busca
+            // afuera, con el sitio si es de este sitio (Daniel: "siempre busca
+            // en la página primero; si no, buscás afuera").
+            working = false
+            await searchElsewhere(elsewhere ?? said ?? goal, question: nil, on: reader)
+            return
         }
 
         await landed(reader)
+    }
+
+    /// Lo pedido, buscado primero en la página abierta: un dato, en lo que
+    /// dice; un lugar, entre lo que se puede tocar, si Jev está seguro. False
+    /// si no está, sin decir nada: quien llama lo busca afuera.
+    private func foundHere(_ query: String, question: String?, goal: String, on reader: ReaderModel) async -> Bool {
+        guard let page = reader.page else { return false }
+        if question != nil {
+            // Con las palabras de la persona, como al responder.
+            working = true
+            defer { working = false }
+            return !(await reply(goal, about: page, quiet: true))
+        }
+        guard let analyzer else { return false }
+        let options = Self.options(of: page).filter { Self.leadsAway($0, from: page) }
+        working = true
+        let found = await analyzer.find(query, among: options, site: page.url)
+        working = false
+        Self.note(found, for: query, among: options)
+        guard let found, let index = found.choice, found.confidence >= Self.sureEnough else { return false }
+        let chosen = options[index]
+        touched.insert(chosen.id)
+        if let field = Self.field(named: chosen, in: page) {
+            await write(field, of: chosen, goal: goal, on: reader)
+            return true
+        }
+        say("Abriendo \(chosen.label).")
+        working = true
+        await reader.activate(chosen)
+        working = false
+        await landed(reader)
+        return true
+    }
+
+    /// No está en esta página: se busca afuera, diciéndolo. Con la pregunta,
+    /// se contesta en los resultados o en el sitio que elija la persona.
+    private func searchElsewhere(_ query: String, question: String?, on reader: ReaderModel) async {
+        say("No está en esta página.")
+        if let question { pendingQuestion = question }
+        await arrive(query, on: reader)
+    }
+
+    /// Si un destino lleva a otra página. Un link a la misma dirección no es
+    /// un paso: en La Nación, «Ver más notas de Política» y «>Política»
+    /// llevaban a /politica/, donde ya se estaba, y el asistente daba vueltas.
+    /// Lo que no tiene dirección —un menú, un formulario— sí puede serlo.
+    static func leadsAway(_ action: Action, from page: ExtractedPage) -> Bool {
+        guard let href = action.href, let there = URL(string: href), let here = URL(string: page.url) else { return true }
+        func key(_ url: URL) -> String {
+            var path = url.path()
+            while path.hasSuffix("/") { path.removeLast() }
+            return (url.host() ?? "").lowercased() + path + (url.query().map { "?" + $0 } ?? "")
+        }
+        return key(there) != key(here)
+    }
+
+    /// Lo que eligió Jev, al registro: con esto se calibran los umbrales.
+    private static func note(_ found: PageAnalyzer.Found?, for goal: String, among options: [Action]) {
+        Registro.anotar("jev", [
+            "pedido": goal,
+            "eleccion": found.map { $0.choice.map { options[$0].label } ?? "ninguno" } ?? "sin respuesta",
+            "confianza": found.map { String(format: "%.2f", $0.confidence) } ?? "",
+            "esta": found?.here.map { String(format: "%.2f", $0) } ?? "",
+        ])
     }
 
     /// Escribe en un campo lo que la persona pidió. Si lo que pidió es
@@ -1962,25 +2007,34 @@ final class Assistant {
     /// lo redacta el modelo y lo respalda con una cita literal que se
     /// verifica contra la página. Si la cita no aparece, no se dice nada:
     /// para quien no ve, una invención sin verificar es indetectable.
-    private func reply(_ question: String, about page: ExtractedPage, reading: String? = nil) async {
+    ///
+    /// `quiet`: si la página no lo contesta, no decirlo ni ofrecer buscarlo,
+    /// porque quien llama lo busca afuera. Devuelve si faltó.
+    @discardableResult
+    private func reply(_ question: String, about page: ExtractedPage, reading: String? = nil, quiet: Bool = false) async -> Bool {
         guard let answerer else {
+            if quiet { return true }
             say("No puedo contestar preguntas en esta versión, pero sí navegar.")
-            return
+            return false
         }
         let text = Self.saying(page)
         guard !text.isEmpty else {
+            if quiet { return true }
             say("Esta página no tiene texto que pueda leer.")
-            return
+            return false
         }
         do {
             guard let answer = try await answerer.answer(question, about: text, previous: previousRequest, reading: reading) else {
+                if quiet { return true }
                 say("Eso no aparece en esta página.")
                 searchInstead = question
-                return
+                return false
             }
             say(answer.text)
             remember(answer.text, on: page)
             nextQuestions = Self.fresh(answer.questions, after: question, answered: saidHere.text)
+            // Sólo una parte: el resto, afuera, si la persona quiere.
+            if answer.partial { searchInstead = question }
         } catch Answerer.AnswerError.transport {
             say("Sin conexión. Puedo leer la página, pero no contestar preguntas.")
         } catch {
@@ -1989,6 +2043,7 @@ final class Assistant {
             // respuesta venía cortada y el mensaje hablaba de la conexión.
             say("Algo falló de mi lado al contestar. Probar de nuevo, o preguntar de otra forma.")
         }
+        return false
     }
 
     /// Lo que la página dice, en su orden y separando el contenido del mobiliario.
@@ -2211,7 +2266,7 @@ final class Assistant {
             options += nextQuestions.map { .link(id: Self.askPrefix + $0, label: $0, href: "", region: "main") }
         }
         if let question = searchInstead {
-            options.append(.link(id: Self.askPrefix + "buscá en internet: " + question,
+            options.append(.link(id: Self.outsidePrefix + "buscá en internet: " + question,
                                  label: "Buscarlo en internet", href: "", region: "main"))
         }
         if failedTurn, let request = lastRequest {
@@ -2274,7 +2329,7 @@ final class Assistant {
             default: task = challenge?.elsewhere
             }
             if let task {
-                out.append(.link(id: Self.askPrefix + "buscá en internet: " + task,
+                out.append(.link(id: Self.outsidePrefix + "buscá en internet: " + task,
                                  label: "Buscarlo en otro sitio", href: "", region: "main"))
             }
             return out + (canGoBack ? [option(Self.backID, back)] : [])
