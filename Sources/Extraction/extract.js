@@ -1780,7 +1780,14 @@
   /// Pulls the fields a list item actually carries. Everything is optional:
   /// a news card has no price, a product card has no date.
   function itemOf(el) {
-    const heading = el.querySelector("h1,h2,h3,h4,h5,h6,[role=heading]");
+    // The first heading a person can see. Google opens a result that has
+    // links to its site's sections with a heading only screen readers get
+    // — "Resultado web con vínculos a sitio", clipped to one pixel — and it
+    // became the result's title, with the site nowhere.
+    const heading = Array.prototype.find.call(
+      el.querySelectorAll("h1,h2,h3,h4,h5,h6,[role=heading]"),
+      function (h) { return !isHidden(h); }
+    );
     const link = el.querySelector("a[href]");
     const image = el.querySelector("img");
     const text = textOf(el);
@@ -1847,6 +1854,11 @@
     if (link) {
       const href = absolute(link.getAttribute("href") || "");
       if (href) item.href = href;
+      // The web address the link shows, when it shows one. A search
+      // engine's result goes through the engine's own redirect, and the
+      // site is only in what the link says: "ANSES https://www.anses.gob.ar".
+      const address = textOf(link).match(/https?:\/\/[^\s,›]+/);
+      if (address && title.indexOf(address[0]) === -1) item.shown = address[0];
     }
     // A card with no link but a button — "Desde 81.987 ARS" on a flight —
     // opens by pressing that button: the one that names the price, or the

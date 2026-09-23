@@ -1,0 +1,24 @@
+https://servicioswww.anses.gob.ar/TurnosInternet/g/a96d6daeeeaf4c6eb2ab52bcbfccfe0f/ConsultaSolicitud/IngresoConsultaSolicitud?cancelacion=False
+ANSES | Turnos - Ingreso consulta solicitud
+
+PAGE: servicioswww.anses.gob.ar — Turnos
+
+PAGE CONTENT (what the person came for):
+Consulta de turnos solicitados
+Campo obligatorio. Ingrese el Número de CUIL del titular.
+Campo obligatorio. Ingrese el Número de solicitud.
+Obtené el número de solicitud en la constancia que te enviamos a tu correo electrónico o ingresá a mi ANSES > Mis Turnos. Si querés acceder al sitio mi ANSES, activá el siguiente enlace. mi ANSES
+VOLVER
+FORM asking for: CUIL, Número de solicitud — button «Continuar»
+Consulta de turnos solicitados
+CUIL
+Campo obligatorio. Ingrese el Número de CUIL del titular.
+Número de solicitud
+Campo obligatorio. Ingrese el Número de solicitud.
+Obtené el número de solicitud en la constancia que te enviamos a tu correo electrónico o ingresá a mi ANSES > Mis Turnos. Si querés acceder al sitio mi ANSES, activá el siguiente enlace. mi ANSES
+
+SITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):
+« Volver, al inicio
+Página de inicio de Sistema de Turnos
+Salir del sistema
+anses.gob.ar

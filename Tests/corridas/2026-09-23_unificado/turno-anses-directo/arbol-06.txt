@@ -1,0 +1,29 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: anses.gob.ar/turnos
+  4 [txt] Abriendo anses.gob.ar.
+  5 [txt] Esta página de ANSES sirve para gestionar turnos y allí mismo puedes iniciar la solicitud para asistir a una oficina.
+  6 [H] Vos: quiero sacar un turno
+  7 [txt] Abriendo «Solicitar un turno».
+  8 [txt] Estás en la página de turnos de ANSES. Hay 19 opciones disponibles para gestionar tu trámite. ¿Qué trámite necesitas realizar?
+  9 [H] Vos: jubilación
+ 10 [txt] Abriendo Solicitud de Jubilación, , ver sub-trámites.
+ 11 [txt] Abriendo Jubilación.
+ 12 [txt] El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella, y tiene opción de audio. Cuando esté resuelta, seguimos.
+ 13 [H] Vos: volvé
+ 14 [txt] Volviendo.
+ 15 [txt] De vuelta en «Turnos», servicioswww.anses.gob.ar.
+ 16 [H] Vos: quiero cobrar por mi hijo
+ 17 [txt] No está en esta página.
+ 18 [txt] Buscando: cobrar asignación hijo anses.
+ 19 [txt] Para gestionar la asignación, ingresá a mi ANSES con tu CUIL y Clave de la Seguridad Social. Desde allí, podés verificar el estado de tus pagos, solicitar el cobro por hijos a cargo o modificar tu medio de pago.
+ 20 [H] Vos: buscame vuelos baratos a Madrid
+ 21 [txt] Buscando: vuelos baratos a Madrid.
+ 22 [txt] Estás en los resultados de «vuelos baratos a Madrid». Los 3 más probables:
+ 23 [btn] Vuelos baratos a Madrid — Vuelos redondos desde $34 — www.skyscanner.com  (Primera de 5 opciones.)
+ 24 [btn] Vuela a Madrid desde $‪207‬* — Los Mejores Precios — www.asaptickets.com
+ 25 [btn] Vuelos baratos a Madrid - Redondo desde $374 — www.expedia.com
+ 26 [btn] Ver más opciones (11)
+ 27 [btn] Otra cosa
+ 28 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 29 [btn] Enviar

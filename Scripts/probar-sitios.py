@@ -97,7 +97,7 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         (pathlib.Path(tmp) / "main.swift").write_text(codigo)
         (pathlib.Path(tmp) / "pedidos.json").write_text(json.dumps(pedidos))
-        compilado = subprocess.run(["swiftc", "-O", "-o", f"{tmp}/probar", f"{tmp}/main.swift"],
+        compilado = subprocess.run(["swiftc", "-O", "-enable-bare-slash-regex", "-o", f"{tmp}/probar", f"{tmp}/main.swift"],
                                    capture_output=True, text=True)
         if compilado.returncode:
             print(compilado.stderr[:4000])

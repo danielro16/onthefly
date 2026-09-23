@@ -1,0 +1,20 @@
+https://servicioscorp.anses.gob.ar/clavelogon/logon.aspx?system=turnoscvss
+Clave de la Seguridad Social
+
+PAGE: servicioscorp.anses.gob.ar — Clave de la Seguridad Social
+
+PAGE CONTENT (what the person came for):
+Logo Anses
+Turnos por CVSS
+Ingresá con tu Clave de la Seguridad Social
+No sé mi CUIL
+Olvidé mi clave
+Cambiar mi clave
+Ver más información sobre la Clave de la Seguridad Social
+Si no tenés tu Clave de la Seguridad Social o la olvidaste, creá una nueva.
+Creá tu Clave
+FORM asking for: Número de CUIL, Clave de Seguridad Social (secreto) — button «Ingresar»
+
+SITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):
+Cartilla
+Preguntas frecuentes

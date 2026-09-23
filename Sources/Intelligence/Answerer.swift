@@ -169,6 +169,12 @@ actor Answerer {
         /// Los números de la lista (desde 1) que son ruido para quien llega:
         /// no se sugieren. Con la definición de `criterios.json`.
         var noise: [Int] = []
+        /// En una página que es una lista de opciones parecidas —trámites,
+        /// categorías, planes— cuando lo pedido no dice cuál: la pregunta, y
+        /// las opciones (números de la lista, desde 1) para contestarla. En
+        /// ANSES, "¿para qué trámite?" con los trámites de la página.
+        var question: String? = nil
+        var choices: [Int] = []
     }
 
     struct Suggestion: Sendable {
@@ -188,14 +194,20 @@ actor Answerer {
     /// asistente diga dónde está, qué dice lo principal, y pregunte qué le
     /// gustaría hacer, con las opciones como botones.
     ///
-    /// Las opciones de abrir se eligen POR NÚMERO de una lista que arma el
+    /// Las opciones de abrir se eligen POR SU MARCA de una lista que arma el
     /// código con lo que la página ofrece de verdad. El modelo escribe la
     /// etiqueta del botón; no puede escribir su destino.
     /// `frontPage`: es una portada, y sus titulares los dice el código, tal
     /// cual los escribió el diario. Reescritos por el modelo salían distintos
     /// en cada visita, y a veces con algo que no estaba.
     func orient(page: String, candidates: [String], goal: String? = nil, frontPage: Bool = false) async throws -> Orientation? {
-        let list = candidates.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
+        // Cada elemento con una marca de dos letras y no con un número: con la
+        // lista numerada, el modelo le decía a la persona "está en la lista
+        // como número 4". La marca es para los campos de la respuesta.
+        let marks = Self.marks(candidates.count)
+        let list = zip(marks, candidates).map { "[\($0)] \($1)" }.joined(separator: "\n")
+        let numberOf = Dictionary(uniqueKeysWithValues: marks.enumerated().map { ($1, $0 + 1) })
+        func number(_ value: Any?) -> Int? { (value as? String).flatMap { numberOf[$0] } }
         // Qué es ruido y sus tipos los dice `criterios.json`, no este código.
         let ruido = Criterios.actuales?.ruido ?? .init(es: "", noEs: "")
         let parsed = try await ask("orientar", [
@@ -204,8 +216,15 @@ actor Answerer {
         guard let parsed,
               let text = parsed["respuesta"] as? String, !text.isEmpty
         else { throw AnswerError.unusable }
+        // Cuántas opciones ofrece para su pregunta: "hay 18 trámites" no está
+        // escrito en la página, pero se verifica contra los botones que se
+        // van a ofrecer. Si cuenta 19 y ofrece 18, se descarta como
+        // cualquier cifra inventada.
+        let offered = String(Set(((parsed["opciones"] as? [Any]) ?? []).compactMap(number)).count)
         let figures = (parsed["cifras"] as? [String]) ?? []
-        let missing = figures.filter { !Self.figureAppears($0, in: page + "\n" + list) }
+        let missing = figures.filter {
+            !Self.figureAppears($0, in: page + "\n" + list) && String($0.filter(\.isNumber)) != offered
+        }
         guard missing.isEmpty else { throw AnswerError.unverified(missing) }
 
         // El ruido, por número y con su tipo: sólo números que estén en la
@@ -215,25 +234,38 @@ actor Answerer {
         let kinds = Set(ruido.tipos)
         let noise = ((parsed["ruido"] as? [[String: Any]]) ?? []).compactMap { mark -> Int? in
             guard let kind = mark["tipo"] as? String, kinds.contains(kind) else { return nil }
-            return (mark["numero"] as? Int) ?? (mark["numero"] as? String).flatMap(Int.init)
-        }.filter { (1...max(candidates.count, 1)).contains($0) && !candidates.isEmpty }
+            return number(mark["id"])
+        }
         let raw = (parsed["sugerencias"] as? [[String: Any]]) ?? []
         let suggestions: [Suggestion] = raw.compactMap { item in
             guard let label = (item["etiqueta"] as? String)?.trimmingCharacters(in: .whitespaces),
                   !label.isEmpty,
                   let kind = (item["tipo"] as? String).flatMap(Suggestion.Kind.init(rawValue:))
             else { return nil }
-            let number = (item["numero"] as? Int) ?? (item["numero"] as? String).flatMap(Int.init)
+            let target = number(item["id"])
             if kind == .abrir {
-                // La verificación de siempre: el número tiene que existir. Y
-                // lo que el mismo modelo llamó ruido no se sugiere.
-                guard let number, (1...max(candidates.count, 1)).contains(number), !candidates.isEmpty,
-                      !noise.contains(number)
-                else { return nil }
+                // La verificación de siempre: la marca tiene que estar en la
+                // lista. Y lo que el mismo modelo llamó ruido no se sugiere.
+                guard let target, !noise.contains(target) else { return nil }
             }
-            return Suggestion(label: label, kind: kind, number: number)
+            return Suggestion(label: label, kind: kind, number: target)
         }
-        return Orientation(text: text, suggestions: Array(suggestions.prefix(4)), noise: noise)
+        // La pregunta vale con sus opciones: sin ninguna opción que exista,
+        // no hay qué contestar.
+        // Cada una una vez; el orden lo pone quien llama, que sabe el de la
+        // página.
+        let choices = Set(((parsed["opciones"] as? [Any]) ?? []).compactMap(number)).subtracting(noise).sorted()
+        let question = (parsed["pregunta"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        return Orientation(
+            text: text, suggestions: Array(suggestions.prefix(4)), noise: noise,
+            question: choices.isEmpty || question?.isEmpty != false ? nil : question, choices: choices)
+    }
+
+    /// Marcas de dos letras para una lista: "bb", "bc", "bd"… Sin vocales,
+    /// para que no formen palabras, y sin números.
+    static func marks(_ count: Int) -> [String] {
+        let letters = Array("bcdfghjkmnpqrstvwxz")
+        return (0..<count).map { String([letters[$0 / letters.count % letters.count], letters[$0 % letters.count]]) }
     }
 
     /// Cuando Jev no encuentra lo pedido o duda: Gemini lee el pedido y lo

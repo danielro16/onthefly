@@ -1,0 +1,35 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero sacar un turno en anses
+  4 [txt] Buscando: anses turnos.
+  5 [txt] Estás en los resultados de «anses turnos». Los 3 más probables:
+  6 [H] Vos: Turnos — www.anses.gob.ar
+  7 [txt] Abriendo anses.gob.ar.
+  8 [txt] Esta página de ANSES te permite gestionar un turno para atención presencial en sus oficinas. Puedes solicitarlo directamente utilizando la opción para ese fin.
+  9 [H] Vos: Abrir «Solicitar un turno»
+ 10 [txt] Abriendo «Solicitar un turno».
+ 11 [txt] Estás en «Turnos», servicioswww.anses.gob.ar.
+ 12 [txt] Las primeras notas:
+ 13 [txt] Plan de Pago de Deuda Previsional para trabajadores en actividad, , ver…
+ 14 [txt] Reapertura Administrativa / Recurso Administrativo
+ 15 [txt] Asignación Universal por Hijo
+ 16 [H] Vos: jubilación
+ 17 [txt] Abriendo Solicitud de Jubilación, , ver sub-trámites.
+ 18 [txt] Abriendo Jubilación.
+ 19 [txt] El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella, y tiene opción de audio. Cuando esté resuelta, seguimos.
+ 20 [H] Vos: volvé
+ 21 [txt] Volviendo.
+ 22 [txt] De vuelta en «Turnos», servicioswww.anses.gob.ar.
+ 23 [H] Vos: quiero cobrar por mi hijo
+ 24 [txt] No está en esta página.
+ 25 [txt] Buscando: cobrar asignación hijo anses.
+ 26 [txt] No encontré resultados para «cobrar asignación hijo anses».
+ 27 [H] Vos: volvé
+ 28 [txt] Volviendo.
+ 29 [txt] De vuelta en «Turnos», servicioswww.anses.gob.ar.
+ 30 [btn] Leer la página  (Primera de 4 opciones.)
+ 31 [btn] Resumir la página
+ 32 [btn] Volver a «ANSES | Turnos - Prestaciones»
+ 33 [btn] Otra cosa
+ 34 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 35 [btn] Enviar

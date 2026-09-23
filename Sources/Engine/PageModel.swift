@@ -285,6 +285,11 @@ struct Listing: Codable, Sendable, Identifiable {
         let imageAlt: String?
         /// Whatever else the card said, minus title and price.
         let meta: String?
+        /// The web address the card's link shows, when it shows one: Google
+        /// writes "ANSES https://www.anses.gob.ar" inside each result's link,
+        /// and the link itself goes through a redirect of its own, so this
+        /// is where the result's site is.
+        let shown: String?
         /// Buttons the card holds besides the link that opens it — "Guardar"
         /// on every recipe. They are the card's own actions, not stops of
         /// their own: fifteen rows reading "Guardar" say nothing about what

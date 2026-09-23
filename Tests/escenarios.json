@@ -331,5 +331,99 @@
         "escribir": "buscame vuelos baratos a Madrid"
       }
     ]
+  },
+  {
+    "id": "abrir-en-resultados",
+    "persona": "Jubilado, ciego. Busca turno en ANSES y pide abrirlo con sus palabras, sin tocar los botones.",
+    "objetivo": "Que en la página de Google lo que se abra sea un resultado, nunca una imagen ni una pestaña del buscador.",
+    "pasos": [
+      {
+        "escribir": "anses turnos"
+      },
+      {
+        "escribir": "Turnos Anses"
+      },
+      {
+        "escribir": "volvé"
+      },
+      {
+        "escribir": "Sacar turno"
+      }
+    ]
+  },
+  {
+    "id": "sacar-turno-anses",
+    "persona": "Jubilada, ciega. Quiere sacar un turno en ANSES y no sabe para qué trámite se pide.",
+    "objetivo": "Que al llegar a la lista de trámites JEF pregunte para cuál quiere el turno, con los trámites como opciones, sin nombrar números internos.",
+    "pasos": [
+      {
+        "escribir": "quiero sacar un turno en anses"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "tocar": "Solicitar un turno"
+      },
+      {
+        "boton": 1
+      }
+    ]
+  },
+  {
+    "id": "sacar-turno-anses-escrito",
+    "persona": "Jubilada, ciega. Quiere sacar un turno en ANSES y contesta escribiendo, con sus palabras, para qué trámite.",
+    "objetivo": "Que lo que escribe se busque entre los trámites de la página; si no está, que JEF lo diga y muestre las opciones, sin salir a Google.",
+    "pasos": [
+      {
+        "escribir": "quiero sacar un turno en anses"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "tocar": "Solicitar un turno"
+      },
+      {
+        "escribir": "jubilación"
+      },
+      {
+        "escribir": "volvé"
+      },
+      {
+        "escribir": "quiero cobrar por mi hijo"
+      },
+      {
+        "escribir": "volvé"
+      },
+      {
+        "escribir": "renovar el pasaporte"
+      }
+    ]
+  },
+  {
+    "id": "turno-anses-directo",
+    "persona": "Jubilada, ciega. Entra a la página de turnos de ANSES y pide un turno con sus palabras.",
+    "objetivo": "Que JEF pregunte para qué trámite, encuentre lo que ella escribe entre los trámites, y que lo que no está lo busque afuera.",
+    "pasos": [
+      {
+        "escribir": "anses.gob.ar/turnos"
+      },
+      {
+        "escribir": "quiero sacar un turno"
+      },
+      {
+        "escribir": "jubilación"
+      },
+      {
+        "escribir": "volvé"
+      },
+      {
+        "escribir": "quiero cobrar por mi hijo"
+      },
+      {
+        "escribir": "buscame vuelos baratos a Madrid"
+      }
+    ]
   }
 ]
