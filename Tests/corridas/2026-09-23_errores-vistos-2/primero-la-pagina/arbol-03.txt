@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: lanacion.com.ar
+  4 [txt] Abriendo lanacion.com.ar.
+  5 [txt] Estás en la portada de La Nación. Los titulares principales son las primeras opciones.
+  6 [H] Vos: ¿a cuánto está el dólar?
+  7 [txt] El dólar oficial cotiza a $1540,00, mientras que el dólar blue está a $1560,00. Por su parte, el dólar tarjeta se encuentra a $2002,00 y el dólar MEP a $1540,31.
+  8 [H] Vos: llevame a las noticias de economía
+  9 [txt] Abriendo Secciones.
+ 10 [txt] Estás en la portada de La Nación, donde puedes encontrar la sección de Economía en el menú principal. Los titulares principales son las primeras opciones.
+ 11 [btn] Abrir «El peronismo quiere vender un cuento de hadas". Con un insulto, Milei culpó a Kicillof por la suba…»  (Primera de 6 opciones.)
+ 12 [btn] Abrir «De 11 segundos a 4 minutos. Milei se puso la camiseta de Malvinas y el uniforme de Trump en la ONU»
+ 13 [btn] Abrir «Las apariencias engañan: la era de los autócratas parece estar llegando a su fin»
+ 14 [btn] Abrir «Con un discurso anti Milei, Kicillof se mostró con el alcalde de Nueva York y el presidente de…»
+ 15 [btn] Resumir la portada
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar

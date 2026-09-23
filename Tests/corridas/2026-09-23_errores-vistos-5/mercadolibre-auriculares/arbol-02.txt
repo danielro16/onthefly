@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: entrá a mercado libre y buscame auriculares bluetooth
+  4 [txt] Buscando: mercado libre.
+  5 [txt] Estás en los resultados de «mercado libre». Los 3 más probables:
+  6 [txt] Cuando elijas, sigo con «buscame auriculares bluetooth».
+  7 [H] Vos: Mercado Libre — www.mercadolibre.com
+  8 [txt] Abriendo mercadolibre.com.
+  9 [txt] Estás en www.mercadolibre.com.
+ 10 [txt] Estás en la página principal de Mercado Libre, donde puedes comprar una gran variedad de productos; como no especificaste tu país, elige uno para continuar con la búsqueda de tus auriculares.
+ 11 [txt] Cuando elijas, sigo con «buscame auriculares bluetooth».
+ 12 [btn] Abrir «Argentina»  (Primera de 5 opciones.)
+ 13 [btn] Abrir «México»
+ 14 [btn] Abrir «Colombia»
+ 15 [btn] Volver a los resultados
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar

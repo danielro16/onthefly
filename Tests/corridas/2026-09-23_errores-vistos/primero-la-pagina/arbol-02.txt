@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: lanacion.com.ar
+  4 [txt] Abriendo lanacion.com.ar.
+  5 [txt] Estás en la portada de LA NACION.
+  6 [txt] Las primeras notas:
+  7 [txt] "El peronismo quiere vender un cuento de hadas". Con un insulto, Milei culpó a Kicillof por la suba del riesgo país
+  8 [txt] De 11 segundos a 4 minutos. Milei se puso la camiseta de Malvinas y el uniforme de Trump en la ONU
+  9 [txt] Las apariencias engañan: la era de los autócratas parece estar llegando a su fin
+ 10 [H] Vos: ¿a cuánto está el dólar?
+ 11 [txt] Hoy en el diario La Nacion, el dólar oficial cotiza a $1540,00 y el dólar blue está a $1560,00.
+ 12 [btn] ¿Cuál es el valor del dólar tarjeta?  (Primera de 4 opciones.)
+ 13 [btn] Leer los titulares
+ 14 [btn] Resumir la portada
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 17 [btn] Enviar

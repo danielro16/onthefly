@@ -530,7 +530,10 @@ final class Assistant {
             // lo que se puede tocar— y sólo si no está, afuera. La página del
             // buscador no es un sitio: ahí buscar es buscar de nuevo.
             let query = decision.target ?? goal
-            if pageFirst, let page = reader.page, Self.searchQuery(of: page) == nil {
+            // También en la página del buscador: sus resultados son lo que hay
+            // ahí. «Sacar turno» en los resultados de ANSES terminó en
+            // "Buscando: https://www.anses.gob.ar".
+            if pageFirst, let page = reader.page {
                 // Un dato, primero en lo que la página dice.
                 if decision.question != nil {
                     working = true
@@ -582,9 +585,35 @@ final class Assistant {
             working = false
 
         case .completar:
+            // El ruteador pidió escribir y la página no tiene dónde. Si es una
+            // tarea que viene de otra página —"entrá a Mercado Libre y buscame
+            // auriculares" llegó al selector de país—, se cuenta la página, que
+            // pregunta lo que falta con sus opciones como botones, y la tarea
+            // espera a que la persona elija. Si no, se busca lo pedido, primero
+            // en la página. Antes: "Acá no hay un formulario para completar".
+            if controls.isEmpty, let page = reader.page {
+                if runningTask != nil {
+                    waiting = goal
+                    working = false
+                    // Una sola vez: si la página ya se contó al llegar, con su
+                    // pregunta y sus botones, no se cuenta de nuevo.
+                    if knownURL != page.url || offer == nil { await arrived(page) }
+                    if offer != nil { say("Cuando elijas, sigo con «\(Self.short(goal, 60))».") }
+                    return
+                }
+                let search = Router.Decision(
+                    action: .buscar, target: decision.value ?? decision.target, reference: nil, question: nil,
+                    control: nil, value: nil, then: nil, rest: nil, message: nil)
+                await carry(.buscar, of: search, goal: goal, on: reader)
+                return
+            }
             await complete(decision, goal: goal, on: reader)
 
         case .enviar:
+            // El "enviar" que seguía a un "completar" sin formulario: ya se
+            // resolvió arriba, y "Acá no hay un formulario para enviar" se
+            // decía de más.
+            if decision.action == .completar, controls.isEmpty { return }
             guard let page = reader.page,
                   let form = control(decision)?.form ?? pageForm(page)
             else { say("Acá no hay un formulario para enviar."); return }
@@ -735,7 +764,7 @@ final class Assistant {
         defer { working = false }
         // Con las tildes de la persona: el ruteador devolvía "clarin" y se
         // oía "Buscando: clarin" después de haber escrito "clarín".
-        let goal = Self.inTheirWords(goal, from: lastRequest)
+        var goal = Self.inTheirWords(goal, from: lastRequest)
 
         // Una dirección no se adivina: la escribió la persona. Si la escribió
         // el ruteador —"buscá mar del plata en wikipedia" volvió una vez como
@@ -750,6 +779,11 @@ final class Assistant {
             return
         }
 
+        // Y si es una dirección que escribió el ruteador, se busca el sitio,
+        // sin "https://www.": se decía "Buscando: https://www.anses.gob.ar".
+        goal = URL(string: goal).flatMap { url in
+            url.scheme.map { ["http", "https"].contains($0) } == true ? url.host().flatMap(Self.bare) : nil
+        } ?? goal
         say("Buscando: \(goal).")
         reader.address = Self.searchURL(for: goal)
         await reader.go()
@@ -1821,8 +1855,15 @@ final class Assistant {
                 elsewhere = found.search
                 if let index = found.choice { return options[index] }
                 if let question = found.question, !found.options.isEmpty {
-                    offer = Offer(goal: goal, options: found.options.map { options[$0] })
-                    say(question)
+                    let offered = found.options.map { options[$0] }
+                    // Una pregunta que no nombra sus propios botones no es
+                    // confiable, y se descarta como una cifra inventada: en La
+                    // Nación preguntó por «Política y Economía» y los botones
+                    // eran tres titulares. Sin pregunta, sigue la salida de
+                    // siempre.
+                    guard Self.names(question, offered) else { return nil }
+                    offer = Offer(goal: goal, options: offered)
+                    say(question, aloud: question + " " + offered.map(\.label).joined(separator: ". "))
                     asked = true
                 }
                 return nil
@@ -1882,8 +1923,12 @@ final class Assistant {
             // una pregunta de JEF: lo que no está entre los trámites de ANSES
             // —el pasaporte— lo resuelve el buscador, y la lista sigue a un
             // "Volver" de distancia.
+            // Si el pedido era "abrir", es algo de este sitio: sin la
+            // búsqueda de Gemini, va con el nombre del sitio. "Llevame a las
+            // noticias de economía" desde La Nación trajo CNN y El País.
             working = false
-            await searchElsewhere(elsewhere ?? orElse ?? said ?? goal, question: question, on: reader)
+            let own = orElse ?? "\(said ?? goal) \(page.displaySite)"
+            await searchElsewhere(elsewhere ?? own, question: question, on: reader)
             return
         }
 
@@ -1893,7 +1938,9 @@ final class Assistant {
     /// No está en esta página: se busca afuera, diciéndolo. Con la pregunta,
     /// se contesta en los resultados o en el sitio que elija la persona.
     private func searchElsewhere(_ query: String, question: String?, on reader: ReaderModel) async {
-        say("No está en esta página.")
+        // En la página del buscador, buscar otra cosa es lo natural: no se
+        // anuncia que no estaba.
+        if reader.page.map({ Self.searchQuery(of: $0) == nil }) ?? true { say("No está en esta página.") }
         if let question { pendingQuestion = question }
         await arrive(query, on: reader)
     }
@@ -1910,6 +1957,20 @@ final class Assistant {
         let found = organicCache.url == page.url ? organicCache.results : Self.results(of: page)
         return found.enumerated().map { index, result in
             .link(id: "res-\(index)-\(result.host)", label: "\(result.title) — \(result.host)", href: result.href, region: "main")
+        }
+    }
+
+    /// Si una pregunta nombra cada una de sus opciones: el comienzo de cada
+    /// etiqueta —hasta la primera coma, tres palabras— tiene que estar en el
+    /// texto, sin mirar mayúsculas ni tildes.
+    static func names(_ question: String, _ options: [Action]) -> Bool {
+        let said = question.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+            .split(whereSeparator: { !$0.isLetter && !$0.isNumber }).joined(separator: " ")
+        return options.allSatisfy { option in
+            let name = option.label.split(separator: ",").first.map(String.init) ?? option.label
+            let words = name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+                .split(whereSeparator: { !$0.isLetter && !$0.isNumber }).prefix(3).joined(separator: " ")
+            return !words.isEmpty && said.contains(words)
         }
     }
 
@@ -2234,7 +2295,13 @@ final class Assistant {
         }
         // Los formularios entran todos, estén donde estén: el del boletín
         // vive en el pie, y para no ofrecerlo Gemini tiene que verlo.
-        let rest = all.filter { !headlines.contains(tidy($0.label)) && (useful($0) || $0.kind == .form) }
+        var rest = all.filter { !headlines.contains(tidy($0.label)) && (useful($0) || $0.kind == .form) }
+        // Cuando el contenido no ofrece nada, el menú es la página: el
+        // selector de país de Mercado Libre son links del menú, y sin ellos
+        // no había qué preguntar.
+        if first.isEmpty, !rest.contains(where: { $0.kind != .form }) {
+            rest = all.filter { !$0.label.trimmingCharacters(in: .whitespaces).isEmpty }
+        }
         // Y los enlaces que viven adentro de un párrafo —"Ingresá a Solicitud
         // de turnos"—, que no son controles sueltos y no entraban.
         var seen = Set(all.compactMap(\.href))

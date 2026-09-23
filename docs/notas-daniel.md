@@ -127,18 +127,28 @@ abrió la pestaña Imágenes de Google en vez de un resultado.
   entre los resultados. En el simulador, «Turnos Anses» abre el resultado de
   anses.gob.ar.
 
-### 5. Vistos al probar (2026-09-23), sin resolver
+### 5. Vistos al probar (2026-09-23)
 
-- **Gemini rescata y la pregunta no coincide con los botones:** en La Nación,
-  "¿la sección Política y Economía o el Dólar?" con botones «Dólar oficial»,
-  «Dólar blue», «Dólar tarjeta». La pregunta nombra cosas que no son sus
-  opciones (`reinterpret`).
-- **"Acá no hay un formulario para completar", dos veces:** con región Estados
-  Unidos, "entrá a mercado libre y buscame auriculares" llega a
-  mercadolibre.com, el selector de país, y el pedido que seguía no tenía dónde
-  escribirse.
-- **El ruteador devolvió una dirección como búsqueda:** «Sacar turno» en los
-  resultados de Google terminó en "Buscando: https://www.anses.gob.ar".
+- **Gemini rescata y la pregunta no coincide con los botones** (en La Nación,
+  "¿Política y Economía o el Dólar?" con tres titulares como botones).
+  Cambiar la frase del prompt no alcanzó (medido: seguía nombrando cosas en 3
+  de 10). **Resuelto en el código:** la pregunta tiene que nombrar sus propios
+  botones; si no, se descarta como una cifra inventada y sigue la salida de
+  siempre. Además, las opciones se leen en voz alta con la pregunta.
+- **Mercado Libre en el selector de país** (correcto, según Daniel): ya no
+  dice "Acá no hay un formulario para completar". **Resuelto:** cuando el
+  contenido de una página no ofrece nada, su menú es la página; JEF cuenta la
+  página, ofrece los países como botones y la tarea ("buscame auriculares")
+  espera a que la persona elija. Con «Argentina», escribió y buscó en Mercado
+  Libre Argentina.
+- **El ruteador devolvió una dirección como búsqueda** ("Buscando:
+  https://www.anses.gob.ar"). **Resuelto:** en la página de resultados,
+  "buscar" mira primero los resultados («Sacar turno» abre el de ANSES); y una
+  dirección escrita por el ruteador se busca por su sitio, sin "https://".
+- **"Abrir" que no encuentra busca afuera con el nombre del sitio:** "llevame
+  a las noticias de economía" en La Nación trajo CNN y El País.
+- Menor, sin tocar: si Google marca un resultado como «Visitados
+  recientemente», el título del botón queda con el sitio repetido.
 
 ## Deuda (Daniel: "no es prioridad ahora")
 
