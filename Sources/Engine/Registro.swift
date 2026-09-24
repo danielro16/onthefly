@@ -19,33 +19,70 @@ enum Voz {
         let queued = NSAttributedString(
             string: text, attributes: [.accessibilitySpeechQueueAnnouncement: !interrumpir]
         )
-        if UIAccessibility.isVoiceOverRunning { Habla.shared.empezo() }
+        if UIAccessibility.isVoiceOverRunning { Habla.shared.empezo(text, cortando: interrumpir) }
         UIAccessibility.post(notification: .announcement, argument: queued)
         Registro.anotar("voz", ["texto": text, "cola": !interrumpir])
     }
 }
 
-/// Cuántos anuncios VoiceOver todavía no terminó de decir.
+/// Cuántos anuncios de JEF VoiceOver todavía no terminó de decir.
 ///
 /// Para saber cuándo se puede mover el cursor: moverlo hace que VoiceOver
 /// lea el elemento nuevo, y eso corta lo que quedaba en la cola. Con
 /// VoiceOver apagado nunca sube de cero.
+///
+/// Se cuentan sólo los de JEF, por su texto: iOS avisa qué anuncio terminó.
+/// Antes se restaba con cualquier aviso de "terminó", la cuenta llegaba a
+/// cero con la descripción de la página todavía sonando, el cursor saltaba a
+/// los botones y la cortaba (Daniel, en su iPhone).
 @MainActor
 @Observable
 final class Habla {
     static let shared = Habla()
     private(set) var pendientes = 0
+    private var sonando: [(id: Int, texto: String)] = []
+    private var siguiente = 0
 
     private init() {
         NotificationCenter.default.addObserver(
             forName: UIAccessibility.announcementDidFinishNotification, object: nil, queue: .main
-        ) { _ in
-            MainActor.assumeIsolated { Habla.shared.termino() }
+        ) { nota in
+            let texto = nota.userInfo?[UIAccessibility.announcementStringValueUserInfoKey] as? String
+            let completo = nota.userInfo?[UIAccessibility.announcementWasSuccessfulUserInfoKey] as? Bool
+            MainActor.assumeIsolated { Habla.shared.termino(texto, completo: completo) }
         }
     }
 
-    func empezo() { pendientes += 1 }
-    func termino() { pendientes = max(0, pendientes - 1) }
+    /// `cortando`: lo que estaba en cola lo descarta VoiceOver, y no siempre
+    /// avisa; se da por terminado.
+    func empezo(_ texto: String, cortando: Bool) {
+        if cortando { sonando.removeAll() }
+        siguiente += 1
+        let id = siguiente
+        sonando.append((id, texto))
+        pendientes = sonando.count
+        // Por si iOS nunca avisa: lo que dura dicho, con margen. Sin esto un
+        // aviso perdido dejaba el cursor sin moverse nunca.
+        let limite = Double(texto.count) / 10 + 5
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(limite))
+            Habla.shared.vencio(id)
+        }
+    }
+
+    func termino(_ texto: String?, completo: Bool?) {
+        guard let texto, let indice = sonando.firstIndex(where: { $0.texto == texto }) else { return }
+        sonando.remove(at: indice)
+        pendientes = sonando.count
+        // Si VoiceOver lo dijo entero o lo cortó: es lo que hay que saber.
+        Registro.anotar("voz_fin", ["texto": String(texto.prefix(80)), "completo": completo ?? true])
+    }
+
+    private func vencio(_ id: Int) {
+        guard let indice = sonando.firstIndex(where: { $0.id == id }) else { return }
+        sonando.remove(at: indice)
+        pendientes = sonando.count
+    }
 }
 
 /// El registro de una prueba: lo que se dijo, lo que se mostró y lo que se vio.
