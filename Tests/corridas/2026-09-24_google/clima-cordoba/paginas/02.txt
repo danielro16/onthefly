@@ -1,0 +1,113 @@
+https://www.aemet.es/es/eltiempo/prediccion/municipios/cordoba-id14021
+El Tiempo: Córdoba (Córdoba) - Predicción 7 días - Tabla - Agencia Estatal de Meteorología - AEMET. Gobierno de España
+
+PAGE: www.aemet.es — El Tiempo: Córdoba (Córdoba)
+
+PAGE CONTENT (what the person came for):
+Información sobre uso de cookies
+Este sitio web utiliza cookies propias y de terceros para mejorar la experiencia de navegación, y ofrecer contenidos y funcionalidades de interés. Para más información sobre las cookies utilizadas consulta nuestra política de cookies
+Agencia Estatal de Meteorología
+C - Ir a contenido
+0 - Accesibilidad web
+1 - Inicio
+2 - Mapa web
+3 - Ayuda web
+4 - Contactar - Atención al ciudadano
+5 - Municipios
+6 - Avisos
+Agencia Estatal de Meteorología
+es
+Buscador oculto
+Menú
+El tiempo
+Servicios climáticos
+Conócenos
+I+D+i
+Conocer más
+Empleo público y becas
+Datos abiertos
+Sede electrónica
+Agencia Estatal de Meteorología
+
+jue. 24, jue. 24
+vie. 25, vie. 25
+sáb. 26, sáb. 26
+InicioEl tiempoPredicciónMunicipiosCórdoba
++Info
+Predicción por municipios. Córdoba (Córdoba)
+Predicción 7 días
+Tabla
+Capital: Córdoba (altitud: 106 m) Latitud: 37° 52' 46'' N - Longitud: 4° 46' 49'' O - Posición: Ver localización Zona de avisos: Campiña cordobesa
+Descargar XML de la predicción detallada de Córdoba
+XML
+jue. 24: 18–24 h, 22°C; vie. 25: 00–06 h, 17°C; sáb. 26: 06–12 h, 34°C; dom. 27: 12–18 h, 34°C; lun. 28: 18–24 h, 23°C; mar. 29: 00–12 h; mié. 30: 12–24 h; 00–12 h; 12–24 h
+jue. 24: Probabilidad de precipitación
+jue. 24: 0%; vie. 25: 0%; sáb. 26: 0%; dom. 27: 0%; lun. 28: 0%; mar. 29: 0%; mié. 30: 0%; 0%; 5%; 25%; 35%; 20%
+jue. 24: Cota de nieve a nivel de provincia (m)
+jue. 24: Temperatura mínima y máxima (°C)
+jue. 24: 16 / 37; vie. 25: 17 / 39; sáb. 26: 17 / 39; dom. 27: 19 / 36; lun. 28: 19 / 33; mar. 29: 17 / 33; mié. 30: 18 / 33
+jue. 24: Sensación térmica mínima y máxima (°C)
+jue. 24: 17 / 37; vie. 25: 16 / 39; sáb. 26: 18 / 39; dom. 27: 19 / 36; lun. 28: 19 / 33; mar. 29: 17 / 33; mié. 30: 18 / 33
+jue. 24: Humedad relativa mínima y máxima (%)
+jue. 24: 20 / 50; vie. 25: 15 / 70; sáb. 26: 15 / 55; dom. 27: 20 / 60; lun. 28: 45 / 80; mar. 29: 35 / 100; mié. 30: 40 / 85
+jue. 24: Dirección y velocidad del viento (km/h)
+jue. 24: S, 5; vie. 25: C, 0; sáb. 26: C, 0; dom. 27: SO, 5; lun. 28: SE, 10; mar. 29: NE, 10; mié. 30: S, 15; O, 5; S, 10; S, 15; S, 10; C, 0
+jue. 24: Racha máxima (km/h)
+jue. 24: Sensación térmica (°C)
+jue. 24: 22; vie. 25: 17; sáb. 26: 34; dom. 27: 34; lun. 28: 23
+jue. 24: Humedad relativa (%)
+jue. 24: 50; vie. 25: 70; sáb. 26: 25; dom. 27: 15; lun. 28: 40
+jue. 24: Indice ultravioleta máximo
+jue. 24: 6; vie. 25: 6; sáb. 26: 6; dom. 27: 6; lun. 28: 5
+jue. 24: Avisos. Campiña cordobesa
+jue. 24: Sin peligro; vie. 25: Bajo - Temperaturas máximas; sáb. 26: Bajo - Temperaturas máximas
+Ver tabla detallada
+Ver más municipios de la provincia
+Acceso a datos observados de estaciones próximas (Distancias referidas a la capital del municipio)
+Estaciones pertenecientes al municipio:
+Córdoba Aeropuerto a, 6,75 km - Altitud 90 m; Córdoba, Embalse de Guadanuño a, 15,78 km - Altitud 525 m
+Córdoba, Prágdena a, 28,97 km - Altitud 275 m
+Estaciones cercanas al municipio:
+La Rambla
+(Municipio: Rambla, La
+) a 26,83 km - Altitud 200 m
+Espiel
+(Municipio: Espiel
+) a 28,84 km - Altitud 465 m
+Fuente Palmera
+(Municipio: Fuente Palmera
+) a 31,45 km - Altitud 120 m
+Suscripción a avisos – Campiña cordobesa
+Activar notificaciones push para avisos meteorológicos
+Reciba notificaciones push cuando AEMET emita avisos para la zona Campiña cordobesa. Necesita activar los permisos de notificaciones en su navegador.
+Enlaces relacionados:
+Predicción general
+Predicciones en 8124 municipios de España. Deben interpretarse como la tendencia más probable de la evolución meteorológica en los próximos 7 días.  La "Predicción por horas" presenta la información de hora en hora hasta 48 horas después de la hora nominal de actualización de los modelos numéricos (00, 06, 12 y 18 UTC), mientras que la "Predicción 7 días" abarca el período completo.  La hora local para la que se predicen todas las variables instantáneas es la que figura en la línea temporal. Para las variables acumuladas en una hora (racha máxima, precipitación y nieve) se considera a partir de ese momento y durante la hora siguiente (p.e., la precipitación a las 09:00 corresponde a la acumulada entre las 09:00 y 10:00).  Los intervalos hexahorarios o mayores corresponden con horarios UTC, por lo que hay que añadir una hora en horario de invierno y dos en el de verano.  Se generan de forma automática mediante el tratamiento estadístico de los resultados de modelos numéricos de predicción, lo que puede dar lugar a diferencias con otras predicciones realizadas por la Agencia, que son elaboradas por predictores que interpretan y adecuan los resultados de los modelos.  La selección se hace por municipios y la información que se presenta son predicciones para la capital del municipio, dado que algunos términos municipales tienen una amplia extensión geográfica, así como diferencias de altitud sensibles, algunos de los datos previstos pueden variar de un lugar a otro del mismo.
+Compartir en Facebook
+Compartir en Twitter
+© AEMET. Autorizado el uso de la información y su reproducción citando a AEMET como autora de la misma.
+Predicción por municipios. Córdoba (Córdoba)
+Mapa web
+Nota legal
+Accesibilidad web
+Enlaces
+Ayuda web
+Widget
+El tiempo en tu web
+Descarga nuestra App
+App Oficial Android e iOS
+Síguenos
+Facebook
+X
+Instagram
+Threads
+Bluesky
+LinkedIn
+YouTube
+Blog
+RSS
+Valida XHTML 1.0 Transicional. (se abrirá en una ventana nueva)
+Certificado W3C Valid CSS. (se abrirá en una ventana nueva)
+Icono de conformidad WCAG 1.0 (Nivel AA) del W3C-WAI. Se abrirá en una ventana nueva.
+FORM asking for: Provincia o ciudad autónoma, Municipio — button «»
+FORM asking for: Buscar municipio por nombre: — button «Buscar»

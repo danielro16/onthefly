@@ -70,6 +70,12 @@ final class HeadlessWebView: NSObject {
     /// Cuántas navegaciones empezaron: la red de seguridad de `didFinish`
     /// sólo actúa si, cuando le toca, sigue siendo la misma.
     private var navigations = 0
+    /// Cuándo empezó y terminó de cargar la página que se está leyendo, y si
+    /// la tuvo que apurar la red de seguridad: para el registro, cuánto es
+    /// red y cuánto es esperar a que la página se quede quieta (`deliver`).
+    private var loadStart: ContinuousClock.Instant?
+    private var loadEnd: ContinuousClock.Instant?
+    private var hurried = false
     private var continuation: CheckedContinuation<ExtractedPage, Error>?
     /// A page that arrived while nobody was waiting for one. The next waiter
     /// takes it instead of blocking on a load that already happened.
@@ -526,6 +532,13 @@ final class HeadlessWebView: NSObject {
     /// Hands a page to whoever is waiting for one — or, if nobody is, reports
     /// that the page changed on its own and keeps it for the next waiter.
     private func deliver(_ result: Result<ExtractedPage, Error>) {
+        if let start = loadStart, case .success(let page) = result {
+            func ms(_ end: ContinuousClock.Instant) -> Int { Int((end - start) / .milliseconds(1)) }
+            Registro.anotar("carga", [
+                "url": page.url, "red_ms": loadEnd.map(ms) ?? -1, "leida_ms": ms(.now), "apurada": hurried,
+            ])
+            loadStart = nil
+        }
         if continuation != nil {
             settle(result)
             return
@@ -596,6 +609,9 @@ extension HeadlessWebView: WKNavigationDelegate {
     ) {
         navigationStarted = true
         navigations += 1
+        loadStart = .now
+        loadEnd = nil
+        hurried = false
     }
 
     /// La red de seguridad: si a los 3 s de terminar la carga el extractor
@@ -606,9 +622,11 @@ extension HeadlessWebView: WKNavigationDelegate {
     /// segundo 2. Lo que la página haga después se sigue leyendo como antes.
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         let started = navigations
+        loadEnd = .now
         Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(3))
             guard let self, self.navigations == started, self.continuation != nil else { return }
+            self.hurried = true
             _ = try? await webView.evaluateJavaScript("window.__jefExtractNow && window.__jefExtractNow()")
         }
     }

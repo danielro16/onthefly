@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: ¿cómo va a estar el tiempo mañana en córdoba?
+  4 [txt] Buscando: el tiempo mañana en Córdoba.
+  5 [txt] Según Google Clima, en Córdoba, España mañana viernes estará parcialmente soleado, con una máxima de 99 grados y una mínima de 64 grados. Ten en cuenta que la página también muestra resultados de Córdoba, Argentina, donde otros sitios como Meteored anuncian mañana soleado con entre 18 y 28 grados. Si querías la de Argentina, dime y te lo detallo.
+  6 [H] Vos: El Tiempo: Córdoba (Córdoba) - Predicción 7 días - Tabla — www.aemet.es
+  7 [txt] Abriendo aemet.es.
+  8 [txt] Estás en la página de la Agencia Estatal de Meteorología con la predicción para Córdoba capital. Para mañana, viernes 25, la página da una mínima de 17 grados y una máxima de 39 grados, sin probabilidad de lluvia y con viento calmo. Hay un aviso de nivel bajo por temperaturas máximas para la Campiña cordobesa; la página muestra encima un aviso de uso de cookies.
+  9 [H] Vos: ¿va a llover?
+ 10 [txt] Mañana viernes, 25 de septiembre, no va a llover en Córdoba: la probabilidad de precipitación es del 0%. El aviso para ese día es solo por temperaturas máximas, que llegarán a 39 grados.
+ 11 [btn] ¿Y el sábado?  (Primera de 6 opciones.)
+ 12 [btn] ¿Qué temperatura hará mañana?
+ 13 [btn] Leer la nota
+ 14 [btn] Abrir «Ver tabla detallada»
+ 15 [btn] Volver a los resultados
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar
