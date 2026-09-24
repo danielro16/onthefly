@@ -433,6 +433,10 @@ final class HeadlessWebView: NSObject {
         config.defaultWebpagePreferences.allowsContentJavaScript = true
         config.suppressesIncrementalRendering = true
         config.allowsInlineMediaPlayback = false
+        // Nada suena ni se mueve si la persona no lo pide: los videos de
+        // Clarín arrancaban solos, y con VoiceOver un video con sonido tapa
+        // la voz. Es lo que hace Brave.
+        config.mediaTypesRequiringUserActionForPlayback = .all
         return config
     }
 
