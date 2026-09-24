@@ -1,0 +1,14 @@
+http://localhost:8765/redirige.html
+Portada que se va
+
+PAGE: localhost — Portada que se va
+
+PAGE CONTENT (what the person came for):
+Portada del Club de Lectura
+Bienvenidos al Club de Lectura del barrio. Cada semana elegimos un libro y nos juntamos a comentarlo.
+Agenda de encuentros
+Hacete socio
+Portada del Club de Lectura
+Bienvenidos al Club de Lectura del barrio. Cada semana elegimos un libro y nos juntamos a comentarlo.
+Agenda de encuentros
+Hacete socio

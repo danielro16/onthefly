@@ -776,5 +776,18 @@
         "escribir": "llevame a deportes"
       }
     ]
+  },
+  {
+    "id": "pagina-que-se-va",
+    "persona": "Cualquiera: la página cambia sola mientras JEF la piensa.",
+    "objetivo": "Que JEF cuente la página que quedó (los resultados de novelas policiales), no la portada que se fue. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/redirige.html"
+      },
+      {
+        "esperar": 6
+      }
+    ]
   }
 ]

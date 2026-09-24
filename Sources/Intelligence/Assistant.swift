@@ -660,7 +660,7 @@ final class Assistant {
                     working = false
                     // Una sola vez: si la página ya se contó al llegar, con su
                     // pregunta y sus botones, no se cuenta de nuevo.
-                    if knownURL != page.url || offer == nil { await arrived(page) }
+                    if knownURL != page.url || offer == nil { await arrived(page, on: reader) }
                     if offer != nil { say("Cuando elijas, sigo con «\(Self.short(goal, 60))».") }
                     return
                 }
@@ -1301,7 +1301,7 @@ final class Assistant {
         case .look:
             // Con una pregunta esperando, la pregunta es lo que se quiere
             // saber: describir la página antes era hacerla esperar.
-            if task.after == nil { await arrived(page) }
+            if task.after == nil { await arrived(page, on: reader) }
         }
         if let question = task.after, let page = reader.page, !Self.hasChallenge(page) {
             working = true
@@ -1324,6 +1324,20 @@ final class Assistant {
         parts.query = nil
         parts.fragment = nil
         return parts.string ?? address
+    }
+
+    /// Si la página que se estaba contando sigue siendo la que está: el
+    /// mismo documento. El "#" no cambia de documento; la consulta sí puede:
+    /// los resultados de otra búsqueda son otra página. Sin página —otra
+    /// está cargando—, no.
+    static func stillOn(_ page: ExtractedPage, _ now: ExtractedPage?) -> Bool {
+        func document(_ address: String) -> String {
+            guard var parts = URLComponents(string: address) else { return address }
+            parts.fragment = nil
+            return parts.string ?? address
+        }
+        guard let now else { return false }
+        return document(now.url) == document(page.url)
     }
 
     /// La opción que se llama exactamente como lo pedido, sin artículos ni
@@ -1947,7 +1961,7 @@ final class Assistant {
             if let found, found.choice == nil, found.confidence >= Self.sureEnough, let here = found.here {
                 if here >= Criterios.actuales?.umbrales["esta_si"] ?? 1 {
                     working = false
-                    await arrived(page)
+                    await arrived(page, on: reader)
                     return
                 }
                 if here <= Criterios.actuales?.umbrales["esta_no"] ?? 0 {
@@ -2663,7 +2677,7 @@ final class Assistant {
     /// cortaba. La carga la pidió el asistente; el que cuenta cómo salió es él.
     private func landed(_ reader: ReaderModel) async {
         if let page = reader.page {
-            await arrived(page)
+            await arrived(page, on: reader)
         } else if case .failed = reader.state {
             say("No pude abrir esa página. Puede ser la conexión o el sitio.")
             failedTurn = true
@@ -2679,7 +2693,29 @@ final class Assistant {
     ///
     /// Sin modelo (sin red, o sin key) se cae a `describe`, que es plantilla
     /// pero es cierta.
-    private func arrived(_ page: ExtractedPage) async {
+    ///
+    /// `again`: cuántas veces ya se empezó de nuevo porque la página cambió
+    /// mientras se pensaba (ver `stillOn`).
+    private func arrived(_ page: ExtractedPage, on reader: ReaderModel, again: Int = 0) async {
+        // La página pudo cambiar mientras se pensaba: una búsqueda que tardó
+        // en salir, un sitio que redirige. Lo pensado era de la otra y no se
+        // dice: se cuenta la que está. En Gob.pe los resultados de
+        // «pasaporte» llegaron mientras se pensaba la portada, y se contó la
+        // portada, con sus botones. Dos veces como tope: una página que no
+        // deja de cambiar se cuenta con la plantilla, que es cierta.
+        func moved() async -> Bool {
+            guard !Self.stillOn(page, reader.page) else { return false }
+            working = false
+            Registro.anotar("atrasada", ["era": page.url, "es": reader.page?.url ?? ""])
+            guard let now = reader.page else { return true }
+            if again < 2 {
+                await arrived(now, on: reader, again: again + 1)
+            } else {
+                describe(now)
+            }
+            return true
+        }
+
         // Las opciones eran de la página anterior. En Mercado Libre, frente al
         // "no soy un robot", seguían ofreciéndose "Suscribirme a Meli+" y
         // "Configurar cookies" de la portada.
@@ -2700,6 +2736,7 @@ final class Assistant {
         // venía, con los resultados como texto. Lo vio Daniel en el simulador.
         if let query = Self.searchQuery(of: page) {
             let (found, ads) = await organic(page)
+            if await moved() { return }
             if !found.isEmpty {
                 present(found, for: query, ads: ads)
                 return
@@ -2724,6 +2761,7 @@ final class Assistant {
         // trámite, elegir de una lista— y decide cómo se lee la página; si
         // duda, lo decide el modelo (Daniel).
         let kinds = await self.kinds(of: page, map: map)
+        if await moved() { return }
         let sure = Criterios.actuales?.umbrales["tipo"] ?? 1
         if let kinds, let notice = kinds.notice, kinds.noticeConfidence >= sure { notices[page.url] = notice }
         if let overlay = page.overlay, let kind = noticeKind(page) {
@@ -2743,6 +2781,7 @@ final class Assistant {
             // y no había cómo saber si fue la red o una cifra sin verificar.
             Registro.anotar("error", ["orientar": String(describing: error)])
         }
+        if await moved() { return }
         working = false
         guard let orientation else { describe(page); return }
         if !orientation.cut.isEmpty { Registro.anotar("cifras_sacadas", ["url": page.url, "oraciones": orientation.cut]) }

@@ -1,0 +1,19 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790280376.472443}
+{"tipo": "ubicacion", "pais": "US", "t": 1790280377.187098}
+{"tipo": "ubicacion", "pais": "US", "t": 1790280377.187835}
+{"tipo": "turno", "quien": "persona", "t": 1790280382.776774, "texto": "http://localhost:8765/redirige.html"}
+{"opciones": [], "tipo": "botones", "t": 1790280382.778112}
+{"tipo": "turno", "quien": "jef", "t": 1790280382.778647, "texto": "Abriendo localhost."}
+{"tipo": "voz", "cola": false, "t": 1790280382.7790442, "texto": "Abriendo localhost."}
+{"tipo": "botones", "t": 1790280382.856553, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"titulo": "Portada que se va", "tipo": "pagina", "texto": "PAGE: localhost — Portada que se va\n\nPAGE CONTENT (what the person came for):\nPortada del Club de Lectura\nBienvenidos al Club de Lectura del barrio. Cada semana elegimos un libro y nos juntamos a comentarlo.\nAgenda de encuentros\nHacete socio\nPortada del Club de Lectura\nBienvenidos al Club de Lectura del barrio. Cada semana elegimos un libro y nos juntamos a comentarlo.\nAgenda de encuentros\nHacete socio", "url": "http://localhost:8765/redirige.html", "t": 1790280384.0804539}
+{"tipo": "botones", "opciones": [], "t": 1790280384.080954}
+{"url": "http://localhost:8765/redirigido.html", "titulo": "Resultados: novelas policiales", "t": 1790280386.081465, "texto": "PAGE: localhost — Resultados: novelas policiales\n\nPAGE CONTENT (what the person came for):\nResultados de la búsqueda «novelas policiales»\nEncontramos 3 libros en la biblioteca del club.\nEl asesinato de Roger Ackroyd — Agatha Christie\nLa muerte y la brújula — Jorge Luis Borges\nEl largo adiós — Raymond Chandler\nResultados de la búsqueda «novelas policiales»\nEncontramos 3 libros en la biblioteca del club.\nEl asesinato de Roger Ackroyd — Agatha Christie, La muerte y la brújula — Jorge Luis Borges, El largo adiós — Raymond Chandler", "tipo": "pagina"}
+{"tipo": "atrasada", "es": "http://localhost:8765/redirigido.html", "t": 1790280386.662012, "era": "http://localhost:8765/redirige.html"}
+{"t": 1790280386.662355, "opciones": [], "tipo": "botones"}
+{"pagina": "results", "sitio": "institution", "url": "http://localhost:8765/redirigido.html", "p_pagina": "1.00", "aviso": "", "tipo": "tipo", "t": 1790280388.702446, "modelo": "otra", "p_sitio": "0.66", "aviso_extractor": "", "p_aviso": "0.00"}
+{"url": "http://localhost:8765/redirigido.html", "elementos": [], "t": 1790280388.703075, "tipo": "ruido"}
+{"quien": "jef", "t": 1790280388.703404, "texto": "Encontré los resultados de la búsqueda de «novelas policiales» en la biblioteca del club: hay 3 libros, de Agatha Christie, Jorge Luis Borges y Raymond Chandler. ¿Cuál de los 3 libros necesitas?", "tipo": "turno"}
+{"t": 1790280388.703798, "cola": true, "texto": "Encontré los resultados de la búsqueda de «novelas policiales» en la biblioteca del club: hay 3 libros, de Agatha Christie, Jorge Luis Borges y Raymond Chandler. ¿Cuál de los 3 libros necesitas?", "tipo": "voz"}
+{"tipo": "botones", "opciones": ["El asesinato de Roger Ackroyd — Agatha Christie", "La muerte y la brújula — Jorge Luis Borges", "El largo adiós — Raymond Chandler"], "t": 1790280388.704709}
+{"tipo": "botones", "opciones": ["El asesinato de Roger Ackroyd — Agatha Christie", "La muerte y la brújula — Jorge Luis Borges", "El largo adiós — Raymond Chandler", "Volver a «Portada que se va»", "Otra cosa"], "t": 1790280388.705189}
