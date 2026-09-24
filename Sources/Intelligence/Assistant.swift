@@ -682,9 +682,16 @@ final class Assistant {
             // resolvió arriba, y "Acá no hay un formulario para enviar" se
             // decía de más.
             if decision.action == .completar, controls.isEmpty { return }
-            guard let page = reader.page,
-                  let form = control(decision)?.form ?? pageForm(page)
-            else { say("Acá no hay un formulario para enviar."); return }
+            guard let page = reader.page else { return }
+            guard let form = control(decision)?.form ?? pageForm(page) else {
+                // Sin formulario, lo que se aprieta es un botón suelto:
+                // «Add to cart», «Guardar preferencias». Se busca como
+                // cualquier cosa de la página, y pasa por `free` como todo
+                // lo que JEF toca. Antes: "Acá no hay un formulario para
+                // enviar", con el botón ahí.
+                await run(decision.reference ?? goal, on: reader, steps: 1, said: goal)
+                return
+            }
             await submitAsked(form, on: reader)
 
         case .volver:

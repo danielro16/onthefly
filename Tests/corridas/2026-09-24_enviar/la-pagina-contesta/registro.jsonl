@@ -1,0 +1,40 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790282280.978329, "tipo": "botones"}
+{"tipo": "ubicacion", "pais": "US", "t": 1790282281.5891771}
+{"pais": "US", "tipo": "ubicacion", "t": 1790282281.589514}
+{"t": 1790282287.170831, "texto": "http://localhost:8765/responde.html", "tipo": "turno", "quien": "persona"}
+{"opciones": [], "tipo": "botones", "t": 1790282287.171825}
+{"t": 1790282287.1723251, "texto": "Abriendo localhost.", "tipo": "turno", "quien": "jef"}
+{"tipo": "voz", "texto": "Abriendo localhost.", "cola": false, "t": 1790282287.172529}
+{"tipo": "botones", "t": 1790282287.2474298, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"url": "http://localhost:8765/responde.html", "t": 1790282288.550606, "texto": "PAGE: localhost — Mis preferencias\n\nPAGE CONTENT (what the person came for):\nMis preferencias\nElegí cómo querés recibir las novedades del club.\nGuardar preferencias\nBorrar todo\nElegí cómo querés recibir las novedades del club.", "titulo": "Mis preferencias", "tipo": "pagina"}
+{"t": 1790282288.5508718, "tipo": "botones", "opciones": []}
+{"p_aviso": "0.00", "modelo": "otra", "t": 1790282291.772265, "aviso": "", "sitio": "institution", "aviso_extractor": "", "p_pagina": "0.95", "url": "http://localhost:8765/responde.html", "tipo": "tipo", "pagina": "form", "p_sitio": "1.00"}
+{"url": "http://localhost:8765/responde.html", "tipo": "ruido", "elementos": [], "t": 1790282291.772616}
+{"quien": "jef", "tipo": "turno", "texto": "Estás en la página «Mis preferencias», donde elegís cómo querés recibir las novedades del club. La página muestra ese mensaje y dos botones: «Guardar preferencias» y «Borrar todo»; no se ven más opciones para marcar. Podés guardar lo elegido o borrar todo cuando quieras.", "t": 1790282291.772784}
+{"t": 1790282291.77313, "tipo": "voz", "texto": "Estás en la página «Mis preferencias», donde elegís cómo querés recibir las novedades del club. La página muestra ese mensaje y dos botones: «Guardar preferencias» y «Borrar todo»; no se ven más opciones para marcar. Podés guardar lo elegido o borrar todo cuando quieras.", "cola": true}
+{"t": 1790282291.773438, "opciones": ["Guardar preferencias", "Borrar todo"], "tipo": "botones"}
+{"t": 1790282291.773732, "opciones": ["Guardar preferencias", "Borrar todo", "Otra cosa"], "tipo": "botones"}
+{"quien": "persona", "tipo": "turno", "texto": "guardá las preferencias", "t": 1790282299.664532}
+{"opciones": [], "t": 1790282299.6649442, "tipo": "botones"}
+{"question": "", "target": "", "control": "", "rest": "", "tipo": "decision", "t": 1790282302.266149, "reference": "Guardar preferencias", "tarea": "sigue", "accion": "enviar", "then": ""}
+{"boton": "Guardar preferencias", "t": 1790282302.479601, "p": "0.61", "tipo": "compromete"}
+{"texto": "«Guardar preferencias» puede confirmar algo: queda abajo, para tocarlo.", "quien": "jef", "t": 1790282302.479996, "tipo": "turno"}
+{"texto": "«Guardar preferencias» puede confirmar algo: queda abajo, para tocarlo.", "cola": false, "t": 1790282302.480418, "tipo": "voz"}
+{"opciones": ["Pulsar «Guardar preferencias»"], "tipo": "botones", "t": 1790282302.480655}
+{"opciones": ["Pulsar «Guardar preferencias»", "Otra cosa"], "tipo": "botones", "t": 1790282302.480856}
+{"tipo": "botones", "opciones": [], "t": 1790282323.976907}
+{"quien": "persona", "texto": "Pulsar «Guardar preferencias»", "tipo": "turno", "t": 1790282323.978903}
+{"quien": "jef", "texto": "Pulsando «Guardar preferencias».", "tipo": "turno", "t": 1790282323.98018}
+{"texto": "Pulsando «Guardar preferencias».", "cola": false, "tipo": "voz", "t": 1790282323.981089}
+{"tipo": "pagina", "url": "http://localhost:8765/responde.html", "texto": "PAGE: localhost — Mis preferencias\n\nPAGE CONTENT (what the person came for):\nMis preferencias\nElegí cómo querés recibir las novedades del club.\nGuardar preferencias\nBorrar todo\nTus preferencias se guardaron.\nElegí cómo querés recibir las novedades del club.\nTus preferencias se guardaron.", "t": 1790282325.581033, "titulo": "Mis preferencias"}
+{"opciones": [], "tipo": "botones", "t": 1790282325.582063}
+{"tipo": "hecho", "t": 1790282325.788076, "pagina": ["Tus preferencias se guardaron."], "boton": "Guardar preferencias"}
+{"sitio": "institution", "pagina": "form", "modelo": "otra", "aviso": "", "aviso_extractor": "", "tipo": "tipo", "t": 1790282327.628629, "p_aviso": "0.00", "p_sitio": "1.00", "p_pagina": "0.90", "url": "http://localhost:8765/responde.html"}
+{"tipo": "ruido", "url": "http://localhost:8765/responde.html", "elementos": [], "t": 1790282327.6347919}
+{"tipo": "turno", "quien": "jef", "t": 1790282327.635522, "texto": "Listo: guardé tus preferencias y la página confirmó «Tus preferencias se guardaron». Estás en la página «Mis preferencias» del club, donde se elige cómo recibir las novedades. Si querés, también podés borrar todo lo guardado."}
+{"cola": true, "tipo": "voz", "t": 1790282327.63831, "texto": "Listo: guardé tus preferencias y la página confirmó «Tus preferencias se guardaron». Estás en la página «Mis preferencias» del club, donde se elige cómo recibir las novedades. Si querés, también podés borrar todo lo guardado."}
+{"opciones": ["Otra cosa"], "tipo": "botones", "t": 1790282327.639288}
+{"tipo": "botones", "t": 1790282353.8647919, "opciones": []}
+{"texto": "Otra cosa", "t": 1790282353.8669581, "quien": "persona", "tipo": "turno"}
+{"texto": "¿Qué otra cosa hacemos? Se puede escribir, o dictar con el micrófono del teclado.", "t": 1790282353.867584, "quien": "jef", "tipo": "turno"}
+{"texto": "¿Qué otra cosa hacemos? Se puede escribir, o dictar con el micrófono del teclado.", "cola": false, "t": 1790282353.8708239, "tipo": "voz"}
