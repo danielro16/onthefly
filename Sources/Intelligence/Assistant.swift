@@ -1796,9 +1796,14 @@ final class Assistant {
                 let host = Self.bare(Self.unicode(URL(string: href)?.host() ?? ""))
                 say("Abriendo \(shown ?? host ?? action.label).")
             }
+            let before = reader.page
+            _ = await reader.takeSaid()
             reader.address = href
             await reader.go()
             working = false
+            // Un link que no llevó a ningún lado —un archivo que no se abrió—
+            // se cuenta como lo que se hizo (`pressed`).
+            if let before, Self.stillOn(before, reader.page) { justDid = Self.pressName(target) }
             // Se abrió una nota y se llegó a un muro: decirlo, no presentarlo
             // como el destino. En Clarín el titular llevó a la página de
             // suscripción, de ahí a iniciar sesión, y cada una se describía
@@ -2273,9 +2278,13 @@ final class Assistant {
     /// página como recién llegada, con cómo agregar al carrito (Daniel).
     private func pressed(_ control: Action, on reader: ReaderModel) async {
         _ = await reader.takeSaid()
+        let before = reader.page
         if control.kind == .form { await reader.submit(control) } else { await reader.activate(control) }
         let goes = control.kind == .link ? !(control.href ?? "").isEmpty : control.kind == .form && Self.isSearch(control)
-        justDid = goes ? nil : Self.pressName(control)
+        // Un link que no llevó a ningún lado —un archivo que no se abrió—
+        // también se cuenta como lo que se hizo.
+        let stayed = before.map { Self.stillOn($0, reader.page) } ?? false
+        justDid = goes && !stayed ? nil : Self.pressName(control)
     }
 
     /// Lo que JEF acaba de hacer y lo que la página contestó, para la

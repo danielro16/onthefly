@@ -414,6 +414,9 @@ final class HeadlessWebView: NSObject {
 
     /// Los carteles desde la última vez que se preguntó (`takeSaid`).
     fileprivate var alerts: [Said] = []
+    /// Se acaba de rechazar un archivo: la carga que falla por eso no es una
+    /// falla (`report`).
+    fileprivate var fileRefused = false
 
     /// Lo que la página dijo sola desde la última vez que se preguntó: sus
     /// carteles y sus zonas de estado (`__jefTakeSaid` en extract.js).
@@ -692,11 +695,35 @@ extension HeadlessWebView: WKNavigationDelegate {
         report(error)
     }
 
+    /// Lo que el navegador no puede mostrar —un archivo para bajar— no se
+    /// abre ni se baja: la persona se queda en la página, y lo que pasó queda
+    /// como lo que contestó la página (`takeSaid`), para que la orientación
+    /// lo cuente. Un link del IMSS que bajaba un archivo dejaba a JEF sin
+    /// página.
+    func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationResponse: WKNavigationResponse
+    ) async -> WKNavigationResponsePolicy {
+        guard navigationResponse.isForMainFrame, !navigationResponse.canShowMIMEType else { return .allow }
+        let type = navigationResponse.response.mimeType ?? "unknown"
+        let name = navigationResponse.response.suggestedFilename.map { ", \($0)" } ?? ""
+        alerts.append(Said(text: "The link is a file (\(type)\(name)) that the browser cannot show; it was not opened or downloaded.", asked: false))
+        fileRefused = true
+        return .cancel
+    }
+
     private func report(_ error: Error) {
         // A load that a newer load replaced comes back as cancelled. The newer
         // one has its own waiter; failing it for the old one's sake would
         // fail every navigation that starts while another is in flight.
         if (error as NSError).code == NSURLErrorCancelled { return }
+        // Un archivo que no se abrió (arriba): no es una falla. Quien espera
+        // una página recibe la que sigue abierta.
+        if fileRefused {
+            fileRefused = false
+            _ = webView?.evaluateJavaScript("window.__jefExtractNow && window.__jefExtractNow()")
+            return
+        }
         deliver(.failure(ExtractionError.navigationFailed(error.localizedDescription)))
     }
 }
