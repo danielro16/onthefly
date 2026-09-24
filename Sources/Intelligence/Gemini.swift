@@ -76,6 +76,30 @@ struct Gemini: Sendable {
         return body
     }
 
+    /// El objeto JSON de una respuesta: el primero completo. GPT-6 Luna, sin
+    /// razonar, a veces deja texto después del objeto (medido al cambiar de
+    /// modelo), y leído entero no era JSON: la orientación se descartaba y
+    /// quedaba la plantilla (tres veces en La Vanguardia).
+    static func object(in content: String) -> [String: Any]? {
+        if let whole = try? JSONSerialization.jsonObject(with: Data(content.utf8)) as? [String: Any] { return whole }
+        guard let start = content.firstIndex(of: "{") else { return nil }
+        var depth = 0, inString = false, escaped = false
+        for index in content[start...].indices {
+            let character = content[index]
+            if inString {
+                if escaped { escaped = false } else if character == "\\" { escaped = true } else if character == "\"" { inString = false }
+                continue
+            }
+            if character == "\"" { inString = true }
+            else if character == "{" { depth += 1 }
+            else if character == "}" {
+                depth -= 1
+                if depth == 0 { return try? JSONSerialization.jsonObject(with: Data(content[start...index].utf8)) as? [String: Any] }
+            }
+        }
+        return nil
+    }
+
     func request(_ body: [String: Any], thinking: Bool = false) throws -> URLRequest {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"

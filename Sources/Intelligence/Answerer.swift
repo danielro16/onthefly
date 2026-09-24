@@ -105,7 +105,14 @@ actor Answerer {
             let message = choices.first?["message"] as? [String: Any],
             let content = message["content"] as? String
         else { throw AnswerError.unusable }
-        return try? JSONSerialization.jsonObject(with: Data(content.utf8)) as? [String: Any]
+        guard let parsed = Gemini.object(in: content) else {
+            // Lo que vino, para saber por qué: sin esto sólo quedaba "unusable".
+            let head = String(content.prefix(400)), end = message["refusal"] as? String ?? ""
+            let reason = choices.first?["finish_reason"] as? String ?? ""
+            await MainActor.run { Registro.anotar("respuesta_rota", ["contenido": head, "fin": reason, "rechazo": end]) }
+            return nil
+        }
+        return parsed
     }
 
     /// Un pedido a Gemini con uno de los prompts de `prompts.json`: su
