@@ -486,6 +486,11 @@ final class Assistant {
         await run(goal, on: reader, steps: Self.maxSteps)
     }
 
+    /// Un control tocado, de qué página: sus marcas se repiten entre páginas.
+    static func touchKey(_ action: Action, on page: ExtractedPage?) -> String {
+        (page?.url ?? "") + "|" + action.id
+    }
+
     /// Si la frase entera va al buscador: ir a un sitio, como tarea nueva.
     /// Lo que quedaba para después (`rest`) ya va en la búsqueda.
     static func whole(_ decision: Router.Decision) -> Bool {
@@ -1884,12 +1889,25 @@ final class Assistant {
         working = true
         defer { working = false }
         var first = true
+        /// El nombre de lo último que se tocó en este camino.
+        var lastPressed: String?
 
         /// Tocar lo elegido. False: el turno terminó acá.
         func go(_ chosen: Action) async -> Bool {
+            // Lo mismo que se acaba de tocar, ya en la página a la que llevó,
+            // es el menú del sitio señalando dónde se está: se llegó. En
+            // Demoblaze, «Cart» del menú no tiene dirección, y en el carrito
+            // Jev lo volvía a elegir (0,97) hasta "No encuentro «carrito»".
+            if let lastPressed, Self.flatten(chosen.label) == lastPressed {
+                working = false
+                await landed(reader)
+                return false
+            }
             // Volver a tocar lo mismo es dar vueltas: no está acá. Se ofrece
             // buscarlo afuera. Antes decía "Sin avance" y ahí se terminaba.
-            guard touched.insert(chosen.id).inserted else {
+            // Lo mismo es de la misma página: las marcas de los controles se
+            // repiten de una página a otra.
+            guard touched.insert(Self.touchKey(chosen, on: reader.page)).inserted else {
                 say("No encuentro «\(Self.short(goal, 60))» en esta página. ¿Lo busco en internet?")
                 searchInstead = goal
                 return false
@@ -1909,6 +1927,7 @@ final class Assistant {
             }
             say("Abriendo \(chosen.label).")
             await pressed(chosen, on: reader)
+            lastPressed = Self.flatten(chosen.label)
             return true
         }
 
@@ -1931,7 +1950,7 @@ final class Assistant {
             // Preguntarle después a Jev si ya estaba terminaba en la
             // descripción de plantilla —"Estás en la portada de LA NACION"
             // parado en Deportes—.
-            if first, let exact = Self.exactOption(for: goal, among: options), touched.insert(exact.id).inserted {
+            if first, let exact = Self.exactOption(for: goal, among: options), touched.insert(Self.touchKey(exact, on: page)).inserted {
                 // Nombrarlo no es tocarlo: «confirmar» dicho en voz alta no
                 // aprieta «Confirmar». Lo que compromete queda para la mano.
                 guard await free(exact, on: reader) else {
