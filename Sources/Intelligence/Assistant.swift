@@ -448,6 +448,7 @@ final class Assistant {
             if decision?.newTask ?? true || task == nil { task = goal }
 
             if let decision {
+                let before = reader.page
                 await carry(decision.action, of: decision, goal: goal, on: reader)
                 // El segundo pedido de una frase que traía dos: "resumime y
                 // después entrame a la de Milei". Descartarlo en silencio era
@@ -459,7 +460,7 @@ final class Assistant {
                 // Y lo que falta de la tarea, ahora que ya hay otra página.
                 // "Quiero entrar a ANSES y pedir un turno" aterrizaba en ANSES
                 // y el turno se perdía: el pedido no sobrevivía al viaje.
-                if let rest = decision.rest, !rest.isEmpty, !Self.whole(decision) {
+                if let rest = decision.rest, !rest.isEmpty, !Self.whole(decision), Self.reached(from: before, reader.page, rest: rest) {
                     if offer?.options.contains(where: { $0.id.hasPrefix("res-") }) == true {
                         // Se frenó a preguntar cuál resultado. La tarea espera
                         // a que la persona elija; seguir ahora sería resolver
@@ -489,6 +490,18 @@ final class Assistant {
     /// Un control tocado, de qué página: sus marcas se repiten entre páginas.
     static func touchKey(_ action: Action, on page: ExtractedPage?) -> String {
         (page?.url ?? "") + "|" + action.id
+    }
+
+    /// Si hay que seguir con lo que queda de la tarea (`rest`): sólo si se
+    /// llegó a otra página, que es como lo define el ruteador. Sin moverse,
+    /// lo que quedaba ya lo cubrió lo que se hizo: en httpbin, «mandá el
+    /// pedido» se pedía dos veces; en Demoblaze, el pedido entero volvía
+    /// como resto y se hacía otra vez.
+    static func reached(from before: ExtractedPage?, _ now: ExtractedPage?, rest: String) -> Bool {
+        guard let before else { return true }
+        let moved = now.map { !stillOn(before, $0) } ?? false
+        if !moved { Registro.anotar("resto_descartado", ["resto": rest]) }
+        return moved
     }
 
     /// Si la frase entera va al buscador: ir a un sitio, como tarea nueva.
@@ -532,6 +545,7 @@ final class Assistant {
             let decision = try? await decide(goal, on: reader)
             working = false
             guard let decision else { return }
+            let before = reader.page
             await carry(decision.action, of: decision, goal: goal, on: reader)
             // El segundo pedido de la frase, como en `ask`: "completar" y
             // "enviar" es buscar con el buscador del sitio, y acá se perdía —
@@ -539,7 +553,7 @@ final class Assistant {
             if let next = decision.then, Self.chains(decision.action, next), !working, awaitingField == nil {
                 await carry(next, of: decision, goal: goal, on: reader)
             }
-            guard let more = decision.rest, !more.isEmpty, more != goal else { return }
+            guard let more = decision.rest, !more.isEmpty, more != goal, Self.reached(from: before, reader.page, rest: more) else { return }
             goal = more
         }
     }
