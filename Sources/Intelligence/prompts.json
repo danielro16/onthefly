@@ -329,14 +329,9 @@
           "es": "what the person came to do, if known"
         },
         {
-          "clave": "titulares",
-          "etiqueta": "HEADLINES READ BY THE APP",
-          "es": "yes, if it is a front page whose headlines the app reads"
-        },
-        {
           "clave": "lista",
           "etiqueta": "LIST OF WHAT CAN BE OPENED",
-          "es": "what the page lets them open, each with an internal id in brackets that is never said to the person"
+          "es": "what the page lets them open, press or fill, in the page's order, each with an internal id in brackets that is never said to the person; (menu) and (footer) mark the site's menu and footer"
         },
         {
           "clave": "texto",
@@ -347,14 +342,15 @@
       "reglas": [
         "Use ONLY the text of the page. Add nothing you know from elsewhere.",
         "Tell them where they are and what is there, as an attentive person would. Start directly with the site and the kind of page: the conversation has already started.",
-        "If HEADLINES READ BY THE APP says yes, the app says its headlines, as they are, after your text: do not name or summarize any. Your text is one short sentence: the site and whether it is the front page or a section. If THE PERSON CAME TO something that is not just entering the site, add half a sentence with where that is on the page.",
-        "Otherwise: on a news front page, say the main headlines, three to five, each in a short sentence with the fact, not the topic. On an article, what it is about, in two sentences. On the home page of an organization (a bank, a store, a company, an agency), what it is and the main thing done there, in one sentence; its promotions, banners and carousels are not named. On a form, what it asks for.",
+        "tipo_de_pagina: portada if the page lists news headlines to open (a news front page or section); nota if it is one article or text to read; otra for anything else.",
+        "On a portada, the app says its headlines, as they are, after your text: do not name or summarize any. Your text is one short sentence: the site and whether it is the front page or a section. If THE PERSON CAME TO something that is not just entering the site, add half a sentence with where that is on the page.",
+        "Otherwise: on an article, what it is about, in two sentences. On the home page of an organization (a bank, a store, a company, an agency), what it is and the main thing done there, in one sentence; its promotions, banners and carousels are not named. On a form, what it asks for.",
         "If you name something the page gives with a number, say the number.",
-        "At most three sentences, or the list of headlines. Whoever listens has to wait for you to finish before doing anything.",
+        "At most three sentences. Whoever listens has to wait for you to finish before doing anything.",
         "Advertising, promotions and subscription offers that cover nothing: do not mention them. If the text says there is a notice on top that does cover the page (cookies to accept, a wall), say so in half a sentence at the end.",
         "If the page is a list of similar options (procedures, categories, plans) and what they came to do does not say which one, do not choose for the person: say how many there are; pregunta asks which one they need, in {idioma}, and opciones are the ids of those options, in the page's order. If it says which one, that one is the first suggestion. Otherwise pregunta is null and opciones is empty.",
         "If THE PERSON CAME TO is given, it leads: start by saying whether this page serves for that and where, and the first suggestion has to be the one that gets them closer to it.",
-        "sugerencias: between 2 and 4 useful ones; if HEADLINES READ BY THE APP says yes, between 0 and 2, only for what the person came to do if it is not reading news. abrir opens an item of the LIST by its id (only ids from the list). leer reads the content aloud, only on an article or a long text, never on a front page. resumir summarizes this page. Each etiqueta is short, in {idioma}, and says what happens when touched.",
+        "sugerencias: the next steps, in the order the person most likely needs them: between 2 and 4; on a portada, between 0 and 2, only for what the person came to do if it is not reading news. abrir opens or presses an item of the LIST by its id (only ids from the list). completar fills a FORM of the LIST by its id; its etiqueta says what it is for, with the site's name (a search box is searching the site), never the field's name. leer reads the content aloud, only on a nota or a long text. resumir summarizes this page. Each etiqueta is short, in {idioma}, and says what happens when touched.",
         "Never propose paying, subscribing, buying or downloading an app.",
         "In ruido, every item of the LIST that is noise, by its id, with its tipo, one of: {ruido_tipos}. What is none of those types is not noise. Noise is never suggested, not now nor later. Noise is: {ruido_es} Not noise: {ruido_no_es}",
         "In cifras, every number, amount or date you used, copied as it appears on the page."
@@ -362,6 +358,14 @@
       "devuelve": {
         "type": "object",
         "properties": {
+          "tipo_de_pagina": {
+            "type": "string",
+            "enum": [
+              "portada",
+              "nota",
+              "otra"
+            ]
+          },
           "respuesta": {
             "type": "string"
           },
@@ -377,6 +381,7 @@
                   "type": "string",
                   "enum": [
                     "abrir",
+                    "completar",
                     "leer",
                     "resumir"
                   ]
@@ -434,6 +439,7 @@
           }
         },
         "required": [
+          "tipo_de_pagina",
           "respuesta",
           "sugerencias",
           "ruido",

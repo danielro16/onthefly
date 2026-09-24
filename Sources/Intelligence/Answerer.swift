@@ -163,6 +163,10 @@ actor Answerer {
 
     /// Lo que se le dice a alguien al llegar a una página, y qué puede hacer.
     struct Orientation: Sendable {
+        /// Qué es la página: lo dice el modelo, que la leyó. Antes lo
+        /// adivinaba el código contando párrafos de 160 letras y titulares.
+        enum Kind: String, Sendable { case portada, nota, otra }
+        let kind: Kind
         let text: String
         let suggestions: [Suggestion]
         /// Los números de la lista (desde 1) que son ruido para quien llega:
@@ -177,12 +181,12 @@ actor Answerer {
     }
 
     struct Suggestion: Sendable {
-        enum Kind: String, Sendable { case abrir, leer, resumir }
+        enum Kind: String, Sendable { case abrir, completar, leer, resumir }
         let label: String
         let kind: Kind
-        /// Para abrir: el número del elemento en la lista que se le pasó al
-        /// modelo, empezando en 1. El modelo nombra el botón; el destino lo
-        /// pone la página.
+        /// Para abrir y completar: el número del elemento en la lista que se
+        /// le pasó al modelo, empezando en 1. El modelo nombra el botón; el
+        /// destino lo pone la página.
         let number: Int?
     }
 
@@ -195,11 +199,11 @@ actor Answerer {
     ///
     /// Las opciones de abrir se eligen POR SU MARCA de una lista que arma el
     /// código con lo que la página ofrece de verdad. El modelo escribe la
-    /// etiqueta del botón; no puede escribir su destino.
-    /// `frontPage`: es una portada, y sus titulares los dice el código, tal
-    /// cual los escribió el diario. Reescritos por el modelo salían distintos
-    /// en cada visita, y a veces con algo que no estaba.
-    func orient(page: String, candidates: [String], goal: String? = nil, frontPage: Bool = false) async throws -> Orientation? {
+    /// etiqueta del botón; no puede escribir su destino. En una portada, los
+    /// titulares los dice el código, tal cual los escribió el diario:
+    /// reescritos por el modelo salían distintos en cada visita, y a veces
+    /// con algo que no estaba.
+    func orient(page: String, candidates: [String], goal: String? = nil) async throws -> Orientation? {
         // Cada elemento con una marca de dos letras y no con un número: con la
         // lista numerada, el modelo le decía a la persona "está en la lista
         // como número 4". La marca es para los campos de la respuesta.
@@ -210,7 +214,7 @@ actor Answerer {
         // Qué es ruido y sus tipos los dice `criterios.json`, no este código.
         let ruido = Criterios.actuales?.ruido ?? .init(es: "", noEs: "")
         let parsed = try await ask("orientar", [
-            "vino": goal, "titulares": frontPage ? "yes" : nil, "lista": list, "texto": page,
+            "vino": goal, "lista": list, "texto": page,
         ], maxTokens: 1100)
         guard let parsed,
               let text = parsed["respuesta"] as? String, !text.isEmpty
@@ -242,7 +246,7 @@ actor Answerer {
                   let kind = (item["tipo"] as? String).flatMap(Suggestion.Kind.init(rawValue:))
             else { return nil }
             let target = number(item["id"])
-            if kind == .abrir {
+            if kind == .abrir || kind == .completar {
                 // La verificación de siempre: la marca tiene que estar en la
                 // lista. Y lo que el mismo modelo llamó ruido no se sugiere.
                 guard let target, !noise.contains(target) else { return nil }
@@ -256,6 +260,7 @@ actor Answerer {
         let choices = Set(((parsed["opciones"] as? [Any]) ?? []).compactMap(number)).subtracting(noise).sorted()
         let question = (parsed["pregunta"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
         return Orientation(
+            kind: (parsed["tipo_de_pagina"] as? String).flatMap(Orientation.Kind.init(rawValue:)) ?? .otra,
             text: text, suggestions: Array(suggestions.prefix(4)), noise: noise,
             question: choices.isEmpty || question?.isEmpty != false ? nil : question, choices: choices)
     }

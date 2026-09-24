@@ -527,5 +527,47 @@
         "escribir": "quiero cajas gratis para mandar un paquete"
       }
     ]
+  },
+  {
+    "id": "portada-elcomercio",
+    "persona": "Lector en Perú, ciego. Entra al diario para escuchar las noticias.",
+    "objetivo": "Que JEF sepa que es una portada: diga el sitio en una frase y lea los titulares tal cual, con los titulares como botones.",
+    "pasos": [
+      {
+        "escribir": "elcomercio.pe"
+      }
+    ]
+  },
+  {
+    "id": "buscar-en-gobpe",
+    "persona": "Vive en Perú, con baja visión. Quiere buscar en el sitio del Estado cómo sacar el pasaporte.",
+    "objetivo": "Que el buscador del sitio sea un solo botón «Buscar en…», que pregunte qué buscar y busque, sin «Completar» ni «Pulsar».",
+    "pasos": [
+      {
+        "escribir": "www.gob.pe"
+      },
+      {
+        "tocar": "Buscar"
+      },
+      {
+        "escribir": "pasaporte"
+      }
+    ]
+  },
+  {
+    "id": "nota-elcomercio",
+    "persona": "Lector en Perú, ciego. Abre una noticia de la portada y la quiere escuchar.",
+    "objetivo": "Que JEF sepa que es una nota, ofrezca leerla y la lea por párrafos.",
+    "pasos": [
+      {
+        "escribir": "elcomercio.pe"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "tocar": "Leer"
+      }
+    ]
   }
 ]

@@ -274,6 +274,34 @@ Daniel. Punto de partida marcado con la etiqueta `antes-de-ajustes`.
    de página y los pasos ordenados (abrir, completar, buscar en el sitio, leer,
    resumir, o una pregunta con opciones); se borran las reglas de los otros
    lugares.
+   **Hecho, primera parte (23/9):** la orientación devuelve `tipo_de_pagina`
+   (portada, nota, otra) y los pasos en su orden, con un paso nuevo,
+   `completar`: el buscador del sitio es un solo botón con nombre («Buscar en
+   Gob.pe»), que pregunta qué buscar y busca. Se borraron `isWall`,
+   `isSubscription`, `stems`, `formOptions`, el formulario primero de
+   `closeTurn`, las reglas de nota de `arrived` y de `followUps`; `readsHeadlines`
+   e `isArticle` leen lo que dijo el modelo; `isQuestion` mira los signos de
+   pregunta, en cualquier escritura. Después de leer o contestar se vuelven a
+   ofrecer los pasos de la orientación. El código verifica dos cosas del
+   contrato: en una portada, sin tarea, no hay sugerencias además de los
+   titulares; y leer y resumir los nombra el código. Probado: ANSES (ya no
+   «Completar «buscador»» ni «Pulsar «Search»»; los trámites como pregunta),
+   gob.pe (buscar «pasaporte» con un botón), El Comercio (portada y nota),
+   IMSS. Falta la segunda parte: los avisos que tapan la página.
+
+   Vistos en las pruebas, para después (no son de este paso):
+   - gob.pe: los resultados de su buscador llegan sin título (el extractor
+     toma la institución y la descripción).
+   - El Comercio: al leer una nota, los primeros párrafos son el menú.
+   - El ruteador a veces devuelve como `rest` el mismo pedido
+     («medicina familiar»), y se procesa dos veces.
+   - «gob.pe» escrito sin www no carga (los navegadores prueban con www).
+   - Los links `http://` los bloquea iOS (ATS); un link que descarga un
+     archivo (RSS) deja a JEF sin página.
+   - USPS: «FREE BOXES» del menú abre el buscador del sitio y Jev lo vuelve a
+     elegir en los resultados.
+   - GLM duda del tipo en páginas ambiguas (IMSS: portada, nota u otra) y a
+     veces ofrece un solo paso donde se piden dos a cuatro.
 4. **Costo y velocidad:** topes en los esquemas, el mismo tope de texto, Jev en
    paralelo.
 5. **Voz:** un mensaje por turno.
