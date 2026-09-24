@@ -514,5 +514,18 @@
         "escribir": "¿qué documentos necesito?"
       }
     ]
+  },
+  {
+    "id": "cajas-usps",
+    "persona": "Vive en Estados Unidos, habla español, ciega. Quiere pedir cajas gratis al correo para mandar un paquete.",
+    "objetivo": "Que JEF encuentre en USPS dónde se piden las cajas gratis aunque el botón diga «Order Now», y la lleve ahí.",
+    "pasos": [
+      {
+        "escribir": "usps.com"
+      },
+      {
+        "escribir": "quiero cajas gratis para mandar un paquete"
+      }
+    ]
   }
 ]

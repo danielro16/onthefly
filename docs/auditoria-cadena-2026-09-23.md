@@ -258,6 +258,18 @@ Daniel. Punto de partida marcado con la etiqueta `antes-de-ajustes`.
    (0,89). Va en el paso 2, con el mapa, y se vuelve a medir ahí.
 2. **Un solo mapa de la página:** en el orden de la página, con las mismas
    marcas para todos.
+   **Hecho (23/9):** `options(of:)` es el mapa: en el orden de la página, con
+   los links de adentro de los párrafos, y lo ven igual Jev, la orientación
+   y reinterpretar (se borraron `candidates(of:)` y `readingOrder`). El
+   extractor nombra un link que no se nombra solo con su tarjeta
+   (`context`: «Agenda tu Cita Médica Digital — Leer», «¿Estás esperando un
+   envío? — MÁS INFO»), por estructura y no por palabras; en 21 sitios
+   cambió 20 nombres, todos a mejor. Jev recibe la tarea pegada al pedido.
+   En el IMSS, «medicina familiar» ahora abre la cita y llega sola al
+   formulario de Cita Médica Digital (antes tocaba «Suscribirse»). La
+   orientación ve el menú y el pie (en el SAT, 46 elementos contra 3): ~500
+   tokens más por página en promedio, US$ 0,00008 con GLM. El ruteador sigue
+   con su lista de campos de formulario.
 3. **Un solo lugar para los próximos pasos:** la orientación devuelve el tipo
    de página y los pasos ordenados (abrir, completar, buscar en el sitio, leer,
    resumir, o una pregunta con opciones); se borran las reglas de los otros

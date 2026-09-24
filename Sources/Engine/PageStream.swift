@@ -30,6 +30,9 @@ struct StreamEntry: Codable, Sendable, Identifiable {
     /// En una tarjeta, el titular solo: `label` es la tarjeta entera, con
     /// volanta, sección y firma.
     let title: String?
+    /// Para un link que no se nombra solo, dónde está: el nombre de su
+    /// tarjeta. «Leer» en el IMSS es «Agenda tu Cita Médica Digital».
+    let context: String?
     /// Con qué se lista una opción: las que comparten grupo son una lista;
     /// las que sólo se tocan, vecinas. Lo dice el DOM —el contenedor que
     /// repite su forma—, no una cuenta nuestra.

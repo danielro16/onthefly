@@ -2588,6 +2588,55 @@
     /// A destination the reader can load. Ver `opensAnotherPage`.
     const opens = opensAnotherPage;
 
+    /// What names a link that does not name itself. «Leer» under «Agenda tu
+    /// Cita Médica Digital» (imss.gob.mx) reached every model as "Leer",
+    /// and Jev chose the feed «Suscribirse a cita médica» instead. The
+    /// link's card is the nearest element around it that says something
+    /// besides the link and leads nowhere else. A link that fills a list
+    /// item or an article, or opens its card («Migración» on gub.uy, with
+    /// its description below), names itself; otherwise the card's heading
+    /// names the link, or its first line —that IMSS title is a plain
+    /// <div>—, when it says more than the link. Kept apart from the label:
+    /// «Buscar con DNI» is what the button does, «¿Sos suscriptor y
+    /// olvidaste tu email?» is where. Structure, not words.
+    const LANDMARKS = "body, main, nav, header, footer, aside, [role=main], [role=navigation], [role=banner], [role=contentinfo]";
+    function namedByCard(el, href, label) {
+      for (let node = el; node && !node.matches(LANDMARKS); node = node.parentElement) {
+        for (const other of node.querySelectorAll("a[href]")) {
+          const to = absolute(other.getAttribute("href") || "");
+          if (to && to !== href && !isPruned(other)) return null;
+        }
+        const first = firstLine(node, href);
+        if (first === null) {
+          if (node.matches("li, [role=listitem], article")) return null;
+          continue;
+        }
+        if (first.own) return null;
+        const heading = Array.prototype.find.call(node.querySelectorAll("h1, h2, h3, h4, h5, h6, [role=heading]"), function (h) {
+          return !isPruned(h) && !h.closest("a[href]") && textOf(h);
+        });
+        const name = heading ? textOf(heading).replace(/\s+/g, " ").trim() : first.text;
+        return name.length > label.length ? name : null;
+      }
+      return null;
+    }
+
+    /// The first thing an element says, and whether it is the link to
+    /// `href` itself. Null when the element says nothing else.
+    function firstLine(node, href) {
+      const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+      let own = false;
+      for (let text = walker.nextNode(); text; text = walker.nextNode()) {
+        const said = text.textContent.replace(/\s+/g, " ").trim();
+        const parent = text.parentElement;
+        if (!said || !parent || parent.closest("script, style, noscript, template") || isPruned(parent)) continue;
+        const link = parent.closest("a[href]");
+        if (link && absolute(link.getAttribute("href") || "") === href) { own = true; continue; }
+        return { text: said, own: own };
+      }
+      return null;
+    }
+
     function putLink(label, href, el, level, group) {
       label = (label || "").replace(/\s+/g, " ").trim();
       if (!label) return;
@@ -2597,6 +2646,10 @@
       if (saidLinks.has(key)) return;
       saidLinks.add(key);
       const entry = { kind: "link", label: clip(label, 200), href: href };
+      if (!level && el) {
+        const card = namedByCard(el, href, label);
+        if (card) entry.context = clip(card, 80);
+      }
       if (level) entry.level = level;
       if (group) entry.group = group;
       if (!says(label)) entry.noise = true;

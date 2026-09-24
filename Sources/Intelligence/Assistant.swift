@@ -102,10 +102,8 @@ final class Assistant {
     /// Lo que la persona vino a hacer, en sus palabras: «quiero sacar un turno
     /// en ANSES». Lo declara ella y dura hasta que pida otra cosa —lo dice el
     /// ruteador—; un «volvé» o un «jubilación» no la pisan. La reciben el
-    /// ruteador, la orientación y Gemini al reinterpretar. Jev todavía no: con
-    /// links sin contexto («Leer») la tarea lo llevaba a lo que la nombra —en
-    /// el IMSS, «Suscribirse a cita médica» con 0,62—; sin ella dice ninguno
-    /// y decide Gemini.
+    /// ruteador, la orientación, Gemini al reinterpretar y Jev (pegada al
+    /// pedido: ver `run`).
     private var task: String?
     /// El de antes, para entender el de ahora: "¿y el oficial?".
     private var previousRequest: String?
@@ -1883,9 +1881,16 @@ final class Assistant {
             var asked = false
             var elsewhere: String?
 
-            // Cuál lleva a lo pedido, o ninguno: Jev, con la carrera.
-            let found = await analyzer.find(said ?? goal, among: options, site: page.url)
-            Self.note(found, for: said ?? goal, among: options)
+            // Cuál lleva a lo pedido, o ninguno: Jev, con la carrera. Con la
+            // tarea delante: «medicina familiar» es otra cosa dentro de «quiero
+            // sacar una cita en el IMSS». Pegada al pedido y no en un campo
+            // aparte: medido ahí, en un campo aparte Jev tocaba «Suscribirse a
+            // cita médica» (0,62); pegada, y con el link nombrado por su
+            // tarjeta, el bueno (0,89).
+            let words = said ?? goal
+            let request = task.map { $0 == words ? words : "\($0): \(words)" } ?? words
+            let found = await analyzer.find(request, among: options, site: page.url)
+            Self.note(found, for: request, among: options)
 
             // Seguro de uno: se toca. Después del primer paso, más seguro: seguir
             // caminando sin la persona es más caro que frenar. En ANSES siguió
@@ -2286,58 +2291,19 @@ final class Assistant {
         return "(This page came in US units; here they are converted to °C, km/h, mm and km.)\n" + out
     }
 
-    /// Qué se abre, en qué orden: los titulares primero, después el resto de
-    /// lo que la página ofrece. La lista que ve el modelo empieza por lo que
-    /// una persona quiere de una portada.
-    static func candidates(of page: ExtractedPage, goal: String? = nil) -> [Action] {
-        let all = options(of: page)
-        let headlines = Set(headlines(of: page))
-        let first = all.filter { headlines.contains(tidy($0.label)) }
-        // Del resto, sólo lo que está en el contenido: "Ya tenés tu tarjeta
-        // 365?" y "Correo electrónico" salían como opciones de una nota.
-        let chrome: Set<String> = ["header", "banner", "nav", "navigation", "footer", "contentinfo"]
-        // Qué no se sugiere —pagar, suscribirse, la app, reproductores, el
-        // "Iniciar sesión" de un diario— ya no lo deciden listas de palabras
-        // en castellano: lo decide Gemini al llegar, con la definición de
-        // ruido de `criterios.json`, en cualquier idioma. Acá queda sólo lo
-        // que dice el estándar (la región) y que la etiqueta exista: un largo
-        // mínimo de letras dejaba afuera «時刻表».
-        func useful(_ action: Action) -> Bool {
-            !action.label.trimmingCharacters(in: .whitespaces).isEmpty && !chrome.contains(action.region)
-        }
-        // Los formularios entran todos, estén donde estén: el del boletín
-        // vive en el pie, y para no ofrecerlo Gemini tiene que verlo.
-        var rest = all.filter { !headlines.contains(tidy($0.label)) && (useful($0) || $0.kind == .form) }
-        // Cuando el contenido no ofrece nada, el menú es la página: el
-        // selector de país de Mercado Libre son links del menú, y sin ellos
-        // no había qué preguntar.
-        if first.isEmpty, !rest.contains(where: { $0.kind != .form }) {
-            rest = all.filter { !$0.label.trimmingCharacters(in: .whitespaces).isEmpty }
-        }
-        // Y los enlaces que viven adentro de un párrafo —"Ingresá a Solicitud
-        // de turnos"—, que no son controles sueltos y no entraban.
-        var seen = Set(all.compactMap(\.href))
-        var inline: [Action] = []
-        for block in page.blocks {
-            guard case .paragraph(let id, let text, let links) = block else { continue }
-            let units = Array(text.utf16)
-            for (index, link) in links.enumerated() {
-                let lower = max(0, min(link.start, units.count)), upper = max(lower, min(link.end, units.count))
-                let label = String(decoding: units[lower..<upper], as: UTF16.self).trimmingCharacters(in: .whitespaces)
-                let action = Action.link(id: "\(id)-l\(index)", label: label, href: link.href, region: "main")
-                if useful(action), seen.insert(link.href).inserted { inline.append(action) }
+    /// Cómo se le nombra a Gemini un elemento del mapa. Lo del menú y el pie,
+    /// dicho: la orientación ve ahora la página entera —en La Nación,
+    /// «Economía» está en el menú y no la veía—, y tiene que saber qué es
+    /// contenido. Un formulario, con lo que pide y su botón: por el nombre
+    /// solo no se sabe si es un boletín.
+    static func described(_ action: Action) -> String {
+        guard action.kind == .form else {
+            switch action.region {
+            case "header", "banner", "nav", "navigation": return "\(short(action.label, 80)) (menu)"
+            case "footer", "contentinfo": return "\(short(action.label, 80)) (footer)"
+            default: return short(action.label, 80)
             }
         }
-        let list = Array((first + rest + inline).prefix(40))
-        // Y ningún formulario queda afuera por el corte: lo que Gemini no ve,
-        // no lo puede marcar como ruido.
-        return list + all.filter { $0.kind == .form && !list.contains($0) }
-    }
-
-    /// Cómo se le nombra un candidato a Gemini. Un formulario, con lo que
-    /// pide y su botón: por el nombre solo no se sabe si es un boletín.
-    static func described(_ action: Action) -> String {
-        guard action.kind == .form else { return action.label }
         let fields = (action.fields ?? []).filter { $0.type != "hidden" }.map(spoken).joined(separator: ", ")
         let button = action.submit.map { " — button «\($0)»" } ?? ""
         return "FORM «\(action.label)» asking for: \(fields)\(button)"
@@ -2725,7 +2691,9 @@ final class Assistant {
         if let overlay = page.overlay {
             text = "A NOTICE COVERS THE PAGE (\(overlay.kind.rawValue)): \(overlay.text)\n\n" + text
         }
-        let candidates = Self.candidates(of: page, goal: task)
+        // El mapa de la página, el mismo que ve Jev: las marcas del modelo
+        // son posiciones en él.
+        let map = Self.options(of: page)
         // En una portada, los titulares que se nombran y los botones son los
         // mismos porque los elige el código: los primeros de la página. Dejando
         // que el modelo eligiera los botones por número, nombraba unos y
@@ -2736,7 +2704,7 @@ final class Assistant {
         var orientation: Answerer.Orientation?
         do {
             orientation = try await answerer.orient(
-                page: text, candidates: candidates.map(Self.described), goal: task, frontPage: !lead.isEmpty
+                page: text, candidates: map.map(Self.described), goal: task, frontPage: !lead.isEmpty
             )
         } catch {
             // Por qué se cayó a la descripción: en una prueba pasó en Clarín
@@ -2747,8 +2715,8 @@ final class Assistant {
         guard let orientation else { describe(page); return }
         // Lo que Gemini llamó ruido: por id, para esta página. No se sugiere
         // —tampoco su formulario—, pero Jev lo sigue viendo al navegar.
-        noisy = (page.url, Set(orientation.noise.compactMap { candidates.indices.contains($0 - 1) ? candidates[$0 - 1].id : nil }))
-        let noisyLabels = orientation.noise.compactMap { candidates.indices.contains($0 - 1) ? candidates[$0 - 1].label : nil }
+        noisy = (page.url, Set(orientation.noise.compactMap { map.indices.contains($0 - 1) ? map[$0 - 1].id : nil }))
+        let noisyLabels = orientation.noise.compactMap { map.indices.contains($0 - 1) ? map[$0 - 1].label : nil }
         Registro.anotar("ruido", ["url": page.url, "elementos": noisyLabels])
         // Tampoco entre los titulares, que elige el código: en StubHub, con
         // cara de portada, los "titulares" eran partidos de Miami que Gemini
@@ -2790,8 +2758,8 @@ final class Assistant {
         let options: [Action] = orientation.suggestions.compactMap { suggestion in
             switch suggestion.kind {
             case .abrir:
-                guard let number = suggestion.number, candidates.indices.contains(number - 1) else { return nil }
-                let target = candidates[number - 1]
+                guard let number = suggestion.number, map.indices.contains(number - 1) else { return nil }
+                let target = map[number - 1]
                 targets["sug-\(target.id)"] = target
                 return Action(
                     // El título de lo que abre, no el del modelo: en Clarín
@@ -2856,8 +2824,8 @@ final class Assistant {
         // sugerencias. En ANSES, con "sacar un turno", se ofrecían consultar y
         // reprogramar uno ya sacado, y los trámites no estaban.
         let choices: [Action] = orientation.choices.compactMap { number in
-            guard orientation.question != nil, candidates.indices.contains(number - 1) else { return nil }
-            let target = candidates[number - 1]
+            guard orientation.question != nil, map.indices.contains(number - 1) else { return nil }
+            let target = map[number - 1]
             targets["sug-\(target.id)"] = target
             return Action(
                 id: "sug-\(target.id)", kind: target.kind, label: Self.short(target.label), href: target.href,
@@ -2866,37 +2834,16 @@ final class Assistant {
             )
         }
         if !choices.isEmpty {
-            // En el orden de la página: la lista que ve el modelo pone
-            // primero lo que parecen titulares, y "Solicitud de Jubilación",
-            // segunda en ANSES, salía cuarta.
-            let position = Self.readingOrder(page)
+            // En el orden de la página, que es el del mapa: el modelo las
+            // devuelve en el suyo, y "Solicitud de Jubilación", segunda en
+            // ANSES, salía cuarta.
+            let position = Dictionary(map.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
             offerChoices(choices.sorted {
                 position[targets[$0.id]?.id ?? ""] ?? .max < position[targets[$1.id]?.id ?? ""] ?? .max
             })
         } else if !ordered.isEmpty {
             offer = Offer(goal: "", options: ordered)
         }
-    }
-
-    /// En qué orden aparece cada destino en el recorrido de la página, por
-    /// el id que le da `options(of:)`. En ANSES, «CONSULTAR TURNO» va abajo
-    /// de la lista de trámites; `options(of:)` pone primero los controles.
-    static func readingOrder(_ page: ExtractedPage) -> [String: Int] {
-        var order: [String: Int] = [:]
-        let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        for entry in page.stream ?? [] {
-            switch entry.kind {
-            case "action": if let ref = entry.ref, order[ref] == nil { order[ref] = order.count }
-            case "link": if order[entry.id] == nil { order[entry.id] = order.count }
-            case "listing":
-                guard let listing = entry.ref.flatMap({ byID[$0] }) else { continue }
-                for index in listing.items.indices where order["\(listing.id)-\(index)"] == nil {
-                    order["\(listing.id)-\(index)"] = order.count
-                }
-            default: continue
-            }
-        }
-        return order
     }
 
     /// Las opciones de una pregunta que no entraron: "Ver más opciones" las
@@ -3022,7 +2969,12 @@ final class Assistant {
 
     // MARK: - La tabla
 
-    /// Todo lo que la página deja tocar o abrir, esté o no en la pantalla.
+    /// Todo lo que la página deja tocar o abrir, esté o no en la pantalla, en
+    /// el orden en que la página lo muestra: el mapa de la página. Lo ven
+    /// igual Jev, la orientación y reinterpretar —los mismos elementos, el
+    /// mismo orden, los mismos nombres—; antes cada uno veía una lista propia,
+    /// y en ANSES «CONSULTAR TURNO» le llegaba a Gemini antes que los
+    /// trámites, aunque en la página está abajo.
     ///
     /// Es la ventaja que JEF tiene y que un agente genérico no: su inventario
     /// mira la página entera. Medido contra el de browser-use en
@@ -3034,34 +2986,49 @@ final class Assistant {
 
         func add(_ action: Action) {
             let key = action.href ?? action.id
-            guard seen.insert(key).inserted, !action.label.isEmpty else { return }
+            guard !action.label.isEmpty, seen.insert(key).inserted else { return }
             out.append(action)
         }
-
-        for action in page.actions where action.unnamed != true {
-            // Un formulario es un destino: significa "escribí acá". Sin él,
-            // "busca Buenos Aires" no tiene a dónde ir y el asistente termina
-            // abriendo y cerrando la lupa.
-            guard action.kind != .form || !(action.fields ?? []).isEmpty else { continue }
-            add(action)
+        // Un formulario es un destino: significa "escribí acá". Sin él,
+        // "busca Buenos Aires" no tiene a dónde ir y el asistente termina
+        // abriendo y cerrando la lupa.
+        func usable(_ action: Action) -> Bool {
+            action.unnamed != true && (action.kind != .form || !(action.fields ?? []).isEmpty)
         }
+
+        let actions = Dictionary(page.actions.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for entry in page.stream ?? [] {
             switch entry.kind {
+            case "action":
+                if let action = entry.ref.flatMap({ actions[$0] }), usable(action) { add(action) }
             case "link":
-                // Una tarjeta se ofrece por su titular, no por todo lo que dice.
+                // Una tarjeta se ofrece por su titular, no por todo lo que dice;
+                // un link que no se nombra solo, con el nombre de su tarjeta.
                 guard let label = entry.title ?? entry.label, let href = entry.href else { continue }
-                add(.link(id: entry.id, label: label, href: href, region: entry.zone))
+                add(.link(id: entry.id, label: entry.context.map { "\($0) — \(label)" } ?? label, href: href, region: entry.zone))
             case "listing":
                 guard let listing = entry.ref.flatMap({ byID[$0] }) else { continue }
                 for (index, item) in listing.items.enumerated() {
                     guard let href = item.href else { continue }
                     add(.link(id: "\(listing.id)-\(index)", label: item.title, href: href, region: entry.zone))
                 }
+            case "block":
+                // Los links que viven adentro de un párrafo —"Ingresá a
+                // Solicitud de turnos"—, que no son controles sueltos.
+                guard case .paragraph(let id, let text, let links)? = entry.block else { continue }
+                let units = Array(text.utf16)
+                for (index, link) in links.enumerated() {
+                    let lower = max(0, min(link.start, units.count)), upper = max(lower, min(link.end, units.count))
+                    let label = String(decoding: units[lower..<upper], as: UTF16.self).trimmingCharacters(in: .whitespaces)
+                    add(.link(id: "\(id)-l\(index)", label: label, href: link.href, region: entry.zone))
+                }
             default:
                 continue
             }
         }
+        // Lo que el recorrido no ubicó, al final: que nada quede afuera.
+        for action in page.actions where usable(action) { add(action) }
         // Jev admite 255 opciones por pregunta. Medido, no documentado.
         return Array(out.prefix(240))
     }
