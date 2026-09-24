@@ -1,0 +1,12 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790219114.148448}
+{"tipo": "ubicacion", "t": 1790219114.358594, "pais": "US"}
+{"tipo": "ubicacion", "t": 1790219114.363151, "pais": "US"}
+{"quien": "persona", "t": 1790219121.732732, "texto": "gob.pe", "tipo": "turno"}
+{"t": 1790219121.733727, "opciones": [], "tipo": "botones"}
+{"quien": "jef", "t": 1790219121.733982, "texto": "Abriendo gob.pe.", "tipo": "turno"}
+{"t": 1790219121.734216, "texto": "Abriendo gob.pe.", "cola": false, "tipo": "voz"}
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790219121.768783, "tipo": "botones"}
+{"t": 1790219122.205373, "mensaje": "Could not load the page: No se ha encontrado ningún servidor con el nombre de host especificado.", "tipo": "error"}
+{"t": 1790219122.20558, "tipo": "turno", "quien": "jef", "texto": "No pude abrir esa página. Puede ser la conexión o el sitio."}
+{"tipo": "voz", "cola": true, "texto": "No pude abrir esa página. Puede ser la conexión o el sitio.", "t": 1790219122.205742}
+{"opciones": ["Intentar de nuevo", "Otra cosa"], "tipo": "botones", "t": 1790219122.20584}

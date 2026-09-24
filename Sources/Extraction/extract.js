@@ -1780,7 +1780,14 @@
   /// Pulls the fields a list item actually carries. Everything is optional:
   /// a news card has no price, a product card has no date.
   function itemOf(el) {
-    const heading = el.querySelector("h1,h2,h3,h4,h5,h6,[role=heading]");
+    // The first heading a person can see. Google opens a result that has
+    // links to its site's sections with a heading only screen readers get
+    // — "Resultado web con vínculos a sitio", clipped to one pixel — and it
+    // became the result's title, with the site nowhere.
+    const heading = Array.prototype.find.call(
+      el.querySelectorAll("h1,h2,h3,h4,h5,h6,[role=heading]"),
+      function (h) { return !isHidden(h); }
+    );
     const link = el.querySelector("a[href]");
     const image = el.querySelector("img");
     const text = textOf(el);
@@ -1847,6 +1854,11 @@
     if (link) {
       const href = absolute(link.getAttribute("href") || "");
       if (href) item.href = href;
+      // The web address the link shows, when it shows one. A search
+      // engine's result goes through the engine's own redirect, and the
+      // site is only in what the link says: "ANSES https://www.anses.gob.ar".
+      const address = textOf(link).match(/https?:\/\/[^\s,›]+/);
+      if (address && title.indexOf(address[0]) === -1) item.shown = address[0];
     }
     // A card with no link but a button — "Desde 81.987 ARS" on a flight —
     // opens by pressing that button: the one that names the price, or the
@@ -2576,15 +2588,138 @@
     /// A destination the reader can load. Ver `opensAnotherPage`.
     const opens = opensAnotherPage;
 
+    /// A headline under an empty link that `cardLink` misses. Clarín's lead
+    /// story is a heading that is no link, an <a> with nothing in it
+    /// stretched over the card, and a related story's own link in the same
+    /// card: two destinations, so not "one card, one link", and the lead
+    /// read as loose text nobody could open (Daniel, on his iPhone). A link
+    /// with no text of its own (an aria-label is not shown) belongs to the
+    /// one heading around it that no link holds, when it lies over that
+    /// heading and no other nameless link there leads elsewhere; that
+    /// heading becomes the link, and everything else in the card is read as
+    /// before. Structure and geometry only: no class names, no words.
+    const headlineLinks = new WeakMap();
+    const linkEntries = new Map();
+    /// Whether the link lies over the heading, as a stretched card link
+    /// does — the one a finger on the headline would press. Wikipedia's
+    /// edit pencil sits beside its section heading and is no headline's.
+    function covers(link, heading) {
+      const l = link.getBoundingClientRect(), h = heading.getBoundingClientRect();
+      if (l.width < 2 || l.height < 2 || h.width < 2 || h.height < 2) return false;
+      const x = h.left + h.width / 2, y = h.top + h.height / 2;
+      return x >= l.left && x <= l.right && y >= l.top && y <= l.bottom;
+    }
+    (function pairEmptyLinks() {
+      const free = function (h) { return !h.closest("a[href]") && !h.querySelector("a[href]"); };
+      for (const a of document.querySelectorAll("a[href]")) {
+        if (isPruned(a)) continue;
+        const to = absolute(a.getAttribute("href") || "");
+        if (!to || !opens(to)) continue;
+        // A link that says exactly what the unlinked heading of its card
+        // says is that headline's link: El Universo's lead is an <h2> that
+        // is no link and, apart, a link with the same words.
+        const said = plain(textOf(a));
+        if (said) {
+          for (let up = a.parentElement; up && up.nodeType === Node.ELEMENT_NODE && !up.matches("body, main, nav, header, footer, aside, [role=main], [role=navigation], [role=banner], [role=contentinfo]"); up = up.parentElement) {
+            const headings = Array.prototype.filter.call(up.querySelectorAll("h1, h2, h3, h4, h5, h6, [role=heading]"), free);
+            if (!headings.length) continue;
+            if (headings.length === 1 && plain(textOf(headings[0])) === said && !headlineLinks.has(headings[0])) {
+              headlineLinks.set(headings[0], to);
+            }
+            break;
+          }
+          continue;
+        }
+        // No visible text: an aria-label names it for a screen reader —
+        // Clarín's says the whole headline — but the walk reads what is shown.
+        if (a.querySelector("img[alt]:not([alt=''])")) continue;
+        for (let up = a.parentElement; up && up.nodeType === Node.ELEMENT_NODE && !up.matches("body, main, nav, header, footer, aside, [role=main], [role=navigation], [role=banner], [role=contentinfo]"); up = up.parentElement) {
+          const headings = Array.prototype.filter.call(up.querySelectorAll("h1, h2, h3, h4, h5, h6, [role=heading]"), free);
+          if (!headings.length) continue;
+          const rival = Array.prototype.some.call(up.querySelectorAll("a[href]"), function (o) {
+            return o !== a && !textOf(o) && absolute(o.getAttribute("href") || "") !== to;
+          });
+          if (headings.length === 1 && !rival && covers(a, headings[0]) && !headlineLinks.has(headings[0])) {
+            headlineLinks.set(headings[0], to);
+          }
+          break;
+        }
+      }
+    })();
+
+    /// What names a link that does not name itself. «Leer» under «Agenda tu
+    /// Cita Médica Digital» (imss.gob.mx) reached every model as "Leer",
+    /// and Jev chose the feed «Suscribirse a cita médica» instead. The
+    /// link's card is the nearest element around it that says something
+    /// besides the link and leads nowhere else. A link that fills a list
+    /// item or an article, or opens its card («Migración» on gub.uy, with
+    /// its description below), names itself; otherwise the card's heading
+    /// names the link, or its first line —that IMSS title is a plain
+    /// <div>—, when it says more than the link. Kept apart from the label:
+    /// «Buscar con DNI» is what the button does, «¿Sos suscriptor y
+    /// olvidaste tu email?» is where. Structure, not words.
+    const LANDMARKS = "body, main, nav, header, footer, aside, [role=main], [role=navigation], [role=banner], [role=contentinfo]";
+    function namedByCard(el, href, label) {
+      for (let node = el; node && node.nodeType === Node.ELEMENT_NODE && !node.matches(LANDMARKS); node = node.parentElement) {
+        for (const other of node.querySelectorAll("a[href]")) {
+          const to = absolute(other.getAttribute("href") || "");
+          if (to && to !== href && !isPruned(other)) return null;
+        }
+        const first = firstLine(node, href);
+        if (first === null) {
+          if (node.matches("li, [role=listitem], article")) return null;
+          continue;
+        }
+        if (first.own) return null;
+        const heading = Array.prototype.find.call(node.querySelectorAll("h1, h2, h3, h4, h5, h6, [role=heading]"), function (h) {
+          return !isPruned(h) && !h.closest("a[href]") && textOf(h);
+        });
+        const name = heading ? textOf(heading).replace(/\s+/g, " ").trim() : first.text;
+        return name.length > label.length ? name : null;
+      }
+      return null;
+    }
+
+    /// The first thing an element says, and whether it is the link to
+    /// `href` itself. Null when the element says nothing else.
+    function firstLine(node, href) {
+      const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+      let own = false;
+      for (let text = walker.nextNode(); text; text = walker.nextNode()) {
+        const said = text.textContent.replace(/\s+/g, " ").trim();
+        const parent = text.parentElement;
+        if (!said || !parent || parent.closest("script, style, noscript, template") || isPruned(parent)) continue;
+        const link = parent.closest("a[href]");
+        if (link && absolute(link.getAttribute("href") || "") === href) { own = true; continue; }
+        return { text: said, own: own };
+      }
+      return null;
+    }
+
     function putLink(label, href, el, level, group) {
       label = (label || "").replace(/\s+/g, " ").trim();
       if (!label) return;
       // The same link twice is the same link to a person — the rule the
       // action pass already applies to a mobile nav repeating the desktop's.
       const key = plain(label) + "|" + href;
-      if (saidLinks.has(key)) return;
+      if (saidLinks.has(key)) {
+        // Met again as a headline —its card's heading after its own link—:
+        // the link already read becomes the headline, once.
+        const earlier = linkEntries.get(key);
+        if (level && earlier && !earlier.level) earlier.level = level;
+        return;
+      }
       saidLinks.add(key);
       const entry = { kind: "link", label: clip(label, 200), href: href };
+      linkEntries.set(key, entry);
+      // Naming a link never costs the page: a card inside a shadow root or
+      // a node that is not an element just goes without a name.
+      if (!level && el && el.nodeType === Node.ELEMENT_NODE) {
+        try {
+          const card = namedByCard(el, href, label);
+          if (card) entry.context = clip(card, 80);
+        } catch (_) {}
+      }
       if (level) entry.level = level;
       if (group) entry.group = group;
       if (!says(label)) entry.noise = true;
@@ -2840,6 +2975,11 @@
         // A heading that is a reported control: the control is the stop.
         if (holdsStamp.has(el)) { walk(el); return; }
         if (isHidden(el)) return;
+        // The headline of an empty link stretched over its card.
+        if (headlineLinks.has(el) && textOf(el)) {
+          putLink(textOf(el), headlineLinks.get(el), el, level, groupOf(el));
+          return;
+        }
         // A headline is a heading AND a link. As a block it could be jumped
         // to and never opened; as a link with a level it is both.
         flush(Array.prototype.slice.call(el.childNodes), el, "paragraph", level);
@@ -3125,34 +3265,6 @@ allowedVideoRegex: /^$/,
    * page with a spinner or a polling widget never goes quiet, and waiting
    * forever is worse than extracting something.
    */
-  /*
-   * Wakes up what only loads on scroll.
-   *
-   * clarin.com's mobile home renders the first screen and fetches the rest
-   * as the reader scrolls; the hidden WebView never scrolls, so the page
-   * extracted as one headline over a footer — 12 elements where the site
-   * has hundreds. A few trips to the bottom, spaced out, fire the same
-   * observers a thumb would; then back to the top, so positions mean what
-   * they meant. Bounded, because an infinite feed is infinite.
-   */
-  function wakeLazyContent(done) {
-    let trips = 0;
-    let lastHeight = 0;
-    function trip() {
-      const height = document.documentElement.scrollHeight;
-      if (trips >= 4 || (trips > 0 && height === lastHeight)) {
-        window.scrollTo(0, 0);
-        setTimeout(done, 200);
-        return;
-      }
-      lastHeight = height;
-      trips++;
-      window.scrollTo(0, height);
-      setTimeout(trip, 500);
-    }
-    trip();
-  }
-
   function whenSettled(callback) {
     const QUIET_MS = 600;
     const MAX_WAIT_MS = 6000;
@@ -3562,6 +3674,14 @@ allowedVideoRegex: /^$/,
     whenSettled(extractAndSend);
   };
 
+  /// Reads the page now, without waiting for it to settle. The app's safety
+  /// net calls it when the page finished loading and nothing has arrived:
+  /// the waits above run on the page's own clock, and in an off-screen
+  /// WebView that clock sometimes stretches a 6 s wait to 20.
+  window.__jefExtractNow = function () {
+    extractAndSend(false);
+  };
+
   /// What a reading of the page amounts to, for telling two apart. Not
   /// field values: typing must not read as the page changing.
   function signatureOf(page) {
@@ -3766,5 +3886,10 @@ allowedVideoRegex: /^$/,
     if (event.persisted) whenSettled(extractAndSend);
   });
 
-  whenSettled(function () { wakeLazyContent(function () { whenSettled(extractAndSend); }); });
+  // No scrolling to wake lazy content any more: the reader is the page the
+  // person sees, and it jumped to the bottom and back on every load, and
+  // Clarín's video players started as they scrolled into view (Daniel).
+  // Measured without it on Clarín, La Nación, El Universo and 20minutos: the
+  // same text within 1 %; Clarín, which it was written for, identical.
+  whenSettled(extractAndSend);
 })();

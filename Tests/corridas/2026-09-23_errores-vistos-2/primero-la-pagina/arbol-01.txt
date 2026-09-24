@@ -1,0 +1,13 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: lanacion.com.ar
+  4 [txt] Abriendo lanacion.com.ar.
+  5 [txt] Estás en la portada de La Nación. Los titulares principales son las primeras opciones.
+  6 [btn] Abrir «El peronismo quiere vender un cuento de hadas". Con un insulto, Milei culpó a Kicillof por la suba…»  (Primera de 6 opciones.)
+  7 [btn] Abrir «De 11 segundos a 4 minutos. Milei se puso la camiseta de Malvinas y el uniforme de Trump en la ONU»
+  8 [btn] Abrir «Las apariencias engañan: la era de los autócratas parece estar llegando a su fin»
+  9 [btn] Abrir «Con un discurso anti Milei, Kicillof se mostró con el alcalde de Nueva York y el presidente de…»
+ 10 [btn] Resumir portada
+ 11 [btn] Otra cosa
+ 12 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 13 [btn] Enviar

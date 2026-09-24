@@ -1,0 +1,12 @@
+{"t": 1790219524.5031152, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"tipo": "ubicacion", "t": 1790219524.866486, "pais": "US"}
+{"pais": "US", "t": 1790219524.866847, "tipo": "ubicacion"}
+{"t": 1790219531.1025171, "quien": "persona", "tipo": "turno", "texto": "correos.es"}
+{"tipo": "botones", "opciones": [], "t": 1790219531.10344}
+{"t": 1790219531.103996, "quien": "jef", "tipo": "turno", "texto": "Abriendo correos.es."}
+{"cola": false, "t": 1790219531.104247, "tipo": "voz", "texto": "Abriendo correos.es."}
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790219531.139615}
+{"mensaje": "No readable content found (undefined is not an object (evaluating 'page.blocks.length')).", "tipo": "error", "t": 1790219533.965455}
+{"tipo": "turno", "texto": "No pude abrir esa página. Puede ser la conexión o el sitio.", "quien": "jef", "t": 1790219533.9682322}
+{"texto": "No pude abrir esa página. Puede ser la conexión o el sitio.", "tipo": "voz", "cola": true, "t": 1790219533.9686332}
+{"tipo": "botones", "opciones": ["Intentar de nuevo", "Otra cosa"], "t": 1790219533.969242}

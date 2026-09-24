@@ -1,4 +1,5 @@
 import Foundation
+import NaturalLanguage
 
 /// Contesta preguntas sobre lo que la página dice.
 ///
@@ -25,6 +26,9 @@ actor Answerer {
         /// Lo que es probable que la persona pregunte después, y que esta
         /// misma página contesta: "¿Y el MEP?" después del blue.
         var questions: [String] = []
+        /// La página contesta sólo una parte: se dice, y se ofrece buscar el
+        /// resto afuera.
+        var partial = false
     }
 
     enum AnswerError: Error {
@@ -38,10 +42,9 @@ actor Answerer {
     private let gemini: Gemini
     private let session: URLSession
 
-    /// Por el gateway, 2.5 Flash; directo a Google, 3.1 Flash-Lite (ver
-    /// `Gemini`).
+    /// El modelo base (ver `Gemini`).
     static func fromEnvironment() -> Answerer? {
-        Gemini.fromEnvironment(gateway: "google/gemini-2.5-flash").map(Answerer.init)
+        Gemini.fromEnvironment().map(Answerer.init)
     }
 
     init(gemini: Gemini) {
@@ -127,7 +130,11 @@ actor Answerer {
         guard let parsed = try await ask("contestar", [
             "anterior": previous, "pedido": question, "lectura": reading, "texto": page,
         ], maxTokens: 800) else { throw AnswerError.unusable }
-        guard let text = parsed["respuesta"] as? String, !text.isEmpty else { return nil }
+        // Si la página contesta lo decide un campo del esquema, no el texto:
+        // con "decilo con naturalidad" el modelo escribía "la página no
+        // menciona vuelos", y eso se tomaba como una respuesta.
+        let answers = parsed["contesta"] as? String
+        guard answers != "no", let text = parsed["respuesta"] as? String, !text.isEmpty else { return nil }
 
         // La verificación, donde importa. Un número inventado —un monto, un
         // precio, una fecha de vencimiento— es el invento que lastima, y es
@@ -140,7 +147,7 @@ actor Answerer {
         let questions = ((parsed["preguntas"] as? [String]) ?? [])
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty && $0.count <= 60 }
-        return Answer(text: text, quote: "", questions: Array(questions.prefix(2)))
+        return Answer(text: text, quote: "", questions: Array(questions.prefix(2)), partial: answers == "en_parte")
     }
 
     /// El resumen de una página. `alreadySaid`: lo que la persona ya escuchó
@@ -157,20 +164,32 @@ actor Answerer {
 
     /// Lo que se le dice a alguien al llegar a una página, y qué puede hacer.
     struct Orientation: Sendable {
+        /// Qué es la página: lo dice el modelo, que la leyó. Antes lo
+        /// adivinaba el código contando párrafos de 160 letras y titulares.
+        enum Kind: String, Sendable { case portada, nota, otra }
+        let kind: Kind
         let text: String
         let suggestions: [Suggestion]
         /// Los números de la lista (desde 1) que son ruido para quien llega:
         /// no se sugieren. Con la definición de `criterios.json`.
         var noise: [Int] = []
+        /// Las oraciones que se sacaron por una cifra que no está en la página.
+        var cut: [String] = []
+        /// En una página que es una lista de opciones parecidas —trámites,
+        /// categorías, planes— cuando lo pedido no dice cuál: la pregunta, y
+        /// las opciones (números de la lista, desde 1) para contestarla. En
+        /// ANSES, "¿para qué trámite?" con los trámites de la página.
+        var question: String? = nil
+        var choices: [Int] = []
     }
 
     struct Suggestion: Sendable {
-        enum Kind: String, Sendable { case abrir, leer, resumir }
+        enum Kind: String, Sendable { case abrir, completar, leer, resumir }
         let label: String
         let kind: Kind
-        /// Para abrir: el número del elemento en la lista que se le pasó al
-        /// modelo, empezando en 1. El modelo nombra el botón; el destino lo
-        /// pone la página.
+        /// Para abrir y completar: el número del elemento en la lista que se
+        /// le pasó al modelo, empezando en 1. El modelo nombra el botón; el
+        /// destino lo pone la página.
         let number: Int?
     }
 
@@ -181,25 +200,58 @@ actor Answerer {
     /// asistente diga dónde está, qué dice lo principal, y pregunte qué le
     /// gustaría hacer, con las opciones como botones.
     ///
-    /// Las opciones de abrir se eligen POR NÚMERO de una lista que arma el
+    /// Las opciones de abrir se eligen POR SU MARCA de una lista que arma el
     /// código con lo que la página ofrece de verdad. El modelo escribe la
-    /// etiqueta del botón; no puede escribir su destino.
-    /// `frontPage`: es una portada, y sus titulares los dice el código, tal
-    /// cual los escribió el diario. Reescritos por el modelo salían distintos
-    /// en cada visita, y a veces con algo que no estaba.
-    func orient(page: String, candidates: [String], goal: String? = nil, frontPage: Bool = false) async throws -> Orientation? {
-        let list = candidates.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
+    /// etiqueta del botón; no puede escribir su destino. En una portada, los
+    /// titulares los dice el código, tal cual los escribió el diario:
+    /// reescritos por el modelo salían distintos en cada visita, y a veces
+    /// con algo que no estaba.
+    /// `kinds`: qué sitio y qué página es, cuando Jev lo dijo con seguridad
+    /// ("site: store; page: product").
+    func orient(page whole: String, candidates: [String], goal: String? = nil, kinds: String? = nil) async throws -> Orientation? {
+        let page = String(whole.prefix(Gemini.pageLimit))
+        // Cada elemento con una marca de dos letras y no con un número: con la
+        // lista numerada, el modelo le decía a la persona "está en la lista
+        // como número 4". La marca es para los campos de la respuesta.
+        let marks = Self.marks(candidates.count)
+        let list = zip(marks, candidates).map { "[\($0)] \($1)" }.joined(separator: "\n")
+        let numberOf = Dictionary(uniqueKeysWithValues: marks.enumerated().map { ($1, $0 + 1) })
+        func number(_ value: Any?) -> Int? { (value as? String).flatMap { numberOf[$0] } }
         // Qué es ruido y sus tipos los dice `criterios.json`, no este código.
         let ruido = Criterios.actuales?.ruido ?? .init(es: "", noEs: "")
         let parsed = try await ask("orientar", [
-            "vino": goal, "titulares": frontPage ? "yes" : nil, "lista": list, "texto": page,
+            "vino": goal, "tipo": kinds, "lista": list, "texto": page,
         ], maxTokens: 1100)
         guard let parsed,
-              let text = parsed["respuesta"] as? String, !text.isEmpty
+              var text = parsed["respuesta"] as? String, !text.isEmpty
         else { throw AnswerError.unusable }
+        // Cuántas opciones ofrece para su pregunta: "hay 18 trámites" no está
+        // escrito en la página, pero se verifica contra los botones que se
+        // van a ofrecer. Si cuenta 19 y ofrece 18, se descarta como
+        // cualquier cifra inventada.
+        let offered = String(Set(((parsed["opciones"] as? [Any]) ?? []).compactMap(number)).count)
         let figures = (parsed["cifras"] as? [String]) ?? []
-        let missing = figures.filter { !Self.figureAppears($0, in: page + "\n" + list) }
-        guard missing.isEmpty else { throw AnswerError.unverified(missing) }
+        let missing = figures.filter {
+            !Self.figureAppears($0, in: page + "\n" + list) && String($0.filter(\.isNumber)) != offered
+        }
+        // Una cifra que no está en la página se lleva su oración, no la
+        // descripción entera: en Clarín, "28,2%" —calculado, no escrito—
+        // tiraba también los botones y "Leer los titulares". Si no queda
+        // ninguna oración, sí se descarta.
+        var cut: [String] = []
+        if !missing.isEmpty {
+            let sentences = Self.sentences(of: text)
+            let kept = sentences.filter { (sentence: String) -> Bool in
+                let digits = String(sentence.filter { $0.isNumber })
+                return !missing.contains { (figure: String) -> Bool in
+                    let own = String(figure.filter { $0.isNumber })
+                    return sentence.contains(figure) || (!own.isEmpty && digits.contains(own))
+                }
+            }
+            guard !kept.isEmpty else { throw AnswerError.unverified(missing) }
+            cut = sentences.filter { !kept.contains($0) }
+            text = kept.joined(separator: " ")
+        }
 
         // El ruido, por número y con su tipo: sólo números que estén en la
         // lista y tipos que estén en `criterios.json`. Una marca sin tipo
@@ -208,25 +260,50 @@ actor Answerer {
         let kinds = Set(ruido.tipos)
         let noise = ((parsed["ruido"] as? [[String: Any]]) ?? []).compactMap { mark -> Int? in
             guard let kind = mark["tipo"] as? String, kinds.contains(kind) else { return nil }
-            return (mark["numero"] as? Int) ?? (mark["numero"] as? String).flatMap(Int.init)
-        }.filter { (1...max(candidates.count, 1)).contains($0) && !candidates.isEmpty }
+            return number(mark["id"])
+        }
         let raw = (parsed["sugerencias"] as? [[String: Any]]) ?? []
         let suggestions: [Suggestion] = raw.compactMap { item in
             guard let label = (item["etiqueta"] as? String)?.trimmingCharacters(in: .whitespaces),
                   !label.isEmpty,
                   let kind = (item["tipo"] as? String).flatMap(Suggestion.Kind.init(rawValue:))
             else { return nil }
-            let number = (item["numero"] as? Int) ?? (item["numero"] as? String).flatMap(Int.init)
-            if kind == .abrir {
-                // La verificación de siempre: el número tiene que existir. Y
-                // lo que el mismo modelo llamó ruido no se sugiere.
-                guard let number, (1...max(candidates.count, 1)).contains(number), !candidates.isEmpty,
-                      !noise.contains(number)
-                else { return nil }
+            let target = number(item["id"])
+            if kind == .abrir || kind == .completar {
+                // La verificación de siempre: la marca tiene que estar en la
+                // lista. Y lo que el mismo modelo llamó ruido no se sugiere.
+                guard let target, !noise.contains(target) else { return nil }
             }
-            return Suggestion(label: label, kind: kind, number: number)
+            return Suggestion(label: label, kind: kind, number: target)
         }
-        return Orientation(text: text, suggestions: Array(suggestions.prefix(4)), noise: noise)
+        // La pregunta vale con sus opciones: sin ninguna opción que exista,
+        // no hay qué contestar.
+        // Cada una una vez; el orden lo pone quien llama, que sabe el de la
+        // página.
+        let choices = Set(((parsed["opciones"] as? [Any]) ?? []).compactMap(number)).subtracting(noise).sorted()
+        let question = (parsed["pregunta"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        return Orientation(
+            kind: (parsed["tipo_de_pagina"] as? String).flatMap(Orientation.Kind.init(rawValue:)) ?? .otra,
+            text: text, suggestions: Array(suggestions.prefix(4)), noise: noise, cut: cut,
+            question: choices.isEmpty || question?.isEmpty != false ? nil : question, choices: choices)
+    }
+
+    /// Las oraciones de un texto, en cualquier idioma: las corta el
+    /// segmentador del sistema (NaturalLanguage, reglas de Unicode), no una
+    /// lista de signos nuestra.
+    static func sentences(of text: String) -> [String] {
+        let tokenizer = NLTokenizer(unit: .sentence)
+        tokenizer.string = text
+        return tokenizer.tokens(for: text.startIndex..<text.endIndex)
+            .map { text[$0].trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+    }
+
+    /// Marcas de dos letras para una lista: "bb", "bc", "bd"… Sin vocales,
+    /// para que no formen palabras, y sin números.
+    static func marks(_ count: Int) -> [String] {
+        let letters = Array("bcdfghjkmnpqrstvwxz")
+        return (0..<count).map { String([letters[$0 / letters.count % letters.count], letters[$0 % letters.count]]) }
     }
 
     /// Cuando Jev no encuentra lo pedido o duda: Gemini lee el pedido y lo
@@ -243,10 +320,11 @@ actor Answerer {
         let search: String?
     }
 
-    func reinterpret(_ request: String, options: [String], page: String) async throws -> Reinterpretation? {
+    func reinterpret(_ request: String, task: String? = nil, options: [String], page: String) async throws -> Reinterpretation? {
         let list = options.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
         guard let parsed = try await ask("reinterpretar", [
-            "pedido": request, "lista": list, "texto": String(page.prefix(6000)),
+            "tarea": task == request ? nil : task,
+            "pedido": request, "lista": list, "texto": String(page.prefix(Gemini.pageLimit)),
         ], maxTokens: 300) else { return nil }
         func number(_ value: Any?) -> Int? {
             let n = (value as? Int) ?? (value as? String).flatMap(Int.init)

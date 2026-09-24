@@ -1,0 +1,19 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero sacar turno en el DMV de California para renovar la licencia
+  4 [txt] Buscando: turno DMV California renovar licencia.
+  5 [txt] Estás en los resultados de «turno DMV California renovar licencia». Los 3 más probables:
+  6 [txt] La página cambió: ahora estás en los resultados de «turno DMV California renovar licencia».
+  7 [H] Vos: Appointments - Service selection — www.dmv.ca.gov
+  8 [txt] Abriendo dmv.ca.gov.
+  9 [txt] Estás en «Schedule an Appointment», dmv.ca.gov.
+ 10 [txt] Hay 5 resultados. Los tres primeros:
+ 11 [txt] Logo
+ 12 [txt] Logo
+ 13 [txt] Logo
+ 14 [btn] Completar «Search the Service Advisor»  (Primera de 4 opciones.)
+ 15 [btn] Pulsar «Submit Service Advisor search»
+ 16 [btn] Volver a los resultados
+ 17 [btn] Otra cosa
+ 18 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 19 [btn] Enviar

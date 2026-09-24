@@ -200,8 +200,10 @@ def cargar(url: str, locale: str) -> dict | None:
 def mapa(pagina: dict) -> list[dict]:
     """Lo que la página deja tocar, con los datos estándar de cada elemento.
 
-    El mismo recorrido que `Assistant.options(of:)`: acciones con nombre,
-    links del recorrido y elementos de los listados, sin repetir destino.
+    El mismo recorrido que `Assistant.options(of:)`: en el orden de la página,
+    sin repetir destino, un link que no se nombra solo con el nombre de su
+    tarjeta, los links de adentro de un párrafo, y al final lo que el
+    recorrido no ubicó.
     """
     propio = sitio(pagina.get("url", ""))
 
@@ -224,28 +226,38 @@ def mapa(pagina: dict) -> list[dict]:
         elementos.append({"text": texto, "kind": tipo, "region": region or "main",
                           "domain": dom, "external": externo, "href": href or ""})
 
-    for a in pagina.get("actions", []):
+    def accion(a: dict) -> None:
         if a.get("unnamed"):
-            continue
+            return
         if a.get("kind") == "form":
             campos = [c.get("name", "") for c in a.get("fields", []) if c.get("type") != "hidden"]
-            if not campos:
-                continue
-            texto = f"{a.get('label', '')} [{', '.join(campos)}] {a.get('submit') or ''}"
-            sumar(texto, "form", a.get("region", ""), None, a["id"])
+            if campos:
+                sumar(f"{a.get('label', '')} [{', '.join(campos)}] {a.get('submit') or ''}", "form",
+                      a.get("region", ""), None, a["id"])
         else:
             sumar(a.get("label", ""), a.get("kind", "button"), a.get("region", ""), a.get("href"),
                   a.get("href") or a["id"])
+
+    acciones = {a["id"]: a for a in pagina.get("actions", [])}
     listados = {l["id"]: l for l in pagina.get("listings", [])}
     for e in pagina.get("stream", []):
-        if e.get("noise"):
-            continue
-        if e.get("kind") == "link" and e.get("href"):
-            sumar(e.get("title") or e.get("label", ""), "link", e.get("zone", ""), e["href"], e["href"])
+        if e.get("kind") == "action" and e.get("ref") in acciones:
+            accion(acciones[e["ref"]])
+        elif e.get("kind") == "link" and e.get("href"):
+            nombre = e.get("title") or e.get("label", "")
+            if e.get("context"):
+                nombre = f"{e['context']} — {nombre}"
+            sumar(nombre, "link", e.get("zone", ""), e["href"], e["href"])
         elif e.get("kind") == "listing" and e.get("ref") in listados:
             for item in listados[e["ref"]].get("items", []):
                 if item.get("href"):
                     sumar(item.get("title", ""), "link", e.get("zone", ""), item["href"], item["href"])
+        elif e.get("kind") == "block" and (e.get("block") or {}).get("type") == "paragraph":
+            bloque = e["block"]
+            for link in bloque.get("links", []):
+                sumar(bloque["text"][link["start"]:link["end"]], "link", e.get("zone", ""), link["href"], link["href"])
+    for a in pagina.get("actions", []):
+        accion(a)
     aviso = pagina.get("overlay") or {}
     for opcion in aviso.get("choices", []):
         sumar(opcion.get("label", ""), "button", "overlay", None, "aviso-" + opcion.get("id", ""))
@@ -268,7 +280,7 @@ def preguntar_a_jev(pedido: str, elementos: list[dict]) -> dict:
        revisar las mejores después, como en la documentación).
     """
     p, datos = PREGUNTAS["preguntas"], PREGUNTAS["datos"]
-    ninguno = {"none": "No item leads to what the person asked for."}
+    ninguno = p["cual"]["criteria"]
     partes: list[tuple[dict, float, int, str]] = []
 
     def una(estado: dict, preguntas: dict) -> tuple[dict, float, int, str]:

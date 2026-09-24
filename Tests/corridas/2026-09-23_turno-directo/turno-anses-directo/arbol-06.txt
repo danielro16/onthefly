@@ -1,0 +1,29 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: anses.gob.ar/turnos
+  4 [txt] Abriendo anses.gob.ar.
+  5 [txt] Esta página de ANSES sirve para gestionar turnos presenciales en sus oficinas, y la opción para solicitar uno se encuentra en el cuerpo principal.
+  6 [H] Vos: quiero sacar un turno
+  7 [txt] Abriendo «Solicitar un turno».
+  8 [txt] Esta es la página de turnos de ANSES donde puedes gestionar tu solicitud. Hay 20 trámites disponibles para los que puedes sacar un turno, ¿cuál de ellos necesitas realizar? ¿Qué trámite deseas realizar?
+  9 [H] Vos: jubilación
+ 10 [txt] Abriendo Solicitud de Jubilación, , ver sub-trámites.
+ 11 [txt] Abriendo Jubilación.
+ 12 [txt] El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella, y tiene opción de audio. Cuando esté resuelta, seguimos.
+ 13 [H] Vos: volvé
+ 14 [txt] Volviendo.
+ 15 [txt] De vuelta en «Turnos», servicioswww.anses.gob.ar.
+ 16 [H] Vos: quiero cobrar por mi hijo
+ 17 [txt] No está en esta página.
+ 18 [txt] Buscando: anses cobrar asignacion por hijo.
+ 19 [txt] Para consultar el cobro de tu asignación, debés ingresar a Mi ANSES con tu CUIL y Clave de la Seguridad Social. Una vez dentro, seleccioná la opción Hijas e Hijos y luego Mis Asignaciones para verificar el estado de tus pagos y fechas de cobro.
+ 20 [H] Vos: buscame vuelos baratos a Madrid
+ 21 [txt] Buscando: vuelos baratos a Madrid.
+ 22 [txt] Estás en los resultados de «vuelos baratos a Madrid». Hay 6 anuncios: los salteo. Los 3 más probables:
+ 23 [btn] Vuelos baratos de San Francisco (SFO) a Aeropuerto de Madrid-Adolfo Suárez ... — www.expedia.com  (Primera de 5 opciones.)
+ 24 [btn] Vuelos baratos de San Francisco (SFO) a Madrid (MAD) — www.iberia.com
+ 25 [btn] Vuelos baratos desde San Francisco a Madrid (SFO - MAD) — www.es.kayak.com
+ 26 [btn] Ver más opciones (6)
+ 27 [btn] Otra cosa
+ 28 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 29 [btn] Enviar

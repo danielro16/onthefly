@@ -1,0 +1,13 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: anses.gob.ar/turnos
+  4 [txt] Abriendo anses.gob.ar.
+  5 [txt] Esta página de ANSES sirve para gestionar turnos presenciales en sus oficinas, y la opción para solicitar uno se encuentra en el cuerpo principal.
+  6 [btn] Completar «buscador»  (Primera de 6 opciones.)
+  7 [btn] Pulsar «Search»
+  8 [btn] Abrir «Solicitar un turno»
+  9 [btn] Abrir «mi ANSES»
+ 10 [btn] Abrir «Atención Virtual»
+ 11 [btn] Otra cosa
+ 12 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 13 [btn] Enviar

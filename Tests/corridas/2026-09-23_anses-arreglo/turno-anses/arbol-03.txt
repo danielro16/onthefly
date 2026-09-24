@@ -1,0 +1,16 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero sacar un turno en anses
+  4 [txt] Buscando: anses turnos.
+  5 [txt] Estás en los resultados de «anses turnos». Los 3 más probables:
+  6 [H] Vos: Turnos — www.anses.gob.ar
+  7 [txt] Abriendo anses.gob.ar.
+  8 [txt] Estás en la sección de turnos de ANSES; puedes solicitar una cita presencial usando la cuarta opción de la lista.
+  9 [H] Vos: Completar «buscador»
+ 10 [txt] ¿Qué pongo en buscador? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.
+ 11 [btn] Pulsar «Search»  (Primera de 4 opciones.)
+ 12 [btn] Leer la página
+ 13 [btn] Volver a los resultados
+ 14 [btn] Otra cosa
+ 15 [campo] Pedido  = Escribir: buscador  (Va directo al campo «buscador» de la página.)
+ 16 [btn] Enviar

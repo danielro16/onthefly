@@ -1,0 +1,19 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: lanacion.com.ar
+  4 [txt] Abriendo lanacion.com.ar.
+  5 [txt] Estás en la página principal de La Nación, que actualiza sus noticias constantemente. Los titulares principales son las primeras opciones.
+  6 [H] Vos: ¿a cuánto está el dólar?
+  7 [txt] Hoy en La Nación el dólar oficial cotiza a $1535,00, el dólar blue a $1555,00, el dólar tarjeta a $1995,50 y el dólar MEP a $1535,08.
+  8 [H] Vos: llevame a las noticias de economía
+  9 [txt] Abriendo Secciones.
+ 10 [txt] Abriendo Política.
+ 11 [txt] Abriendo VER MÁS NOTAS DE POLÍTICA.
+ 12 [txt] Abriendo >Política.
+ 13 [txt] Esta es la sección de política de La Nación.
+ 14 [btn] Abrir «Presupuesto 2027. A falta de recursos, Luis Caputo propone trasladar a las provincias las obras…»  (Primera de 4 opciones.)
+ 15 [btn] Abrir «Rulo financiero. El BCRA denunció a Piccirillo y Migueles por operaciones de más de US$250 millones…»
+ 16 [btn] Volver a la portada
+ 17 [btn] Otra cosa
+ 18 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 19 [btn] Enviar

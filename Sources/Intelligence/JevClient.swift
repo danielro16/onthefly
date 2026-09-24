@@ -63,7 +63,7 @@ actor JevClient {
         /// Yes/no. Returns a probability.
         case boolean(instructions: String, whenTrue: String? = nil, whenFalse: String? = nil)
         /// One option from a named set. `options` maps name to description.
-        case choice(instructions: String, options: [String: String])
+        case choice(instructions: String, options: [String: String?])
         /// Position on an ordered scale. `levels` runs lowest to highest.
         case score(instructions: String, levels: [String])
 

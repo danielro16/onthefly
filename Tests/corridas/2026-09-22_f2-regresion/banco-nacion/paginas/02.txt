@@ -1,0 +1,16 @@
+https://digital.bna.com.ar/loginStep1
+Home banking
+
+PAGE: digital.bna.com.ar — Home banking
+
+PAGE CONTENT (what the person came for):
+Saltar al contenido principal
+Saltar al contenido principal
+Recordá tu DNI
+Recuperar usuario y contraseña
+FORM asking for: DNI, Usuario — button «Continuar»
+
+SITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):
+pie de página
+Contáctenos
+Términos y Condiciones

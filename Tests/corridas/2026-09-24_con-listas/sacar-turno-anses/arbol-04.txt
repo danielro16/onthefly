@@ -1,0 +1,20 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero sacar un turno en anses
+  4 [txt] Buscando: turnos ANSES.
+  5 [txt] Para sacar un turno en ANSES: ingresá al sitio oficial de ANSES, andá a Trámites y servicios, opción Turnos, y elegí Solicitar un turno. Después seleccionás el trámite, escribís tu número de CUIL, y elegís la oficina, la fecha y el horario; al finalizar guardás la constancia con el número de registro. Podés pedir turno en cualquier oficina del país, sin importar tu domicilio, y también podés hacer muchos trámites online en mi ANSES con tu CUIL y la Clave de la Seguridad Social. ¿Querés que entre al sitio de ANSES para empezar?
+  6 [H] Vos: Turnos — www.anses.gob.ar
+  7 [txt] Abriendo anses.gob.ar.
+  8 [txt] Estás en la página de Turnos de ANSES, que sirve justamente para sacar turno: el botón «Solicitar un turno» está al final del texto. La página también aclara que varios trámites se hacen online sin ir a oficina, con mi ANSES, la Atención Virtual o la app, ingresando con CUIL y Clave de la Seguridad Social.
+  9 [H] Vos: Abrir «Solicitar un turno»
+ 10 [txt] Abriendo «Solicitar un turno».
+ 11 [txt] Estás en el sistema de turnos de Anses, con la lista de trámites para los que se puede sacar turno: hay veinte, desde Solicitud de Jubilación hasta Asesoramiento por tareas de cuidado. Para sacar el turno, decime cuál es tu trámite y lo abro; también podés consultar o reprogramar un turno que ya tengas. ¿Para qué trámite necesitás el turno en Anses?
+ 12 [H] Vos: Plan de Pago de Deuda Previsional para trabajadores en actividad, ver…
+ 13 [txt] Abriendo Plan de Pago de Deuda Previsional para trabajadores en actividad, ver….
+ 14 [txt] Estás en el sistema de turnos de Anses, y acá se pide turno eligiendo el trámite. Hay dos trámites disponibles para sacar turno: el Plan de Pago de Deuda Previsional para trabajadores en actividad y el mismo plan con Reimputación de Pagos. ¿Qué trámite necesitas para el turno?
+ 15 [btn] Plan de Pago de Deuda Previsional para trabajadores en actividad  (Primera de 4 opciones.)
+ 16 [btn] Plan de Pago de Deuda Previsional para trabajadores en actividad - Reimputación de Pagos
+ 17 [btn] Volver a «ANSES | Turnos - Prestaciones»
+ 18 [btn] Otra cosa
+ 19 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 20 [btn] Enviar

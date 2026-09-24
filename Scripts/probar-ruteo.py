@@ -23,7 +23,8 @@ URL = ("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
        else "https://ai-gateway.vercel.sh/v1/chat/completions")
 # Por millón de tokens, entrada y salida.
 PRECIOS = {"gemini-2.5-flash-lite": (0.10, 0.40), "gemini-3.1-flash-lite": (0.25, 1.50),
-           "gemini-2.5-flash": (0.30, 2.50), "gemini-3-flash-preview": (0.50, 3.00)}
+           "gemini-2.5-flash": (0.30, 2.50), "gemini-3-flash-preview": (0.50, 3.00),
+           "glm-5.3-flash": (0.15, 0.50)}
 # El prompt, armado desde prompts.json con el mismo constructor que la app
 # (Prompts.swift ↔ Scripts/prompts_gemini.py): lo que se prueba es lo que corre.
 sys.path.insert(0, str(RAIZ / "Scripts"))

@@ -1,0 +1,16 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero sacar turno en el DMV de California para renovar la licencia
+  4 [txt] Buscando: DMV California.
+  5 [txt] Estás en los resultados de «DMV California». Los 3 más probables:
+  6 [txt] Cuando elijas, sigo con «sacar turno en el DMV de California para renovar la licencia».
+  7 [H] Vos: California DMV, (.gov) — www.dmv.ca.gov
+  8 [txt] Abriendo dmv.ca.gov.
+  9 [txt] Estás en dmv.ca.gov.
+ 10 [txt] ¿Qué pongo en Search a topic? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.
+ 11 [btn] Leer la nota  (Primera de 4 opciones.)
+ 12 [btn] Resumir la nota
+ 13 [btn] Volver a los resultados
+ 14 [btn] Otra cosa
+ 15 [campo] Pedido  = Escribir: Search a topic  (Va directo al campo «Search a topic» de la página.)
+ 16 [btn] Enviar

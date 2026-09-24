@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: anses turnos
+  4 [txt] Buscando: anses turnos.
+  5 [txt] Estás en los resultados de «anses turnos». Los 3 más probables:
+  6 [H] Vos: Turnos Anses
+  7 [txt] Abriendo Cómo solicitar un turno para tramitar en cualquier oficina de ANSES — www.anses.gob.ar.
+  8 [txt] Esta página de ANSES explica detalladamente cómo solicitar un turno para realizar trámites en cualquier oficina del organismo. Indica que los ciudadanos pueden elegir la sede de su preferencia siguiendo seis pasos específicos dentro del sitio web.
+  9 [H] Vos: volvé
+ 10 [txt] Volviendo.
+ 11 [txt] De vuelta en los resultados de «anses turnos».
+ 12 [btn] Turnos — www.anses.gob.ar  (Primera de 5 opciones.)
+ 13 [btn] Solicitar turnos en ANSES — www.argentina.gob.ar
+ 14 [btn] ANSES — www.anses.gob.ar
+ 15 [btn] Ver más opciones (3)
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar

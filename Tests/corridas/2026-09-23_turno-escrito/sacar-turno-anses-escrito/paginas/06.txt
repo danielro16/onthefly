@@ -1,0 +1,22 @@
+https://servicioswww.anses.gob.ar/TurnosInternet/g/110c6316ec494c08b1539c6146bd1cc1/Solicitud/IngresoSolicitud?idprest=111
+ANSES | Turnos - Ingreso Solicitud
+
+PAGE: servicioswww.anses.gob.ar — Turnos
+
+PAGE CONTENT (what the person came for):
+Reincorporación de beneficiarios/as suspendidos por no presentar la Libreta 2017 o anteriores (Decreto 840/2020)
+CAMBIAR
+Datos del titular
+Campo obligatorio. Ingrese el Número de CUIL del titular.
+ANTERIOR
+FORM asking for: Número de CUIL — button «Continuar»
+El trámite se puede realizar en cualquier oficina de ANSES sin turno previo.
+Recordá que podés hacer este trámite desde mi ANSES: ingresá en Solicitud de Prestaciones y luego en Plan de Pago de Deuda Previsional para trabajadores.
+Recordá que podés hacer este trámite desde mi ANSES: ingresá en Solicitud de Prestaciones y luego en Pensión Derivada por fallecimiento de un jubilado.
+Recordá que podés hacer este trámite desde mi ANSES Ingresá en Solicitud de Prestaciones y luego a Pensión Universal para el Adulto Mayor.
+
+SITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):
+« Volver, al inicio
+Página de inicio de Sistema de Turnos
+Salir del sistema
+anses.gob.ar

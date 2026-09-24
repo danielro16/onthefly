@@ -41,6 +41,10 @@ actor Router {
         let rest: String?
         /// Para `noPuedo`: qué no se puede y qué sí, dicho por el modelo.
         let message: String?
+        /// Si el pedido empieza una tarea nueva o sigue la que había: lo que
+        /// la persona vino a hacer lo declara ella, y viaja a Gemini hasta que
+        /// pida otra cosa.
+        var newTask = false
     }
 
     enum RouterError: Error { case http(Int), transport(String), unusable }
@@ -48,12 +52,9 @@ actor Router {
     private let gemini: Gemini
     private let session: URLSession
 
-    /// Flash-Lite y no Flash: rutear es una decisión corta sobre un texto
-    /// corto. Por el gateway, 2.5 Flash-Lite; directo a Google, 3.1
-    /// Flash-Lite (ver `Gemini`). Medido con las 60 frases de prueba: unos
-    /// US$0,0003 por turno con 3.1.
+    /// El mismo modelo que responde (ver `Gemini`).
     static func fromEnvironment() -> Router? {
-        Gemini.fromEnvironment(gateway: "google/gemini-2.5-flash-lite").map(Router.init)
+        Gemini.fromEnvironment().map(Router.init)
     }
 
     init(gemini: Gemini) {
@@ -92,18 +93,18 @@ actor Router {
         return parts.joined(separator: " ")
     }
 
-    /// `place`: dónde está la persona. `page`: el texto de la página.
-    /// `controls`: los campos y botones de formulario, en el orden en que se
-    /// numeran.
+    /// `task`: lo que la persona vino a hacer. `place`: dónde está la
+    /// persona. `page`: el texto de la página. `controls`: los campos y
+    /// botones de formulario, en el orden en que se numeran.
     func decide(
-        _ request: String, state: String, place: String? = nil,
+        _ request: String, task: String? = nil, state: String, place: String? = nil,
         page: String? = nil, controls: [String] = []
     ) async throws -> Decision {
         guard let prompts = Prompts.actuales else { throw RouterError.unusable }
         let list = controls.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
         let input = prompts.mensaje("ruteador", [
-            "pedido": request, "pagina": state, "lugar": place,
-            "formulario": list.isEmpty ? nil : list, "texto": page.map { String($0.prefix(6000)) },
+            "pedido": request, "tarea": task, "pagina": state, "lugar": place,
+            "formulario": list.isEmpty ? nil : list, "texto": page.map { String($0.prefix(Gemini.pageLimit)) },
         ])
         let body: [String: Any] = [
             // Con el texto real de una portada razona más: 300 cortaba la
@@ -155,7 +156,8 @@ actor Router {
             value: text("value"),
             then: text("then").flatMap(Action.init(rawValue:)),
             rest: text("rest"),
-            message: text("message")
+            message: text("message"),
+            newTask: text("tarea") != "sigue"
         )
     }
 }

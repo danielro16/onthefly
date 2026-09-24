@@ -312,5 +312,440 @@
         "escribir": "abrí el carrito"
       }
     ]
+  },
+  {
+    "id": "primero-la-pagina",
+    "persona": "Lectora de diarios, ciega. Ya está en La Nación y pide cosas sin saber si están ahí.",
+    "objetivo": "Que lo que está en la página se conteste o se abra ahí mismo, y que lo que no está se busque afuera sin preguntar.",
+    "pasos": [
+      {
+        "escribir": "lanacion.com.ar"
+      },
+      {
+        "escribir": "¿a cuánto está el dólar?"
+      },
+      {
+        "escribir": "llevame a las noticias de economía"
+      },
+      {
+        "escribir": "buscame vuelos baratos a Madrid"
+      }
+    ]
+  },
+  {
+    "id": "abrir-en-resultados",
+    "persona": "Jubilado, ciego. Busca turno en ANSES y pide abrirlo con sus palabras, sin tocar los botones.",
+    "objetivo": "Que en la página de Google lo que se abra sea un resultado, nunca una imagen ni una pestaña del buscador.",
+    "pasos": [
+      {
+        "escribir": "anses turnos"
+      },
+      {
+        "escribir": "Turnos Anses"
+      },
+      {
+        "escribir": "volvé"
+      },
+      {
+        "escribir": "Sacar turno"
+      }
+    ]
+  },
+  {
+    "id": "sacar-turno-anses",
+    "persona": "Jubilada, ciega. Quiere sacar un turno en ANSES y no sabe para qué trámite se pide.",
+    "objetivo": "Que al llegar a la lista de trámites JEF pregunte para cuál quiere el turno, con los trámites como opciones, sin nombrar números internos.",
+    "pasos": [
+      {
+        "escribir": "quiero sacar un turno en anses"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "tocar": "Solicitar un turno"
+      },
+      {
+        "boton": 1
+      }
+    ]
+  },
+  {
+    "id": "sacar-turno-anses-escrito",
+    "persona": "Jubilada, ciega. Quiere sacar un turno en ANSES y contesta escribiendo, con sus palabras, para qué trámite.",
+    "objetivo": "Que lo que escribe se busque entre los trámites de la página; si no está, que JEF lo diga y muestre las opciones, sin salir a Google.",
+    "pasos": [
+      {
+        "escribir": "quiero sacar un turno en anses"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "tocar": "Solicitar un turno"
+      },
+      {
+        "escribir": "jubilación"
+      },
+      {
+        "escribir": "volvé"
+      },
+      {
+        "escribir": "quiero cobrar por mi hijo"
+      },
+      {
+        "escribir": "volvé"
+      },
+      {
+        "escribir": "renovar el pasaporte"
+      }
+    ]
+  },
+  {
+    "id": "turno-anses-directo",
+    "persona": "Jubilada, ciega. Entra a la página de turnos de ANSES y pide un turno con sus palabras.",
+    "objetivo": "Que JEF pregunte para qué trámite, encuentre lo que ella escribe entre los trámites, y que lo que no está lo busque afuera.",
+    "pasos": [
+      {
+        "escribir": "anses.gob.ar/turnos"
+      },
+      {
+        "escribir": "quiero sacar un turno"
+      },
+      {
+        "escribir": "jubilación"
+      },
+      {
+        "escribir": "volvé"
+      },
+      {
+        "escribir": "quiero cobrar por mi hijo"
+      },
+      {
+        "escribir": "buscame vuelos baratos a Madrid"
+      }
+    ]
+  },
+  {
+    "id": "cita-imss",
+    "persona": "Trabajador en México, ciego. Quiere sacar una cita en el IMSS; contesta escribiendo y en un momento vuelve atrás.",
+    "objetivo": "Que la tarea (sacar una cita en el IMSS) siga viva en cada paso: al contestar, al volver, y que lo que se ofrece en cada página apunte a sacar la cita.",
+    "pasos": [
+      {
+        "escribir": "quiero sacar una cita en el IMSS"
+      },
+      {
+        "tocar": "Cita Médica — www.imss.gob.mx"
+      },
+      {
+        "escribir": "medicina familiar"
+      },
+      {
+        "escribir": "volvé"
+      },
+      {
+        "escribir": "¿qué necesito para la cita?"
+      }
+    ]
+  },
+  {
+    "id": "cita-dni-espana",
+    "persona": "Jubilado en España, con baja visión. Quiere pedir cita para renovar el DNI; contesta con una palabra y vuelve atrás.",
+    "objetivo": "Que la tarea (pedir cita para renovar el DNI) siga viva en cada paso y que lo que JEF dice y ofrece en cada página apunte a esa cita.",
+    "pasos": [
+      {
+        "escribir": "quiero pedir cita previa para renovar el DNI"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "renovación"
+      },
+      {
+        "escribir": "volvé"
+      }
+    ]
+  },
+  {
+    "id": "licencia-dmv",
+    "persona": "Vive en California, habla español, ciega. Quiere sacar turno para renovar la licencia de manejar.",
+    "objetivo": "Que JEF la lleve al DMV, le diga dónde se saca el turno y conteste qué documentos llevar, sin inventar.",
+    "pasos": [
+      {
+        "escribir": "quiero sacar turno en el DMV de California para renovar la licencia"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "¿qué documentos tengo que llevar?"
+      }
+    ]
+  },
+  {
+    "id": "licuadora-amazon",
+    "persona": "Vive en México, con baja visión. Quiere comprar una licuadora en Amazon.",
+    "objetivo": "Que JEF entre a Amazon México, busque licuadoras, abra una y diga el precio que está en la página.",
+    "pasos": [
+      {
+        "escribir": "entrá a Amazon México y buscame una licuadora"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "¿cuánto cuesta?"
+      }
+    ]
+  },
+  {
+    "id": "jubilacion-inss",
+    "persona": "Vive en Brasil, habla español, ciego. Quiere pedir la jubilación en el INSS.",
+    "objetivo": "Que JEF lo lleve al sitio del INSS, le cuente en español qué hay y dónde se pide la jubilación, y conteste qué documentos necesita.",
+    "pasos": [
+      {
+        "escribir": "quiero pedir la jubilación en el INSS de Brasil"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "¿qué documentos necesito?"
+      }
+    ]
+  },
+  {
+    "id": "cajas-usps",
+    "persona": "Vive en Estados Unidos, habla español, ciega. Quiere pedir cajas gratis al correo para mandar un paquete.",
+    "objetivo": "Que JEF encuentre en USPS dónde se piden las cajas gratis aunque el botón diga «Order Now», y la lleve ahí.",
+    "pasos": [
+      {
+        "escribir": "usps.com"
+      },
+      {
+        "escribir": "quiero cajas gratis para mandar un paquete"
+      }
+    ]
+  },
+  {
+    "id": "portada-elcomercio",
+    "persona": "Lector en Perú, ciego. Entra al diario para escuchar las noticias.",
+    "objetivo": "Que JEF sepa que es una portada: diga el sitio en una frase y lea los titulares tal cual, con los titulares como botones.",
+    "pasos": [
+      {
+        "escribir": "elcomercio.pe"
+      }
+    ]
+  },
+  {
+    "id": "buscar-en-gobpe",
+    "persona": "Vive en Perú, con baja visión. Quiere buscar en el sitio del Estado cómo sacar el pasaporte.",
+    "objetivo": "Que el buscador del sitio sea un solo botón «Buscar en…», que pregunte qué buscar y busque, sin «Completar» ni «Pulsar».",
+    "pasos": [
+      {
+        "escribir": "www.gob.pe"
+      },
+      {
+        "tocar": "Buscar"
+      },
+      {
+        "escribir": "pasaporte"
+      }
+    ]
+  },
+  {
+    "id": "nota-elcomercio",
+    "persona": "Lector en Perú, ciego. Abre una noticia de la portada y la quiere escuchar.",
+    "objetivo": "Que JEF sepa que es una nota, ofrezca leerla y la lea por párrafos.",
+    "pasos": [
+      {
+        "escribir": "elcomercio.pe"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "tocar": "Leer"
+      }
+    ]
+  },
+  {
+    "id": "cookies-correos",
+    "persona": "Vive en España, ciega. Entra a Correos y le sale el aviso de cookies.",
+    "objetivo": "Que los botones del aviso sean lo primero, que al rechazar se cierre y queden los pasos de la página, y que después pueda seguir su envío.",
+    "pasos": [
+      {
+        "escribir": "correos.es"
+      },
+      {
+        "tocar": "Rechaz"
+      },
+      {
+        "escribir": "quiero saber dónde está mi paquete, el número es PK123456789ES"
+      }
+    ]
+  },
+  {
+    "id": "cookies-renfe",
+    "persona": "Vive en España, con baja visión. Entra a Renfe y le sale el aviso de privacidad.",
+    "objetivo": "Que los botones del aviso sean lo primero y que al contestar se cierre y queden los pasos de la página.",
+    "pasos": [
+      {
+        "escribir": "renfe.com"
+      },
+      {
+        "tocar": "Reject"
+      }
+    ]
+  },
+  {
+    "id": "cookies-lavanguardia",
+    "persona": "Vive en España, ciega. Entra al diario y le sale el aviso de cookies.",
+    "objetivo": "Que los botones del aviso vayan primero, que al rechazar se cierre y queden los titulares.",
+    "pasos": [
+      {
+        "escribir": "lavanguardia.com"
+      },
+      {
+        "tocar": "Rechazar"
+      }
+    ]
+  },
+  {
+    "id": "tienda-liverpool",
+    "persona": "Vive en México, con baja visión. Entra a una tienda.",
+    "objetivo": "Que JEF sepa qué tipo de sitio y de página es, y que los pasos que ofrece sean los probables para ese tipo.",
+    "pasos": [
+      {
+        "escribir": "liverpool.com.mx"
+      }
+    ]
+  },
+  {
+    "id": "gobierno-chile",
+    "persona": "Vive en Chile, ciego. Entra al sitio del gobierno.",
+    "objetivo": "Que JEF sepa qué tipo de sitio y de página es, y que los pasos que ofrece sean los probables para ese tipo.",
+    "pasos": [
+      {
+        "escribir": "www.gob.cl"
+      }
+    ]
+  },
+  {
+    "id": "diario-eluniverso",
+    "persona": "Vive en Ecuador, ciega. Entra al diario.",
+    "objetivo": "Que JEF sepa qué tipo de sitio y de página es, y que los pasos que ofrece sean los probables para ese tipo.",
+    "pasos": [
+      {
+        "escribir": "eluniverso.com"
+      }
+    ]
+  },
+  {
+    "id": "aviso-20minutos",
+    "persona": "Vive en España, ciega. Entra al diario.",
+    "objetivo": "Que Jev diga qué pide el aviso que tapa la página, y que sólo un aviso que pide una decisión (cookies, edad) vaya primero.",
+    "pasos": [
+      {
+        "escribir": "20minutos.es"
+      }
+    ]
+  },
+  {
+    "id": "aviso-foodit",
+    "persona": "Vive en Argentina, con baja visión. Entra a un sitio de recetas.",
+    "objetivo": "Que Jev diga qué pide el aviso que tapa la página, y que sólo un aviso que pide una decisión (cookies, edad) vaya primero.",
+    "pasos": [
+      {
+        "escribir": "foodit.lanacion.com.ar"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-lanacion",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "lanacion.com.ar"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-clarin",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "clarin.com"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-elmundo",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "elmundo.es"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-fravega",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "fravega.com"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-seguro",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "buscá seguro de auto"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-zapatillas",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "buscá zapatillas nike"
+      }
+    ]
+  },
+  {
+    "id": "leer-clarin",
+    "persona": "Vive en Argentina, ciego. Quiere que JEF le lea las noticias de Clarín.",
+    "objetivo": "Que llegando con la tarea pendiente, JEF sepa que es una portada y lea los titulares, no el pie de página.",
+    "pasos": [
+      {
+        "escribir": "entrá a clarín y leeme las noticias"
+      },
+      {
+        "tocar": "clarin.com"
+      }
+    ]
+  },
+  {
+    "id": "portada-resumen-clarin",
+    "persona": "Vive en Argentina, ciego. Entra a Clarín y quiere saber qué pasa y escuchar los titulares.",
+    "objetivo": "Que al llegar JEF diga cuál es la noticia principal, con los titulares como botones, y que «Leer los titulares» los lea desde el primero.",
+    "pasos": [
+      {
+        "escribir": "clarin.com"
+      },
+      {
+        "tocar": "Leer los titulares"
+      }
+    ]
   }
 ]

@@ -1,0 +1,21 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero pedir la jubilación en el INSS de Brasil
+  4 [txt] Buscando: jubilación INSS Brasil.
+  5 [txt] Estás en los resultados de «jubilación INSS Brasil». Los 3 más probables:
+  6 [H] Vos: ¿Qué es el INSS en Brasil? — www.europartner.com.br
+  7 [txt] Abriendo europartner.com.br.
+  8 [txt] Esto no es la web oficial del INSS: es un artículo del blog de Europartner, una consultora contable, que explica qué es el INSS de Brasil y cómo funciona la jubilación. Según el texto, para tramitar prestaciones se puede acudir a una unidad del INSS o usar el «Portal Meu INSS» digitalmente. La página detalla los cinco modelos de jubilación desde la Reforma de Pensiones de 2019: por ejemplo, el sistema de puntos exige 98 puntos para hombres y 88 para mujeres, y la jubilación por edad, 65 años para hombres y 62 para mujeres, con 15 años de cotización. Nota: hay un aviso de contacto que cubre parte de la página.
+  9 [H] Vos: ¿qué documentos necesito?
+ 10 [txt] ¿Qué pongo en Buscar? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.
+ 11 [txt] No está en esta página.
+ 12 [txt] Buscando: solicitar jubilación INSS Brasil.
+ 13 [txt] Estás en los resultados de «solicitar jubilación INSS Brasil». Los 3 más probables:
+ 14 [btn] Pulsar «Buscar con Google»  (Primera de 6 opciones.)
+ 15 [btn] ¿Qué es el INSS en Brasil? — www.europartner.com.br
+ 16 [btn] Cuales son los tramites necesarios para solicitar la jubilacion en Brasil — visorjudicial.com
+ 17 [btn] Brasil - SP. Superintendencia de Pensiones - Gobierno de Chile — www.spensiones.cl
+ 18 [btn] Ver más opciones (5)
+ 19 [btn] Otra cosa
+ 20 [campo] Pedido  = Escribir: Buscar  (Va directo al campo «Buscar» de la página.)
+ 21 [btn] Enviar
