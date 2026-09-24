@@ -846,5 +846,21 @@
         "boton": 1
       }
     ]
+  },
+  {
+    "id": "zapatillas-amazon",
+    "persona": "Compra por internet. Escribe lo que quiere como en cualquier buscador.",
+    "objetivo": "Que la primera búsqueda sea la frase tal cual, que el primer botón lleve a zapatillas en Amazon (no a la portada), y que ahí JEF sepa a qué vino y conteste el precio.",
+    "pasos": [
+      {
+        "escribir": "quiero comprar zapatillas en Amazon"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "¿cuánto cuestan las primeras?"
+      }
+    ]
   }
 ]

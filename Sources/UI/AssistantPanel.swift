@@ -19,6 +19,9 @@ struct AssistantPanel: View {
     /// Cerrado sigue armado, invisible: la conversación y hasta dónde se
     /// leyó quedan como estaban para cuando se vuelva a abrir.
     var isOpen = true
+    /// Sin página abierta, lo escrito se busca en internet tal cual, y el
+    /// campo lo dice (Daniel). Ver `Assistant.ask`.
+    var searching = false
 
     @State private var text = ""
     @FocusState private var writing: Bool
@@ -313,7 +316,7 @@ struct AssistantPanel: View {
                 if assistant.awaitingSecret {
                     SecureField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? "").foregroundStyle(Color(.secondaryLabel)))
                 } else {
-                    TextField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? "¿Qué querés hacer?").foregroundStyle(Color(.secondaryLabel)), axis: .vertical)
+                    TextField("Pedido", text: $text, prompt: Text(assistant.awaiting.map { "Escribir: \($0)" } ?? (searching ? "¿Qué querés buscar en internet?" : "¿Qué querés hacer?")).foregroundStyle(Color(.secondaryLabel)), axis: .vertical)
                         .lineLimit(1...3)
                 }
             }

@@ -488,7 +488,8 @@ struct ReaderView: View {
             onAccept: { action in Task { await model.assistant.accept(action, on: model) } },
             onClose: hasPage ? { close() } : nil,
             onDrag: hasPage ? { value, ended in dragged(value, ended: ended, in: screen) } : nil,
-            isOpen: open
+            isOpen: open,
+            searching: !hasPage
         )
         .frame(maxWidth: .infinity)
         .frame(height: hasPage ? panelHeight(in: screen) : screen.size.height)

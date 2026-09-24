@@ -394,6 +394,22 @@ final class Assistant {
         // Cualquier otro pedido deja la prueba atrás: se fue a otro lado.
         challenge = nil
 
+        // Sin página abierta, lo escrito va al buscador tal cual, como en
+        // cualquier navegador (Daniel): el buscador entiende la frase mejor
+        // que nuestra reescritura, y no se decide por la persona qué buscar.
+        // «Quiero comprar zapatillas en Amazon» se buscaba como «Amazon», la
+        // persona quedaba en la portada y las zapatillas, para después. Sin
+        // el ruteador, además, la primera búsqueda no espera a un modelo. La
+        // frase queda como la tarea: la recibe la orientación del sitio que
+        // elija. Una pregunta —por sus signos, en cualquier escritura— se
+        // contesta con la página de resultados, si alcanza.
+        if reader.page == nil {
+            task = goal
+            if Self.isQuestion(goal) { pendingQuestion = goal }
+            await arrive(goal, on: reader)
+            return
+        }
+
         // Qué quiere, decidido por un modelo con un esquema cerrado.
         //
         // Antes había acá una lista de expresiones regulares que escribí yo, y
