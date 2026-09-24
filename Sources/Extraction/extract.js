@@ -3424,6 +3424,42 @@ allowedVideoRegex: /^$/,
     return { ok: true, value: el.value };
   };
 
+  /// What the page says on its own when something happens: its live
+  /// regions, the ones a screen reader announces by standard (aria-live,
+  /// role=status, role=alert, role=log, <output>) — "Agregado al carrito",
+  /// "Datos guardados". Kept until the app takes them with
+  /// `__jefTakeSaid`, which it does before and after pressing something:
+  /// what came in between is the page's answer.
+  const saidByPage = [];
+  const LIVE = '[aria-live]:not([aria-live="off"]), [role="status"], [role="alert"], [role="log"], output';
+  function liveRegionOf(node) {
+    const el = node && (node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement);
+    const region = el && el.closest ? el.closest(LIVE) : null;
+    return region && !region.closest('[aria-hidden="true"]') ? region : null;
+  }
+  try {
+    new MutationObserver(function (records) {
+      const touched = new Set();
+      for (const record of records) {
+        const region = liveRegionOf(record.target);
+        if (region) touched.add(region);
+        for (const node of record.addedNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE && node.matches(LIVE)) touched.add(node);
+        }
+      }
+      touched.forEach(function (region) {
+        const text = (region.textContent || "").replace(/\s+/g, " ").trim().slice(0, 300);
+        if (text && saidByPage[saidByPage.length - 1] !== text) saidByPage.push(text);
+        if (saidByPage.length > 10) saidByPage.shift();
+      });
+    }).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+  } catch (e) { /* a page without a document element says nothing */ }
+  window.__jefTakeSaid = function () {
+    const out = saidByPage.slice();
+    saidByPage.length = 0;
+    return out;
+  };
+
   /// What a field holds now, as `__jefFill` left it or as the page changed
   /// it after reacting. A radio group answers with its checked option.
   window.__jefValue = function (fieldId) {

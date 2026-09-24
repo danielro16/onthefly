@@ -1,0 +1,13 @@
+http://localhost:8765/responde.html
+Mis preferencias
+
+PAGE: localhost — Mis preferencias
+
+PAGE CONTENT (what the person came for):
+Mis preferencias
+Elegí cómo querés recibir las novedades del club.
+Guardar preferencias
+Borrar todo
+Tus preferencias se guardaron.
+Elegí cómo querés recibir las novedades del club.
+Tus preferencias se guardaron.

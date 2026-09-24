@@ -824,5 +824,27 @@
         "escribir": "poné Palermo en el código postal"
       }
     ]
+  },
+  {
+    "id": "la-pagina-contesta",
+    "persona": "Cualquiera: aprieta botones que contestan con un aviso o con una pregunta.",
+    "objetivo": "Que JEF cuente lo que la página contestó después de apretar («se guardaron»), y que una pregunta de confirmación no la acepte solo. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/responde.html"
+      },
+      {
+        "escribir": "guardá las preferencias"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "borrá todo"
+      },
+      {
+        "boton": 1
+      }
+    ]
   }
 ]

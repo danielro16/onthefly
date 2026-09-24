@@ -63,6 +63,10 @@ final class Assistant {
     /// El formulario cuyo botón se ofreció para que lo toque la mano: el que
     /// se aprieta al tocar "Pulsar «…»". Ver `submitAsked`.
     private var pendingSubmit: Action?
+    /// El nombre de lo que JEF acaba de apretar por la persona: lo recibe la
+    /// orientación de la página que quedó, con lo que la página contestó
+    /// (`pressed`).
+    private var justDid: String?
     /// Lo que Gemini marcó como ruido al llegar a esta página, por id: no se
     /// sugiere. Jev lo sigue viendo al navegar. Ver `arrived`.
     private var noisy: (url: String, ids: Set<String>) = ("", [])
@@ -298,6 +302,7 @@ final class Assistant {
         offer = nil
         touched = []
         lastDone = nil
+        justDid = nil
         failedTurn = false
         pendingQuestion = nil
         nextQuestions = []
@@ -1583,6 +1588,7 @@ final class Assistant {
         defer { inTurn = false }
         heard(action.label)
         lastDone = nil
+        justDid = nil
         failedTurn = false
         nextQuestions = []
         searchInstead = nil
@@ -1674,13 +1680,8 @@ final class Assistant {
         // o un botón o link que no toca solo—; si no, el formulario de la página.
         if action.id == Self.submitID, let page = reader.page, let control = pendingSubmit ?? pageForm(page) {
             pendingSubmit = nil
-            if control.kind == .form {
-                say("Pulsando «\(control.submit ?? action.label)».")
-                await reader.submit(control)
-            } else {
-                say("Pulsando «\(control.label)».")
-                await reader.activate(control)
-            }
+            say("Pulsando «\(control.kind == .form ? control.submit ?? action.label : control.label)».")
+            await pressed(control, on: reader)
             working = false
             await landed(reader)
             return
@@ -1814,7 +1815,7 @@ final class Assistant {
         }
 
         say(target.kind == .link ? "Abriendo «\(target.label)»." : "Tocando «\(target.label)».")
-        await reader.activate(target)
+        await pressed(target, on: reader)
         working = false
         guard !chosen.goal.isEmpty else {
             await landed(reader)
@@ -1865,7 +1866,7 @@ final class Assistant {
                 return false
             }
             say("Abriendo \(chosen.label).")
-            await reader.activate(chosen)
+            await pressed(chosen, on: reader)
             return true
         }
 
@@ -1896,7 +1897,7 @@ final class Assistant {
                     return
                 }
                 say("Abriendo «\(exact.label)».")
-                await reader.activate(exact)
+                await pressed(exact, on: reader)
                 working = false
                 await landed(reader)
                 return
@@ -2148,7 +2149,7 @@ final class Assistant {
         }
         working = true
         say("Pulsando «\(label.isEmpty ? "enviar" : label)».")
-        await reader.submit(form)
+        await pressed(form, on: reader)
         working = false
         await landed(reader)
     }
@@ -2173,6 +2174,27 @@ final class Assistant {
         Registro.anotar("compromete", ["boton": label, "p": risk.map { String(format: "%.2f", $0) } ?? "sin respuesta"])
         let limit = Criterios.actuales?.umbrales["compromete"] ?? 0
         return risk.map { $0 < limit } ?? false
+    }
+
+    /// Aprieta un control por la persona. Lo que la página dijo antes no es
+    /// su respuesta, y se descarta. Si no es ir a otra página —un botón, un
+    /// formulario que no es un buscador, un link sin dirección—, queda
+    /// anotado para la orientación (`justDid`), que lo recibe con lo que la
+    /// página contestó. Sin eso, después de agregar al carrito se contaba la
+    /// página como recién llegada, con cómo agregar al carrito (Daniel).
+    private func pressed(_ control: Action, on reader: ReaderModel) async {
+        _ = await reader.takeSaid()
+        if control.kind == .form { await reader.submit(control) } else { await reader.activate(control) }
+        let goes = control.kind == .link ? !(control.href ?? "").isEmpty : control.kind == .form && Self.isSearch(control)
+        justDid = goes ? nil : Self.pressName(control)
+    }
+
+    /// Lo que JEF acaba de hacer y lo que la página contestó, para la
+    /// orientación: en inglés, como el resto de lo que recibe el modelo.
+    static func done(_ pressed: String, answered: [HeadlessWebView.Said]) -> String {
+        (["JEF pressed «\(pressed)» for the person."] + answered.map {
+            $0.asked ? "The page asked «\($0.text)», and it was not accepted." : "The page answered: «\($0.text)»"
+        }).joined(separator: "\n")
     }
 
     /// Lo que JEF no toca solo queda ofrecido, con el nombre que le da la
@@ -2785,11 +2807,21 @@ final class Assistant {
             kinds.flatMap { $0.siteConfidence >= sure ? "site: \($0.site)" : nil },
             kinds.flatMap { $0.pageConfidence >= sure ? "page: \($0.page)" : nil },
         ].compactMap { $0 }
+        // Lo que JEF acaba de apretar, con lo que la página contestó —sus
+        // carteles, sus zonas de estado—, tomado recién ahora: hay respuestas
+        // que tardan. Va primero en la orientación: qué pasó.
+        var done: String?
+        if let did = justDid {
+            justDid = nil
+            let answered = await reader.takeSaid()
+            done = Self.done(did, answered: answered)
+            Registro.anotar("hecho", ["boton": did, "pagina": answered.map(\.text)])
+        }
         var orientation: Answerer.Orientation?
         do {
             orientation = try await answerer.orient(
                 page: text, candidates: map.map(Self.described), goal: task,
-                kinds: said.isEmpty ? nil : said.joined(separator: "; "))
+                kinds: said.isEmpty ? nil : said.joined(separator: "; "), done: done)
         } catch {
             // Por qué se cayó a la descripción: en una prueba pasó en Clarín
             // y no había cómo saber si fue la red o una cifra sin verificar.

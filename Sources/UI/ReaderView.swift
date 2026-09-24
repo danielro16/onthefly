@@ -306,6 +306,12 @@ final class ReaderModel {
         return Self.holds(held, value)
     }
 
+    /// Lo que la página dijo sola desde la última vez que se preguntó: sus
+    /// carteles y sus zonas de estado (`HeadlessWebView.takeSaid`).
+    func takeSaid() async -> [HeadlessWebView.Said] {
+        await engine.takeSaid()
+    }
+
     /// Si lo que tiene el campo es lo que se escribió, sin espacios ni
     /// signos ni mayúsculas: una página que da formato ("12.345.678",
     /// "(11) 4444-5555") lo aceptó; una que lo vació o lo cortó, no.

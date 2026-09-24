@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mis preferencias</title>
+<!--
+  Dos botones que contestan como contestan muchas páginas: «Guardar» avisa
+  en una zona de estado (role=status) medio segundo después, y «Borrar
+  todo» pregunta con un cartel del navegador (confirm). JEF tiene que
+  contar la respuesta, y no aceptar la pregunta por su cuenta.
+  Servida con: python3 -m http.server 8765 --directory Tests
+-->
+</head>
+<body>
+<main>
+<h1>Mis preferencias</h1>
+<p>Elegí cómo querés recibir las novedades del club.</p>
+<button type="button" id="guardar">Guardar preferencias</button>
+<button type="button" id="borrar">Borrar todo</button>
+<div role="status" id="estado"></div>
+</main>
+<script>
+document.getElementById('guardar').addEventListener('click', function () {
+  setTimeout(function () { document.getElementById('estado').textContent = 'Tus preferencias se guardaron.'; }, 500);
+});
+document.getElementById('borrar').addEventListener('click', function () {
+  if (confirm('¿Seguro que querés borrar todas tus preferencias?')) {
+    document.getElementById('estado').textContent = 'Se borró todo.';
+  }
+});
+</script>
+</body>
+</html>

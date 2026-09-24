@@ -368,6 +368,27 @@ final class HeadlessWebView: NSObject {
         teardown()
     }
 
+    /// Algo que la página dijo sola: un cartel, o una zona de estado de las
+    /// que VoiceOver anuncia. `asked`: era una pregunta para confirmar, y no
+    /// se aceptó.
+    struct Said: Sendable {
+        let text: String
+        let asked: Bool
+    }
+
+    /// Los carteles desde la última vez que se preguntó (`takeSaid`).
+    fileprivate var alerts: [Said] = []
+
+    /// Lo que la página dijo sola desde la última vez que se preguntó: sus
+    /// carteles y sus zonas de estado (`__jefTakeSaid` en extract.js).
+    /// Preguntado antes y después de apretar algo, es lo que la página
+    /// contestó.
+    func takeSaid() async -> [Said] {
+        let live = (try? await webView?.evaluateJavaScript("window.__jefTakeSaid ? window.__jefTakeSaid() : []")) as? [String] ?? []
+        defer { alerts = [] }
+        return alerts + live.map { Said(text: $0, asked: false) }
+    }
+
     /// Lo que una acción hizo tarde, hasta `limit`: la página de una
     /// navegación que recién empieza, o la que la página entregó sola. Nil si
     /// no pasó nada.
@@ -616,6 +637,29 @@ extension HeadlessWebView: WKNavigationDelegate {
 // MARK: - WKUIDelegate
 
 extension HeadlessWebView: WKUIDelegate {
+
+    /// Un cartel del navegador (`alert`): se cierra y se guarda lo que dice.
+    /// Es cómo muchas páginas contestan —Demoblaze: "Product added."—, y
+    /// antes se perdía sin que nadie lo oyera.
+    func webView(
+        _ webView: WKWebView,
+        runJavaScriptAlertPanelWithMessage message: String,
+        initiatedByFrame frame: WKFrameInfo
+    ) async {
+        guard frame.isMainFrame else { return }
+        alerts.append(Said(text: message, asked: false))
+    }
+
+    /// Un cartel que pide confirmar (`confirm`): no se acepta, como antes
+    /// —aceptar le toca a la persona—, pero se guarda lo que preguntó.
+    func webView(
+        _ webView: WKWebView,
+        runJavaScriptConfirmPanelWithMessage message: String,
+        initiatedByFrame frame: WKFrameInfo
+    ) async -> Bool {
+        if frame.isMainFrame { alerts.append(Said(text: message, asked: true)) }
+        return false
+    }
 
     /// `target="_blank"` asks for a new window. There is one page here, so the
     /// link opens in it; without this the tap does nothing at all, silently,
