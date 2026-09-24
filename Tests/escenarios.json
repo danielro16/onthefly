@@ -747,5 +747,34 @@
         "tocar": "Leer los titulares"
       }
     ]
+  },
+  {
+    "id": "compromete-carrito",
+    "persona": "Ciega, compra por internet. Pide las cosas con palabras.",
+    "objetivo": "Que JEF no toque solo un botón que compromete fuera de un formulario («Add to cart» hecho con JavaScript): que lo deje para que lo toque ella, y que al tocarlo se apriete.",
+    "pasos": [
+      {
+        "escribir": "https://www.demoblaze.com/prod.html?idp_=1"
+      },
+      {
+        "escribir": "agregalo al carrito"
+      },
+      {
+        "boton": 1
+      }
+    ]
+  },
+  {
+    "id": "compromete-deportes",
+    "persona": "Ciega hace veinte años, lee La Nación cada mañana.",
+    "objetivo": "Que un link de navegación pedido con palabras se siga abriendo solo, sin pedir confirmación.",
+    "pasos": [
+      {
+        "escribir": "lanacion.com.ar"
+      },
+      {
+        "escribir": "llevame a deportes"
+      }
+    ]
   }
 ]

@@ -26,13 +26,14 @@ actor PageAnalyzer {
     /// pagar, confirmar, mandar datos, darse de baja. Lo juzga Jev con la
     /// pregunta de `criterios.json`, en cualquier idioma, con los campos del
     /// formulario como contexto ("Continuar" junto a un número de tarjeta).
+    /// `control`: un formulario, o un botón o link, que no tiene campos.
     ///
     /// Nil si no hay criterio, si Jev falla o si no contesta a tiempo: la
     /// carrera de la arquitectura. Quien llama trata nil como "compromete":
     /// ante la duda, el botón lo toca la mano.
-    func commits(button: String, form: Action, page: ExtractedPage) async -> Double? {
+    func commits(button: String, control: Action, page: ExtractedPage) async -> Double? {
         guard let criterios = Criterios.actuales, let pregunta = criterios.jev["compromete"] else { return nil }
-        let fields = (form.fields ?? []).filter { $0.type != "hidden" }.map { field in
+        let fields = (control.fields ?? []).filter { $0.type != "hidden" }.map { field in
             "\(field.name) (\(field.type)\(field.autocomplete.map { ", \($0)" } ?? ""))"
         }
         let state = CommitState(button: button, fields: fields, site: page.displaySite, title: page.title)

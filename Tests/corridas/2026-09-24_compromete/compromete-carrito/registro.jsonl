@@ -1,0 +1,36 @@
+{"t": 1790279907.459151, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"pais": "US", "tipo": "ubicacion", "t": 1790279908.2417278}
+{"pais": "US", "tipo": "ubicacion", "t": 1790279908.248355}
+{"t": 1790279914.231585, "texto": "https://www.demoblaze.com/prod.html?idp_=1", "quien": "persona", "tipo": "turno"}
+{"opciones": [], "tipo": "botones", "t": 1790279914.233138}
+{"t": 1790279914.233772, "texto": "Abriendo demoblaze.com.", "quien": "jef", "tipo": "turno"}
+{"t": 1790279914.234122, "texto": "Abriendo demoblaze.com.", "tipo": "voz", "cola": false}
+{"t": 1790279914.316493, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones"}
+{"titulo": "STORE", "url": "https://www.demoblaze.com/prod.html?idp_=1", "tipo": "pagina", "t": 1790279917.004354, "texto": "PAGE: www.demoblaze.com — STORE\n\nPAGE CONTENT (what the person came for):\nSamsung galaxy s6\n$360 *includes tax\nProduct description\nThe Samsung Galaxy S6 is powered by 1.5GHz octa-core Samsung Exynos 7420 processor and it comes with 3GB of RAM. The phone packs 32GB of internal storage cannot be expanded.\nAdd to cart\nAbout Us\nWe believe performance needs to be validated at every stage of the software development cycle and our open source compatible, massively scalable platform makes that a reality.\nGet in Touch\nAddress: 2390 El Camino Real\nPhone: +440 123456\nEmail: demo@blazemeter.com\nPRODUCT STORE\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nToggle navigation\nPRODUCT STORE\nHome (current)\nContact\nAbout us\nCart\nLog in\nSign up\nCopyright © Product Store"}
+{"opciones": [], "t": 1790279917.005032, "tipo": "botones"}
+{"pagina": "product", "url": "https://www.demoblaze.com/prod.html?idp_=1", "tipo": "tipo", "p_sitio": "0.99", "p_pagina": "0.95", "modelo": "otra", "aviso": "", "p_aviso": "0.00", "aviso_extractor": "", "sitio": "store", "t": 1790279920.4058151}
+{"url": "https://www.demoblaze.com/prod.html?idp_=1", "t": 1790279920.4067678, "tipo": "ruido", "elementos": []}
+{"quien": "jef", "texto": "Estás en la tienda Product Store, en la página del Samsung Galaxy S6, que cuesta 360 dólares e incluye impuestos. La descripción dice que tiene procesador octa-core Samsung Exynos 7420 de 1.5GHz, 3GB de memoria RAM y 32GB de almacenamiento interno que no se puede ampliar. Puedes agregarlo al carrito desde esta misma página.", "t": 1790279920.407343, "tipo": "turno"}
+{"texto": "Estás en la tienda Product Store, en la página del Samsung Galaxy S6, que cuesta 360 dólares e incluye impuestos. La descripción dice que tiene procesador octa-core Samsung Exynos 7420 de 1.5GHz, 3GB de memoria RAM y 32GB de almacenamiento interno que no se puede ampliar. Puedes agregarlo al carrito desde esta misma página.", "cola": true, "tipo": "voz", "t": 1790279920.408252}
+{"opciones": ["Abrir «Add to cart»", "Abrir «Cart»", "Leer la página"], "tipo": "botones", "t": 1790279920.408824}
+{"opciones": ["Abrir «Add to cart»", "Abrir «Cart»", "Leer la página", "Otra cosa"], "tipo": "botones", "t": 1790279920.409278}
+{"quien": "persona", "texto": "agregalo al carrito", "t": 1790279928.1130118, "tipo": "turno"}
+{"tipo": "botones", "opciones": [], "t": 1790279928.113583}
+{"tarea": "nueva", "reference": "Add to cart", "tipo": "decision", "question": "", "accion": "abrir", "rest": "", "t": 1790279931.367868, "target": "", "control": "", "then": ""}
+{"tipo": "compromete", "boton": "Add to cart", "p": "0.23", "t": 1790279931.620748}
+{"texto": "«Add to cart» puede confirmar algo: queda abajo, para tocarlo.", "tipo": "turno", "quien": "jef", "t": 1790279931.6215038}
+{"texto": "«Add to cart» puede confirmar algo: queda abajo, para tocarlo.", "tipo": "voz", "cola": false, "t": 1790279931.622202}
+{"opciones": ["Pulsar «Add to cart»"], "t": 1790279931.6224709, "tipo": "botones"}
+{"opciones": ["Pulsar «Add to cart»", "Otra cosa"], "t": 1790279931.622688, "tipo": "botones"}
+{"t": 1790279938.573546, "tipo": "botones", "opciones": []}
+{"quien": "persona", "t": 1790279938.574285, "tipo": "turno", "texto": "Pulsar «Add to cart»"}
+{"quien": "jef", "t": 1790279938.574623, "tipo": "turno", "texto": "Pulsando «Add to cart»."}
+{"t": 1790279938.575243, "tipo": "voz", "texto": "Pulsando «Add to cart».", "cola": false}
+{"titulo": "STORE", "tipo": "pagina", "t": 1790279939.680972, "url": "https://www.demoblaze.com/prod.html?idp_=1#", "texto": "PAGE: www.demoblaze.com — STORE\n\nPAGE CONTENT (what the person came for):\nSamsung galaxy s6\n$360 *includes tax\nProduct description\nThe Samsung Galaxy S6 is powered by 1.5GHz octa-core Samsung Exynos 7420 processor and it comes with 3GB of RAM. The phone packs 32GB of internal storage cannot be expanded.\nAdd to cart\nAbout Us\nWe believe performance needs to be validated at every stage of the software development cycle and our open source compatible, massively scalable platform makes that a reality.\nGet in Touch\nAddress: 2390 El Camino Real\nPhone: +440 123456\nEmail: demo@blazemeter.com\nPRODUCT STORE\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nToggle navigation\nPRODUCT STORE\nHome (current)\nContact\nAbout us\nCart\nLog in\nSign up\nCopyright © Product Store"}
+{"t": 1790279939.681473, "tipo": "botones", "opciones": []}
+{"tipo": "tipo", "sitio": "store", "p_aviso": "0.00", "t": 1790279942.51691, "p_sitio": "1.00", "modelo": "otra", "pagina": "product", "url": "https://www.demoblaze.com/prod.html?idp_=1#", "p_pagina": "0.97", "aviso_extractor": "", "aviso": ""}
+{"t": 1790279942.5174232, "url": "https://www.demoblaze.com/prod.html?idp_=1#", "elementos": [], "tipo": "ruido"}
+{"t": 1790279942.517621, "quien": "jef", "texto": "Estás en la página del Samsung Galaxy S6 en la tienda Product Store, con precio de 360 dólares con impuestos incluidos. Tiene procesador octa-core de 1.5GHz, 3GB de memoria RAM y 32GB de almacenamiento interno no ampliable. Sí sirve para agregarlo al carrito: hay un botón de \"Add to cart\" justo debajo de la descripción, y te lo marco como primera opción.", "tipo": "turno"}
+{"t": 1790279942.518172, "cola": true, "texto": "Estás en la página del Samsung Galaxy S6 en la tienda Product Store, con precio de 360 dólares con impuestos incluidos. Tiene procesador octa-core de 1.5GHz, 3GB de memoria RAM y 32GB de almacenamiento interno no ampliable. Sí sirve para agregarlo al carrito: hay un botón de \"Add to cart\" justo debajo de la descripción, y te lo marco como primera opción.", "tipo": "voz"}
+{"opciones": ["Abrir «Add to cart»", "Abrir «Cart»", "Leer la página"], "tipo": "botones", "t": 1790279942.518414}
+{"tipo": "botones", "t": 1790279942.518853, "opciones": ["Abrir «Add to cart»", "Abrir «Cart»", "Leer la página", "Volver a «STORE»", "Otra cosa"]}

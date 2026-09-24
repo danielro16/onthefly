@@ -1653,12 +1653,18 @@ final class Assistant {
             await summarize(page)
             return
         }
-        // El botón del formulario: lo tocó la persona, así que se aprieta. El
-        // que se le ofreció, si fue por un pedido; si no, el de la página.
-        if action.id == Self.submitID, let page = reader.page, let form = pendingSubmit ?? pageForm(page) {
+        // El botón que JEF dejó para la mano: lo tocó la persona, así que se
+        // aprieta. El que se le ofreció, si fue por un pedido —un formulario,
+        // o un botón o link que no toca solo—; si no, el formulario de la página.
+        if action.id == Self.submitID, let page = reader.page, let control = pendingSubmit ?? pageForm(page) {
             pendingSubmit = nil
-            say("Pulsando «\(form.submit ?? action.label)».")
-            await reader.submit(form)
+            if control.kind == .form {
+                say("Pulsando «\(control.submit ?? action.label)».")
+                await reader.submit(control)
+            } else {
+                say("Pulsando «\(control.label)».")
+                await reader.activate(control)
+            }
             working = false
             await landed(reader)
             return
@@ -1837,6 +1843,11 @@ final class Assistant {
                 await write(field, of: chosen, goal: goal, on: reader)
                 return false
             }
+            // Y lo que compromete no se toca solo: queda para la mano.
+            guard await free(chosen, on: reader) else {
+                leaveToHand(chosen)
+                return false
+            }
             say("Abriendo \(chosen.label).")
             await reader.activate(chosen)
             return true
@@ -1862,6 +1873,12 @@ final class Assistant {
             // descripción de plantilla —"Estás en la portada de LA NACION"
             // parado en Deportes—.
             if first, let exact = Self.exactOption(for: goal, among: options), touched.insert(exact.id).inserted {
+                // Nombrarlo no es tocarlo: «confirmar» dicho en voz alta no
+                // aprieta «Confirmar». Lo que compromete queda para la mano.
+                guard await free(exact, on: reader) else {
+                    leaveToHand(exact)
+                    return
+                }
                 say("Abriendo «\(exact.label)».")
                 await reader.activate(exact)
                 working = false
@@ -2090,38 +2107,61 @@ final class Assistant {
     }
 
     /// Apretar el botón de un formulario porque la persona lo pidió, por voz
-    /// o escribiendo, sin tocarlo.
-    ///
-    /// Un buscador se aprieta. Lo demás lo juzga Jev con la pregunta
-    /// "¿compromete?" de `criterios.json`: por debajo del umbral se aprieta;
-    /// por encima, si Jev duda o si no contesta a tiempo, el botón queda
-    /// ofrecido con el nombre que le da la página y lo aprieta la mano. La
-    /// voz pide; la mano confirma lo que compromete.
+    /// o escribiendo, sin tocarlo. Pasa por `free`, como todo lo que JEF toca
+    /// por su cuenta.
     private func submitAsked(_ form: Action, on reader: ReaderModel) async {
-        let label = form.submit?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        if !Self.isSearch(form) {
-            var risk: Double?
-            if let analyzer, let page = reader.page {
-                working = true
-                risk = await analyzer.commits(button: label, form: form, page: page)
-                working = false
-            }
-            Registro.anotar("compromete", ["boton": label, "p": risk.map { String(format: "%.2f", $0) } ?? "sin respuesta"])
-            let limit = Criterios.actuales?.umbrales["compromete"] ?? 0
-            guard let risk, risk < limit else {
-                pendingSubmit = form
-                say(label.isEmpty
-                    ? "Ese botón puede confirmar algo: queda abajo, para tocarlo."
-                    : "«\(label)» puede confirmar algo: queda abajo, para tocarlo.")
-                offer = Offer(goal: "", options: [.link(id: Self.submitID, label: "Pulsar «\(label.isEmpty ? "enviar" : label)»", href: "", region: "main")])
-                return
-            }
+        let label = Self.pressName(form)
+        working = true
+        let free = await free(form, on: reader)
+        working = false
+        guard free else {
+            leaveToHand(form)
+            return
         }
         working = true
         say("Pulsando «\(label.isEmpty ? "enviar" : label)».")
         await reader.submit(form)
         working = false
         await landed(reader)
+    }
+
+    /// Si JEF puede tocar esto por su cuenta: un formulario, un botón o un
+    /// link que la persona pidió con palabras, sin tocarlo.
+    ///
+    /// Un buscador, sí. Lo demás lo juzga Jev con la pregunta "¿compromete?"
+    /// de `criterios.json`: por debajo del umbral, sí; por encima, si Jev duda
+    /// o si no contesta a tiempo, no. La voz pide; la mano confirma lo que
+    /// compromete. Antes sólo pasaban por acá los formularios, y un
+    /// «Confirmar» o un «Eliminar» hecho con un botón suelto —lo que Jev
+    /// eligió como el camino a lo pedido— se tocaba solo: la confianza en
+    /// cuál es el control no dice qué pasa al tocarlo.
+    private func free(_ control: Action, on reader: ReaderModel) async -> Bool {
+        if control.kind == .form, Self.isSearch(control) { return true }
+        let label = Self.pressName(control)
+        var risk: Double?
+        if let analyzer, let page = reader.page {
+            risk = await analyzer.commits(button: label, control: control, page: page)
+        }
+        Registro.anotar("compromete", ["boton": label, "p": risk.map { String(format: "%.2f", $0) } ?? "sin respuesta"])
+        let limit = Criterios.actuales?.umbrales["compromete"] ?? 0
+        return risk.map { $0 < limit } ?? false
+    }
+
+    /// Lo que JEF no toca solo queda ofrecido, con el nombre que le da la
+    /// página, para que lo toque la persona.
+    private func leaveToHand(_ control: Action) {
+        let label = Self.pressName(control)
+        pendingSubmit = control
+        say(label.isEmpty
+            ? "Ese botón puede confirmar algo: queda abajo, para tocarlo."
+            : "«\(label)» puede confirmar algo: queda abajo, para tocarlo.")
+        offer = Offer(goal: "", options: [.link(id: Self.submitID, label: "Pulsar «\(label.isEmpty ? "enviar" : label)»", href: "", region: "main")])
+    }
+
+    /// El nombre con que la página llama a lo que se aprieta: el botón de un
+    /// formulario, o el control mismo.
+    static func pressName(_ control: Action) -> String {
+        ((control.kind == .form ? control.submit : control.label) ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     /// Si la persona dijo ese valor: en este pedido, en el anterior o en la

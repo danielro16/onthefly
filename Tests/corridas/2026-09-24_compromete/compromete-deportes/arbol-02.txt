@@ -1,0 +1,20 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: lanacion.com.ar
+  4 [txt] Abriendo lanacion.com.ar.
+  5 [txt] Estás en la portada de La Nación, el diario de noticias de Argentina. La principal es un dato oficial: la pobreza creció a 32,3% en el primer semestre y hay 2 millones de pobres nuevos; también hay una sección en vivo sobre las medidas de Milei y la cotización del dólar.
+  6 [H] Vos: llevame a deportes
+  7 [txt] Abriendo «Deportes».
+  8 [txt] Estás en la sección de Deportes de LA NACION. La principal es que Lionel Scaloni probó una formación con Paz y Mastantuono juntos, de cara al primero de los amistosos de la selección, ya sin Lionel Messi en el grupo. Acá también hay noticias del caso Aramburú, Colapinto en Bakú y más.
+  9 [btn] La formación que probó Lionel Scaloni con el foco en el primero de los amistosos de la selección…  (Primera de 10 opciones.)
+ 10 [btn] Abrir «Fútbol»
+ 11 [btn] Abrir «La formación que probó Lionel Scaloni con el foco en el primero de los amistosos de la selección…»
+ 12 [btn] Abrir «Le Priol no nació siendo Hannibal Lecter", dijo su abogado: visualiza una pena "cercana a los 25…»
+ 13 [btn] Abrir «Colapinto pasó momentos de incomodidad en Bakú, pero tiene muy en claro los objetivos para el fin…»
+ 14 [btn] Abrir «Mientras preparan un final obligatorio ante Boca, futbolistas de Racing buscan otro título: el…»
+ 15 [btn] Leer los titulares
+ 16 [btn] Resumir la página
+ 17 [btn] Volver a la portada
+ 18 [btn] Otra cosa
+ 19 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 20 [btn] Enviar
