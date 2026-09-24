@@ -350,6 +350,30 @@ final class HeadlessWebView: NSObject {
         teardown()
     }
 
+    /// Lo que una acción hizo tarde, hasta `limit`: la página de una
+    /// navegación que recién empieza, o la que la página entregó sola. Nil si
+    /// no pasó nada.
+    ///
+    /// Hay botones que navegan un rato después del toque —un buscador que
+    /// primero consulta y después cambia de página—. A los 450 ms de
+    /// `navigationGrace` la página seguía igual, se decía "Formulario enviado.
+    /// La página no cambió." y los resultados llegaban un segundo después
+    /// (Gob.pe). Quien llama pregunta sólo si la página quedó igual: lo que
+    /// cambió ya contestó.
+    func lateChange(within limit: Duration) async throws -> ExtractedPage? {
+        guard let web = webView else { return nil }
+        let end = ContinuousClock.now.advanced(by: limit)
+        while ContinuousClock.now < end {
+            if navigationStarted || web.isLoading { return try await nextPage() }
+            if let page = unconsumed {
+                unconsumed = nil
+                return page
+            }
+            try? await Task.sleep(for: .milliseconds(150))
+        }
+        return nil
+    }
+
     /// Re-runs extraction in the live page and waits for the result.
     private func reextract(_ web: WKWebView) async throws -> ExtractedPage {
         unconsumed = nil

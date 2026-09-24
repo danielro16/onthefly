@@ -168,6 +168,11 @@ final class ReaderModel {
         }
     }
 
+    /// Cuánto más se espera, después de un toque o un envío que dejó la
+    /// página igual, a que haga algo. En Gob.pe la búsqueda navegaba un
+    /// segundo y medio después de enviarla.
+    static let lateLimit = Duration.milliseconds(2500)
+
     /// Una carga que otra más nueva reemplazó no falló: dejó de importar.
     ///
     /// El motor atiende una página por vez, y cuando llega un pedido nuevo le
@@ -192,7 +197,11 @@ final class ReaderModel {
 
         do {
             switch try await engine.activate(actionID: action.id, expecting: action.label) {
-            case .updated(let page):
+            case .updated(var page):
+                // Igual todavía: puede estar por navegar (`lateChange`).
+                if page.isEquivalent(to: self.page), let late = try await engine.lateChange(within: Self.lateLimit) {
+                    page = late
+                }
                 // A control that changed nothing is not an error and must not
                 // look like one.
                 guard !page.isEquivalent(to: self.page) else {
@@ -267,6 +276,11 @@ final class ReaderModel {
                             : "No se envió. \(detail)"
                     )
                     return
+                }
+                // Igual todavía: puede estar por navegar (`lateChange`).
+                var page = page
+                if page.isEquivalent(to: self.page), let late = try await engine.lateChange(within: Self.lateLimit) {
+                    page = late
                 }
                 guard !page.isEquivalent(to: self.page) else {
                     Voz.decir(
