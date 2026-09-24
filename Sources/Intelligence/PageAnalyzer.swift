@@ -359,19 +359,28 @@ actor PageAnalyzer {
         guard let first = await round(groups) else { return nil }
         var candidates: [Int] = []
         var here: [Double] = []
+        // Qué tan seguro está Jev, en cada tanda, de que ninguno lleva.
+        var none: [Double] = []
         for (group, answers) in zip(groups, first) {
             guard let answers else { continue }
             if case .boolean(let probability)? = answers["esta"] { here.append(probability) }
             guard case .choice(_, let probabilities, _)? = answers["cual"] else { continue }
+            none.append(probabilities["none"] ?? 0)
             // Los dos mejores de cada tanda, si valen algo: la final decide.
             candidates += probabilities.filter { $0.key != "none" && $0.value >= 0.1 }
                 .sorted { $0.value > $1.value }.prefix(2)
                 .compactMap { Int($0.key) }.filter { group.indices.contains($0) }.map { group[$0] }
         }
         guard !candidates.isEmpty else {
-            // Ninguna tanda tuvo un candidato: ninguno, si contestaron todas.
-            guard first.allSatisfy({ $0 != nil }) else { return nil }
-            return Found(choice: nil, confidence: 1, here: here.max())
+            // Ninguna tanda tuvo un candidato: ninguno, si contestaron todas, y
+            // tan seguro como la tanda menos segura de que no hay. Antes era
+            // seguro del todo: con la duda repartida entre muchas opciones,
+            // ninguna llegaba a 0,1, y "ninguno, seguro" mandaba a buscar
+            // afuera sin consultar a Gemini. En Mercado Libre, «¿cuánto sale
+            // el más barato?» con los precios en pantalla terminó en "No está
+            // en esta página".
+            guard none.count == groups.count else { return nil }
+            return Found(choice: nil, confidence: none.min() ?? 0, here: here.max())
         }
         guard let final = await round([candidates])?.first ?? nil,
               case .choice(let value, let probabilities, let confidence)? = final["cual"]
