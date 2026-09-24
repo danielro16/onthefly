@@ -1,0 +1,13 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790219586.9830508}
+{"tipo": "ubicacion", "pais": "US", "t": 1790219587.20485}
+{"tipo": "ubicacion", "t": 1790219587.2127051, "pais": "US"}
+{"quien": "persona", "tipo": "turno", "texto": "correos.es", "t": 1790219593.5573668}
+{"opciones": [], "t": 1790219593.558346, "tipo": "botones"}
+{"quien": "jef", "tipo": "turno", "texto": "Abriendo correos.es.", "t": 1790219593.5606441}
+{"cola": false, "texto": "Abriendo correos.es.", "tipo": "voz", "t": 1790219593.5608811}
+{"t": 1790219593.5942569, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"tipo": "error", "t": 1790219594.05492, "mensaje": "Could not load the page: The resource could not be loaded because the App Transport Security policy requires the use of a secure connection."}
+{"texto": "No pude abrir esa página. Puede ser la conexión o el sitio.", "quien": "jef", "t": 1790219594.0552511, "tipo": "turno"}
+{"tipo": "voz", "cola": true, "t": 1790219594.055445, "texto": "No pude abrir esa página. Puede ser la conexión o el sitio."}
+{"tipo": "botones", "t": 1790219594.055822, "opciones": ["Intentar de nuevo", "Otra cosa"]}
+{"tipo": "error", "mensaje": "No readable content found (undefined is not an object (evaluating 'page.blocks.length')).", "t": 1790219595.95469}

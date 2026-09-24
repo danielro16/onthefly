@@ -287,7 +287,15 @@ Daniel. Punto de partida marcado con la etiqueta `antes-de-ajustes`.
    titulares; y leer y resumir los nombra el código. Probado: ANSES (ya no
    «Completar «buscador»» ni «Pulsar «Search»»; los trámites como pregunta),
    gob.pe (buscar «pasaporte» con un botón), El Comercio (portada y nota),
-   IMSS. Falta la segunda parte: los avisos que tapan la página.
+   IMSS.
+   **Segunda parte (23/9):** los avisos que tapan la página (cookies, boletín,
+   edad, otros) ponen sus botones primero y entran al mapa, así que Jev los
+   encuentra si la persona los pide por escrito. Decide la persona: la app no
+   acepta ni rechaza por nadie (la decisión escrita en `Overlay`). Al tocar
+   uno, si la página quedó igual y sin aviso, «Listo: el aviso se cerró.» y
+   siguen sus pasos, sin volver a describirla. Probado en La Vanguardia:
+   «Rechazar» cerró el aviso y el sitio mostró otro (pagar o aceptar), que
+   también quedó primero; El Mundo y 20minutos, con sus avisos primero.
 
    Vistos en las pruebas, para después (no son de este paso):
    - gob.pe: los resultados de su buscador llegan sin título (el extractor
@@ -300,6 +308,8 @@ Daniel. Punto de partida marcado con la etiqueta `antes-de-ajustes`.
      archivo (RSS) deja a JEF sin página.
    - USPS: «FREE BOXES» del menú abre el buscador del sitio y Jev lo vuelve a
      elegir en los resultados.
+   - Correos (correos.es) no se lee en el simulador («No readable content
+     found»), también con el extractor anterior: ya pasaba.
    - GLM duda del tipo en páginas ambiguas (IMSS: portada, nota u otra) y a
      veces ofrece un solo paso donde se piden dos a cuatro.
 4. **Costo y velocidad:** topes en los esquemas, el mismo tope de texto, Jev en

@@ -569,5 +569,47 @@
         "tocar": "Leer"
       }
     ]
+  },
+  {
+    "id": "cookies-correos",
+    "persona": "Vive en España, ciega. Entra a Correos y le sale el aviso de cookies.",
+    "objetivo": "Que los botones del aviso sean lo primero, que al rechazar se cierre y queden los pasos de la página, y que después pueda seguir su envío.",
+    "pasos": [
+      {
+        "escribir": "correos.es"
+      },
+      {
+        "tocar": "Rechaz"
+      },
+      {
+        "escribir": "quiero saber dónde está mi paquete, el número es PK123456789ES"
+      }
+    ]
+  },
+  {
+    "id": "cookies-renfe",
+    "persona": "Vive en España, con baja visión. Entra a Renfe y le sale el aviso de privacidad.",
+    "objetivo": "Que los botones del aviso sean lo primero y que al contestar se cierre y queden los pasos de la página.",
+    "pasos": [
+      {
+        "escribir": "renfe.com"
+      },
+      {
+        "tocar": "Reject"
+      }
+    ]
+  },
+  {
+    "id": "cookies-lavanguardia",
+    "persona": "Vive en España, ciega. Entra al diario y le sale el aviso de cookies.",
+    "objetivo": "Que los botones del aviso vayan primero, que al rechazar se cierre y queden los titulares.",
+    "pasos": [
+      {
+        "escribir": "lavanguardia.com"
+      },
+      {
+        "tocar": "Rechazar"
+      }
+    ]
   }
 ]

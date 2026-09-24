@@ -1761,6 +1761,21 @@ final class Assistant {
             return
         }
 
+        // El botón de un aviso: se toca y, si la página quedó en su lugar y
+        // sin aviso, se siguen ofreciendo sus pasos, sin volver a contarla.
+        if target.region == "overlay", let page = reader.page {
+            let url = page.url
+            await reader.activate(target)
+            working = false
+            if let now = reader.page, now.url == url, now.overlay == nil {
+                say("Listo: el aviso se cerró.")
+                offer = Offer(goal: "", options: known[url]?.steps ?? [])
+                return
+            }
+            await landed(reader)
+            return
+        }
+
         say(target.kind == .link ? "Abriendo «\(target.label)»." : "Tocando «\(target.label)».")
         await reader.activate(target)
         working = false
@@ -2286,6 +2301,7 @@ final class Assistant {
             switch action.region {
             case "header", "banner", "nav", "navigation": return "\(short(action.label, 80)) (menu)"
             case "footer", "contentinfo": return "\(short(action.label, 80)) (footer)"
+            case "overlay": return "\(short(action.label, 80)) (on the notice covering the page)"
             default: return short(action.label, 80)
             }
         }
@@ -2798,6 +2814,20 @@ final class Assistant {
         } else if !ordered.isEmpty {
             offer = Offer(goal: "", options: ordered)
         }
+        // Un aviso que tapa la página se contesta primero, como lo haría quien
+        // ve: sus botones van adelante y decide la persona —la app no acepta
+        // ni rechaza cookies por nadie—. Pagar, iniciar sesión y la prueba
+        // anti-robot tienen su propio camino.
+        if let overlay = page.overlay, [.cookies, .newsletter, .age, .other].contains(overlay.kind), !overlay.choices.isEmpty {
+            // Todos: con tres, en El Mundo quedaban «Iniciar sesión», «nuestros
+            // socios» y «Configuración», y ni aceptar ni rechazar.
+            let covering = overlay.choices.map { choice in
+                targets["sug-\(choice.id)"] = Self.button(choice)
+                return Self.button(choice, id: "sug-\(choice.id)")
+            }
+            let rest = (offer?.options ?? []).filter { option in !covering.contains { $0.id == option.id } }
+            offer = Offer(goal: "", options: covering + rest)
+        }
     }
 
     /// Las opciones de una pregunta que no entraron: "Ver más opciones" las
@@ -2950,6 +2980,12 @@ final class Assistant {
             action.unnamed != true && (action.kind != .form || !(action.fields ?? []).isEmpty)
         }
 
+        // Lo que tapa la página va primero: sus botones son lo primero que se
+        // puede tocar, como para quien ve. La prueba anti-robot no: se
+        // resuelve en la página.
+        if let overlay = page.overlay, overlay.kind != .captcha {
+            for choice in overlay.choices { add(Self.button(choice)) }
+        }
         let actions = Dictionary(page.actions.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for entry in page.stream ?? [] {
@@ -2985,6 +3021,15 @@ final class Assistant {
         for action in page.actions where usable(action) { add(action) }
         // Jev admite 255 opciones por pregunta. Medido, no documentado.
         return Array(out.prefix(240))
+    }
+
+    /// Un botón de un aviso que tapa la página, como un elemento del mapa. El
+    /// extractor le puso su marca, así que se toca como cualquier control.
+    static func button(_ choice: Overlay.Choice, id: String? = nil) -> Action {
+        Action(
+            id: id ?? choice.id, kind: .button, label: choice.label, href: nil, fields: nil, submit: nil,
+            notices: nil, region: "overlay", unnamed: nil, cluster: nil, primary: nil, fresh: nil
+        )
     }
 
     /// El lugar, con el nombre que le daría una persona: "la portada de La

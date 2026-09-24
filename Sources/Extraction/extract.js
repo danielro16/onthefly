@@ -2601,7 +2601,7 @@
     /// olvidaste tu email?» is where. Structure, not words.
     const LANDMARKS = "body, main, nav, header, footer, aside, [role=main], [role=navigation], [role=banner], [role=contentinfo]";
     function namedByCard(el, href, label) {
-      for (let node = el; node && !node.matches(LANDMARKS); node = node.parentElement) {
+      for (let node = el; node && node.nodeType === Node.ELEMENT_NODE && !node.matches(LANDMARKS); node = node.parentElement) {
         for (const other of node.querySelectorAll("a[href]")) {
           const to = absolute(other.getAttribute("href") || "");
           if (to && to !== href && !isPruned(other)) return null;
@@ -2646,9 +2646,13 @@
       if (saidLinks.has(key)) return;
       saidLinks.add(key);
       const entry = { kind: "link", label: clip(label, 200), href: href };
-      if (!level && el) {
-        const card = namedByCard(el, href, label);
-        if (card) entry.context = clip(card, 80);
+      // Naming a link never costs the page: a card inside a shadow root or
+      // a node that is not an element just goes without a name.
+      if (!level && el && el.nodeType === Node.ELEMENT_NODE) {
+        try {
+          const card = namedByCard(el, href, label);
+          if (card) entry.context = clip(card, 80);
+        } catch (_) {}
       }
       if (level) entry.level = level;
       if (group) entry.group = group;
