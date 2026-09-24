@@ -721,5 +721,18 @@
         "escribir": "buscá zapatillas nike"
       }
     ]
+  },
+  {
+    "id": "leer-clarin",
+    "persona": "Vive en Argentina, ciego. Quiere que JEF le lea las noticias de Clarín.",
+    "objetivo": "Que llegando con la tarea pendiente, JEF sepa que es una portada y lea los titulares, no el pie de página.",
+    "pasos": [
+      {
+        "escribir": "entrá a clarín y leeme las noticias"
+      },
+      {
+        "tocar": "clarin.com"
+      }
+    ]
   }
 ]

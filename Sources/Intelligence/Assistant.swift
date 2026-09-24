@@ -624,10 +624,12 @@ final class Assistant {
         case .leer:
             guard let page = reader.page else { return }
             readingFrom = 0
+            await learnKind(page)
             readAloud(page)
 
         case .seguir:
             guard let page = reader.page else { return }
+            await learnKind(page)
             readAloud(page)
 
         case .resumir:
@@ -1608,12 +1610,14 @@ final class Assistant {
 
         // Leer y resumir no llevan a ningún lado: actúan sobre esta página.
         if action.id == Self.readID, let page = reader.page {
+            await learnKind(page)
             working = false
             readingFrom = 0
             readAloud(page)
             return
         }
         if action.id == Self.continueID, let page = reader.page {
+            await learnKind(page)
             working = false
             readAloud(page)
             return
@@ -3097,6 +3101,24 @@ final class Assistant {
             headings: headings, text: content,
             items: map.prefix(30).map { (text: $0.label, kind: $0.kind.rawValue, region: $0.region.isEmpty ? "main" : $0.region) },
             overlay: page.overlay?.kind == .captcha ? nil : page.overlay)
+    }
+
+    /// Qué es la página, si todavía no se sabe: se pregunta antes de leerla.
+    /// El tipo lo decían Jev o el modelo al describirla, y hay caminos que no
+    /// la describen —llegar con una tarea pendiente sigue derecho—: en el
+    /// iPhone de Daniel, la portada de Clarín se leyó como una nota, y lo que
+    /// Readability sacó de ella fue el pie ("Registro de Propiedad
+    /// Intelectual…"), con la página llevada al fondo.
+    private func learnKind(_ page: ExtractedPage) async {
+        guard known[page.url] == nil, let kinds = await kinds(of: page, map: Self.options(of: page)) else { return }
+        let sure = Criterios.actuales?.umbrales["tipo"] ?? 1
+        let kind: Answerer.Orientation.Kind = kinds.pageConfidence < sure ? .otra
+            : kinds.page == "front_page" ? .portada : kinds.page == "article" ? .nota : .otra
+        known[page.url] = (kind, [])
+        Registro.anotar("tipo", [
+            "url": page.url, "sitio": kinds.site, "p_sitio": String(format: "%.2f", kinds.siteConfidence),
+            "pagina": kinds.page, "p_pagina": String(format: "%.2f", kinds.pageConfidence), "modelo": "",
+        ])
     }
 
     /// Qué pidió el aviso de cada página, según Jev, cuando lo dijo seguro.
