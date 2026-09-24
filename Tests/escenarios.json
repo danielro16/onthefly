@@ -734,5 +734,18 @@
         "tocar": "clarin.com"
       }
     ]
+  },
+  {
+    "id": "portada-resumen-clarin",
+    "persona": "Vive en Argentina, ciego. Entra a Clarín y quiere saber qué pasa y escuchar los titulares.",
+    "objetivo": "Que al llegar JEF diga cuál es la noticia principal, con los titulares como botones, y que «Leer los titulares» los lea desde el primero.",
+    "pasos": [
+      {
+        "escribir": "clarin.com"
+      },
+      {
+        "tocar": "Leer los titulares"
+      }
+    ]
   }
 ]

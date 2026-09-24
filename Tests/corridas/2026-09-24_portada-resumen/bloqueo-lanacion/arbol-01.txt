@@ -1,0 +1,14 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: lanacion.com.ar
+  4 [txt] Abriendo lanacion.com.ar.
+  5 [txt] Estás en la portada de La Nación, el diario de noticias. La nota principal es un dato oficial: la pobreza creció a 32,3% en el primer semestre, con 2 millones de pobres nuevos. También hay en vivo sobre las medidas de Milei y el dólar, actualizado hace 3 minutos.
+  6 [btn] Abrir «La pobreza creció a 32,3% en el primer semestre y hay 2 millones de pobres nuevos»  (Primera de 7 opciones.)
+  7 [btn] Abrir «En EE.UU. Milei, ante inversores: “Si somos reelectos, 2028 será el mejor año económico de la…»
+  8 [btn] Abrir «Delegaciones abandonan la sala antes del discurso de Netanyahu y él las acusa de “cobardes”»
+  9 [btn] Abrir «Mientras más argentinos se sumergen en la pobreza, se descartan 73 millones de kilos de alimentos…»
+ 10 [btn] Leer los titulares
+ 11 [btn] Resumir la página
+ 12 [btn] Otra cosa
+ 13 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 14 [btn] Enviar

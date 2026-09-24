@@ -151,8 +151,6 @@ final class Assistant {
     /// Las opciones que había antes de "Otra cosa", para volver a ellas.
     private var stashed: Offer?
     static let restoreID = "jef-volver-a-las-opciones"
-    /// Los titulares que se dijeron al llegar a una portada.
-    private var leadSaid = 0
     /// Lo que ya se dijo de esta página —al llegar y al contestar—, para
     /// no repetirlo: el resumen repetía la presentación de la nota, y se
     /// ofrecía "¿Qué temperaturas se esperan?" después de decirlas.
@@ -1453,11 +1451,8 @@ final class Assistant {
         let unit = readingUnit(page)
         let first = chunk.startIndex + 1, last = chunk.endIndex
         if unit == "Titular" {
-            // Sin el total —"de 143" contaba lo que el sitio repite— y
-            // diciendo por qué no empieza en el 1: "Titulares 5 a 7" sin más
-            // sonaba a que se habían perdido cuatro.
-            let skipped = first == leadSaid + 1 && leadSaid > 0 ? "Los \(leadSaid) primeros ya los dije. " : ""
-            say(first == last ? "\(skipped)Titular \(first):" : "\(skipped)Titulares \(first) a \(last):")
+            // Sin el total: "de 143" contaba lo que el sitio repite.
+            say(first == last ? "Titular \(first):" : "Titulares \(first) a \(last):")
         } else {
             say(first == last
                 ? "\(unit) \(first) de \(pieces.count):"
@@ -2710,6 +2705,7 @@ final class Assistant {
         }
         working = false
         guard let orientation else { describe(page); return }
+        if !orientation.cut.isEmpty { Registro.anotar("cifras_sacadas", ["url": page.url, "oraciones": orientation.cut]) }
         // Qué es la página: lo de Jev si estaba seguro, si no lo del modelo,
         // que la leyó. Lo demás —leer, "Volver a la portada", lo que se
         // ofrece después— lo pregunta acá.
@@ -2730,7 +2726,6 @@ final class Assistant {
         // que el modelo eligiera los botones por número, nombraba unos y
         // ofrecía otros.
         var lead = readsHeadlines(page) ? Array(Self.headlines(of: page).prefix(4)) : []
-        var spoken = lead.map(Self.dekick)
         // Lo que Gemini llamó ruido: por id, para esta página. No se sugiere
         // —tampoco su formulario—, pero Jev lo sigue viendo al navegar.
         noisy = (page.url, Set(orientation.noise.compactMap { map.indices.contains($0 - 1) ? map[$0 - 1].id : nil }))
@@ -2741,7 +2736,6 @@ final class Assistant {
         // ya había marcado como ruido, y se decían igual.
         let noisyTitles = Set(noisyLabels.map(Self.tidy))
         lead = lead.filter { !noisyTitles.contains(Self.tidy($0)) }
-        spoken = lead.map(Self.dekick)
 
         remember(orientation.text, on: page)
         if lead.isEmpty {
@@ -2755,23 +2749,14 @@ final class Assistant {
                 say(orientation.text)
             }
         } else {
-            // Los titulares, tal cual los escribió el diario y dichos por el
-            // código. Reescritos por el modelo salían distintos en cada visita
-            // —tres versiones del mismo titular de Adorni— y con cosas que no
-            // estaban ("sobreseyó a un acusado"). En pantalla no se repiten:
-            // son los botones que siguen.
-            let list = spoken.enumerated().map { "\($0.offset + 1). \(Self.sentence($0.element))" }.joined(separator: " ")
-            // Una frase que el modelo dejó abierta para los titulares —"Estás
-            // en la portada de Clarín y sus titulares son:"— queda colgando:
-            // el lugar lo dice la plantilla.
-            // Y de lo que dijo, sólo la primera oración: pedido que no nombre
-            // titulares, igual agregaba las cotizaciones del dólar.
-            let said = orientation.text.trimmingCharacters(in: .whitespaces)
-            let first = said.range(of: ". ").map { String(said[..<$0.lowerBound]) + "." } ?? said
-            let intro = first.hasSuffix(":") ? "Estás en \(whereIs(page))." : first
-            say("\(intro) Los titulares principales son las primeras opciones.",
-                aloud: "\(intro) Los titulares principales: \(list)")
-            leadSaid = lead.count
+            // La portada, resumida: el sitio y la noticia principal, dichos por
+            // el modelo con lo que la página dice (las cifras se verifican).
+            // Antes el modelo no podía nombrar ninguna y el código leía los
+            // primeros cuatro titulares tal cual; en pantalla sólo quedaba
+            // "Los titulares principales son las primeras opciones", y en
+            // Clarín faltaba justo la principal (Daniel). Los titulares siguen
+            // textuales: son los botones, y "Leer los titulares" los dice.
+            say(orientation.text)
         }
         let what = isArticle(page) ? Self.the(page) : "la página"
         let options: [Action] = orientation.suggestions.compactMap { suggestion in
@@ -2823,17 +2808,15 @@ final class Assistant {
             // dijo "para sacar un turno, tenés que ir a la sección Turnos", y
             // los botones eran sólo los primeros titulares: el de Turnos no
             // estaba.
-            // Los cuatro ya se dijeron: "dame los titulares" sigue desde el
-            // quinto en vez de repetirlos.
-            readingURL = page.url
-            readingFrom = lead.count
             // En una portada el modelo sugiere sólo para lo que la persona vino
             // a hacer, si no es leer noticias: eso va primero. Sin tarea no
             // hay para qué, y se verifica acá: GLM sugería «LO ÚLTIMO» y
             // «Lima - navegación principal» antes que los titulares.
             let hrefs = Set(named.compactMap(\.href))
             let forGoal = task == nil ? [] : ordered.filter { $0.id.hasPrefix("sug-") && !hrefs.contains($0.href ?? "") }.prefix(2)
-            ordered = Array(forGoal) + named + ordered.filter { !$0.id.hasPrefix("sug-") }
+            // Y escucharlos todos, de a tres: los lee el código, tal cual.
+            let hear = Action.link(id: Self.readID, label: "Leer los titulares", href: "", region: "main")
+            ordered = Array(forGoal) + named + [hear] + ordered.filter { !$0.id.hasPrefix("sug-") }
         }
         // Una opción por id: dos "leer" con el mismo id eran, para VoiceOver,
         // el mismo botón dos veces con nombres distintos.

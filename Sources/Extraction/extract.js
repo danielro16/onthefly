@@ -2599,6 +2599,7 @@
     /// heading becomes the link, and everything else in the card is read as
     /// before. Structure and geometry only: no class names, no words.
     const headlineLinks = new WeakMap();
+    const linkEntries = new Map();
     /// Whether the link lies over the heading, as a stretched card link
     /// does — the one a finger on the headline would press. Wikipedia's
     /// edit pencil sits beside its section heading and is no headline's.
@@ -2611,11 +2612,27 @@
     (function pairEmptyLinks() {
       const free = function (h) { return !h.closest("a[href]") && !h.querySelector("a[href]"); };
       for (const a of document.querySelectorAll("a[href]")) {
-        // No visible text: an aria-label names it for a screen reader —
-        // Clarín's says the whole headline — but the walk reads what is shown.
-        if (isPruned(a) || textOf(a) || a.querySelector("img[alt]:not([alt=''])")) continue;
+        if (isPruned(a)) continue;
         const to = absolute(a.getAttribute("href") || "");
         if (!to || !opens(to)) continue;
+        // A link that says exactly what the unlinked heading of its card
+        // says is that headline's link: El Universo's lead is an <h2> that
+        // is no link and, apart, a link with the same words.
+        const said = plain(textOf(a));
+        if (said) {
+          for (let up = a.parentElement; up && up.nodeType === Node.ELEMENT_NODE && !up.matches("body, main, nav, header, footer, aside, [role=main], [role=navigation], [role=banner], [role=contentinfo]"); up = up.parentElement) {
+            const headings = Array.prototype.filter.call(up.querySelectorAll("h1, h2, h3, h4, h5, h6, [role=heading]"), free);
+            if (!headings.length) continue;
+            if (headings.length === 1 && plain(textOf(headings[0])) === said && !headlineLinks.has(headings[0])) {
+              headlineLinks.set(headings[0], to);
+            }
+            break;
+          }
+          continue;
+        }
+        // No visible text: an aria-label names it for a screen reader —
+        // Clarín's says the whole headline — but the walk reads what is shown.
+        if (a.querySelector("img[alt]:not([alt=''])")) continue;
         for (let up = a.parentElement; up && up.nodeType === Node.ELEMENT_NODE && !up.matches("body, main, nav, header, footer, aside, [role=main], [role=navigation], [role=banner], [role=contentinfo]"); up = up.parentElement) {
           const headings = Array.prototype.filter.call(up.querySelectorAll("h1, h2, h3, h4, h5, h6, [role=heading]"), free);
           if (!headings.length) continue;
@@ -2685,9 +2702,16 @@
       // The same link twice is the same link to a person — the rule the
       // action pass already applies to a mobile nav repeating the desktop's.
       const key = plain(label) + "|" + href;
-      if (saidLinks.has(key)) return;
+      if (saidLinks.has(key)) {
+        // Met again as a headline —its card's heading after its own link—:
+        // the link already read becomes the headline, once.
+        const earlier = linkEntries.get(key);
+        if (level && earlier && !earlier.level) earlier.level = level;
+        return;
+      }
       saidLinks.add(key);
       const entry = { kind: "link", label: clip(label, 200), href: href };
+      linkEntries.set(key, entry);
       // Naming a link never costs the page: a card inside a shadow root or
       // a node that is not an element just goes without a name.
       if (!level && el && el.nodeType === Node.ELEMENT_NODE) {

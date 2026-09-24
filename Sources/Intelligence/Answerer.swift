@@ -1,4 +1,5 @@
 import Foundation
+import NaturalLanguage
 
 /// Contesta preguntas sobre lo que la página dice.
 ///
@@ -172,6 +173,8 @@ actor Answerer {
         /// Los números de la lista (desde 1) que son ruido para quien llega:
         /// no se sugieren. Con la definición de `criterios.json`.
         var noise: [Int] = []
+        /// Las oraciones que se sacaron por una cifra que no está en la página.
+        var cut: [String] = []
         /// En una página que es una lista de opciones parecidas —trámites,
         /// categorías, planes— cuando lo pedido no dice cuál: la pregunta, y
         /// las opciones (números de la lista, desde 1) para contestarla. En
@@ -220,7 +223,7 @@ actor Answerer {
             "vino": goal, "tipo": kinds, "lista": list, "texto": page,
         ], maxTokens: 1100)
         guard let parsed,
-              let text = parsed["respuesta"] as? String, !text.isEmpty
+              var text = parsed["respuesta"] as? String, !text.isEmpty
         else { throw AnswerError.unusable }
         // Cuántas opciones ofrece para su pregunta: "hay 18 trámites" no está
         // escrito en la página, pero se verifica contra los botones que se
@@ -231,7 +234,24 @@ actor Answerer {
         let missing = figures.filter {
             !Self.figureAppears($0, in: page + "\n" + list) && String($0.filter(\.isNumber)) != offered
         }
-        guard missing.isEmpty else { throw AnswerError.unverified(missing) }
+        // Una cifra que no está en la página se lleva su oración, no la
+        // descripción entera: en Clarín, "28,2%" —calculado, no escrito—
+        // tiraba también los botones y "Leer los titulares". Si no queda
+        // ninguna oración, sí se descarta.
+        var cut: [String] = []
+        if !missing.isEmpty {
+            let sentences = Self.sentences(of: text)
+            let kept = sentences.filter { (sentence: String) -> Bool in
+                let digits = String(sentence.filter { $0.isNumber })
+                return !missing.contains { (figure: String) -> Bool in
+                    let own = String(figure.filter { $0.isNumber })
+                    return sentence.contains(figure) || (!own.isEmpty && digits.contains(own))
+                }
+            }
+            guard !kept.isEmpty else { throw AnswerError.unverified(missing) }
+            cut = sentences.filter { !kept.contains($0) }
+            text = kept.joined(separator: " ")
+        }
 
         // El ruido, por número y con su tipo: sólo números que estén en la
         // lista y tipos que estén en `criterios.json`. Una marca sin tipo
@@ -264,8 +284,19 @@ actor Answerer {
         let question = (parsed["pregunta"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
         return Orientation(
             kind: (parsed["tipo_de_pagina"] as? String).flatMap(Orientation.Kind.init(rawValue:)) ?? .otra,
-            text: text, suggestions: Array(suggestions.prefix(4)), noise: noise,
+            text: text, suggestions: Array(suggestions.prefix(4)), noise: noise, cut: cut,
             question: choices.isEmpty || question?.isEmpty != false ? nil : question, choices: choices)
+    }
+
+    /// Las oraciones de un texto, en cualquier idioma: las corta el
+    /// segmentador del sistema (NaturalLanguage, reglas de Unicode), no una
+    /// lista de signos nuestra.
+    static func sentences(of text: String) -> [String] {
+        let tokenizer = NLTokenizer(unit: .sentence)
+        tokenizer.string = text
+        return tokenizer.tokens(for: text.startIndex..<text.endIndex)
+            .map { text[$0].trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
     }
 
     /// Marcas de dos letras para una lista: "bb", "bc", "bd"… Sin vocales,
