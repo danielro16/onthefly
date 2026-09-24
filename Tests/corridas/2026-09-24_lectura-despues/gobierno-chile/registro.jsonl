@@ -1,0 +1,17 @@
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790291083.396831}
+{"t": 1790291083.6954699, "tipo": "ubicacion", "pais": "US"}
+{"t": 1790291083.696212, "tipo": "ubicacion", "pais": "US"}
+{"texto": "www.gob.cl", "tipo": "turno", "t": 1790291090.01265, "quien": "persona"}
+{"tipo": "botones", "opciones": [], "t": 1790291090.013657}
+{"texto": "Abriendo gob.cl.", "tipo": "turno", "t": 1790291090.014377, "quien": "jef"}
+{"texto": "Abriendo gob.cl.", "tipo": "voz", "cola": false, "t": 1790291090.014668}
+{"t": 1790291090.0972319, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"url": "https://www.gob.cl/", "red_ms": 565, "apurada": false, "leida_ms": 1080, "tipo": "carga", "t": 1790291091.7327418}
+{"titulo": "Un momento…", "url": "https://www.gob.cl/", "texto": "PAGE: www.gob.cl — Un momento…\n\nPAGE CONTENT (what the person came for):\nwww.gob.cl\nVerificación de seguridad en curso\nEste sitio web utiliza un servicio de seguridad para protegerse contra bots maliciosos. Esta página se muestra mientras el sitio web verifica que tú no eres un bot.\nwww.gob.cl\nVerificación de seguridad en curso\nEste sitio web utiliza un servicio de seguridad para protegerse contra bots maliciosos. Esta página se muestra mientras el sitio web verifica que tú no eres un bot.\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nRay ID: a4056e34fccac777\nRendimiento y seguridad de Cloudflare Privacidad", "tipo": "pagina", "t": 1790291091.7338529}
+{"opciones": [], "t": 1790291091.733986, "tipo": "botones"}
+{"url": "https://www.gob.cl/", "pagina": "other", "aviso_extractor": "", "t": 1790291094.287705, "aviso": "", "modelo": "otra", "sitio": "government", "p_aviso": "0.00", "p_sitio": "0.99", "p_pagina": "1.00", "tipo": "tipo"}
+{"tipo": "ruido", "t": 1790291094.288558, "url": "https://www.gob.cl/", "elementos": ["Cloudflare"]}
+{"t": 1790291094.289044, "quien": "jef", "texto": "Estás en el sitio del Gobierno de Chile, en una página de verificación de seguridad; indica que está comprobando que no eres un bot malicioso. No aparece aquí el contenido del sitio.", "tipo": "turno"}
+{"t": 1790291094.28976, "cola": true, "texto": "Estás en el sitio del Gobierno de Chile, en una página de verificación de seguridad; indica que está comprobando que no eres un bot malicioso. No aparece aquí el contenido del sitio.", "tipo": "voz"}
+{"opciones": ["Abrir «Privacidad»"], "t": 1790291094.2905211, "tipo": "botones"}
+{"opciones": ["Abrir «Privacidad»", "Otra cosa"], "t": 1790291094.29078, "tipo": "botones"}

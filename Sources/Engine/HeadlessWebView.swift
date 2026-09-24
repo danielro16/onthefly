@@ -76,6 +76,12 @@ final class HeadlessWebView: NSObject {
     private var loadStart: ContinuousClock.Instant?
     private var loadEnd: ContinuousClock.Instant?
     private var hurried = false
+    /// Cuánto después de terminar la carga se lee la página, si todavía no se
+    /// leyó sola: la red de seguridad, o poco en los resultados de una
+    /// búsqueda (`extract(url:results:)`).
+    private var readAfterLoad = HeadlessWebView.safetyNet
+    private static let safetyNet = Duration.seconds(3)
+    private static let resultsRead = Duration.milliseconds(500)
     /// Cuántas páginas se leyeron: una falla que llega tarde no pisa una
     /// página que llegó después (ver `receive`).
     private var pagesRead = 0
@@ -99,10 +105,19 @@ final class HeadlessWebView: NSObject {
     ///
     /// One extraction at a time per instance; a second call while one is in
     /// flight fails the earlier one rather than silently interleaving.
-    func extract(url: URL) async throws -> ExtractedPage {
+    ///
+    /// `results`: es la página de resultados de una búsqueda que pidió JEF.
+    /// El buscador sigue cambiando su página después de cargar y nunca se
+    /// queda quieto: se esperaban 1,6–2,3 s más, con los resultados ya ahí.
+    /// Se lee a `resultsRead` de terminar la carga. Sólo ahí: en los sitios la
+    /// espera casi no se nota al lado de la orientación, y un sitio que arma
+    /// su contenido después de cargar (Renfe) se leía a medias y había que
+    /// orientarlo dos veces.
+    func extract(url: URL, results: Bool = false) async throws -> ExtractedPage {
         settle(.failure(CancellationError()))
         let web = try session()
         await blocking?.value
+        readAfterLoad = results ? Self.resultsRead : Self.safetyNet
 
         // Anything that arrived before this load belongs to the previous page.
         unconsumed = nil
@@ -636,7 +651,8 @@ extension HeadlessWebView: WKNavigationDelegate {
         hurried = false
     }
 
-    /// La red de seguridad: si a los 3 s de terminar la carga el extractor
+    /// La red de seguridad: si a los 3 s de terminar la carga (medio segundo
+    /// en los resultados de una búsqueda, ver `extract`) el extractor
     /// todavía no entregó la página, se le pide que la lea ya, sin esperas.
     /// Sus esperas corren con los relojes de la página, y en un WebView
     /// fuera de pantalla a veces se estiran: en Clarín, una de 6 s tardó 20,
@@ -645,8 +661,10 @@ extension HeadlessWebView: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         let started = navigations
         loadEnd = .now
+        let wait = readAfterLoad
+        readAfterLoad = Self.safetyNet
         Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .seconds(3))
+            try? await Task.sleep(for: wait)
             guard let self, self.navigations == started, self.continuation != nil else { return }
             self.hurried = true
             _ = try? await webView.evaluateJavaScript("window.__jefExtractNow && window.__jefExtractNow()")

@@ -877,7 +877,7 @@ final class Assistant {
         } ?? goal
         say("Buscando: \(goal).")
         reader.address = Self.searchURL(for: goal)
-        await reader.go()
+        await reader.go(results: true)
         // Lo que cargó no es la página de resultados: el buscador pidió
         // comprobar que no es un robot ("tráfico inusual"). Se cuenta lo que
         // hay, como cualquier llegada; "No encontré resultados" decía que no

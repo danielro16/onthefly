@@ -149,7 +149,9 @@ final class ReaderModel {
         }
     }
 
-    func go() async {
+    /// `results`: es la página de resultados de una búsqueda que pidió el
+    /// asistente, que se lee apenas carga (`HeadlessWebView.extract`).
+    func go(results: Bool = false) async {
         guard let url = Self.normalize(address) else {
             state = .failed("Eso no parece una dirección web.")
             return
@@ -158,7 +160,7 @@ final class ReaderModel {
         state = .loading(url)
 
         do {
-            let page = try await engine.extract(url: url)
+            let page = try await engine.extract(url: url, results: results)
             address = page.url
             state = .loaded(page)
             engine.scrollToTop()

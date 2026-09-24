@@ -1,0 +1,4 @@
+  1 [txt] www.fravega.com quiere utilizar tu ubicación actual
+  2 [txt] Este sitio web utilizará tu ubicación exacta porque actualmente JEF tiene acceso a este dato.
+  3 [btn] No permitir
+  4 [btn] Permitir
