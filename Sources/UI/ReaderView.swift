@@ -246,6 +246,14 @@ final class ReaderModel {
         return (item.title ?? "", item.url.absoluteString)
     }
 
+    /// Cierra lo que tapa la página con Escape, sin tocar nada, y la lee
+    /// como quedó (`HeadlessWebView.dismiss`).
+    func dismiss() async {
+        guard let page = try? await engine.dismiss(), !page.isEquivalent(to: self.page) else { return }
+        address = page.url
+        state = .loaded(page)
+    }
+
     /// Vuelve a leer la página tal como está ahora.
     func reread() async {
         guard let page = try? await engine.reread() else { return }

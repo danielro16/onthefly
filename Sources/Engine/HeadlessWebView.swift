@@ -340,6 +340,15 @@ final class HeadlessWebView: NSObject {
         return try await reextract(web)
     }
 
+    /// Cierra lo que tapa la página con Escape (`__jefDismiss`) y la lee
+    /// otra vez, como quedó.
+    func dismiss() async throws -> ExtractedPage {
+        guard let web = webView else { throw ExtractionError.noSession }
+        _ = try? await web.evaluateJavaScript("window.__jefDismiss && window.__jefDismiss()")
+        try? await Task.sleep(for: Self.navigationGrace)
+        return try await reextract(web)
+    }
+
     /// Reads the live page again, as it is now: after the person solved a
     /// challenge on the page itself, for instance.
     func reread() async throws -> ExtractedPage {

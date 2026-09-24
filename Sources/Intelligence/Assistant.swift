@@ -2830,9 +2830,10 @@ final class Assistant {
         if await moved() { return }
         let sure = Criterios.actuales?.umbrales["tipo"] ?? 1
         if let kinds, let notice = kinds.notice, kinds.noticeConfidence >= sure { notices[page.url] = notice }
-        // Un aviso de cookies se contesta como eligió la persona, sin decir
-        // nada, y se cuenta la página que queda (`answerCookies`).
-        if await answerCookies(page, on: reader) {
+        // Un aviso de cookies se contesta como eligió la persona, y la
+        // propaganda se cierra, sin decir nada; se cuenta la página que queda
+        // (`answerNotice`).
+        if await answerNotice(page, on: reader) {
             working = false
             if let now = reader.page { await arrived(now, on: reader, again: again) }
             return
@@ -3286,28 +3287,52 @@ final class Assistant {
         }
     }
 
-    /// Las direcciones donde ya se contestó un aviso de cookies: si el aviso
-    /// sigue después de tocar el botón, no se vuelve a tocar.
-    private var cookiesAnswered: Set<String> = []
+    /// Las direcciones donde ya se contestó un aviso: si sigue después de
+    /// tocar el botón, no se vuelve a tocar.
+    private var noticesAnswered: Set<String> = []
 
-    /// Contesta un aviso de cookies como eligió la persona, sin decir nada:
-    /// Jev elige el botón que hace eso, por lo que dicen el aviso y sus
-    /// botones, en cualquier idioma. Si no llega al umbral, el aviso queda
-    /// como antes, con sus botones primero, y decide la persona. True si se
-    /// tocó un botón.
-    private func answerCookies(_ page: ExtractedPage, on reader: ReaderModel) async -> Bool {
-        guard let overlay = page.overlay, noticeKind(page) == .cookies, !overlay.choices.isEmpty,
-              let want = Self.cookiesWanted, let analyzer, cookiesAnswered.insert(page.url).inserted
-        else { return false }
-        let answer = await analyzer.cookieButton(want, text: overlay.text, among: overlay.choices.map(\.label))
+    /// Contesta, sin decir nada, el aviso que tapa la página, si es de los
+    /// que no le piden nada a la persona:
+    /// - cookies: como ella eligió (`cookiesWanted`);
+    /// - propaganda, bajar la app, boletines, otros: se cierra. Tapaban la
+    ///   página —en La Vanguardia, «SUSCRÍBETE / Ahora no»— y quedaban
+    ///   arriba (Daniel).
+    /// Iniciar sesión, pagar, la edad y la prueba anti-robot no: son una
+    /// decisión de la persona o un muro. Jev elige el botón, por lo que dicen
+    /// el aviso y sus botones, en cualquier idioma; si no llega al umbral, el
+    /// aviso queda como antes y decide la persona. True si se tocó un botón.
+    private func answerNotice(_ page: ExtractedPage, on reader: ReaderModel) async -> Bool {
+        guard let overlay = page.overlay, let analyzer, let kind = noticeKind(page) else { return false }
+        let key: String, want: String?
+        switch kind {
+        case .cookies:
+            guard let wanted = Self.cookiesWanted else { return false }
+            (key, want) = ("cookies", wanted)
+        case .newsletter, .other:
+            (key, want) = ("cerrar", nil)
+        case .login, .paywall, .age, .captcha:
+            return false
+        }
+        guard noticesAnswered.insert(page.url).inserted else { return false }
+        let answer = overlay.choices.isEmpty ? nil
+            : await analyzer.noticeButton(key, want: want, text: overlay.text, among: overlay.choices.map(\.label))
         let index = answer.flatMap { Int($0.choice) }.flatMap { overlay.choices.indices.contains($0) ? $0 : nil }
-        Registro.anotar("cookies", [
-            "url": page.url, "quiere": want, "p": answer.map { String(format: "%.2f", $0.probability) } ?? "",
+        Registro.anotar("aviso_contestado", [
+            "url": page.url, "pregunta": key, "p": answer.map { String(format: "%.2f", $0.probability) } ?? "",
             "boton": index.map { overlay.choices[$0].label } ?? answer?.choice ?? "sin respuesta",
         ])
-        guard let index, let answer, answer.probability >= Criterios.actuales?.umbrales["cookies"] ?? 1 else { return false }
-        await reader.activate(Self.button(overlay.choices[index]))
-        return true
+        if let index, let answer, answer.probability >= Criterios.actuales?.umbrales[key] ?? 1 {
+            await reader.activate(Self.button(overlay.choices[index]))
+            return true
+        }
+        // Sin un botón que sólo lo cierre —el de cerrar suele ser una «×»
+        // dibujada, sin nombre—, la propaganda se cierra con Escape, como
+        // pide el estándar de los diálogos. Si sigue ahí, queda como antes.
+        guard key == "cerrar" else { return false }
+        await reader.dismiss()
+        let closed = reader.page.map { $0.overlay == nil } ?? false
+        Registro.anotar("aviso_escape", ["url": page.url, "cerrado": closed ? "si" : "no"])
+        return closed
     }
 
     private func noticeKind(_ page: ExtractedPage) -> Overlay.Kind? {

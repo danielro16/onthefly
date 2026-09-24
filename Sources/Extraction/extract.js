@@ -3460,6 +3460,20 @@ allowedVideoRegex: /^$/,
     return out;
   };
 
+  /// Closes what covers the page the standard way, as a keyboard does:
+  /// Escape, which the WAI-ARIA dialog pattern asks every modal to honor.
+  /// Nothing on the page is pressed. For notices whose close button has no
+  /// name, a drawn "×" the reader cannot offer.
+  window.__jefDismiss = function () {
+    const target = document.activeElement || document.body || document.documentElement;
+    for (const type of ["keydown", "keyup"]) {
+      target.dispatchEvent(new KeyboardEvent(type, {
+        key: "Escape", code: "Escape", keyCode: 27, which: 27, bubbles: true, cancelable: true,
+      }));
+    }
+    return true;
+  };
+
   /// What a field holds now, as `__jefFill` left it or as the page changed
   /// it after reacting. A radio group answers with its checked option.
   window.__jefValue = function (fieldId) {
