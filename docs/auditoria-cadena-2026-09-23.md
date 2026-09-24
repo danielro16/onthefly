@@ -411,6 +411,11 @@ extractor ya no leía); en Google («seguro de auto») el texto baja un tercio
 y las listas sacan 2 de 3 anuncios: el tercero lo sacó Jev, así que Jev
 sigue en Google. Sin mejora de carga en el simulador. **Rompen Clarín:** con
 cualquiera de las dos, falló o tardó más de 20 s en 5 de 6 cargas; sin
-ellas, 4,5 s siempre. Quedan en la app **apagadas** (ajuste de prueba
-`bloqueo`) hasta saber si es de las listas o de cómo el extractor decide que
-la página terminó de cargar.
+ellas, 4,5 s siempre.
+
+**Decisión (Daniel, 24/9): se sacan.** No aportan en lo que JEF lee y
+cuestan (14 MB, actualizarlas, sitios rotos). Filtran ya: Jev en Google
+(anuncio ≥ 0,7; si se cuela uno, se ofrece como un resultado más), el
+extractor, que no lee los marcos donde van los anuncios, y el ruido de la
+orientación, que nunca se sugiere. "No importa si se cuelan anuncios; lo
+importante es que algo filtre." El trabajo queda en el commit 372e642.
