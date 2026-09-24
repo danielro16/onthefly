@@ -3758,6 +3758,13 @@ allowedVideoRegex: /^$/,
   function extractAndSend(onlyIfChanged) {
     try {
       const page = extract();
+      // Nothing to read is said as it is: its signature threw, and the app
+      // heard "page.blocks.length" instead of "no-article".
+      if (!page.ok) {
+        send(page);
+        watchLateChanges();
+        return;
+      }
       const signature = signatureOf(page);
       if (onlyIfChanged && signature === lastSignature) {
         watchLateChanges();

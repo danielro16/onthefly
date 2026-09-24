@@ -76,6 +76,12 @@ final class HeadlessWebView: NSObject {
     private var loadStart: ContinuousClock.Instant?
     private var loadEnd: ContinuousClock.Instant?
     private var hurried = false
+    /// Cuántas páginas se leyeron: una falla que llega tarde no pisa una
+    /// página que llegó después (ver `receive`).
+    private var pagesRead = 0
+    /// Cuánto se espera, después de una página sin nada que leer, a que la
+    /// redirección que suele seguir empiece. En ANSES, más de medio segundo.
+    private static let redirectWait = Duration.milliseconds(2500)
     private var continuation: CheckedContinuation<ExtractedPage, Error>?
     /// A page that arrived while nobody was waiting for one. The next waiter
     /// takes it instead of blocking on a load that already happened.
@@ -569,12 +575,28 @@ final class HeadlessWebView: NSObject {
         let decoder = JSONDecoder()
 
         if let page = try? decoder.decode(ExtractedPage.self, from: data), page.ok {
+            pagesRead += 1
             deliver(.success(page))
             return
         }
 
         if let failure = try? decoder.decode(ExtractionFailure.self, from: data) {
-            deliver(.failure(ExtractionError.notReadable(failure.message ?? failure.reason)))
+            // Una página sin nada que leer puede ser el paso intermedio de
+            // una redirección: si ya carga otra, o empieza a cargar dentro
+            // de `redirectWait`, o la misma página llega a leerse, lo que vale
+            // es eso, que llega solo. En ANSES se decía "No pude abrir esa
+            // página" y la de turnos cargaba al segundo.
+            let started = navigations, read = pagesRead
+            Task { @MainActor [weak self] in
+                let end = ContinuousClock.now.advanced(by: Self.redirectWait)
+                while ContinuousClock.now < end {
+                    guard let self, self.navigations == started, self.pagesRead == read,
+                          self.webView?.isLoading != true else { return }
+                    try? await Task.sleep(for: .milliseconds(150))
+                }
+                guard let self, self.navigations == started, self.pagesRead == read else { return }
+                self.deliver(.failure(ExtractionError.notReadable(failure.message ?? failure.reason)))
+            }
             return
         }
 
