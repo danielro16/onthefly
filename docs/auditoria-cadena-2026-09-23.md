@@ -164,3 +164,62 @@ Esto está bien resuelto y hay que conservarlo:
 
 Los puntos 1 a 4 son el mismo cambio visto desde cuatro lados. Los 5 y 6 son
 independientes.
+
+## Costo (agregado después, con Daniel)
+
+Daniel: "Además de eso es muy caro. Solamente lo que estuvimos probando me
+costó esto (US$ 1,93 en Gemini, 22 y 23/9). El costo de la arquitectura
+también hay que considerarlo."
+
+Cuenta hecha con el tamaño real de las páginas de las pruebas (mediana ~4.000
+caracteres, p90 ~12.000) y los prompts de hoy, con Gemini 3.1 Flash-Lite
+($0,25 / $1,50 por millón de tokens):
+
+| | Página mediana | Página grande (p90) |
+|---|---|---|
+| Ruteador | $0,0010 | $0,0011 |
+| Orientar | $0,0014 | $0,0020 |
+| Un paso típico | $0,0024 | $0,0031 |
+
+Con 10 pasos por persona por día, 1.000 personas diarias cuestan unos
+US$ 750–900 por mes. Los US$ 1,93 fueron casi todo pruebas (~700 llamadas).
+
+Lo que más pesa es la salida (6 veces más cara que la entrada): el
+razonamiento del ruteador (~300 tokens por mensaje), las listas que devuelve
+orientar y nadie usa (en La Nación, ~30 cifras de toda la página), y hasta
+cuatro llamadas a Gemini en un mismo paso. Palancas: una llamada de Gemini por
+página, topes en los esquemas, medir el razonamiento del ruteador (lo decide
+Daniel), caché por página en el backend (F5), y Jev donde alcance (unas 40
+veces más barato por pregunta).
+
+## Modelos candidatos
+
+De la tabla de precios de Vercel que trajo Daniel, más inteligentes y más
+baratos que Gemini 3.1 Flash-Lite: GLM-5.3 Flash ($0,15 / $0,50, AA 42),
+Qwen 3.8 Flash-Next ($0,15 / $0,47, AA 40), DeepSeek V4.1 Flash ($0,15 /
+$0,60 fuera de hora, AA 39), Xiaomi MiMo 2.6 Pro ($0,435 / $0,87, AA 46).
+El índice no alcanza: deciden también la velocidad, que cumpla `json_schema`
+siempre, los idiomas, la privacidad (qué proveedores no guardan los datos en
+Vercel) y que el precio sea estable. **Daniel elige probar GLM-5.3 Flash,
+después de los ajustes.**
+
+## Plan de ajustes (acordado con Daniel, 2026-09-23)
+
+Un paso por vez; cada uno se prueba en un sitio nuevo de otro país y lo prueba
+Daniel. Punto de partida marcado con la etiqueta `antes-de-ajustes`.
+
+1. **La tarea:** el ruteador devuelve "tarea" (sigue / nueva); una sola
+   variable en el código; la reciben Gemini y Jev.
+2. **Un solo mapa de la página:** en el orden de la página, con las mismas
+   marcas para todos.
+3. **Un solo lugar para los próximos pasos:** la orientación devuelve el tipo
+   de página y los pasos ordenados (abrir, completar, buscar en el sitio, leer,
+   resumir, o una pregunta con opciones); se borran las reglas de los otros
+   lugares.
+4. **Costo y velocidad:** topes en los esquemas, el mismo tope de texto, Jev en
+   paralelo.
+5. **Voz:** un mensaje por turno.
+6. **GLM-5.3 Flash** contra Gemini, en la estructura nueva.
+
+Sitios de prueba, sin repetir: citas del IMSS (México), cita previa del DNI
+(España), turnos del DMV (EE. UU.), INSS (Brasil), Amazon.
