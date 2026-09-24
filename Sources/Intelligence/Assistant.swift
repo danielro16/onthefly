@@ -887,7 +887,13 @@ final class Assistant {
             return
         }
         var (found, ads): ([Result], Int) = ([], 0)
-        if let page = reader.page { (found, ads) = await organic(page) }
+        if let page = reader.page {
+            // Los resultados son el lugar donde quedó la persona: el buscador
+            // se vuelve a leer solo un momento después, y sin anotarlo se
+            // anunciaba "La página cambió" sobre los mismos resultados.
+            knownURL = page.url
+            (found, ads) = await organic(page)
+        }
         guard !found.isEmpty else {
             // Pasa de verdad: en una consulta comercial la página trae
             // resultados y nosotros extraemos cero. Decirlo es mejor que
