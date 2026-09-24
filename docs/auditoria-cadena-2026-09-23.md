@@ -203,6 +203,42 @@ siempre, los idiomas, la privacidad (qué proveedores no guardan los datos en
 Vercel) y que el precio sea estable. **Daniel elige probar GLM-5.3 Flash,
 después de los ajustes.**
 
+### GLM-5.3 Flash contra Gemini 3.1 Flash-Lite (23/9, después del paso 1)
+
+Daniel cargó crédito en Vercel (el plan gratis no da GLM). Comparación directa,
+sin jueces, con los prompts de la app y páginas reales nuevas cargadas con el
+extractor: Correos (España), SAT y Liverpool (México), USPS (EE. UU.), El
+Tiempo (Colombia), Renfe (España), ChileAtiende (Chile), gob.pe (Perú) y gub.uy
+(Uruguay); 30 pedidos, dos veces cada uno. La Registraduría (Colombia) se cayó
+de la muestra: el extractor sacó un solo botón.
+
+| | Gemini 3.1 Flash-Lite | GLM-5.3 Flash |
+|---|---|---|
+| Ruteador: acción correcta | 50 de 60 | 46 de 60 |
+| Ruteador: tarea sigue/nueva | 10 de 14 | 13 de 14 |
+| Ruteador: misma decisión dos veces | 25 de 30 | 21 de 30 |
+| Ruteador: tiempo (mediana / peor) | 1,5 / 3,4 s | 1,9 / 7,7 s |
+| Orientar: tiempo (mediana / peor) | 1,8 / 2,7 s | 2,1 / 4,9 s |
+| Costo por decisión del ruteador | US$ 0,00064 | US$ 0,00043 |
+| Costo por orientación | US$ 0,00138 | US$ 0,00061 |
+| Un paso (ruteador + orientar) | ~US$ 0,0020 | ~US$ 0,0010 |
+
+GLM cuesta la mitad y sus textos suelen ser más directos, pero comete más
+errores que la persona no puede detectar: en Renfe ofreció «Buscar billete»
+en un botón que resume la página y «Poner Madrid como origen» en un link a la
+página de Madrid; en El Tiempo dijo «la abro para leerle los detalles» (no la
+abre, y en usted) y ofreció «Leer la nota» en una portada; en el ruteador
+escribió JSON adentro del campo `then` («buscame unos tenis Nike» quedaría
+escrito y sin buscar). Gemini: marca «sigue» sin tarea, y en Correos puso el
+número de seguimiento que dijo la persona entre sus cifras, así que la app
+descartaría la orientación (la verificación de cifras no mira lo que dijo la
+persona: error nuestro, de código).
+
+**Recomendación:** seguir con Gemini por ahora y volver a medir GLM después del
+paso 3, cuando la orientación devuelva pasos tipados que el código valida (ahí
+el botón mal tipado deja de ser posible) y los topes del paso 4 bajen la
+salida.
+
 ## Plan de ajustes (acordado con Daniel, 2026-09-23)
 
 Un paso por vez; cada uno se prueba en un sitio nuevo de otro país y lo prueba
