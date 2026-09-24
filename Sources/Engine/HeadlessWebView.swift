@@ -52,6 +52,8 @@ final class HeadlessWebView: NSObject {
     /// The live page. Nil until the first load. Exposed so the UI can put it
     /// on screen; nothing else should reach into it.
     private(set) var webView: WKWebView?
+    /// Las listas de bloqueo cargándose: la primera página las espera.
+    private var blocking: Task<Void, Never>?
 
     /// Called when the page changed without anyone awaiting it: the user
     /// navigated inside the visible WebView, a site redirected, a form the
@@ -86,6 +88,9 @@ final class HeadlessWebView: NSObject {
     func extract(url: URL) async throws -> ExtractedPage {
         settle(.failure(CancellationError()))
         let web = try session()
+        // Sin anuncios ni rastreadores desde la primera página: compiladas,
+        // tardan una décima de segundo; la primera vez, unos segundos.
+        await blocking?.value
 
         // Anything that arrived before this load belongs to the previous page.
         unconsumed = nil
@@ -111,6 +116,8 @@ final class HeadlessWebView: NSObject {
         if let webView { return webView }
 
         let config = try makeConfiguration()
+        let controller = config.userContentController
+        blocking = Task { await Bloqueo.cargar(en: controller) }
         let web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = self
         web.uiDelegate = self

@@ -661,5 +661,65 @@
         "escribir": "foodit.lanacion.com.ar"
       }
     ]
+  },
+  {
+    "id": "bloqueo-lanacion",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "lanacion.com.ar"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-clarin",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "clarin.com"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-elmundo",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "elmundo.es"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-fravega",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "fravega.com"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-seguro",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "buscá seguro de auto"
+      }
+    ]
+  },
+  {
+    "id": "bloqueo-zapatillas",
+    "persona": "Medición: la misma página con y sin las listas de bloqueo.",
+    "objetivo": "Comparar tiempo de carga, texto que ve el modelo y anuncios, con y sin EasyList/EasyPrivacy.",
+    "pasos": [
+      {
+        "escribir": "buscá zapatillas nike"
+      }
+    ]
   }
 ]

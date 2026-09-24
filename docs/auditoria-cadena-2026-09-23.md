@@ -393,3 +393,24 @@ botones, pero JEF sólo las menciona). **Primero se pule el código (pasos 2 a 5
 y las ventanas emergentes); recién después se comparan los modelos con tareas
 completas.** Mientras tanto la app usa GLM-5.3 Flash (`Gemini.base`), con los
 ajustes de prueba `modelo` y `razonar`.
+
+### Listas de bloqueo de anuncios, como Brave (24/9)
+
+Idea de Daniel: sacar los anuncios como Brave, sin llamar a ningún modelo.
+EasyList y EasyPrivacy (licencia doble; JEF las usa bajo CC BY-SA 3.0, con
+atribución a The EasyList authors en `Sources/Engine/Bloqueo/LICENCIA.md`),
+convertidas al formato de WebKit con SafariConverterLib v4.3.0 de AdGuard
+(GPL-3.0, usado sólo en la Mac; compilado desde su código:
+`Scripts/listas-de-bloqueo.sh`). 65.465 y 56.181 reglas; ~14 MB en la app.
+EasyList trae las reglas de los anuncios de búsqueda de Google (`#tads`,
+`div[data-text-ad]`) para 100 dominios de Google.
+
+Medido en el simulador, con y sin listas (6 páginas): en los diarios el
+texto que lee el modelo casi no cambia (sus anuncios están en marcos que el
+extractor ya no leía); en Google («seguro de auto») el texto baja un tercio
+y las listas sacan 2 de 3 anuncios: el tercero lo sacó Jev, así que Jev
+sigue en Google. Sin mejora de carga en el simulador. **Rompen Clarín:** con
+cualquiera de las dos, falló o tardó más de 20 s en 5 de 6 cargas; sin
+ellas, 4,5 s siempre. Quedan en la app **apagadas** (ajuste de prueba
+`bloqueo`) hasta saber si es de las listas o de cómo el extractor decide que
+la página terminó de cargar.
