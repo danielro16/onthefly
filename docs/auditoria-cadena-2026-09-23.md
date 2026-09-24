@@ -269,3 +269,40 @@ Daniel. Punto de partida marcado con la etiqueta `antes-de-ajustes`.
 
 Sitios de prueba, sin repetir: citas del IMSS (México), cita previa del DNI
 (España), turnos del DMV (EE. UU.), INSS (Brasil), Amazon.
+
+### Cuatro modelos baratos (23/9, a la noche)
+
+Daniel: "No hay manera de poder usar Gemini. Vamos a usar GLM como nuestro
+modelo base, pero comparemos con otros similares, donde no haya casi
+diferencia de costo." Mismos 30 pedidos y 9 páginas que arriba.
+
+| Ruteador | Acción correcta | Tarea bien | Rotas | Mediana | US$ por decisión |
+|---|---|---|---|---|---|
+| GLM-5.3 Flash, razonando | 51/60 | 10/14 | 4 | 2,0 s | 0,00043 |
+| GLM-5.3 Flash, sin razonar | 47/60 | 12/14 | 0 | 1,3 s | 0,00036 |
+| Qwen 3.8 Flash, sin razonar | 52/60 | 14/14 | 0 | 3,3 s | 0,00039 |
+| Qwen 3.8 Flash, razonando | 40/60 | 8/14 | 7 | 18,3 s | 0,00077 |
+| DeepSeek V4 Flash, sin razonar | 37/60 | 12/14 | 0 | 1,1 s | 0,00033 |
+| MiMo 2.6 Flash | 46/60 | 5/14 | 55 de 56 fuera del esquema | 5,8 s | 0,00034 |
+
+Orientar: Qwen, el más corto y directo (~140 caracteres, 3,9 s); GLM ~230
+caracteres, con dos cifras que no están en la página; DeepSeek ~290 y un texto
+cortado a la mitad. Los tres, ~US$ 0,0006 por página. Un paso cuesta ~US$ 0,0010
+con cualquiera de los tres, la mitad que con Gemini.
+
+En el simulador (DMV de California, Amazon México, INSS de Brasil; corridas
+`Tests/corridas/2026-09-23_modelo-*`), una corrida por modelo: Qwen llegó a la
+página de citas del DMV y explicó el primer paso; GLM escribió la pregunta en
+el buscador del sitio; DeepSeek llegó al portal del INSS pero habla de más;
+MiMo rompió la orientación ("Logo, Logo, Logo").
+
+**Lo que marcó Daniel, y queda como criterio:** esto midió sólo el primer paso
+y una o dos preguntas; lo que decide es quién completa la tarea entera. Y la
+mayoría de las fallas vistas eran del código, no del modelo: links sin
+contexto, reglas viejas en los botones, el pedido que se escribe en el campo
+después de "¿Qué pongo en…?", las cifras que dijo la persona, las cookies y
+ventanas emergentes que nadie cierra (el extractor las detecta con sus
+botones, pero JEF sólo las menciona). **Primero se pule el código (pasos 2 a 5
+y las ventanas emergentes); recién después se comparan los modelos con tareas
+completas.** Mientras tanto la app usa GLM-5.3 Flash (`Gemini.base`), con los
+ajustes de prueba `modelo` y `razonar`.

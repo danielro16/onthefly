@@ -52,12 +52,9 @@ actor Router {
     private let gemini: Gemini
     private let session: URLSession
 
-    /// Flash-Lite y no Flash: rutear es una decisión corta sobre un texto
-    /// corto. Por el gateway, 2.5 Flash-Lite; directo a Google, 3.1
-    /// Flash-Lite (ver `Gemini`). Medido con las 60 frases de prueba: unos
-    /// US$0,0003 por turno con 3.1.
+    /// El mismo modelo que responde (ver `Gemini`).
     static func fromEnvironment() -> Router? {
-        Gemini.fromEnvironment(gateway: "google/gemini-2.5-flash-lite").map(Router.init)
+        Gemini.fromEnvironment().map(Router.init)
     }
 
     init(gemini: Gemini) {

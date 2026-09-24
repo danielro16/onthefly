@@ -41,10 +41,9 @@ actor Answerer {
     private let gemini: Gemini
     private let session: URLSession
 
-    /// Por el gateway, 2.5 Flash; directo a Google, 3.1 Flash-Lite (ver
-    /// `Gemini`).
+    /// El modelo base (ver `Gemini`).
     static func fromEnvironment() -> Answerer? {
-        Gemini.fromEnvironment(gateway: "google/gemini-2.5-flash").map(Answerer.init)
+        Gemini.fromEnvironment().map(Answerer.init)
     }
 
     init(gemini: Gemini) {

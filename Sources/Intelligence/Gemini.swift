@@ -1,33 +1,40 @@
 import Foundation
 
-/// Adónde van las llamadas a Gemini del ruteador y del que responde.
+/// Adónde van las llamadas al modelo de lenguaje del ruteador y del que responde.
 ///
-/// Con la clave de Google (`GEMINI_API_KEY`), directo a Google con 3.1
-/// Flash-Lite: lo decidió Daniel (2026-09-22) — más nuevo que 2.5 y más
-/// barato que 2.5 Flash para responder. Sin esa clave, por el AI Gateway de
-/// Vercel con los modelos de antes. Jev va siempre por el gateway.
+/// Desde 2026-09-23, GLM-5.3 Flash por el AI Gateway de Vercel (Daniel:
+/// "necesito ahorrar costos"). Medido en nueve sitios nuevos, cuesta la mitad
+/// que Gemini 3.1 Flash-Lite por paso: US$ 0,0010 contra 0,0020. Para probar
+/// otro sin recompilar, el ajuste `modelo` (en el simulador, `simctl spawn
+/// <udid> defaults write ai.jef.browser modelo deepseek/deepseek-v4-flash`).
+/// Un nombre que empieza con "gemini-" va directo a Google con su clave. Jev va
+/// siempre por el gateway.
 struct Gemini: Sendable {
     let endpoint: URL
     let key: String
     let model: String
     /// Directo a Google: el razonamiento se apaga con otro parámetro.
     let direct: Bool
+    /// Si el ruteador puede razonar. El ajuste `razonar` en falso lo apaga:
+    /// Qwen 3.8 Flash razonando tardaba 18 s por decisión, y sin razonar
+    /// acertaba más (52 de 60 contra 40).
+    var reasons = UserDefaults.standard.object(forKey: "razonar") as? Bool ?? true
 
-    /// `gateway`: el modelo que se usa por el gateway si no hay clave de Google.
-    static func fromEnvironment(gateway model: String) -> Gemini? {
-        if let key = value("GeminiAPIKey", unset: "$(GEMINI_API_KEY)") {
+    static let base = "zai/glm-5.3-flash"
+
+    static func fromEnvironment() -> Gemini? {
+        let chosen = UserDefaults.standard.string(forKey: "modelo") ?? base
+        if chosen.hasPrefix("gemini-"), let key = value("GeminiAPIKey", unset: "$(GEMINI_API_KEY)") {
             return Gemini(
                 endpoint: URL(string: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions")!,
-                key: key, model: "gemini-3.1-flash-lite", direct: true
+                key: key, model: chosen, direct: true
             )
         }
-        if let key = value("AIGatewayAPIKey", unset: "$(AI_GATEWAY_API_KEY)") {
-            return Gemini(
-                endpoint: URL(string: "https://ai-gateway.vercel.sh/v1/chat/completions")!,
-                key: key, model: model, direct: false
-            )
-        }
-        return nil
+        guard let key = value("AIGatewayAPIKey", unset: "$(AI_GATEWAY_API_KEY)") else { return nil }
+        return Gemini(
+            endpoint: URL(string: "https://ai-gateway.vercel.sh/v1/chat/completions")!,
+            key: key, model: chosen, direct: false
+        )
     }
 
     private static func value(_ name: String, unset: String) -> String? {
@@ -47,6 +54,7 @@ struct Gemini: Sendable {
     func body(_ body: [String: Any], thinking: Bool = false) -> [String: Any] {
         var body = body
         body["model"] = model
+        let thinking = thinking && reasons
         if direct {
             body["reasoning_effort"] = thinking ? "low" : "none"
         } else {

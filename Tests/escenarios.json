@@ -466,5 +466,53 @@
         "escribir": "volvé"
       }
     ]
+  },
+  {
+    "id": "licencia-dmv",
+    "persona": "Vive en California, habla español, ciega. Quiere sacar turno para renovar la licencia de manejar.",
+    "objetivo": "Que JEF la lleve al DMV, le diga dónde se saca el turno y conteste qué documentos llevar, sin inventar.",
+    "pasos": [
+      {
+        "escribir": "quiero sacar turno en el DMV de California para renovar la licencia"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "¿qué documentos tengo que llevar?"
+      }
+    ]
+  },
+  {
+    "id": "licuadora-amazon",
+    "persona": "Vive en México, con baja visión. Quiere comprar una licuadora en Amazon.",
+    "objetivo": "Que JEF entre a Amazon México, busque licuadoras, abra una y diga el precio que está en la página.",
+    "pasos": [
+      {
+        "escribir": "entrá a Amazon México y buscame una licuadora"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "¿cuánto cuesta?"
+      }
+    ]
+  },
+  {
+    "id": "jubilacion-inss",
+    "persona": "Vive en Brasil, habla español, ciego. Quiere pedir la jubilación en el INSS.",
+    "objetivo": "Que JEF lo lleve al sitio del INSS, le cuente en español qué hay y dónde se pide la jubilación, y conteste qué documentos necesita.",
+    "pasos": [
+      {
+        "escribir": "quiero pedir la jubilación en el INSS de Brasil"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "¿qué documentos necesito?"
+      }
+    ]
   }
 ]
