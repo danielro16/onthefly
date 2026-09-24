@@ -1,0 +1,10 @@
+http://localhost:8765/busca-tarde.html
+Biblioteca del club
+
+PAGE: localhost — Biblioteca del club
+
+PAGE CONTENT (what the person came for):
+Biblioteca del club
+Buscá un libro por título, autor o género.
+FORM asking for: Buscar en la biblioteca — button «Buscar»
+Buscá un libro por título, autor o género.

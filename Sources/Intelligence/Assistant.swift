@@ -1327,9 +1327,11 @@ final class Assistant {
     }
 
     /// Si la página que se estaba contando sigue siendo la que está: el
-    /// mismo documento. El "#" no cambia de documento; la consulta sí puede:
-    /// los resultados de otra búsqueda son otra página. Sin página —otra
-    /// está cargando—, no.
+    /// mismo documento, con lo mismo. El "#" no cambia de documento; la
+    /// consulta sí puede: los resultados de otra búsqueda son otra página. Y
+    /// el mismo documento puede traer otra cosa: los productos de un carrito
+    /// que llegan después (`sameContent`). Sin página —otra está cargando—,
+    /// no.
     static func stillOn(_ page: ExtractedPage, _ now: ExtractedPage?) -> Bool {
         func document(_ address: String) -> String {
             guard var parts = URLComponents(string: address) else { return address }
@@ -1337,7 +1339,7 @@ final class Assistant {
             return parts.string ?? address
         }
         guard let now else { return false }
-        return document(now.url) == document(page.url)
+        return document(now.url) == document(page.url) && now.sameContent(as: page)
     }
 
     /// La opción que se llama exactamente como lo pedido, sin artículos ni

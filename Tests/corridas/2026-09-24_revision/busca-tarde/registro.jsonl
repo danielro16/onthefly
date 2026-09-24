@@ -1,0 +1,33 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790281400.668751}
+{"tipo": "ubicacion", "t": 1790281401.671659, "pais": "US"}
+{"tipo": "ubicacion", "t": 1790281401.673856, "pais": "US"}
+{"texto": "http://localhost:8765/busca-tarde.html", "quien": "persona", "t": 1790281407.064029, "tipo": "turno"}
+{"opciones": [], "t": 1790281407.0652041, "tipo": "botones"}
+{"texto": "Abriendo localhost.", "quien": "jef", "t": 1790281407.065944, "tipo": "turno"}
+{"cola": false, "texto": "Abriendo localhost.", "t": 1790281407.066173, "tipo": "voz"}
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790281407.1262522}
+{"tipo": "pagina", "texto": "PAGE: localhost — Biblioteca del club\n\nPAGE CONTENT (what the person came for):\nBiblioteca del club\nBuscá un libro por título, autor o género.\nFORM asking for: Buscar en la biblioteca — button «Buscar»\nBuscá un libro por título, autor o género.", "titulo": "Biblioteca del club", "url": "http://localhost:8765/busca-tarde.html", "t": 1790281408.265408}
+{"tipo": "botones", "t": 1790281408.265713, "opciones": []}
+{"url": "http://localhost:8765/busca-tarde.html", "sitio": "institution", "modelo": "otra", "p_pagina": "0.87", "tipo": "tipo", "aviso_extractor": "", "p_aviso": "0.00", "t": 1790281410.956032, "p_sitio": "0.98", "aviso": "", "pagina": "form"}
+{"t": 1790281410.956986, "tipo": "ruido", "url": "http://localhost:8765/busca-tarde.html", "elementos": []}
+{"quien": "jef", "t": 1790281410.95733, "texto": "Estás en la página de la biblioteca del club, donde se busca un libro por título, autor o género. Hay un buscador para escribir eso mismo y un botón Buscar. Dime qué libro, autor o género querés buscar.", "tipo": "turno"}
+{"t": 1790281410.9580312, "texto": "Estás en la página de la biblioteca del club, donde se busca un libro por título, autor o género. Hay un buscador para escribir eso mismo y un botón Buscar. Dime qué libro, autor o género querés buscar.", "tipo": "voz", "cola": true}
+{"t": 1790281410.95852, "opciones": ["Buscar libros", "Resumir la página"], "tipo": "botones"}
+{"t": 1790281410.958772, "opciones": ["Buscar libros", "Resumir la página", "Otra cosa"], "tipo": "botones"}
+{"opciones": [], "tipo": "botones", "t": 1790281419.2307382}
+{"t": 1790281419.231642, "tipo": "turno", "quien": "persona", "texto": "Buscar libros"}
+{"t": 1790281419.232405, "tipo": "turno", "quien": "jef", "texto": "«Buscar libros»: ¿qué escribo? Se puede escribir o dictar acá abajo."}
+{"t": 1790281419.23315, "cola": false, "tipo": "voz", "texto": "«Buscar libros»: ¿qué escribo? Se puede escribir o dictar acá abajo."}
+{"opciones": ["Buscar libros", "Resumir la página", "Otra cosa"], "tipo": "botones", "t": 1790281419.233649}
+{"tipo": "turno", "texto": "Buscar en la biblioteca terminado en les", "quien": "persona", "t": 1790281428.85901}
+{"t": 1790281428.8594031, "opciones": [], "tipo": "botones"}
+{"texto": "Buscando «novelas policiales».", "quien": "jef", "tipo": "turno", "t": 1790281429.576232}
+{"texto": "Buscando «novelas policiales».", "tipo": "voz", "cola": false, "t": 1790281429.5765328}
+{"tipo": "pagina", "titulo": "Resultados: novelas policiales", "url": "http://localhost:8765/redirigido.html", "texto": "PAGE: localhost — Resultados: novelas policiales\n\nPAGE CONTENT (what the person came for):\nResultados de la búsqueda «novelas policiales»\nEncontramos 3 libros en la biblioteca del club.\nEl asesinato de Roger Ackroyd — Agatha Christie\nLa muerte y la brújula — Jorge Luis Borges\nEl largo adiós — Raymond Chandler\nResultados de la búsqueda «novelas policiales»\nEncontramos 3 libros en la biblioteca del club.\nEl asesinato de Roger Ackroyd — Agatha Christie, La muerte y la brújula — Jorge Luis Borges, El largo adiós — Raymond Chandler", "t": 1790281431.728229}
+{"t": 1790281431.728745, "tipo": "botones", "opciones": []}
+{"modelo": "otra", "sitio": "institution", "url": "http://localhost:8765/redirigido.html", "p_sitio": "0.66", "p_aviso": "0.00", "aviso": "", "aviso_extractor": "", "pagina": "results", "tipo": "tipo", "p_pagina": "1.00", "t": 1790281435.071928}
+{"t": 1790281435.072917, "elementos": [], "url": "http://localhost:8765/redirigido.html", "tipo": "ruido"}
+{"texto": "Encontré 3 libros de novelas policiales en la biblioteca del club: El asesinato de Roger Ackroyd de Agatha Christie, La muerte y la brújula de Jorge Luis Borges y El largo adiós de Raymond Chandler. Puedes abrir cualquiera de ellos con los botones.", "t": 1790281435.0732388, "tipo": "turno", "quien": "jef"}
+{"texto": "Encontré 3 libros de novelas policiales en la biblioteca del club: El asesinato de Roger Ackroyd de Agatha Christie, La muerte y la brújula de Jorge Luis Borges y El largo adiós de Raymond Chandler. Puedes abrir cualquiera de ellos con los botones.", "cola": true, "t": 1790281435.07375, "tipo": "voz"}
+{"t": 1790281435.074233, "tipo": "botones", "opciones": ["Abrir «El asesinato de Roger Ackroyd — Agatha Christie»", "Abrir «La muerte y la brújula — Jorge Luis Borges»", "Abrir «El largo adiós — Raymond Chandler»"]}
+{"opciones": ["Abrir «El asesinato de Roger Ackroyd — Agatha Christie»", "Abrir «La muerte y la brújula — Jorge Luis Borges»", "Abrir «El largo adiós — Raymond Chandler»", "Volver a «Biblioteca del club»", "Otra cosa"], "tipo": "botones", "t": 1790281435.0749412}

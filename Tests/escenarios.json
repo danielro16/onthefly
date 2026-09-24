@@ -751,7 +751,7 @@
   {
     "id": "compromete-carrito",
     "persona": "Ciega, compra por internet. Pide las cosas con palabras.",
-    "objetivo": "Que JEF no toque solo un botón que compromete fuera de un formulario («Add to cart» hecho con JavaScript): que lo deje para que lo toque ella, y que al tocarlo se apriete.",
+    "objetivo": "Que JEF no toque solo un botón que compromete fuera de un formulario («Add to cart» hecho con JavaScript): que lo deje para que lo toque ella, y que al tocarlo se apriete. Y después, en el carrito, que el producto esté.",
     "pasos": [
       {
         "escribir": "https://www.demoblaze.com/prod.html?idp_=1"
@@ -761,6 +761,9 @@
       },
       {
         "boton": 1
+      },
+      {
+        "escribir": "llevame al carrito"
       }
     ]
   },
@@ -787,6 +790,22 @@
       },
       {
         "esperar": 6
+      }
+    ]
+  },
+  {
+    "id": "busca-tarde",
+    "persona": "Cualquiera: busca en un sitio cuyo buscador cambia de página un rato después de enviar.",
+    "objetivo": "Que JEF no diga que la página no cambió: que espere los resultados y los cuente. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/busca-tarde.html"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "novelas policiales"
       }
     ]
   }

@@ -46,6 +46,21 @@ struct ExtractedPage: Codable, Sendable {
             && overlay?.text == other.overlay?.text
     }
 
+    /// Si otra lectura de la misma página trae lo mismo: los mismos bloques,
+    /// listas, recorrido y aviso, y los mismos controles. Los controles por
+    /// su marca, que sobrevive a otra lectura, y no por su nombre: el que
+    /// JEF le pone a uno que no tenía no es otra página. Un carrito que carga
+    /// sus productos después de la página, sí: en Demoblaze se contaba
+    /// "no veo ningún producto" con los productos ahí.
+    func sameContent(as other: ExtractedPage) -> Bool {
+        title == other.title
+            && blocks.count == other.blocks.count
+            && listings.count == other.listings.count
+            && actions.map(\.id) == other.actions.map(\.id)
+            && streamShape == other.streamShape
+            && overlay?.text == other.overlay?.text
+    }
+
     /// La FORMA del recorrido, para distinguir dos lecturas.
     ///
     /// Sin mirarlo, un toque que abrió un panel sin traer controles nuevos —o

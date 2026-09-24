@@ -1,0 +1,14 @@
+http://localhost:8765/redirigido.html
+Resultados: novelas policiales
+
+PAGE: localhost — Resultados: novelas policiales
+
+PAGE CONTENT (what the person came for):
+Resultados de la búsqueda «novelas policiales»
+Encontramos 3 libros en la biblioteca del club.
+El asesinato de Roger Ackroyd — Agatha Christie
+La muerte y la brújula — Jorge Luis Borges
+El largo adiós — Raymond Chandler
+Resultados de la búsqueda «novelas policiales»
+Encontramos 3 libros en la biblioteca del club.
+El asesinato de Roger Ackroyd — Agatha Christie, La muerte y la brújula — Jorge Luis Borges, El largo adiós — Raymond Chandler
