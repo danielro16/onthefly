@@ -149,7 +149,7 @@ actor Answerer {
         // cifra que el modelo dice haber usado tiene que estar en la página.
         // Si una no aparece, no se dice nada: mejor callar que inventar un
         // saldo.
-        let figures = (parsed["cifras"] as? [String]) ?? []
+        let figures = ((parsed["cifras"] as? [String]) ?? []) + Self.numbers(in: text)
         guard figures.allSatisfy({ Self.figureAppears($0, in: page) }) else { return nil }
         let questions = ((parsed["preguntas"] as? [String]) ?? [])
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -164,7 +164,7 @@ actor Answerer {
         guard let parsed = try await ask("resumir", ["dicho": alreadySaid, "texto": page], maxTokens: 600)
         else { throw AnswerError.unusable }
         guard let text = parsed["respuesta"] as? String, !text.isEmpty else { return nil }
-        let figures = (parsed["cifras"] as? [String]) ?? []
+        let figures = ((parsed["cifras"] as? [String]) ?? []) + Self.numbers(in: text)
         guard figures.allSatisfy({ Self.figureAppears($0, in: page) }) else { return nil }
         return Answer(text: text, quote: "")
     }
@@ -240,7 +240,7 @@ actor Answerer {
         // van a ofrecer. Si cuenta 19 y ofrece 18, se descarta como
         // cualquier cifra inventada.
         let offered = String(Set(((parsed["opciones"] as? [Any]) ?? []).compactMap(number)).count)
-        let figures = (parsed["cifras"] as? [String]) ?? []
+        let figures = ((parsed["cifras"] as? [String]) ?? []) + Self.numbers(in: text)
         let missing = figures.filter {
             !Self.figureAppears($0, in: page + "\n" + list + "\n" + (done ?? "")) && String($0.filter(\.isNumber)) != offered
         }
@@ -395,6 +395,16 @@ actor Answerer {
     /// otro: Wikipedia escribe "644 234" con un espacio fino y el modelo lo
     /// copió "644.234" — la misma cifra, y por eso se descartaba la
     /// orientación entera.
+    /// Los números que dice un texto, tal como los escribe. Se verifican
+    /// todos, no sólo los que el modelo declara en `cifras`: con la lista
+    /// vacía, nada se verificaba (la auditoría). Medido sobre lo que JEF dijo
+    /// el 24/9: 1 oración de 475 hubiera caído, un conteo que el modelo hizo
+    /// ("18 trámites"), y la orientación exceptúa ese conteo cuando coincide
+    /// con las opciones que ofrece.
+    static func numbers(in text: String) -> [String] {
+        text.matches(of: /\d(?:[\d.,]*\d)?/).map { String($0.output) }
+    }
+
     static func figureAppears(_ figure: String, in page: String) -> Bool {
         if appears(figure, in: page, minimum: 1) { return true }
         // Se comparan los números, no las palabras ni las unidades: el modelo

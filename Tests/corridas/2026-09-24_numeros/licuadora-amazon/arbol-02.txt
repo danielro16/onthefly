@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: entrá a Amazon México y buscame una licuadora
+  4 [txt] Buscando: entrá a Amazon México y buscame una licuadora.
+  5 [txt] Estás en los resultados de «entrá a Amazon México y buscame una licuadora». Los 3 más probables:
+  6 [H] Vos: Licuadoras_y_procesadores: Hogar y Cocina — www.amazon.com.mx
+  7 [txt] Abriendo amazon.com.mx.
+  8 [txt] Amazon México muestra una lista de Hogar y Cocina con 5 resultados de licuadoras y procesadores. Entre ellos, la Hamilton Beach Stay or Go cuesta $832.65 y trae una jarra de 945 ml, dos vasos de viaje de 475 ml y un recipiente para picar de 237 ml.
+  9 [btn] Abrir «Oster Licuadora Osterizer Premium Mod. 6878-013 16V, $1,911.96 $ 1,911 96»  (Primera de 5 opciones.)
+ 10 [btn] Abrir «Hamilton Beach 52400 Licuadora Stay or Go con una jarra de 945 ml (32 oz), 2…»
+ 11 [btn] Abrir «Ninja Bl770 Mega Sistema de Cocina, 1500 W, 4 Funciones, Negro, $3,590.00 $…»
+ 12 [btn] Volver a los resultados
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 15 [btn] Enviar
