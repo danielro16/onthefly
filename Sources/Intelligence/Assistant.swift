@@ -2661,9 +2661,22 @@ final class Assistant {
         // son posiciones en él.
         let map = Self.options(of: page)
         working = true
+        // Qué sitio y qué página es: Jev, en medio segundo, con las opciones
+        // de `criterios.json`. Lo que dice con seguridad le llega a la
+        // orientación como dato —en una tienda lo probable es buscar; en un
+        // trámite, elegir de una lista— y decide cómo se lee la página; si
+        // duda, lo decide el modelo (Daniel).
+        let kinds = await self.kinds(of: page, map: map)
+        let sure = Criterios.actuales?.umbrales["tipo"] ?? 1
+        let said = [
+            kinds.flatMap { $0.siteConfidence >= sure ? "site: \($0.site)" : nil },
+            kinds.flatMap { $0.pageConfidence >= sure ? "page: \($0.page)" : nil },
+        ].compactMap { $0 }
         var orientation: Answerer.Orientation?
         do {
-            orientation = try await answerer.orient(page: text, candidates: map.map(Self.described), goal: task)
+            orientation = try await answerer.orient(
+                page: text, candidates: map.map(Self.described), goal: task,
+                kinds: said.isEmpty ? nil : said.joined(separator: "; "))
         } catch {
             // Por qué se cayó a la descripción: en una prueba pasó en Clarín
             // y no había cómo saber si fue la red o una cifra sin verificar.
@@ -2671,10 +2684,19 @@ final class Assistant {
         }
         working = false
         guard let orientation else { describe(page); return }
-        // Qué es la página lo dijo el modelo, que la leyó: portada, nota u
-        // otra. Lo demás —leer, "Volver a la portada", lo que se ofrece
-        // después— lo pregunta acá.
-        known[page.url] = (orientation.kind, [])
+        // Qué es la página: lo de Jev si estaba seguro, si no lo del modelo,
+        // que la leyó. Lo demás —leer, "Volver a la portada", lo que se
+        // ofrece después— lo pregunta acá.
+        var kind = orientation.kind
+        if let kinds, kinds.pageConfidence >= sure {
+            kind = kinds.page == "front_page" ? .portada : kinds.page == "article" ? .nota : .otra
+        }
+        Registro.anotar("tipo", [
+            "url": page.url, "sitio": kinds?.site ?? "", "p_sitio": kinds.map { String(format: "%.2f", $0.siteConfidence) } ?? "",
+            "pagina": kinds?.page ?? "", "p_pagina": kinds.map { String(format: "%.2f", $0.pageConfidence) } ?? "",
+            "modelo": orientation.kind.rawValue,
+        ])
+        known[page.url] = (kind, [])
         // En una portada, los titulares que se nombran y los botones son los
         // mismos porque los elige el código: los primeros de la página. Dejando
         // que el modelo eligiera los botones por número, nombraba unos y
@@ -2789,7 +2811,7 @@ final class Assistant {
         // el mismo botón dos veces con nombres distintos.
         var ids = Set<String>(), labels = Set<String>()
         ordered = ordered.filter { ids.insert($0.id).inserted && labels.insert(Self.flatten($0.label)).inserted }
-        known[page.url] = (orientation.kind, ordered)
+        known[page.url] = (kind, ordered)
         // Una pregunta se contesta con sus opciones: van ellas, no las
         // sugerencias. En ANSES, con "sacar un turno", se ofrecían consultar y
         // reprogramar uno ya sacado, y los trámites no estaban.
@@ -2814,19 +2836,24 @@ final class Assistant {
         } else if !ordered.isEmpty {
             offer = Offer(goal: "", options: ordered)
         }
-        // Un aviso que tapa la página se contesta primero, como lo haría quien
-        // ve: sus botones van adelante y decide la persona —la app no acepta
-        // ni rechaza cookies por nadie—. Pagar, iniciar sesión y la prueba
-        // anti-robot tienen su propio camino.
-        if let overlay = page.overlay, [.cookies, .newsletter, .age, .other].contains(overlay.kind), !overlay.choices.isEmpty {
-            // Todos: con tres, en El Mundo quedaban «Iniciar sesión», «nuestros
-            // socios» y «Configuración», y ni aceptar ni rechazar.
-            let covering = overlay.choices.map { choice in
+        // Un aviso que pide una decisión de la persona —las cookies, la edad—
+        // se contesta primero, como lo haría quien ve: sus botones van
+        // adelante y decide ella; la app no acepta ni rechaza por nadie. Todos
+        // sus botones: con tres, en El Mundo quedaban «Iniciar sesión»,
+        // «nuestros socios» y «Configuración», y ni aceptar ni rechazar. Menos
+        // lo que el modelo llamó ruido, pero nunca todos: la salida no se
+        // pierde. La propaganda —bajar la app, el boletín— no se pone
+        // adelante: no le impide nada a JEF, que toca la página por debajo, y
+        // en Liverpool se ofrecía «Descarga». Sigue en el mapa, por si la
+        // persona pide cerrarla.
+        if let overlay = page.overlay, [.cookies, .age].contains(overlay.kind) {
+            let wanted = overlay.choices.filter { !noiseIDs(of: page).contains($0.id) }
+            let covering = (wanted.isEmpty ? overlay.choices : wanted).map { choice in
                 targets["sug-\(choice.id)"] = Self.button(choice)
                 return Self.button(choice, id: "sug-\(choice.id)")
             }
             let rest = (offer?.options ?? []).filter { option in !covering.contains { $0.id == option.id } }
-            offer = Offer(goal: "", options: covering + rest)
+            if !covering.isEmpty { offer = Offer(goal: "", options: covering + rest) }
         }
     }
 
@@ -3021,6 +3048,24 @@ final class Assistant {
         for action in page.actions where usable(action) { add(action) }
         // Jev admite 255 opciones por pregunta. Medido, no documentado.
         return Array(out.prefix(240))
+    }
+
+    /// Lo que Jev dice de esta página: con qué se juzga es lo que se ve de
+    /// ella —su dominio, título, títulos, el comienzo del contenido y lo
+    /// primero del mapa—, en un estado chico.
+    private func kinds(of page: ExtractedPage, map: [Action]) async -> PageAnalyzer.Kinds? {
+        guard let analyzer else { return nil }
+        var headings: [String] = []
+        for entry in page.stream ?? [] {
+            if case .heading(_, _, let text)? = entry.block, !text.isEmpty { headings.append(text) }
+            if entry.kind == "link", entry.level != nil, let title = entry.title ?? entry.label { headings.append(title) }
+        }
+        let content = Self.saying(page).components(separatedBy: "PAGE CONTENT (what the person came for):\n").last ?? ""
+        let domain = URL(string: page.url)?.host()?.lowercased() ?? ""
+        return await analyzer.kinds(
+            domain: domain.hasPrefix("www.") ? String(domain.dropFirst(4)) : domain, title: page.title,
+            headings: headings, text: content,
+            items: map.prefix(30).map { (text: $0.label, kind: $0.kind.rawValue, region: $0.region.isEmpty ? "main" : $0.region) })
     }
 
     /// Un botón de un aviso que tapa la página, como un elemento del mapa. El

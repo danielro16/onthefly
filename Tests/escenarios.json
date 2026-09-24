@@ -611,5 +611,35 @@
         "tocar": "Rechazar"
       }
     ]
+  },
+  {
+    "id": "tienda-liverpool",
+    "persona": "Vive en México, con baja visión. Entra a una tienda.",
+    "objetivo": "Que JEF sepa qué tipo de sitio y de página es, y que los pasos que ofrece sean los probables para ese tipo.",
+    "pasos": [
+      {
+        "escribir": "liverpool.com.mx"
+      }
+    ]
+  },
+  {
+    "id": "gobierno-chile",
+    "persona": "Vive en Chile, ciego. Entra al sitio del gobierno.",
+    "objetivo": "Que JEF sepa qué tipo de sitio y de página es, y que los pasos que ofrece sean los probables para ese tipo.",
+    "pasos": [
+      {
+        "escribir": "www.gob.cl"
+      }
+    ]
+  },
+  {
+    "id": "diario-eluniverso",
+    "persona": "Vive en Ecuador, ciega. Entra al diario.",
+    "objetivo": "Que JEF sepa qué tipo de sitio y de página es, y que los pasos que ofrece sean los probables para ese tipo.",
+    "pasos": [
+      {
+        "escribir": "eluniverso.com"
+      }
+    ]
   }
 ]

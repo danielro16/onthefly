@@ -329,6 +329,11 @@
           "es": "what the person came to do, if known"
         },
         {
+          "clave": "tipo",
+          "etiqueta": "WHAT THE PAGE IS",
+          "es": "the kind of site and of page, judged from the page when it is clear; it tells what people usually do there"
+        },
+        {
           "clave": "lista",
           "etiqueta": "LIST OF WHAT CAN BE OPENED",
           "es": "what the page lets them open, press or fill, in the page's order, each with an internal id in brackets that is never said to the person; (menu) and (footer) mark the site's menu and footer"

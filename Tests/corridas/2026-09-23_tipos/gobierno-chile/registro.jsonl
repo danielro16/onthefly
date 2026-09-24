@@ -1,0 +1,15 @@
+{"tipo": "botones", "t": 1790222399.914509, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"tipo": "ubicacion", "t": 1790222400.161547, "pais": "US"}
+{"pais": "US", "t": 1790222400.161789, "tipo": "ubicacion"}
+{"t": 1790222406.543994, "quien": "persona", "tipo": "turno", "texto": "www.gob.cl"}
+{"t": 1790222406.5447469, "opciones": [], "tipo": "botones"}
+{"t": 1790222406.544929, "quien": "jef", "tipo": "turno", "texto": "Abriendo gob.cl."}
+{"t": 1790222406.545156, "tipo": "voz", "cola": false, "texto": "Abriendo gob.cl."}
+{"t": 1790222406.589336, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones"}
+{"titulo": "Un momento…", "texto": "PAGE: www.gob.cl — Un momento…\n\nPAGE CONTENT (what the person came for):\nwww.gob.cl\nVerificación de seguridad en curso\nEste sitio web utiliza un servicio de seguridad para protegerse contra bots maliciosos. Esta página se muestra mientras el sitio web verifica que tú no eres un bot.\nwww.gob.cl\nVerificación de seguridad en curso\nEste sitio web utiliza un servicio de seguridad para protegerse contra bots maliciosos. Esta página se muestra mientras el sitio web verifica que tú no eres un bot.\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nRay ID: a3fee15eb97de0c1\nRendimiento y seguridad de Cloudflare Privacidad", "t": 1790222409.062784, "url": "https://www.gob.cl/", "tipo": "pagina"}
+{"opciones": [], "tipo": "botones", "t": 1790222409.063441}
+{"pagina": "other", "tipo": "tipo", "t": 1790222411.295721, "url": "https://www.gob.cl/", "p_pagina": "0.98", "sitio": "government", "p_sitio": "0.98", "modelo": "otra"}
+{"url": "https://www.gob.cl/", "elementos": ["Cloudflare"], "tipo": "ruido", "t": 1790222411.296675}
+{"quien": "jef", "texto": "Estás en el sitio del gobierno de Chile, gob.cl, pero por ahora se muestra una pantalla de verificación de seguridad: el sitio está comprobando que no eres un bot antes de dejar entrar. Solo aparece el aviso de «Verificación de seguridad en curso», así que habrá que esperar a que termine para ver la página.", "tipo": "turno", "t": 1790222411.2971048}
+{"texto": "Estás en el sitio del gobierno de Chile, gob.cl, pero por ahora se muestra una pantalla de verificación de seguridad: el sitio está comprobando que no eres un bot antes de dejar entrar. Solo aparece el aviso de «Verificación de seguridad en curso», así que habrá que esperar a que termine para ver la página.", "cola": true, "tipo": "voz", "t": 1790222411.297639}
+{"opciones": ["Otra cosa"], "tipo": "botones", "t": 1790222411.2979589}

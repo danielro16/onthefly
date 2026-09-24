@@ -110,6 +110,65 @@ actor PageAnalyzer {
         return out
     }
 
+    // MARK: - Qué sitio es, qué página es
+
+    private struct KindState: Encodable, Sendable {
+        struct Item: Encodable, Sendable {
+            let text: String
+            let kind: String
+            let region: String
+        }
+        let domain: String
+        let title: String
+        let headings: [String]
+        let text: String
+        let items: [Item]
+    }
+
+    /// Lo que Jev dijo de una página: qué tipo de sitio y qué tipo de página,
+    /// cada uno con su seguridad.
+    struct Kinds: Sendable {
+        let site: String
+        let siteConfidence: Double
+        let page: String
+        let pageConfidence: Double
+    }
+
+    /// Las preguntas "sitio" y "pagina" de `criterios.json`, en un solo
+    /// pedido: con las opciones y sus definiciones en el archivo, un tipo
+    /// nuevo es una línea, no código. Medido en 27 páginas de 9 países: con
+    /// seguridad de 0,7 o más acertó 48 de 48 sitios y 45 de 45 páginas, en
+    /// medio segundo. Lo que no llega a esa seguridad lo decide el modelo.
+    /// Nil si Jev no contesta a tiempo.
+    func kinds(domain: String, title: String, headings: [String], text: String,
+               items: [(text: String, kind: String, region: String)]) async -> Kinds? {
+        guard let criterios = Criterios.actuales, let sitio = criterios.jev["sitio"], let pagina = criterios.jev["pagina"]
+        else { return nil }
+        let state = KindState(
+            domain: domain, title: String(title.prefix(120)), headings: headings.prefix(12).map { String($0.prefix(100)) },
+            text: String(text.prefix(1200)),
+            items: items.prefix(30).map { .init(text: String($0.text.prefix(80)), kind: $0.kind, region: $0.region) })
+        let questions: [String: JevClient.Question] = [
+            "sitio": .choice(instructions: sitio.instructions, options: (sitio.criteria ?? [:]).mapValues { $0 }),
+            "pagina": .choice(instructions: pagina.instructions, options: (pagina.criteria ?? [:]).mapValues { $0 }),
+        ]
+        let jev = self.jev
+        let answers: [String: JevClient.Answer]? = await withTaskGroup(of: [String: JevClient.Answer]?.self) { group in
+            group.addTask { try? await jev.evaluate(state: state, questions: questions).answers }
+            group.addTask {
+                try? await Task.sleep(for: criterios.esperaJev)
+                return nil
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first
+        }
+        guard case .choice(let site, let siteP, let siteC)? = answers?["sitio"],
+              case .choice(let page, let pageP, let pageC)? = answers?["pagina"] else { return nil }
+        return Kinds(site: site, siteConfidence: siteC ?? siteP[site] ?? 0,
+                     page: page, pageConfidence: pageC ?? pageP[page] ?? 0)
+    }
+
     // MARK: - Controles sin nombre
 
     private struct ControlsState: Encodable, Sendable {

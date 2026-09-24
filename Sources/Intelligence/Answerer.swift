@@ -203,7 +203,9 @@ actor Answerer {
     /// titulares los dice el código, tal cual los escribió el diario:
     /// reescritos por el modelo salían distintos en cada visita, y a veces
     /// con algo que no estaba.
-    func orient(page: String, candidates: [String], goal: String? = nil) async throws -> Orientation? {
+    /// `kinds`: qué sitio y qué página es, cuando Jev lo dijo con seguridad
+    /// ("site: store; page: product").
+    func orient(page: String, candidates: [String], goal: String? = nil, kinds: String? = nil) async throws -> Orientation? {
         // Cada elemento con una marca de dos letras y no con un número: con la
         // lista numerada, el modelo le decía a la persona "está en la lista
         // como número 4". La marca es para los campos de la respuesta.
@@ -214,7 +216,7 @@ actor Answerer {
         // Qué es ruido y sus tipos los dice `criterios.json`, no este código.
         let ruido = Criterios.actuales?.ruido ?? .init(es: "", noEs: "")
         let parsed = try await ask("orientar", [
-            "vino": goal, "lista": list, "texto": page,
+            "vino": goal, "tipo": kinds, "lista": list, "texto": page,
         ], maxTokens: 1100)
         guard let parsed,
               let text = parsed["respuesta"] as? String, !text.isEmpty

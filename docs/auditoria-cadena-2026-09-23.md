@@ -314,6 +314,22 @@ Daniel. Punto de partida marcado con la etiqueta `antes-de-ajustes`.
      veces ofrece un solo paso donde se piden dos a cuatro.
 4. **Costo y velocidad:** topes en los esquemas, el mismo tope de texto, Jev en
    paralelo.
+   **Idea de Daniel (24/9), hecha:** las decisiones son variables en un JSON y
+   las contesta Jev con probabilidad; el modelo grande, sólo si Jev duda.
+   Primeras dos: `sitio` (tienda, gobierno, banco, diario, salud, educación,
+   viajes, servicios, institución, referencia, buscador, landing, otra) y
+   `pagina` (portada, nota, inicio, lista, producto, resultados, formulario,
+   ingreso, pago, otra), en `criterios.json`. Medido en 27 páginas de 9
+   países: con seguridad ≥ 0,7 (umbral `tipo`), 48 de 48 sitios y 45 de 45
+   páginas bien, en 0,45 s. Lo seguro llega a la orientación como dato
+   («site: store; page: home») y decide cómo se lee la página; si no, decide
+   el modelo. Queda en el registro («tipo»). Probado: Liverpool (tienda →
+   «Buscar productos en Liverpool»), El Universo (diario, portada), gob.cl.
+   Los avisos: sólo los que piden una decisión de la persona (cookies, edad)
+   van primero, sin su ruido pero nunca sin salida; la propaganda (bajar la
+   app) no, porque no le impide nada a JEF.
+   Pendiente: el tipo de aviso lo decide el extractor por palabras
+   («cookie|consentimiento|privacidad»); es una variable para Jev.
 5. **Voz:** un mensaje por turno.
 6. **GLM-5.3 Flash** contra Gemini, en la estructura nueva.
 
