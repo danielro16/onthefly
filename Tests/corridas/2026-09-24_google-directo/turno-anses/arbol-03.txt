@@ -1,0 +1,20 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero sacar un turno en anses
+  4 [txt] Buscando: quiero sacar un turno en anses.
+  5 [txt] Estás en los resultados de «quiero sacar un turno en anses». Los 3 más probables:
+  6 [txt] La página cambió: ahora estás en los resultados de «quiero sacar un turno en anses».
+  7 [H] Vos: Solicitar turnos en ANSES — www.argentina.gob.ar
+  8 [txt] Abriendo argentina.gob.ar.
+  9 [txt] Argentina.gob.ar tiene una página sobre cómo solicitar turnos en ANSES. Sí sirve para sacar el turno: se elige el trámite, la oficina y la fecha; la solicitud se inicia en «Solicitud de turnos».
+ 10 [H] Vos: Abrir «Solicitud de turnos»
+ 11 [txt] Abriendo «Solicitud de turnos».
+ 12 [txt] No pude abrir esa página. Puede ser la conexión o el sitio.
+ 13 [txt] La página cambió: ahora estás en «Turnos», servicioswww.anses.gob.ar.
+ 14 [btn] Intentar de nuevo  (Primera de 5 opciones.)
+ 15 [btn] Leer la página
+ 16 [btn] Resumir la página
+ 17 [btn] Volver a «Solicitar turnos en ANSES»
+ 18 [btn] Otra cosa
+ 19 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 20 [btn] Enviar

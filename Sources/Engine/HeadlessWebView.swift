@@ -70,6 +70,24 @@ final class HeadlessWebView: NSObject {
     /// Cuántas navegaciones empezaron: la red de seguridad de `didFinish`
     /// sólo actúa si, cuando le toca, sigue siendo la misma.
     private var navigations = 0
+    /// Cuándo empezó y terminó de cargar la página que se está leyendo, y si
+    /// la tuvo que apurar la red de seguridad: para el registro, cuánto es
+    /// red y cuánto es esperar a que la página se quede quieta (`deliver`).
+    private var loadStart: ContinuousClock.Instant?
+    private var loadEnd: ContinuousClock.Instant?
+    private var hurried = false
+    /// Cuánto después de terminar la carga se lee la página, si todavía no se
+    /// leyó sola: la red de seguridad, o poco en los resultados de una
+    /// búsqueda (`extract(url:results:)`).
+    private var readAfterLoad = HeadlessWebView.safetyNet
+    private static let safetyNet = Duration.seconds(3)
+    private static let resultsRead = Duration.milliseconds(500)
+    /// Cuántas páginas se leyeron: una falla que llega tarde no pisa una
+    /// página que llegó después (ver `receive`).
+    private var pagesRead = 0
+    /// Cuánto se espera, después de una página sin nada que leer, a que la
+    /// redirección que suele seguir empiece. En ANSES, más de medio segundo.
+    private static let redirectWait = Duration.milliseconds(2500)
     private var continuation: CheckedContinuation<ExtractedPage, Error>?
     /// A page that arrived while nobody was waiting for one. The next waiter
     /// takes it instead of blocking on a load that already happened.
@@ -87,10 +105,19 @@ final class HeadlessWebView: NSObject {
     ///
     /// One extraction at a time per instance; a second call while one is in
     /// flight fails the earlier one rather than silently interleaving.
-    func extract(url: URL) async throws -> ExtractedPage {
+    ///
+    /// `results`: es la página de resultados de una búsqueda que pidió JEF.
+    /// El buscador sigue cambiando su página después de cargar y nunca se
+    /// queda quieto: se esperaban 1,6–2,3 s más, con los resultados ya ahí.
+    /// Se lee a `resultsRead` de terminar la carga. Sólo ahí: en los sitios la
+    /// espera casi no se nota al lado de la orientación, y un sitio que arma
+    /// su contenido después de cargar (Renfe) se leía a medias y había que
+    /// orientarlo dos veces.
+    func extract(url: URL, results: Bool = false) async throws -> ExtractedPage {
         settle(.failure(CancellationError()))
         let web = try session()
         await blocking?.value
+        readAfterLoad = results ? Self.resultsRead : Self.safetyNet
 
         // Anything that arrived before this load belongs to the previous page.
         unconsumed = nil
@@ -238,16 +265,34 @@ final class HeadlessWebView: NSObject {
         return (result as? [String: Any])?["ok"] as? Bool == true
     }
 
-    /// Escribe en un campo y devuelve cuando la página lo recibió.
+    /// Escribe en un campo y devuelve, cuando la página ya lo recibió, lo que
+    /// el campo tiene. Nil si no se pudo escribir o el campo ya no está.
     ///
     /// `fill(fieldID:value:)` está pensado para el tecleo de una persona:
     /// dispara y sigue. Un asistente que escribe y después envía necesita
-    /// saber que el valor llegó antes de apretar.
-    func write(_ fieldID: String, _ value: String) async {
-        _ = try? await fill(fieldID: fieldID, value: value)
+    /// saber que el valor llegó antes de apretar. Y que quedó: antes se
+    /// decía "Listo, escrito" sin mirar, aunque el campo ya no estuviera o
+    /// la página lo hubiera borrado al reaccionar.
+    func write(_ fieldID: String, _ value: String) async -> String? {
+        guard (try? await fill(fieldID: fieldID, value: value)) == true, let web = webView else { return nil }
         // Lo que un sitio con autocompletado tarda en reaccionar. Medido en
         // el buscador de vuelos: menos que esto y el submit salía vacío.
         try? await Task.sleep(for: .milliseconds(700))
+        let safeID = fieldID.filter { $0.isLetter || $0.isNumber }
+        let now = try? await web.evaluateJavaScript("window.__jefValue('\(safeID)')") as? [String: Any]
+        guard now?["ok"] as? Bool == true else { return nil }
+        return now?["value"] as? String
+    }
+
+    /// Si lo que tiene el campo es lo que se escribió, sin espacios ni
+    /// signos ni mayúsculas: una página que da formato ("12.345.678",
+    /// "(11) 4444-5555") lo aceptó; una que lo vació o lo cortó, no.
+    static func holds(_ held: String, _ written: String) -> Bool {
+        func bare(_ text: String) -> String {
+            String(text.lowercased().filter { $0.isLetter || $0.isNumber })
+        }
+        let wanted = bare(written)
+        return wanted.isEmpty ? bare(held).isEmpty : bare(held).contains(wanted)
     }
 
     /// Arriba de todo. El extractor baja hasta el final para despertar lo
@@ -292,6 +337,15 @@ final class HeadlessWebView: NSObject {
         // abrir esa página" con la página ahí. Sin navegación, se relee.
         try? await Task.sleep(for: Self.navigationGrace)
         if navigationStarted || web.isLoading { return try await nextPage() }
+        return try await reextract(web)
+    }
+
+    /// Cierra lo que tapa la página con Escape (`__jefDismiss`) y la lee
+    /// otra vez, como quedó.
+    func dismiss() async throws -> ExtractedPage {
+        guard let web = webView else { throw ExtractionError.noSession }
+        _ = try? await web.evaluateJavaScript("window.__jefDismiss && window.__jefDismiss()")
+        try? await Task.sleep(for: Self.navigationGrace)
         return try await reextract(web)
     }
 
@@ -348,6 +402,54 @@ final class HeadlessWebView: NSObject {
     func cancel() {
         settle(.failure(CancellationError()))
         teardown()
+    }
+
+    /// Algo que la página dijo sola: un cartel, o una zona de estado de las
+    /// que VoiceOver anuncia. `asked`: era una pregunta para confirmar, y no
+    /// se aceptó.
+    struct Said: Sendable {
+        let text: String
+        let asked: Bool
+    }
+
+    /// Los carteles desde la última vez que se preguntó (`takeSaid`).
+    fileprivate var alerts: [Said] = []
+    /// Se acaba de rechazar un archivo: la carga que falla por eso no es una
+    /// falla (`report`).
+    fileprivate var fileRefused = false
+
+    /// Lo que la página dijo sola desde la última vez que se preguntó: sus
+    /// carteles y sus zonas de estado (`__jefTakeSaid` en extract.js).
+    /// Preguntado antes y después de apretar algo, es lo que la página
+    /// contestó.
+    func takeSaid() async -> [Said] {
+        let live = (try? await webView?.evaluateJavaScript("window.__jefTakeSaid ? window.__jefTakeSaid() : []")) as? [String] ?? []
+        defer { alerts = [] }
+        return alerts + live.map { Said(text: $0, asked: false) }
+    }
+
+    /// Lo que una acción hizo tarde, hasta `limit`: la página de una
+    /// navegación que recién empieza, o la que la página entregó sola. Nil si
+    /// no pasó nada.
+    ///
+    /// Hay botones que navegan un rato después del toque —un buscador que
+    /// primero consulta y después cambia de página—. A los 450 ms de
+    /// `navigationGrace` la página seguía igual, se decía "Formulario enviado.
+    /// La página no cambió." y los resultados llegaban un segundo después
+    /// (Gob.pe). Quien llama pregunta sólo si la página quedó igual: lo que
+    /// cambió ya contestó.
+    func lateChange(within limit: Duration) async throws -> ExtractedPage? {
+        guard let web = webView else { return nil }
+        let end = ContinuousClock.now.advanced(by: limit)
+        while ContinuousClock.now < end {
+            if navigationStarted || web.isLoading { return try await nextPage() }
+            if let page = unconsumed {
+                unconsumed = nil
+                return page
+            }
+            try? await Task.sleep(for: .milliseconds(150))
+        }
+        return nil
     }
 
     /// Re-runs extraction in the live page and waits for the result.
@@ -463,6 +565,13 @@ final class HeadlessWebView: NSObject {
     /// Hands a page to whoever is waiting for one — or, if nobody is, reports
     /// that the page changed on its own and keeps it for the next waiter.
     private func deliver(_ result: Result<ExtractedPage, Error>) {
+        if let start = loadStart, case .success(let page) = result {
+            func ms(_ end: ContinuousClock.Instant) -> Int { Int((end - start) / .milliseconds(1)) }
+            Registro.anotar("carga", [
+                "url": page.url, "red_ms": loadEnd.map(ms) ?? -1, "leida_ms": ms(.now), "apurada": hurried,
+            ])
+            loadStart = nil
+        }
         if continuation != nil {
             settle(result)
             return
@@ -493,12 +602,28 @@ final class HeadlessWebView: NSObject {
         let decoder = JSONDecoder()
 
         if let page = try? decoder.decode(ExtractedPage.self, from: data), page.ok {
+            pagesRead += 1
             deliver(.success(page))
             return
         }
 
         if let failure = try? decoder.decode(ExtractionFailure.self, from: data) {
-            deliver(.failure(ExtractionError.notReadable(failure.message ?? failure.reason)))
+            // Una página sin nada que leer puede ser el paso intermedio de
+            // una redirección: si ya carga otra, o empieza a cargar dentro
+            // de `redirectWait`, o la misma página llega a leerse, lo que vale
+            // es eso, que llega solo. En ANSES se decía "No pude abrir esa
+            // página" y la de turnos cargaba al segundo.
+            let started = navigations, read = pagesRead
+            Task { @MainActor [weak self] in
+                let end = ContinuousClock.now.advanced(by: Self.redirectWait)
+                while ContinuousClock.now < end {
+                    guard let self, self.navigations == started, self.pagesRead == read,
+                          self.webView?.isLoading != true else { return }
+                    try? await Task.sleep(for: .milliseconds(150))
+                }
+                guard let self, self.navigations == started, self.pagesRead == read else { return }
+                self.deliver(.failure(ExtractionError.notReadable(failure.message ?? failure.reason)))
+            }
             return
         }
 
@@ -533,9 +658,13 @@ extension HeadlessWebView: WKNavigationDelegate {
     ) {
         navigationStarted = true
         navigations += 1
+        loadStart = .now
+        loadEnd = nil
+        hurried = false
     }
 
-    /// La red de seguridad: si a los 3 s de terminar la carga el extractor
+    /// La red de seguridad: si a los 3 s de terminar la carga (medio segundo
+    /// en los resultados de una búsqueda, ver `extract`) el extractor
     /// todavía no entregó la página, se le pide que la lea ya, sin esperas.
     /// Sus esperas corren con los relojes de la página, y en un WebView
     /// fuera de pantalla a veces se estiran: en Clarín, una de 6 s tardó 20,
@@ -543,9 +672,13 @@ extension HeadlessWebView: WKNavigationDelegate {
     /// segundo 2. Lo que la página haga después se sigue leyendo como antes.
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         let started = navigations
+        loadEnd = .now
+        let wait = readAfterLoad
+        readAfterLoad = Self.safetyNet
         Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .seconds(3))
+            try? await Task.sleep(for: wait)
             guard let self, self.navigations == started, self.continuation != nil else { return }
+            self.hurried = true
             _ = try? await webView.evaluateJavaScript("window.__jefExtractNow && window.__jefExtractNow()")
         }
     }
@@ -562,11 +695,35 @@ extension HeadlessWebView: WKNavigationDelegate {
         report(error)
     }
 
+    /// Lo que el navegador no puede mostrar —un archivo para bajar— no se
+    /// abre ni se baja: la persona se queda en la página, y lo que pasó queda
+    /// como lo que contestó la página (`takeSaid`), para que la orientación
+    /// lo cuente. Un link del IMSS que bajaba un archivo dejaba a JEF sin
+    /// página.
+    func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationResponse: WKNavigationResponse
+    ) async -> WKNavigationResponsePolicy {
+        guard navigationResponse.isForMainFrame, !navigationResponse.canShowMIMEType else { return .allow }
+        let type = navigationResponse.response.mimeType ?? "unknown"
+        let name = navigationResponse.response.suggestedFilename.map { ", \($0)" } ?? ""
+        alerts.append(Said(text: "The link is a file (\(type)\(name)) that the browser cannot show; it was not opened or downloaded.", asked: false))
+        fileRefused = true
+        return .cancel
+    }
+
     private func report(_ error: Error) {
         // A load that a newer load replaced comes back as cancelled. The newer
         // one has its own waiter; failing it for the old one's sake would
         // fail every navigation that starts while another is in flight.
         if (error as NSError).code == NSURLErrorCancelled { return }
+        // Un archivo que no se abrió (arriba): no es una falla. Quien espera
+        // una página recibe la que sigue abierta.
+        if fileRefused {
+            fileRefused = false
+            _ = webView?.evaluateJavaScript("window.__jefExtractNow && window.__jefExtractNow()")
+            return
+        }
         deliver(.failure(ExtractionError.navigationFailed(error.localizedDescription)))
     }
 }
@@ -574,6 +731,29 @@ extension HeadlessWebView: WKNavigationDelegate {
 // MARK: - WKUIDelegate
 
 extension HeadlessWebView: WKUIDelegate {
+
+    /// Un cartel del navegador (`alert`): se cierra y se guarda lo que dice.
+    /// Es cómo muchas páginas contestan —Demoblaze: "Product added."—, y
+    /// antes se perdía sin que nadie lo oyera.
+    func webView(
+        _ webView: WKWebView,
+        runJavaScriptAlertPanelWithMessage message: String,
+        initiatedByFrame frame: WKFrameInfo
+    ) async {
+        guard frame.isMainFrame else { return }
+        alerts.append(Said(text: message, asked: false))
+    }
+
+    /// Un cartel que pide confirmar (`confirm`): no se acepta, como antes
+    /// —aceptar le toca a la persona—, pero se guarda lo que preguntó.
+    func webView(
+        _ webView: WKWebView,
+        runJavaScriptConfirmPanelWithMessage message: String,
+        initiatedByFrame frame: WKFrameInfo
+    ) async -> Bool {
+        if frame.isMainFrame { alerts.append(Said(text: message, asked: true)) }
+        return false
+    }
 
     /// `target="_blank"` asks for a new window. There is one page here, so the
     /// link opens in it; without this the tap does nothing at all, silently,

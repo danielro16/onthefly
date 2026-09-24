@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datos del socio</title>
+<!--
+  Dos campos que reaccionan a lo que se escribe, como los de muchos sitios:
+  el DNI se escribe con puntos (lo acepta, con otro formato) y el código
+  postal borra lo que no sea número (no lo acepta). JEF tiene que decir
+  "Listo" en el primero y que no quedó en el segundo.
+  Servida con: python3 -m http.server 8765 --directory Tests
+-->
+</head>
+<body>
+<main>
+<h1>Datos del socio</h1>
+<form action="redirigido.html">
+<label for="dni">DNI</label>
+<input id="dni" name="dni" inputmode="numeric">
+<label for="cp">Código postal</label>
+<input id="cp" name="cp" inputmode="numeric" maxlength="5">
+<button type="submit">Guardar</button>
+</form>
+</main>
+<script>
+document.getElementById('dni').addEventListener('input', function (e) {
+  var d = e.target.value.replace(/\D/g, '');
+  e.target.value = d.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+});
+document.getElementById('cp').addEventListener('input', function (e) {
+  e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5);
+});
+</script>
+</body>
+</html>

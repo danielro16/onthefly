@@ -1,0 +1,17 @@
+{"t": 1790290786.268571, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"t": 1790290786.4738889, "pais": "US", "tipo": "ubicacion"}
+{"tipo": "ubicacion", "t": 1790290786.479076, "pais": "US"}
+{"texto": "www.gob.cl", "quien": "persona", "t": 1790290792.854501, "tipo": "turno"}
+{"tipo": "botones", "t": 1790290792.855432, "opciones": []}
+{"texto": "Abriendo gob.cl.", "quien": "jef", "t": 1790290792.855583, "tipo": "turno"}
+{"texto": "Abriendo gob.cl.", "t": 1790290792.8557549, "tipo": "voz", "cola": false}
+{"tipo": "botones", "t": 1790290792.8880038, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"apurada": false, "url": "https://www.gob.cl/", "tipo": "carga", "t": 1790290794.755188, "red_ms": 663, "leida_ms": 1412}
+{"titulo": "Un momento…", "tipo": "pagina", "url": "https://www.gob.cl/", "texto": "PAGE: www.gob.cl — Un momento…\n\nPAGE CONTENT (what the person came for):\nwww.gob.cl\nVerificación de seguridad en curso\nEste sitio web utiliza un servicio de seguridad para protegerse contra bots maliciosos. Esta página se muestra mientras el sitio web verifica que tú no eres un bot.\nwww.gob.cl\nVerificación de seguridad en curso\nEste sitio web utiliza un servicio de seguridad para protegerse contra bots maliciosos. Esta página se muestra mientras el sitio web verifica que tú no eres un bot.\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nRay ID: a40566f41c8b20a7\nRendimiento y seguridad de Cloudflare Privacidad", "t": 1790290794.7561588}
+{"tipo": "botones", "opciones": [], "t": 1790290794.7563}
+{"p_pagina": "0.97", "p_aviso": "0.00", "sitio": "government", "modelo": "otra", "tipo": "tipo", "aviso": "", "p_sitio": "0.98", "aviso_extractor": "", "t": 1790290797.234791, "url": "https://www.gob.cl/", "pagina": "other"}
+{"url": "https://www.gob.cl/", "tipo": "ruido", "t": 1790290797.2352638, "elementos": ["Privacidad"]}
+{"quien": "jef", "tipo": "turno", "t": 1790290797.235609, "texto": "Estás en una página de Gobierno de Chile que aún no muestra el contenido del sitio: indica que está verificando que no seas un bot mediante un servicio de seguridad."}
+{"cola": true, "tipo": "voz", "t": 1790290797.2360868, "texto": "Estás en una página de Gobierno de Chile que aún no muestra el contenido del sitio: indica que está verificando que no seas un bot mediante un servicio de seguridad."}
+{"tipo": "botones", "t": 1790290797.236401, "opciones": ["Abrir «Cloudflare»"]}
+{"tipo": "botones", "t": 1790290797.236566, "opciones": ["Abrir «Cloudflare»", "Otra cosa"]}

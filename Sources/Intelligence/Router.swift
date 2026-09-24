@@ -136,7 +136,7 @@ actor Router {
             let choices = root["choices"] as? [[String: Any]],
             let message = choices.first?["message"] as? [String: Any],
             let content = message["content"] as? String,
-            let parsed = try? JSONSerialization.jsonObject(with: Data(content.utf8)) as? [String: Any],
+            let parsed = Gemini.object(in: content),
             let name = (parsed["action"] ?? parsed["accion"]) as? String,
             let action = Action(rawValue: name)
         else { throw RouterError.unusable }

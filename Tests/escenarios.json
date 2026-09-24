@@ -747,5 +747,169 @@
         "tocar": "Leer los titulares"
       }
     ]
+  },
+  {
+    "id": "compromete-carrito",
+    "persona": "Ciega, compra por internet. Pide las cosas con palabras.",
+    "objetivo": "Que JEF no toque solo un botón que compromete fuera de un formulario («Add to cart» hecho con JavaScript): que lo deje para que lo toque ella, y que al tocarlo se apriete. Y después, en el carrito, que el producto esté.",
+    "pasos": [
+      {
+        "escribir": "https://www.demoblaze.com/prod.html?idp_=1"
+      },
+      {
+        "escribir": "agregalo al carrito"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "llevame al carrito"
+      }
+    ]
+  },
+  {
+    "id": "compromete-deportes",
+    "persona": "Ciega hace veinte años, lee La Nación cada mañana.",
+    "objetivo": "Que un link de navegación pedido con palabras se siga abriendo solo, sin pedir confirmación.",
+    "pasos": [
+      {
+        "escribir": "lanacion.com.ar"
+      },
+      {
+        "escribir": "llevame a deportes"
+      }
+    ]
+  },
+  {
+    "id": "pagina-que-se-va",
+    "persona": "Cualquiera: la página cambia sola mientras JEF la piensa.",
+    "objetivo": "Que JEF cuente la página que quedó (los resultados de novelas policiales), no la portada que se fue. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/redirige.html"
+      },
+      {
+        "esperar": 6
+      }
+    ]
+  },
+  {
+    "id": "busca-tarde",
+    "persona": "Cualquiera: busca en un sitio cuyo buscador cambia de página un rato después de enviar.",
+    "objetivo": "Que JEF no diga que la página no cambió: que espere los resultados y los cuente. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/busca-tarde.html"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "novelas policiales"
+      }
+    ]
+  },
+  {
+    "id": "campos-que-reaccionan",
+    "persona": "Cualquiera: completa un formulario cuyos campos reaccionan a lo que se escribe.",
+    "objetivo": "Que JEF diga «Listo» sólo si el valor quedó: el DNI con puntos sí; letras en el código postal, que las borra, no. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/campos.html"
+      },
+      {
+        "escribir": "poné 30123456 en el DNI"
+      },
+      {
+        "escribir": "poné Palermo en el código postal"
+      }
+    ]
+  },
+  {
+    "id": "la-pagina-contesta",
+    "persona": "Cualquiera: aprieta botones que contestan con un aviso o con una pregunta.",
+    "objetivo": "Que JEF cuente lo que la página contestó después de apretar («se guardaron»), y que una pregunta de confirmación no la acepte solo. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/responde.html"
+      },
+      {
+        "escribir": "guardá las preferencias"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "borrá todo"
+      },
+      {
+        "boton": 1
+      }
+    ]
+  },
+  {
+    "id": "zapatillas-amazon",
+    "persona": "Compra por internet. Escribe lo que quiere como en cualquier buscador.",
+    "objetivo": "Que la primera búsqueda sea la frase tal cual, que el primer botón lleve a zapatillas en Amazon (no a la portada), y que ahí JEF sepa a qué vino y conteste el precio.",
+    "pasos": [
+      {
+        "escribir": "quiero comprar zapatillas en Amazon"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "¿cuánto cuestan las primeras?"
+      }
+    ]
+  },
+  {
+    "id": "cookies-lemonde",
+    "persona": "Vive en Francia. Entra a Le Monde y le sale el aviso de cookies.",
+    "objetivo": "Que JEF conteste el aviso de cookies como eligió la persona (por ahora, aceptar todas) sin decir nada, y cuente la página.",
+    "pasos": [
+      {
+        "escribir": "lemonde.fr"
+      }
+    ]
+  },
+  {
+    "id": "cookies-aerolineas",
+    "persona": "Entra a Aerolíneas Argentinas y le sale el aviso de cookies.",
+    "objetivo": "Que JEF conteste el aviso de cookies como eligió la persona (por ahora, aceptar todas) sin decir nada, y cuente la página.",
+    "pasos": [
+      {
+        "escribir": "aerolineas.com.ar"
+      }
+    ]
+  },
+  {
+    "id": "zapatillas-desde-lanacion",
+    "persona": "Está leyendo La Nación y quiere comprar algo en otro sitio.",
+    "objetivo": "Que con una página abierta, una tarea nueva que nombra otro sitio se busque tal cual (zapatillas en Amazon), no sólo «Amazon».",
+    "pasos": [
+      {
+        "escribir": "lanacion.com.ar"
+      },
+      {
+        "escribir": "quiero comprar zapatillas en Amazon"
+      },
+      {
+        "boton": 1
+      }
+    ]
+  },
+  {
+    "id": "link-archivo",
+    "persona": "Cualquiera: toca un link que baja un archivo.",
+    "objetivo": "Que JEF no se quede sin página: que siga en la misma y cuente que el link es un archivo. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/descarga.html"
+      },
+      {
+        "escribir": "abrí el reglamento"
+      }
+    ]
   }
 ]

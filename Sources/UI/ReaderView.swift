@@ -149,7 +149,9 @@ final class ReaderModel {
         }
     }
 
-    func go() async {
+    /// `results`: es la página de resultados de una búsqueda que pidió el
+    /// asistente, que se lee apenas carga (`HeadlessWebView.extract`).
+    func go(results: Bool = false) async {
         guard let url = Self.normalize(address) else {
             state = .failed("Eso no parece una dirección web.")
             return
@@ -158,7 +160,7 @@ final class ReaderModel {
         state = .loading(url)
 
         do {
-            let page = try await engine.extract(url: url)
+            let page = try await engine.extract(url: url, results: results)
             address = page.url
             state = .loaded(page)
             engine.scrollToTop()
@@ -167,6 +169,11 @@ final class ReaderModel {
             state = .failed(error.localizedDescription)
         }
     }
+
+    /// Cuánto más se espera, después de un toque o un envío que dejó la
+    /// página igual, a que haga algo. En Gob.pe la búsqueda navegaba un
+    /// segundo y medio después de enviarla.
+    static let lateLimit = Duration.milliseconds(2500)
 
     /// Una carga que otra más nueva reemplazó no falló: dejó de importar.
     ///
@@ -192,7 +199,11 @@ final class ReaderModel {
 
         do {
             switch try await engine.activate(actionID: action.id, expecting: action.label) {
-            case .updated(let page):
+            case .updated(var page):
+                // Igual todavía: puede estar por navegar (`lateChange`).
+                if page.isEquivalent(to: self.page), let late = try await engine.lateChange(within: Self.lateLimit) {
+                    page = late
+                }
                 // A control that changed nothing is not an error and must not
                 // look like one.
                 guard !page.isEquivalent(to: self.page) else {
@@ -235,17 +246,19 @@ final class ReaderModel {
         return (item.title ?? "", item.url.absoluteString)
     }
 
+    /// Cierra lo que tapa la página con Escape, sin tocar nada, y la lee
+    /// como quedó (`HeadlessWebView.dismiss`).
+    func dismiss() async {
+        guard let page = try? await engine.dismiss(), !page.isEquivalent(to: self.page) else { return }
+        address = page.url
+        state = .loaded(page)
+    }
+
     /// Vuelve a leer la página tal como está ahora.
     func reread() async {
         guard let page = try? await engine.reread() else { return }
         address = page.url
         state = .loaded(page)
-    }
-
-    /// Lleva un valor a un campo de la página sin esperar a que lo reciba.
-    /// Quien la llama espera lo que haga falta; `type` es la que espera.
-    func fill(_ field: Action.Field, with value: String) {
-        Task { try? await engine.fill(fieldID: field.id, value: value) }
     }
 
     /// Submits a form and reads whatever the page became.
@@ -268,6 +281,11 @@ final class ReaderModel {
                     )
                     return
                 }
+                // Igual todavía: puede estar por navegar (`lateChange`).
+                var page = page
+                if page.isEquivalent(to: self.page), let late = try await engine.lateChange(within: Self.lateLimit) {
+                    page = late
+                }
                 guard !page.isEquivalent(to: self.page) else {
                     Voz.decir(
                         "Formulario enviado. La página no cambió."
@@ -288,13 +306,31 @@ final class ReaderModel {
         }
     }
 
-    /// Escribe en un campo y espera a que la página lo reciba.
-    ///
-    /// `fill` dispara sin esperar. Un asistente que escribe y a continuación
-    /// envía necesita saber que el valor llegó: acá se escribe y se espera.
-    func type(_ value: String, into field: Action.Field) async {
-        await engine.write(field.id, value)
+    /// Escribe en un campo, espera a que la página lo reciba y dice si quedó
+    /// escrito: el campo sigue ahí y tiene lo que se escribió.
+    func type(_ value: String, into field: Action.Field) async -> Bool {
+        let held = await engine.write(field.id, value)
         state = state
+        guard let held else { return false }
+        if field.type == "checkbox" { return (held == "on") == (value == "on" || value == "true") }
+        return Self.holds(held, value)
+    }
+
+    /// Lo que la página dijo sola desde la última vez que se preguntó: sus
+    /// carteles y sus zonas de estado (`HeadlessWebView.takeSaid`).
+    func takeSaid() async -> [HeadlessWebView.Said] {
+        await engine.takeSaid()
+    }
+
+    /// Si lo que tiene el campo es lo que se escribió, sin espacios ni
+    /// signos ni mayúsculas: una página que da formato ("12.345.678",
+    /// "(11) 4444-5555") lo aceptó; una que lo vació o lo cortó, no.
+    static func holds(_ held: String, _ written: String) -> Bool {
+        func bare(_ text: String) -> String {
+            String(text.lowercased().filter { $0.isLetter || $0.isNumber })
+        }
+        let wanted = bare(written)
+        return wanted.isEmpty ? bare(held).isEmpty : bare(held).contains(wanted)
     }
 
     /// Volver a la página anterior, con la sesión intacta.
@@ -462,7 +498,8 @@ struct ReaderView: View {
             onAccept: { action in Task { await model.assistant.accept(action, on: model) } },
             onClose: hasPage ? { close() } : nil,
             onDrag: hasPage ? { value, ended in dragged(value, ended: ended, in: screen) } : nil,
-            isOpen: open
+            isOpen: open,
+            searching: !hasPage
         )
         .frame(maxWidth: .infinity)
         .frame(height: hasPage ? panelHeight(in: screen) : screen.size.height)

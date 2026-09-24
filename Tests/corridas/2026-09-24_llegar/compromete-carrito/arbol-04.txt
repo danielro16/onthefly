@@ -1,0 +1,20 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: https://www.demoblaze.com/prod.html?idp_=1
+  4 [txt] Abriendo demoblaze.com.
+  5 [txt] La tienda Product Store muestra el Samsung Galaxy S6, con un precio de $360, impuestos incluidos. El teléfono tiene un procesador Samsung Exynos 7420 de ocho núcleos a 1.5GHz, 3GB de RAM y 32GB de almacenamiento interno no ampliable.
+  6 [H] Vos: agregalo al carrito
+  7 [txt] «Add to cart» puede confirmar algo: queda abajo, para tocarlo.
+  8 [H] Vos: Pulsar «Add to cart»
+  9 [txt] Pulsando «Add to cart».
+ 10 [txt] La tienda confirmó que el producto se agregó al carrito. Estás en la página del Samsung Galaxy S6, que cuesta $360 e incluye impuestos; la descripción indica que tiene un procesador de ocho núcleos a 1.5GHz, 3GB de RAM y 32GB de almacenamiento.
+ 11 [H] Vos: llevame al carrito
+ 12 [txt] «Add to cart» puede confirmar algo: queda abajo, para tocarlo.
+ 13 [txt] Abriendo Cart.
+ 14 [txt] Estás en el carrito de Product Store. Ya aparecen muchos productos, incluidos varios Samsung Galaxy S6 y S7; la página indica un total de 62840, así que no se ve que se haya agregado un producto nuevo ahora. Para agregar uno, esta tienda permite ir a la sección de productos.
+ 15 [btn] Abrir «PRODUCT STORE»  (Primera de 4 opciones.)
+ 16 [btn] Abrir «Delete»
+ 17 [btn] Volver a «STORE»
+ 18 [btn] Otra cosa
+ 19 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 20 [btn] Enviar

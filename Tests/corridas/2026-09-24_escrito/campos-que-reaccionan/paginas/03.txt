@@ -1,0 +1,8 @@
+http://localhost:8765/campos.html
+Datos del socio
+
+PAGE: localhost — Datos del socio
+
+PAGE CONTENT (what the person came for):
+Datos del socio
+FORM asking for: DNI, Código postal — button «Guardar»

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portada que se va</title>
+<!--
+  Una página que cambia sola mientras JEF la está pensando: a los dos
+  segundos se va a otra, como un sitio que redirige o una búsqueda que tarda
+  en salir. JEF no tiene que contar esta: tiene que contar la que quedó.
+  Servida con: python3 -m http.server 8765 --directory Tests
+-->
+</head>
+<body>
+<main>
+<h1>Portada del Club de Lectura</h1>
+<p>Bienvenidos al Club de Lectura del barrio. Cada semana elegimos un libro y nos juntamos a comentarlo.</p>
+<h2><a href="#agenda">Agenda de encuentros</a></h2>
+<h2><a href="#socios">Hacete socio</a></h2>
+</main>
+<script>setTimeout(function () { location.href = 'redirigido.html'; }, 2000);</script>
+</body>
+</html>

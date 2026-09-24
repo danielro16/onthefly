@@ -1,0 +1,9 @@
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790283118.8809252}
+{"tipo": "ubicacion", "t": 1790283119.381432, "pais": "US"}
+{"tipo": "ubicacion", "t": 1790283119.381777, "pais": "US"}
+{"quien": "persona", "texto": "buscá seguro de auto", "t": 1790283125.285625, "tipo": "turno"}
+{"t": 1790283125.286638, "tipo": "botones", "opciones": []}
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790283125.287843}
+{"tipo": "turno", "quien": "jef", "texto": "Sin conexión. No puedo entender lo que pedís sin internet.", "t": 1790283141.312226}
+{"t": 1790283141.314691, "tipo": "voz", "texto": "Sin conexión. No puedo entender lo que pedís sin internet.", "cola": false}
+{"t": 1790283141.315618, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?", "Otra cosa"], "tipo": "botones"}

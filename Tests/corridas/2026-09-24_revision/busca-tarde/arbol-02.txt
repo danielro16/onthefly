@@ -1,0 +1,12 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: http://localhost:8765/busca-tarde.html
+  4 [txt] Abriendo localhost.
+  5 [txt] Estás en la página de la biblioteca del club, donde se busca un libro por título, autor o género. Hay un buscador para escribir eso mismo y un botón Buscar. Dime qué libro, autor o género querés buscar.
+  6 [H] Vos: Buscar libros
+  7 [txt] «Buscar libros»: ¿qué escribo? Se puede escribir o dictar acá abajo.
+  8 [btn] Buscar libros  (Primera de 3 opciones.)
+  9 [btn] Resumir la página
+ 10 [btn] Otra cosa
+ 11 [campo] Pedido  = Escribir: Buscar en la biblioteca  (Va directo al campo «Buscar en la biblioteca» de la página.)
+ 12 [btn] Enviar

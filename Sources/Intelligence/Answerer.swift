@@ -105,7 +105,14 @@ actor Answerer {
             let message = choices.first?["message"] as? [String: Any],
             let content = message["content"] as? String
         else { throw AnswerError.unusable }
-        return try? JSONSerialization.jsonObject(with: Data(content.utf8)) as? [String: Any]
+        guard let parsed = Gemini.object(in: content) else {
+            // Lo que vino, para saber por qué: sin esto sólo quedaba "unusable".
+            let head = String(content.prefix(400)), end = message["refusal"] as? String ?? ""
+            let reason = choices.first?["finish_reason"] as? String ?? ""
+            await MainActor.run { Registro.anotar("respuesta_rota", ["contenido": head, "fin": reason, "rechazo": end]) }
+            return nil
+        }
+        return parsed
     }
 
     /// Un pedido a Gemini con uno de los prompts de `prompts.json`: su
@@ -142,7 +149,7 @@ actor Answerer {
         // cifra que el modelo dice haber usado tiene que estar en la página.
         // Si una no aparece, no se dice nada: mejor callar que inventar un
         // saldo.
-        let figures = (parsed["cifras"] as? [String]) ?? []
+        let figures = ((parsed["cifras"] as? [String]) ?? []) + Self.numbers(in: text)
         guard figures.allSatisfy({ Self.figureAppears($0, in: page) }) else { return nil }
         let questions = ((parsed["preguntas"] as? [String]) ?? [])
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -157,7 +164,7 @@ actor Answerer {
         guard let parsed = try await ask("resumir", ["dicho": alreadySaid, "texto": page], maxTokens: 600)
         else { throw AnswerError.unusable }
         guard let text = parsed["respuesta"] as? String, !text.isEmpty else { return nil }
-        let figures = (parsed["cifras"] as? [String]) ?? []
+        let figures = ((parsed["cifras"] as? [String]) ?? []) + Self.numbers(in: text)
         guard figures.allSatisfy({ Self.figureAppears($0, in: page) }) else { return nil }
         return Answer(text: text, quote: "")
     }
@@ -208,7 +215,10 @@ actor Answerer {
     /// con algo que no estaba.
     /// `kinds`: qué sitio y qué página es, cuando Jev lo dijo con seguridad
     /// ("site: store; page: product").
-    func orient(page whole: String, candidates: [String], goal: String? = nil, kinds: String? = nil) async throws -> Orientation? {
+    /// `done`: lo que JEF acaba de apretar y lo que la página contestó
+    /// (`Assistant.done`); lo que dice de eso también vale como fuente de
+    /// cifras.
+    func orient(page whole: String, candidates: [String], goal: String? = nil, kinds: String? = nil, done: String? = nil) async throws -> Orientation? {
         let page = String(whole.prefix(Gemini.pageLimit))
         // Cada elemento con una marca de dos letras y no con un número: con la
         // lista numerada, el modelo le decía a la persona "está en la lista
@@ -220,7 +230,7 @@ actor Answerer {
         // Qué es ruido y sus tipos los dice `criterios.json`, no este código.
         let ruido = Criterios.actuales?.ruido ?? .init(es: "", noEs: "")
         let parsed = try await ask("orientar", [
-            "vino": goal, "tipo": kinds, "lista": list, "texto": page,
+            "hecho": done, "vino": goal, "tipo": kinds, "lista": list, "texto": page,
         ], maxTokens: 1100)
         guard let parsed,
               var text = parsed["respuesta"] as? String, !text.isEmpty
@@ -230,9 +240,9 @@ actor Answerer {
         // van a ofrecer. Si cuenta 19 y ofrece 18, se descarta como
         // cualquier cifra inventada.
         let offered = String(Set(((parsed["opciones"] as? [Any]) ?? []).compactMap(number)).count)
-        let figures = (parsed["cifras"] as? [String]) ?? []
+        let figures = ((parsed["cifras"] as? [String]) ?? []) + Self.numbers(in: text)
         let missing = figures.filter {
-            !Self.figureAppears($0, in: page + "\n" + list) && String($0.filter(\.isNumber)) != offered
+            !Self.figureAppears($0, in: page + "\n" + list + "\n" + (done ?? "")) && String($0.filter(\.isNumber)) != offered
         }
         // Una cifra que no está en la página se lleva su oración, no la
         // descripción entera: en Clarín, "28,2%" —calculado, no escrito—
@@ -385,6 +395,16 @@ actor Answerer {
     /// otro: Wikipedia escribe "644 234" con un espacio fino y el modelo lo
     /// copió "644.234" — la misma cifra, y por eso se descartaba la
     /// orientación entera.
+    /// Los números que dice un texto, tal como los escribe. Se verifican
+    /// todos, no sólo los que el modelo declara en `cifras`: con la lista
+    /// vacía, nada se verificaba (la auditoría). Medido sobre lo que JEF dijo
+    /// el 24/9: 1 oración de 475 hubiera caído, un conteo que el modelo hizo
+    /// ("18 trámites"), y la orientación exceptúa ese conteo cuando coincide
+    /// con las opciones que ofrece.
+    static func numbers(in text: String) -> [String] {
+        text.matches(of: /\d(?:[\d.,]*\d)?/).map { String($0.output) }
+    }
+
     static func figureAppears(_ figure: String, in page: String) -> Bool {
         if appears(figure, in: page, minimum: 1) { return true }
         // Se comparan los números, no las palabras ni las unidades: el modelo

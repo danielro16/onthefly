@@ -1,0 +1,36 @@
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790293621.692316}
+{"t": 1790293622.206262, "pais": "US", "tipo": "ubicacion"}
+{"pais": "US", "tipo": "ubicacion", "t": 1790293622.2066422}
+{"tipo": "turno", "t": 1790293628.219234, "texto": "http://localhost:8765/descarga.html", "quien": "persona"}
+{"tipo": "botones", "opciones": [], "t": 1790293628.2202082}
+{"tipo": "turno", "t": 1790293628.2206979, "texto": "Abriendo localhost.", "quien": "jef"}
+{"tipo": "voz", "t": 1790293628.22088, "texto": "Abriendo localhost.", "cola": false}
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790293628.276277}
+{"t": 1790293629.525147, "apurada": false, "tipo": "carga", "leida_ms": 689, "url": "http://localhost:8765/descarga.html", "red_ms": 57}
+{"titulo": "Documentos del club", "texto": "PAGE: localhost — Documentos del club\n\nPAGE CONTENT (what the person came for):\nDocumentos del club\nAcá están los documentos del Club de Lectura.\nBajar el reglamento del club\nVer el catálogo de libros\nAcá están los documentos del Club de Lectura.\nBajar el reglamento del club, Ver el catálogo de libros", "tipo": "pagina", "url": "http://localhost:8765/descarga.html", "t": 1790293629.526192}
+{"tipo": "botones", "opciones": [], "t": 1790293629.5263171}
+{"aviso_extractor": "", "url": "http://localhost:8765/descarga.html", "sitio": "", "p_pagina": "", "tipo": "tipo", "pagina": "", "t": 1790293632.079669, "p_aviso": "", "modelo": "otra", "p_sitio": "", "aviso": ""}
+{"tipo": "ruido", "t": 1790293632.0805268, "elementos": [], "url": "http://localhost:8765/descarga.html"}
+{"tipo": "turno", "texto": "Estás en la página de documentos del Club de Lectura, donde puedes acceder al reglamento y al catálogo de libros.", "t": 1790293632.080828, "quien": "jef"}
+{"tipo": "voz", "texto": "Estás en la página de documentos del Club de Lectura, donde puedes acceder al reglamento y al catálogo de libros.", "t": 1790293632.0816278, "cola": true}
+{"t": 1790293632.082646, "opciones": ["Abrir «Bajar el reglamento del club»", "Abrir «Ver el catálogo de libros»"], "tipo": "botones"}
+{"t": 1790293632.083013, "opciones": ["Abrir «Bajar el reglamento del club»", "Abrir «Ver el catálogo de libros»", "Otra cosa"], "tipo": "botones"}
+{"t": 1790293640.146781, "tipo": "turno", "texto": "abrí el reglamento", "quien": "persona"}
+{"tipo": "botones", "t": 1790293640.147172, "opciones": []}
+{"then": "", "rest": "", "question": "", "tipo": "decision", "accion": "abrir", "reference": "el reglamento", "control": "", "t": 1790293642.80857, "tarea": "sigue", "target": ""}
+{"usado": "si", "t": 1790293642.811701, "tipo": "jev_adelantado"}
+{"confianza": "0.76", "eleccion": "Bajar el reglamento del club", "tipo": "jev", "pedido": "abrí el reglamento", "esta": "0.72", "t": 1790293642.812051}
+{"tipo": "compromete", "boton": "Bajar el reglamento del club", "p": "0.07", "t": 1790293643.022022}
+{"tipo": "turno", "quien": "jef", "texto": "Abriendo Bajar el reglamento del club.", "t": 1790293643.022687}
+{"cola": false, "tipo": "voz", "texto": "Abriendo Bajar el reglamento del club.", "t": 1790293643.023353}
+{"apurada": false, "url": "http://localhost:8765/descarga.html", "t": 1790293643.242795, "red_ms": -1, "leida_ms": 199, "tipo": "carga"}
+{"url": "http://localhost:8765/descarga.html", "titulo": "Documentos del club", "tipo": "pagina", "texto": "PAGE: localhost — Documentos del club\n\nPAGE CONTENT (what the person came for):\nDocumentos del club\nAcá están los documentos del Club de Lectura.\nBajar el reglamento del club\nVer el catálogo de libros\nAcá están los documentos del Club de Lectura.\nBajar el reglamento del club, Ver el catálogo de libros", "t": 1790293643.2430859}
+{"tipo": "jev", "pedido": "abrí el reglamento", "confianza": "", "esta": "", "eleccion": "sin respuesta", "t": 1790293643.502574}
+{"t": 1790293643.502744, "tipo": "botones", "opciones": []}
+{"boton": "Bajar el reglamento del club", "pagina": ["The link is a file (application/zip, reglamento.zip) that the browser cannot show; it was not opened or downloaded."], "t": 1790293643.832344, "tipo": "hecho"}
+{"modelo": "otra", "t": 1790293645.6327748, "aviso": "", "p_sitio": "1.00", "p_aviso": "0.00", "p_pagina": "0.88", "pagina": "list", "tipo": "tipo", "url": "http://localhost:8765/descarga.html", "aviso_extractor": "", "sitio": "institution"}
+{"t": 1790293645.633657, "tipo": "ruido", "elementos": [], "url": "http://localhost:8765/descarga.html"}
+{"t": 1790293645.633932, "texto": "El enlace al reglamento es un archivo ZIP que el navegador no pudo mostrar, así que no se abrió ni se descargó. Esta página del club contiene sus documentos, pero no permite leer aquí el reglamento.", "tipo": "turno", "quien": "jef"}
+{"t": 1790293645.6346068, "texto": "El enlace al reglamento es un archivo ZIP que el navegador no pudo mostrar, así que no se abrió ni se descargó. Esta página del club contiene sus documentos, pero no permite leer aquí el reglamento.", "tipo": "voz", "cola": true}
+{"tipo": "botones", "opciones": ["Abrir «Ver el catálogo de libros»", "Resumir la página"], "t": 1790293645.634979}
+{"tipo": "botones", "opciones": ["Abrir «Ver el catálogo de libros»", "Resumir la página", "Otra cosa"], "t": 1790293645.635215}

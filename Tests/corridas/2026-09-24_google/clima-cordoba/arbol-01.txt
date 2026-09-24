@@ -1,0 +1,12 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: ¿cómo va a estar el tiempo mañana en córdoba?
+  4 [txt] Buscando: el tiempo mañana en Córdoba.
+  5 [txt] Según Google Clima, en Córdoba, España mañana viernes estará parcialmente soleado, con una máxima de 99 grados y una mínima de 64 grados. Ten en cuenta que la página también muestra resultados de Córdoba, Argentina, donde otros sitios como Meteored anuncian mañana soleado con entre 18 y 28 grados. Si querías la de Argentina, dime y te lo detallo.
+  6 [btn] El Tiempo: Córdoba (Córdoba) - Predicción 7 días - Tabla — www.aemet.es  (Primera de 5 opciones.)
+  7 [btn] El Tiempo en Córdoba (Argentina). Predicción a 14 días — www.tiempo.com
+  8 [btn] Clima en Córdoba hoy y pronóstico del tiempo a 14 días — www.clima.com
+  9 [btn] Ver más opciones (6)
+ 10 [btn] Otra cosa
+ 11 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 12 [btn] Enviar

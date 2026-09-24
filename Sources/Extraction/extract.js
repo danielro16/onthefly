@@ -3424,6 +3424,68 @@ allowedVideoRegex: /^$/,
     return { ok: true, value: el.value };
   };
 
+  /// What the page says on its own when something happens: its live
+  /// regions, the ones a screen reader announces by standard (aria-live,
+  /// role=status, role=alert, role=log, <output>) — "Agregado al carrito",
+  /// "Datos guardados". Kept until the app takes them with
+  /// `__jefTakeSaid`, which it does before and after pressing something:
+  /// what came in between is the page's answer.
+  const saidByPage = [];
+  const LIVE = '[aria-live]:not([aria-live="off"]), [role="status"], [role="alert"], [role="log"], output';
+  function liveRegionOf(node) {
+    const el = node && (node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement);
+    const region = el && el.closest ? el.closest(LIVE) : null;
+    return region && !region.closest('[aria-hidden="true"]') ? region : null;
+  }
+  try {
+    new MutationObserver(function (records) {
+      const touched = new Set();
+      for (const record of records) {
+        const region = liveRegionOf(record.target);
+        if (region) touched.add(region);
+        for (const node of record.addedNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE && node.matches(LIVE)) touched.add(node);
+        }
+      }
+      touched.forEach(function (region) {
+        const text = (region.textContent || "").replace(/\s+/g, " ").trim().slice(0, 300);
+        if (text && saidByPage[saidByPage.length - 1] !== text) saidByPage.push(text);
+        if (saidByPage.length > 10) saidByPage.shift();
+      });
+    }).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+  } catch (e) { /* a page without a document element says nothing */ }
+  window.__jefTakeSaid = function () {
+    const out = saidByPage.slice();
+    saidByPage.length = 0;
+    return out;
+  };
+
+  /// Closes what covers the page the standard way, as a keyboard does:
+  /// Escape, which the WAI-ARIA dialog pattern asks every modal to honor.
+  /// Nothing on the page is pressed. For notices whose close button has no
+  /// name, a drawn "×" the reader cannot offer.
+  window.__jefDismiss = function () {
+    const target = document.activeElement || document.body || document.documentElement;
+    for (const type of ["keydown", "keyup"]) {
+      target.dispatchEvent(new KeyboardEvent(type, {
+        key: "Escape", code: "Escape", keyCode: 27, which: 27, bubbles: true, cancelable: true,
+      }));
+    }
+    return true;
+  };
+
+  /// What a field holds now, as `__jefFill` left it or as the page changed
+  /// it after reacting. A radio group answers with its checked option.
+  window.__jefValue = function (fieldId) {
+    const key = String(fieldId).replace(/"/g, "");
+    const el = document.querySelector('[data-jef-field="' + key + '"]');
+    if (el) return { ok: true, value: el.type === "checkbox" ? (el.checked ? "on" : "") : String(el.value || "") };
+    const radios = document.querySelectorAll('[data-jef-field^="' + key + ':"]');
+    if (!radios.length) return { ok: false, reason: "gone" };
+    const checked = Array.prototype.find.call(radios, function (r) { return r.checked; });
+    return { ok: true, value: checked ? String(checked.value) : "" };
+  };
+
   /*
    * What an autocomplete is offering right now.
    *
@@ -3710,6 +3772,13 @@ allowedVideoRegex: /^$/,
   function extractAndSend(onlyIfChanged) {
     try {
       const page = extract();
+      // Nothing to read is said as it is: its signature threw, and the app
+      // heard "page.blocks.length" instead of "no-article".
+      if (!page.ok) {
+        send(page);
+        watchLateChanges();
+        return;
+      }
       const signature = signatureOf(page);
       if (onlyIfChanged && signature === lastSignature) {
         watchLateChanges();

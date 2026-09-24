@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: ¿a cuánto está el dólar blue hoy?
+  4 [txt] Buscando: dólar blue hoy.
+  5 [txt] Hoy el dólar blue cerró a $1.560,00, tras subir un 0,32 por ciento, según datos de La Nación y Valor Dólar Blue. La brecha con el dólar oficial, que está a $1.540,00, es del 1,6 por ciento.
+  6 [H] Vos: Dólar hoy, Cotización del dólar | Dolarhoy.com — dolarhoy.com
+  7 [txt] Abriendo dolarhoy.com.
+  8 [txt] Estás en Dolarhoy.com, en su portada de cotizaciones, y el dólar blue hoy está a 1.540 pesos para la compra y 1.560 pesos para la venta, sin variación. El dólar oficial cotiza a 1.490 y 1.540 pesos, el MEP a 1.539 y 1.545,60 pesos, y el dólar tarjeta a 2.002 pesos la venta. Hay un aviso de publicidad que cubre la página y se puede cerrar.
+  9 [H] Vos: ¿y el oficial?
+ 10 [txt] El dólar oficial está a $1.490 para la compra y $1.540 para la venta, con una suba del 0,34%. La página también muestra el dólar mayorista a $1.438 y $1.439.
+ 11 [btn] ¿A cuánto está el dólar MEP?  (Primera de 6 opciones.)
+ 12 [btn] ¿A cuánto está el dólar tarjeta?
+ 13 [btn] Abrir «Dólar Blue Histórico»
+ 14 [btn] Abrir «Las ventas en supermercados caen 2,1% interanual en julio y acumulan siete meses en rojo»
+ 15 [btn] Volver a los resultados
+ 16 [btn] Otra cosa
+ 17 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 18 [btn] Enviar

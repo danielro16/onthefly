@@ -1,0 +1,19 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: https://www.demoblaze.com/prod.html?idp_=1
+  4 [txt] Abriendo demoblaze.com.
+  5 [txt] Estás en la página de inicio de Product Store. Aquí puedes entrar a la tienda de productos y consultar información de contacto o sobre la empresa; también aparece una dirección, un teléfono y un correo electrónico.
+  6 [H] Vos: agregalo al carrito
+  7 [txt] Buscando: demoblaze.com.
+  8 [txt] Estás en los resultados de «demoblaze.com». Los 3 más probables:
+  9 [txt] Cuando elijas, sigo con «agrégalo al carrito».
+ 10 [H] Vos: Demo Blaze — www.demoblaze.com
+ 11 [txt] Abriendo demoblaze.com.
+ 12 [txt] Estás en www.demoblaze.com.
+ 13 [txt] Estás en «STORE», www.demoblaze.com. Arriba se ve la página, y esto es la conversación conmigo, JEF: se avanza tocando una opción o escribiendo lo que haga falta.
+ 14 [btn] Leer la página  (Primera de 4 opciones.)
+ 15 [btn] Resumir la página
+ 16 [btn] Volver a los resultados
+ 17 [btn] Otra cosa
+ 18 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 19 [btn] Enviar

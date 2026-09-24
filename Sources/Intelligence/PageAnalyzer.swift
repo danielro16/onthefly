@@ -26,13 +26,14 @@ actor PageAnalyzer {
     /// pagar, confirmar, mandar datos, darse de baja. Lo juzga Jev con la
     /// pregunta de `criterios.json`, en cualquier idioma, con los campos del
     /// formulario como contexto ("Continuar" junto a un número de tarjeta).
+    /// `control`: un formulario, o un botón o link, que no tiene campos.
     ///
     /// Nil si no hay criterio, si Jev falla o si no contesta a tiempo: la
     /// carrera de la arquitectura. Quien llama trata nil como "compromete":
     /// ante la duda, el botón lo toca la mano.
-    func commits(button: String, form: Action, page: ExtractedPage) async -> Double? {
+    func commits(button: String, control: Action, page: ExtractedPage) async -> Double? {
         guard let criterios = Criterios.actuales, let pregunta = criterios.jev["compromete"] else { return nil }
-        let fields = (form.fields ?? []).filter { $0.type != "hidden" }.map { field in
+        let fields = (control.fields ?? []).filter { $0.type != "hidden" }.map { field in
             "\(field.name) (\(field.type)\(field.autocomplete.map { ", \($0)" } ?? ""))"
         }
         let state = CommitState(button: button, fields: fields, site: page.displaySite, title: page.title)
@@ -45,6 +46,45 @@ actor PageAnalyzer {
                 let result = try? await jev.evaluate(state: state, questions: ["compromete": question])
                 guard case .boolean(let probability)? = result?.answers["compromete"] else { return nil }
                 return probability
+            }
+            group.addTask {
+                try? await Task.sleep(for: criterios.esperaJev)
+                return nil
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first
+        }
+    }
+
+    // MARK: - El botón de un aviso
+
+    private struct NoticeState: Encodable, Sendable {
+        let want: String?
+        let text: String
+        let choices: [String]
+    }
+
+    /// Cuál botón del aviso que tapa la página hace algo: la pregunta `key`
+    /// de `criterios.json` —"cookies", el que hace lo que eligió la persona
+    /// (`want`); "cerrar", el que sólo lo cierra—, en cualquier idioma, por
+    /// lo que dicen el aviso y sus botones. Lo que contestó Jev —un índice de
+    /// `choices`, o "none"— con su probabilidad; nil si no hay criterio o si
+    /// no contesta a tiempo. El umbral lo aplica quien llama.
+    func noticeButton(_ key: String, want: String? = nil, text: String, among choices: [String]) async -> (choice: String, probability: Double)? {
+        guard let criterios = Criterios.actuales, let pregunta = criterios.jev[key], !choices.isEmpty else { return nil }
+        var options: [String: String?] = [:]
+        for index in choices.indices { options.updateValue(nil, forKey: String(index)) }
+        for (key, text) in pregunta.criteria ?? [:] { options[key] = text }
+        let state = NoticeState(want: want, text: String(text.prefix(600)), choices: choices)
+        let question = JevClient.Question.choice(instructions: pregunta.instructions, options: options)
+        let jev = self.jev
+        return await withTaskGroup(of: (choice: String, probability: Double)?.self) { group in
+            group.addTask {
+                guard let result = try? await jev.evaluate(state: state, questions: [key: question]),
+                      case .choice(let value, let probabilities, let confidence)? = result.answers[key]
+                else { return nil }
+                return (value, confidence ?? probabilities[value] ?? 0)
             }
             group.addTask {
                 try? await Task.sleep(for: criterios.esperaJev)
@@ -358,19 +398,35 @@ actor PageAnalyzer {
         guard let first = await round(groups) else { return nil }
         var candidates: [Int] = []
         var here: [Double] = []
+        // Qué tan seguro está Jev, en cada tanda, de que ninguno lleva.
+        var none: [Double] = []
         for (group, answers) in zip(groups, first) {
             guard let answers else { continue }
             if case .boolean(let probability)? = answers["esta"] { here.append(probability) }
             guard case .choice(_, let probabilities, _)? = answers["cual"] else { continue }
+            none.append(probabilities["none"] ?? 0)
             // Los dos mejores de cada tanda, si valen algo: la final decide.
             candidates += probabilities.filter { $0.key != "none" && $0.value >= 0.1 }
                 .sorted { $0.value > $1.value }.prefix(2)
                 .compactMap { Int($0.key) }.filter { group.indices.contains($0) }.map { group[$0] }
         }
+        // Una sola tanda ya eligió entre todas las opciones: la final le volvía
+        // a preguntar lo mismo entre sus dos favoritas (la auditoría, llamadas
+        // de más). Su respuesta es la de la página.
+        if groups.count == 1, let answers = first[0], case .choice(let value, let probabilities, let confidence)? = answers["cual"] {
+            let index = Int(value).flatMap { groups[0].indices.contains($0) ? groups[0][$0] : nil }
+            return Found(choice: index, confidence: confidence ?? probabilities[value] ?? 0, here: here.max())
+        }
         guard !candidates.isEmpty else {
-            // Ninguna tanda tuvo un candidato: ninguno, si contestaron todas.
-            guard first.allSatisfy({ $0 != nil }) else { return nil }
-            return Found(choice: nil, confidence: 1, here: here.max())
+            // Ninguna tanda tuvo un candidato: ninguno, si contestaron todas, y
+            // tan seguro como la tanda menos segura de que no hay. Antes era
+            // seguro del todo: con la duda repartida entre muchas opciones,
+            // ninguna llegaba a 0,1, y "ninguno, seguro" mandaba a buscar
+            // afuera sin consultar a Gemini. En Mercado Libre, «¿cuánto sale
+            // el más barato?» con los precios en pantalla terminó en "No está
+            // en esta página".
+            guard none.count == groups.count else { return nil }
+            return Found(choice: nil, confidence: none.min() ?? 0, here: here.max())
         }
         guard let final = await round([candidates])?.first ?? nil,
               case .choice(let value, let probabilities, let confidence)? = final["cual"]

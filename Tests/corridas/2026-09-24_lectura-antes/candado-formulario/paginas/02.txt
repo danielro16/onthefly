@@ -1,0 +1,7 @@
+https://httpbin.org/forms/post
+
+
+PAGE: httpbin.org — Inicio
+
+PAGE CONTENT (what the person came for):
+FORM asking for: Customer name:, Telephone:, E-mail address:, Pizza Size, Bacon, Extra Cheese, Onion, Mushroom, Preferred delivery time:, Delivery instructions: — button «Submit order»

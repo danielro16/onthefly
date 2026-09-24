@@ -2,11 +2,15 @@ import Foundation
 
 /// Adónde van las llamadas al modelo de lenguaje del ruteador y del que responde.
 ///
-/// Desde 2026-09-23, GLM-5.3 Flash por el AI Gateway de Vercel (Daniel:
-/// "necesito ahorrar costos"). Medido en nueve sitios nuevos, cuesta la mitad
-/// que Gemini 3.1 Flash-Lite por paso: US$ 0,0010 contra 0,0020. Para probar
-/// otro sin recompilar, el ajuste `modelo` (en el simulador, `simctl spawn
-/// <udid> defaults write ai.jef.browser modelo deepseek/deepseek-v4-flash`).
+/// Desde 2026-09-24, GPT-6 Luna por el AI Gateway de Vercel (Daniel). En los
+/// mismos nueve sitios, contra GLM-5.3 Flash (el base desde el 23/9): el
+/// ruteador razonando acierta 49 de 60 contra 47, sin JSON roto, y un paso
+/// cuesta ~US$ 0,00076 contra 0,00108. Sin razonar, el ruteador de Luna a veces
+/// deja texto después del JSON: por eso `razonar` sigue prendido. OpenAI
+/// rechaza el esquema si un objeto no trae `additionalProperties: false`
+/// (prompts.json). Para probar otro sin recompilar, el ajuste `modelo` (en el
+/// simulador, `simctl spawn <udid> defaults write ai.jef.browser modelo
+/// zai/glm-5.3-flash`).
 /// Un nombre que empieza con "gemini-" va directo a Google con su clave. Jev va
 /// siempre por el gateway.
 struct Gemini: Sendable {
@@ -20,7 +24,7 @@ struct Gemini: Sendable {
     /// acertaba más (52 de 60 contra 40).
     var reasons = UserDefaults.standard.object(forKey: "razonar") as? Bool ?? true
 
-    static let base = "zai/glm-5.3-flash"
+    static let base = "openai/gpt-6-luna"
 
     /// Cuánto texto de la página ven los que deciden: el ruteador, la
     /// orientación y reinterpretar, el mismo para todos. La orientación veía
@@ -70,6 +74,30 @@ struct Gemini: Sendable {
             body["reasoning"] = ["enabled": thinking]
         }
         return body
+    }
+
+    /// El objeto JSON de una respuesta: el primero completo. GPT-6 Luna, sin
+    /// razonar, a veces deja texto después del objeto (medido al cambiar de
+    /// modelo), y leído entero no era JSON: la orientación se descartaba y
+    /// quedaba la plantilla (tres veces en La Vanguardia).
+    static func object(in content: String) -> [String: Any]? {
+        if let whole = try? JSONSerialization.jsonObject(with: Data(content.utf8)) as? [String: Any] { return whole }
+        guard let start = content.firstIndex(of: "{") else { return nil }
+        var depth = 0, inString = false, escaped = false
+        for index in content[start...].indices {
+            let character = content[index]
+            if inString {
+                if escaped { escaped = false } else if character == "\\" { escaped = true } else if character == "\"" { inString = false }
+                continue
+            }
+            if character == "\"" { inString = true }
+            else if character == "{" { depth += 1 }
+            else if character == "}" {
+                depth -= 1
+                if depth == 0 { return try? JSONSerialization.jsonObject(with: Data(content[start...index].utf8)) as? [String: Any] }
+            }
+        }
+        return nil
     }
 
     func request(_ body: [String: Any], thinking: Bool = false) throws -> URLRequest {

@@ -114,6 +114,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "tarea": {
             "type": "string",
@@ -238,6 +239,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "contesta": {
             "type": "string",
@@ -299,6 +301,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "respuesta": {
             "type": [
@@ -323,6 +326,11 @@
       "rol": "You are an assistant who has just taken a person to a web page. That person may not see the screen: what you tell them is all they will know about where they are.",
       "para_la_persona": true,
       "recibe": [
+        {
+          "clave": "hecho",
+          "etiqueta": "WHAT JEF JUST DID",
+          "es": "what JEF just pressed on the page for the person, and what the page answered right after in its own words (a message, a notice, a question it asked), if anything"
+        },
         {
           "clave": "vino",
           "etiqueta": "THE PERSON CAME TO",
@@ -354,7 +362,8 @@
         "At most three sentences. Whoever listens has to wait for you to finish before doing anything.",
         "Advertising, promotions and subscription offers that cover nothing: do not mention them. If the text says there is a notice on top that does cover the page (cookies to accept, a wall), say so in half a sentence at the end.",
         "If the page is a list of similar options (procedures, categories, plans) and what they came to do does not say which one, do not choose for the person: say how many there are; pregunta asks which one they need, in {idioma}, and opciones are the ids of those options, in the page's order. If it says which one, that one is the first suggestion. Otherwise pregunta is null and opciones is empty.",
-        "If THE PERSON CAME TO is given, it leads: start by saying whether this page serves for that and where, and the first suggestion has to be the one that gets them closer to it.",
+        "If WHAT JEF JUST DID is given, it goes first: say in one sentence what happened after it, judged only by what the page answered and by the page as it is now; if nothing shows that it worked, say so plainly. Never tell the person how to do what JEF just did, and do not suggest doing it again.",
+        "If THE PERSON CAME TO is given, it leads (after WHAT JEF JUST DID): start by saying whether this page serves for what is still left of it and where, and the first suggestion has to be the one that gets them closer to it.",
         "sugerencias: the next steps, in the order the person most likely needs them: between 2 and 4; on a portada, between 0 and 2, only for what the person came to do if it is not reading news. abrir opens or presses an item of the LIST by its id (only ids from the list). completar fills a FORM of the LIST by its id; its etiqueta says what it is for, with the site's name (a search box is searching the site), never the field's name. leer reads the content aloud, only on a nota or a long text. resumir summarizes this page. Each etiqueta is short, in {idioma}, and says what happens when touched.",
         "Never propose paying, subscribing, buying or downloading an app.",
         "In ruido, every item of the LIST that is noise, by its id, with its tipo, one of: {ruido_tipos}. What is none of those types is not noise. Noise is never suggested, not now nor later. Noise is: {ruido_es} Not noise: {ruido_no_es}",
@@ -362,6 +371,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "tipo_de_pagina": {
             "type": "string",
@@ -378,6 +388,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "etiqueta": {
                   "type": "string"
@@ -409,6 +420,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "tipo": {
                   "type": "string",
@@ -486,6 +498,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "elegir": {
             "type": [
@@ -540,6 +553,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "valor": {
             "type": [

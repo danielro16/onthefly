@@ -63,6 +63,10 @@ final class Assistant {
     /// El formulario cuyo botón se ofreció para que lo toque la mano: el que
     /// se aprieta al tocar "Pulsar «…»". Ver `submitAsked`.
     private var pendingSubmit: Action?
+    /// El nombre de lo que JEF acaba de apretar por la persona: lo recibe la
+    /// orientación de la página que quedó, con lo que la página contestó
+    /// (`pressed`).
+    private var justDid: String?
     /// Lo que Gemini marcó como ruido al llegar a esta página, por id: no se
     /// sugiere. Jev lo sigue viendo al navegar. Ver `arrived`.
     private var noisy: (url: String, ids: Set<String>) = ("", [])
@@ -298,6 +302,7 @@ final class Assistant {
         offer = nil
         touched = []
         lastDone = nil
+        justDid = nil
         failedTurn = false
         pendingQuestion = nil
         nextQuestions = []
@@ -315,9 +320,9 @@ final class Assistant {
             awaitingField = nil
             if isValue {
                 working = true
-                reader.fill(field, with: goal)
-                try? await Task.sleep(for: .milliseconds(700))
+                let held = await typed(goal, into: field, on: reader)
                 working = false
+                guard held else { return }
                 filledFields.insert(field.id)
                 // Y no queda como "lo que pidió antes": eso viaja al modelo en
                 // el turno siguiente, y un DNI no tiene que ir a ningún lado.
@@ -389,6 +394,22 @@ final class Assistant {
         // Cualquier otro pedido deja la prueba atrás: se fue a otro lado.
         challenge = nil
 
+        // Sin página abierta, lo escrito va al buscador tal cual, como en
+        // cualquier navegador (Daniel): el buscador entiende la frase mejor
+        // que nuestra reescritura, y no se decide por la persona qué buscar.
+        // «Quiero comprar zapatillas en Amazon» se buscaba como «Amazon», la
+        // persona quedaba en la portada y las zapatillas, para después. Sin
+        // el ruteador, además, la primera búsqueda no espera a un modelo. La
+        // frase queda como la tarea: la recibe la orientación del sitio que
+        // elija. Una pregunta —por sus signos, en cualquier escritura— se
+        // contesta con la página de resultados, si alcanza.
+        if reader.page == nil {
+            task = goal
+            if Self.isQuestion(goal) { pendingQuestion = goal }
+            await arrive(goal, on: reader)
+            return
+        }
+
         // Qué quiere, decidido por un modelo con un esquema cerrado.
         //
         // Antes había acá una lista de expresiones regulares que escribí yo, y
@@ -403,7 +424,7 @@ final class Assistant {
         // segundo resultado es anses.gob.ar. Se vio en el simulador.
         if router != nil {
             working = true
-            early = nil
+            dropEarly(used: false)
             if let page = reader.page, let analyzer {
                 let request = jevRequest(goal)
                 let options = openable(page)
@@ -425,8 +446,12 @@ final class Assistant {
             }
             working = false
             if decision?.newTask ?? true || task == nil { task = goal }
+            // Lo que no busca en la página no la usa: leer, resumir, contestar,
+            // ir a otro lado. Se cancela ya, en vez de dejarla correr.
+            if let action = decision?.action, ![.abrir, .buscar, .enviar].contains(action) { dropEarly(used: false) }
 
             if let decision {
+                let before = reader.page
                 await carry(decision.action, of: decision, goal: goal, on: reader)
                 // El segundo pedido de una frase que traía dos: "resumime y
                 // después entrame a la de Milei". Descartarlo en silencio era
@@ -438,7 +463,7 @@ final class Assistant {
                 // Y lo que falta de la tarea, ahora que ya hay otra página.
                 // "Quiero entrar a ANSES y pedir un turno" aterrizaba en ANSES
                 // y el turno se perdía: el pedido no sobrevivía al viaje.
-                if let rest = decision.rest, !rest.isEmpty {
+                if let rest = decision.rest, !rest.isEmpty, !Self.whole(decision), Self.reached(from: before, reader.page, rest: rest) {
                     if offer?.options.contains(where: { $0.id.hasPrefix("res-") }) == true {
                         // Se frenó a preguntar cuál resultado. La tarea espera
                         // a que la persona elija; seguir ahora sería resolver
@@ -463,6 +488,39 @@ final class Assistant {
             return
         }
         await run(goal, on: reader, steps: Self.maxSteps)
+    }
+
+    /// Un control tocado, de qué página: sus marcas se repiten entre páginas.
+    static func touchKey(_ action: Action, on page: ExtractedPage?) -> String {
+        (page?.url ?? "") + "|" + action.id
+    }
+
+    /// Si hay que seguir con lo que queda de la tarea (`rest`): sólo si se
+    /// llegó a otra página, que es como lo define el ruteador. Sin moverse,
+    /// lo que quedaba ya lo cubrió lo que se hizo: en httpbin, «mandá el
+    /// pedido» se pedía dos veces; en Demoblaze, el pedido entero volvía
+    /// como resto y se hacía otra vez.
+    static func reached(from before: ExtractedPage?, _ now: ExtractedPage?, rest: String) -> Bool {
+        guard let before else { return true }
+        let moved = now.map { !stillOn(before, $0) } ?? false
+        if !moved { Registro.anotar("resto_descartado", ["resto": rest]) }
+        return moved
+    }
+
+    /// Deja la búsqueda de Jev que se adelantó mientras decidía el ruteador:
+    /// si no se usó, se cancela (la auditoría: seguía corriendo). El registro
+    /// dice cuántas se aprovechan.
+    private func dropEarly(used: Bool) {
+        guard let ready = early else { return }
+        early = nil
+        if !used { ready.answer.cancel() }
+        Registro.anotar("jev_adelantado", ["usado": used ? "si" : "no"])
+    }
+
+    /// Si la frase entera va al buscador: ir a un sitio, como tarea nueva.
+    /// Lo que quedaba para después (`rest`) ya va en la búsqueda.
+    static func whole(_ decision: Router.Decision) -> Bool {
+        decision.action == .ir && decision.newTask
     }
 
     /// Si el segundo pedido de una frase se hace a continuación del primero.
@@ -500,6 +558,7 @@ final class Assistant {
             let decision = try? await decide(goal, on: reader)
             working = false
             guard let decision else { return }
+            let before = reader.page
             await carry(decision.action, of: decision, goal: goal, on: reader)
             // El segundo pedido de la frase, como en `ask`: "completar" y
             // "enviar" es buscar con el buscador del sitio, y acá se perdía —
@@ -507,7 +566,7 @@ final class Assistant {
             if let next = decision.then, Self.chains(decision.action, next), !working, awaitingField == nil {
                 await carry(next, of: decision, goal: goal, on: reader)
             }
-            guard let more = decision.rest, !more.isEmpty, more != goal else { return }
+            guard let more = decision.rest, !more.isEmpty, more != goal, Self.reached(from: before, reader.page, rest: more) else { return }
             goal = more
         }
     }
@@ -583,7 +642,13 @@ final class Assistant {
     ) async {
         switch action {
         case .ir:
-            await arrive(decision.target ?? goal, on: reader)
+            // Una tarea nueva que nombra un sitio va al buscador como la dijo
+            // la persona, igual que sin página abierta (Daniel): «quiero
+            // comprar zapatillas en Amazon» desde La Nación se buscaba como
+            // «Amazon», y las zapatillas quedaban para después, en la portada.
+            // Lo que sigue a lo que se venía haciendo sí lleva el sitio que
+            // nombró el ruteador.
+            await arrive(Self.whole(decision) ? goal : decision.target ?? goal, on: reader)
 
         case .buscar:
             // Primero la página (Daniel, 2026-09-22): con un sitio abierto, lo
@@ -660,7 +725,7 @@ final class Assistant {
                     working = false
                     // Una sola vez: si la página ya se contó al llegar, con su
                     // pregunta y sus botones, no se cuenta de nuevo.
-                    if knownURL != page.url || offer == nil { await arrived(page) }
+                    if knownURL != page.url || offer == nil { await arrived(page, on: reader) }
                     if offer != nil { say("Cuando elijas, sigo con «\(Self.short(goal, 60))».") }
                     return
                 }
@@ -677,9 +742,16 @@ final class Assistant {
             // resolvió arriba, y "Acá no hay un formulario para enviar" se
             // decía de más.
             if decision.action == .completar, controls.isEmpty { return }
-            guard let page = reader.page,
-                  let form = control(decision)?.form ?? pageForm(page)
-            else { say("Acá no hay un formulario para enviar."); return }
+            guard let page = reader.page else { return }
+            guard let form = control(decision)?.form ?? pageForm(page) else {
+                // Sin formulario, lo que se aprieta es un botón suelto:
+                // «Add to cart», «Guardar preferencias». Se busca como
+                // cualquier cosa de la página, y pasa por `free` como todo
+                // lo que JEF toca. Antes: "Acá no hay un formulario para
+                // enviar", con el botón ahí.
+                await run(decision.reference ?? goal, on: reader, steps: 1, said: goal)
+                return
+            }
             await submitAsked(form, on: reader)
 
         case .volver:
@@ -733,9 +805,9 @@ final class Assistant {
             return
         }
         working = true
-        reader.fill(field, with: value)
-        try? await Task.sleep(for: .milliseconds(700))
+        let held = await typed(value, into: field, on: reader)
         working = false
+        guard held else { return }
         filledFields.insert(field.id)
         say(field.isSecure ? "Listo: quedó escrita en «\(Self.spoken(field))»." : "Listo, escrito en \(Self.spoken(field)).")
     }
@@ -849,7 +921,7 @@ final class Assistant {
         } ?? goal
         say("Buscando: \(goal).")
         reader.address = Self.searchURL(for: goal)
-        await reader.go()
+        await reader.go(results: true)
         // Lo que cargó no es la página de resultados: el buscador pidió
         // comprobar que no es un robot ("tráfico inusual"). Se cuenta lo que
         // hay, como cualquier llegada; "No encontré resultados" decía que no
@@ -859,7 +931,13 @@ final class Assistant {
             return
         }
         var (found, ads): ([Result], Int) = ([], 0)
-        if let page = reader.page { (found, ads) = await organic(page) }
+        if let page = reader.page {
+            // Los resultados son el lugar donde quedó la persona: el buscador
+            // se vuelve a leer solo un momento después, y sin anotarlo se
+            // anunciaba "La página cambió" sobre los mismos resultados.
+            knownURL = page.url
+            (found, ads) = await organic(page)
+        }
         guard !found.isEmpty else {
             // Pasa de verdad: en una consulta comercial la página trae
             // resultados y nosotros extraemos cero. Decirlo es mejor que
@@ -1301,7 +1379,7 @@ final class Assistant {
         case .look:
             // Con una pregunta esperando, la pregunta es lo que se quiere
             // saber: describir la página antes era hacerla esperar.
-            if task.after == nil { await arrived(page) }
+            if task.after == nil { await arrived(page, on: reader) }
         }
         if let question = task.after, let page = reader.page, !Self.hasChallenge(page) {
             working = true
@@ -1326,13 +1404,30 @@ final class Assistant {
         return parts.string ?? address
     }
 
-    /// La opción que se llama exactamente como lo pedido, sin artículos ni
-    /// verbos de ir: "llevame a deportes" → "Deportes".
+    /// Si la página que se estaba contando sigue siendo la que está: el
+    /// mismo documento, con lo mismo. El "#" no cambia de documento; la
+    /// consulta sí puede: los resultados de otra búsqueda son otra página. Y
+    /// el mismo documento puede traer otra cosa: los productos de un carrito
+    /// que llegan después (`sameContent`). Sin página —otra está cargando—,
+    /// no.
+    static func stillOn(_ page: ExtractedPage, _ now: ExtractedPage?) -> Bool {
+        func document(_ address: String) -> String {
+            guard var parts = URLComponents(string: address) else { return address }
+            parts.fragment = nil
+            return parts.string ?? address
+        }
+        guard let now else { return false }
+        return document(now.url) == document(page.url) && now.sameContent(as: page)
+    }
+
+    /// La opción que se llama exactamente como lo pedido, sin mirar
+    /// mayúsculas, tildes ni signos: la referencia del ruteador «Deportes» y
+    /// el link "Deportes". El nombre lo saca el ruteador de las palabras de
+    /// la persona, en cualquier idioma; lo que no coincide lo decide Jev.
+    /// Antes se sacaban acá verbos y artículos en castellano ("llevame a",
+    /// "la"): una lista de palabras, que en otro idioma no hacía nada (Daniel).
     static func exactOption(for goal: String, among options: [Action]) -> Action? {
-        let filler = "^(llevame|lleva|abri|abrime|abrir|anda|ir|quiero ir|mostrame|ver|entra)( a| al| a la| a los| a las)?\\s+"
-        let asked = flatten(goal.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
-            .replacingOccurrences(of: filler, with: "", options: .regularExpression)
-            .replacingOccurrences(of: "^(la|el|los|las)\\s+", with: "", options: .regularExpression))
+        let asked = flatten(goal)
         guard asked.count >= 4 else { return nil }
         return options.first { flatten($0.label) == asked && $0.kind != .form }
     }
@@ -1567,6 +1662,7 @@ final class Assistant {
         defer { inTurn = false }
         heard(action.label)
         lastDone = nil
+        justDid = nil
         failedTurn = false
         nextQuestions = []
         searchInstead = nil
@@ -1653,12 +1749,13 @@ final class Assistant {
             await summarize(page)
             return
         }
-        // El botón del formulario: lo tocó la persona, así que se aprieta. El
-        // que se le ofreció, si fue por un pedido; si no, el de la página.
-        if action.id == Self.submitID, let page = reader.page, let form = pendingSubmit ?? pageForm(page) {
+        // El botón que JEF dejó para la mano: lo tocó la persona, así que se
+        // aprieta. El que se le ofreció, si fue por un pedido —un formulario,
+        // o un botón o link que no toca solo—; si no, el formulario de la página.
+        if action.id == Self.submitID, let page = reader.page, let control = pendingSubmit ?? pageForm(page) {
             pendingSubmit = nil
-            say("Pulsando «\(form.submit ?? action.label)».")
-            await reader.submit(form)
+            say("Pulsando «\(control.kind == .form ? control.submit ?? action.label : control.label)».")
+            await pressed(control, on: reader)
             working = false
             await landed(reader)
             return
@@ -1699,9 +1796,14 @@ final class Assistant {
                 let host = Self.bare(Self.unicode(URL(string: href)?.host() ?? ""))
                 say("Abriendo \(shown ?? host ?? action.label).")
             }
+            let before = reader.page
+            _ = await reader.takeSaid()
             reader.address = href
             await reader.go()
             working = false
+            // Un link que no llevó a ningún lado —un archivo que no se abrió—
+            // se cuenta como lo que se hizo (`pressed`).
+            if let before, Self.stillOn(before, reader.page) { justDid = Self.pressName(target) }
             // Se abrió una nota y se llegó a un muro: decirlo, no presentarlo
             // como el destino. En Clarín el titular llevó a la página de
             // suscripción, de ahí a iniciar sesión, y cada una se describía
@@ -1792,7 +1894,7 @@ final class Assistant {
         }
 
         say(target.kind == .link ? "Abriendo «\(target.label)»." : "Tocando «\(target.label)».")
-        await reader.activate(target)
+        await pressed(target, on: reader)
         working = false
         guard !chosen.goal.isEmpty else {
             await landed(reader)
@@ -1819,12 +1921,25 @@ final class Assistant {
         working = true
         defer { working = false }
         var first = true
+        /// El nombre de lo último que se tocó en este camino.
+        var lastPressed: String?
 
         /// Tocar lo elegido. False: el turno terminó acá.
         func go(_ chosen: Action) async -> Bool {
+            // Lo mismo que se acaba de tocar, ya en la página a la que llevó,
+            // es el menú del sitio señalando dónde se está: se llegó. En
+            // Demoblaze, «Cart» del menú no tiene dirección, y en el carrito
+            // Jev lo volvía a elegir (0,97) hasta "No encuentro «carrito»".
+            if let lastPressed, Self.flatten(chosen.label) == lastPressed {
+                working = false
+                await landed(reader)
+                return false
+            }
             // Volver a tocar lo mismo es dar vueltas: no está acá. Se ofrece
             // buscarlo afuera. Antes decía "Sin avance" y ahí se terminaba.
-            guard touched.insert(chosen.id).inserted else {
+            // Lo mismo es de la misma página: las marcas de los controles se
+            // repiten de una página a otra.
+            guard touched.insert(Self.touchKey(chosen, on: reader.page)).inserted else {
                 say("No encuentro «\(Self.short(goal, 60))» en esta página. ¿Lo busco en internet?")
                 searchInstead = goal
                 return false
@@ -1837,8 +1952,14 @@ final class Assistant {
                 await write(field, of: chosen, goal: goal, on: reader)
                 return false
             }
+            // Y lo que compromete no se toca solo: queda para la mano.
+            guard await free(chosen, on: reader) else {
+                leaveToHand(chosen)
+                return false
+            }
             say("Abriendo \(chosen.label).")
-            await reader.activate(chosen)
+            await pressed(chosen, on: reader)
+            lastPressed = Self.flatten(chosen.label)
             return true
         }
 
@@ -1861,9 +1982,15 @@ final class Assistant {
             // Preguntarle después a Jev si ya estaba terminaba en la
             // descripción de plantilla —"Estás en la portada de LA NACION"
             // parado en Deportes—.
-            if first, let exact = Self.exactOption(for: goal, among: options), touched.insert(exact.id).inserted {
+            if first, let exact = Self.exactOption(for: goal, among: options), touched.insert(Self.touchKey(exact, on: page)).inserted {
+                // Nombrarlo no es tocarlo: «confirmar» dicho en voz alta no
+                // aprieta «Confirmar». Lo que compromete queda para la mano.
+                guard await free(exact, on: reader) else {
+                    leaveToHand(exact)
+                    return
+                }
                 say("Abriendo «\(exact.label)».")
-                await reader.activate(exact)
+                await pressed(exact, on: reader)
                 working = false
                 await landed(reader)
                 return
@@ -1906,10 +2033,11 @@ final class Assistant {
             let found: PageAnalyzer.Found?
             if first, let ready = early, ready.url == page.url, ready.request == request, ready.ids == options.map(\.id) {
                 found = await ready.answer.value
+                dropEarly(used: true)
             } else {
+                dropEarly(used: false)
                 found = await analyzer.find(request, among: options, site: page.url)
             }
-            early = nil
             Self.note(found, for: request, among: options)
 
             // Seguro de uno: se toca. Después del primer paso, más seguro: seguir
@@ -1930,7 +2058,7 @@ final class Assistant {
             if let found, found.choice == nil, found.confidence >= Self.sureEnough, let here = found.here {
                 if here >= Criterios.actuales?.umbrales["esta_si"] ?? 1 {
                     working = false
-                    await arrived(page)
+                    await arrived(page, on: reader)
                     return
                 }
                 if here <= Criterios.actuales?.umbrales["esta_no"] ?? 0 {
@@ -2061,13 +2189,25 @@ final class Assistant {
             return
         }
 
-        await reader.type(found.value, into: field)
+        guard await typed(found.value, into: field, on: reader) else { return }
         filledFields.insert(field.id)
         say("Listo, escrito en \(Self.spoken(field)).")
         if found.send {
             working = false
             await submitAsked(form, on: reader)
         }
+    }
+
+    /// Escribe en un campo de la página y dice si quedó escrito. Si no —el
+    /// campo ya no está, o la página lo vació o lo cambió—, lo dice y no se
+    /// sigue: ni otro campo, ni enviar. Antes se decía "Listo, escrito" a
+    /// los 700 ms sin mirar el campo.
+    private func typed(_ value: String, into field: Action.Field, on reader: ReaderModel) async -> Bool {
+        let held = await reader.type(value, into: field)
+        // Sin el valor: un DNI no va al registro.
+        Registro.anotar("escrito", ["campo": Self.spoken(field), "quedo": held ? "si" : "no"])
+        if !held { say("No quedó escrito en «\(Self.spoken(field))»: la página no lo aceptó.") }
+        return held
     }
 
     /// Si este formulario es un buscador, según el estándar: todos sus campos
@@ -2090,38 +2230,86 @@ final class Assistant {
     }
 
     /// Apretar el botón de un formulario porque la persona lo pidió, por voz
-    /// o escribiendo, sin tocarlo.
-    ///
-    /// Un buscador se aprieta. Lo demás lo juzga Jev con la pregunta
-    /// "¿compromete?" de `criterios.json`: por debajo del umbral se aprieta;
-    /// por encima, si Jev duda o si no contesta a tiempo, el botón queda
-    /// ofrecido con el nombre que le da la página y lo aprieta la mano. La
-    /// voz pide; la mano confirma lo que compromete.
+    /// o escribiendo, sin tocarlo. Pasa por `free`, como todo lo que JEF toca
+    /// por su cuenta.
     private func submitAsked(_ form: Action, on reader: ReaderModel) async {
-        let label = form.submit?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        if !Self.isSearch(form) {
-            var risk: Double?
-            if let analyzer, let page = reader.page {
-                working = true
-                risk = await analyzer.commits(button: label, form: form, page: page)
-                working = false
-            }
-            Registro.anotar("compromete", ["boton": label, "p": risk.map { String(format: "%.2f", $0) } ?? "sin respuesta"])
-            let limit = Criterios.actuales?.umbrales["compromete"] ?? 0
-            guard let risk, risk < limit else {
-                pendingSubmit = form
-                say(label.isEmpty
-                    ? "Ese botón puede confirmar algo: queda abajo, para tocarlo."
-                    : "«\(label)» puede confirmar algo: queda abajo, para tocarlo.")
-                offer = Offer(goal: "", options: [.link(id: Self.submitID, label: "Pulsar «\(label.isEmpty ? "enviar" : label)»", href: "", region: "main")])
-                return
-            }
+        let label = Self.pressName(form)
+        working = true
+        let free = await free(form, on: reader)
+        working = false
+        guard free else {
+            leaveToHand(form)
+            return
         }
         working = true
         say("Pulsando «\(label.isEmpty ? "enviar" : label)».")
-        await reader.submit(form)
+        await pressed(form, on: reader)
         working = false
         await landed(reader)
+    }
+
+    /// Si JEF puede tocar esto por su cuenta: un formulario, un botón o un
+    /// link que la persona pidió con palabras, sin tocarlo.
+    ///
+    /// Un buscador, sí. Lo demás lo juzga Jev con la pregunta "¿compromete?"
+    /// de `criterios.json`: por debajo del umbral, sí; por encima, si Jev duda
+    /// o si no contesta a tiempo, no. La voz pide; la mano confirma lo que
+    /// compromete. Antes sólo pasaban por acá los formularios, y un
+    /// «Confirmar» o un «Eliminar» hecho con un botón suelto —lo que Jev
+    /// eligió como el camino a lo pedido— se tocaba solo: la confianza en
+    /// cuál es el control no dice qué pasa al tocarlo.
+    private func free(_ control: Action, on reader: ReaderModel) async -> Bool {
+        if control.kind == .form, Self.isSearch(control) { return true }
+        let label = Self.pressName(control)
+        var risk: Double?
+        if let analyzer, let page = reader.page {
+            risk = await analyzer.commits(button: label, control: control, page: page)
+        }
+        Registro.anotar("compromete", ["boton": label, "p": risk.map { String(format: "%.2f", $0) } ?? "sin respuesta"])
+        let limit = Criterios.actuales?.umbrales["compromete"] ?? 0
+        return risk.map { $0 < limit } ?? false
+    }
+
+    /// Aprieta un control por la persona. Lo que la página dijo antes no es
+    /// su respuesta, y se descarta. Si no es ir a otra página —un botón, un
+    /// formulario que no es un buscador, un link sin dirección—, queda
+    /// anotado para la orientación (`justDid`), que lo recibe con lo que la
+    /// página contestó. Sin eso, después de agregar al carrito se contaba la
+    /// página como recién llegada, con cómo agregar al carrito (Daniel).
+    private func pressed(_ control: Action, on reader: ReaderModel) async {
+        _ = await reader.takeSaid()
+        let before = reader.page
+        if control.kind == .form { await reader.submit(control) } else { await reader.activate(control) }
+        let goes = control.kind == .link ? !(control.href ?? "").isEmpty : control.kind == .form && Self.isSearch(control)
+        // Un link que no llevó a ningún lado —un archivo que no se abrió—
+        // también se cuenta como lo que se hizo.
+        let stayed = before.map { Self.stillOn($0, reader.page) } ?? false
+        justDid = goes && !stayed ? nil : Self.pressName(control)
+    }
+
+    /// Lo que JEF acaba de hacer y lo que la página contestó, para la
+    /// orientación: en inglés, como el resto de lo que recibe el modelo.
+    static func done(_ pressed: String, answered: [HeadlessWebView.Said]) -> String {
+        (["JEF pressed «\(pressed)» for the person."] + answered.map {
+            $0.asked ? "The page asked «\($0.text)», and it was not accepted." : "The page answered: «\($0.text)»"
+        }).joined(separator: "\n")
+    }
+
+    /// Lo que JEF no toca solo queda ofrecido, con el nombre que le da la
+    /// página, para que lo toque la persona.
+    private func leaveToHand(_ control: Action) {
+        let label = Self.pressName(control)
+        pendingSubmit = control
+        say(label.isEmpty
+            ? "Ese botón puede confirmar algo: queda abajo, para tocarlo."
+            : "«\(label)» puede confirmar algo: queda abajo, para tocarlo.")
+        offer = Offer(goal: "", options: [.link(id: Self.submitID, label: "Pulsar «\(label.isEmpty ? "enviar" : label)»", href: "", region: "main")])
+    }
+
+    /// El nombre con que la página llama a lo que se aprieta: el botón de un
+    /// formulario, o el control mismo.
+    static func pressName(_ control: Action) -> String {
+        ((control.kind == .form ? control.submit : control.label) ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     /// Si la persona dijo ese valor: en este pedido, en el anterior o en la
@@ -2623,7 +2811,7 @@ final class Assistant {
     /// cortaba. La carga la pidió el asistente; el que cuenta cómo salió es él.
     private func landed(_ reader: ReaderModel) async {
         if let page = reader.page {
-            await arrived(page)
+            await arrived(page, on: reader)
         } else if case .failed = reader.state {
             say("No pude abrir esa página. Puede ser la conexión o el sitio.")
             failedTurn = true
@@ -2639,7 +2827,29 @@ final class Assistant {
     ///
     /// Sin modelo (sin red, o sin key) se cae a `describe`, que es plantilla
     /// pero es cierta.
-    private func arrived(_ page: ExtractedPage) async {
+    ///
+    /// `again`: cuántas veces ya se empezó de nuevo porque la página cambió
+    /// mientras se pensaba (ver `stillOn`).
+    private func arrived(_ page: ExtractedPage, on reader: ReaderModel, again: Int = 0) async {
+        // La página pudo cambiar mientras se pensaba: una búsqueda que tardó
+        // en salir, un sitio que redirige. Lo pensado era de la otra y no se
+        // dice: se cuenta la que está. En Gob.pe los resultados de
+        // «pasaporte» llegaron mientras se pensaba la portada, y se contó la
+        // portada, con sus botones. Dos veces como tope: una página que no
+        // deja de cambiar se cuenta con la plantilla, que es cierta.
+        func moved() async -> Bool {
+            guard !Self.stillOn(page, reader.page) else { return false }
+            working = false
+            Registro.anotar("atrasada", ["era": page.url, "es": reader.page?.url ?? ""])
+            guard let now = reader.page else { return true }
+            if again < 2 {
+                await arrived(now, on: reader, again: again + 1)
+            } else {
+                describe(now)
+            }
+            return true
+        }
+
         // Las opciones eran de la página anterior. En Mercado Libre, frente al
         // "no soy un robot", seguían ofreciéndose "Suscribirme a Meli+" y
         // "Configurar cookies" de la portada.
@@ -2660,6 +2870,7 @@ final class Assistant {
         // venía, con los resultados como texto. Lo vio Daniel en el simulador.
         if let query = Self.searchQuery(of: page) {
             let (found, ads) = await organic(page)
+            if await moved() { return }
             if !found.isEmpty {
                 present(found, for: query, ads: ads)
                 return
@@ -2684,8 +2895,17 @@ final class Assistant {
         // trámite, elegir de una lista— y decide cómo se lee la página; si
         // duda, lo decide el modelo (Daniel).
         let kinds = await self.kinds(of: page, map: map)
+        if await moved() { return }
         let sure = Criterios.actuales?.umbrales["tipo"] ?? 1
         if let kinds, let notice = kinds.notice, kinds.noticeConfidence >= sure { notices[page.url] = notice }
+        // Un aviso de cookies se contesta como eligió la persona, y la
+        // propaganda se cierra, sin decir nada; se cuenta la página que queda
+        // (`answerNotice`).
+        if await answerNotice(page, on: reader) {
+            working = false
+            if let now = reader.page { await arrived(now, on: reader, again: again) }
+            return
+        }
         if let overlay = page.overlay, let kind = noticeKind(page) {
             text = "A NOTICE COVERS THE PAGE (\(kind.rawValue)): \(overlay.text)\n\n" + text
         }
@@ -2693,16 +2913,27 @@ final class Assistant {
             kinds.flatMap { $0.siteConfidence >= sure ? "site: \($0.site)" : nil },
             kinds.flatMap { $0.pageConfidence >= sure ? "page: \($0.page)" : nil },
         ].compactMap { $0 }
+        // Lo que JEF acaba de apretar, con lo que la página contestó —sus
+        // carteles, sus zonas de estado—, tomado recién ahora: hay respuestas
+        // que tardan. Va primero en la orientación: qué pasó.
+        var done: String?
+        if let did = justDid {
+            justDid = nil
+            let answered = await reader.takeSaid()
+            done = Self.done(did, answered: answered)
+            Registro.anotar("hecho", ["boton": did, "pagina": answered.map(\.text)])
+        }
         var orientation: Answerer.Orientation?
         do {
             orientation = try await answerer.orient(
                 page: text, candidates: map.map(Self.described), goal: task,
-                kinds: said.isEmpty ? nil : said.joined(separator: "; "))
+                kinds: said.isEmpty ? nil : said.joined(separator: "; "), done: done)
         } catch {
             // Por qué se cayó a la descripción: en una prueba pasó en Clarín
             // y no había cómo saber si fue la red o una cifra sin verificar.
             Registro.anotar("error", ["orientar": String(describing: error)])
         }
+        if await moved() { return }
         working = false
         guard let orientation else { describe(page); return }
         if !orientation.cut.isEmpty { Registro.anotar("cifras_sacadas", ["url": page.url, "oraciones": orientation.cut]) }
@@ -3112,6 +3343,66 @@ final class Assistant {
     /// ("cookie", "consentimiento") y a la promoción de Foodit la llamaba
     /// "otro"—; si no, lo del extractor. La prueba anti-robot tiene su propio
     /// camino y no se le pregunta a Jev.
+    /// Lo que la persona eligió para los avisos de cookies, dicho para Jev:
+    /// aceptar todas, rechazar las que no hacen falta, o nil si decide cada
+    /// vez. Por ahora aceptar (Daniel); se va a preguntar en la bienvenida.
+    /// Ajuste `cookies`: "aceptar", "rechazar" o "preguntar".
+    static var cookiesWanted: String? {
+        switch UserDefaults.standard.string(forKey: "cookies") ?? "aceptar" {
+        case "aceptar": return "accept all cookies"
+        case "rechazar": return "reject every cookie that is not strictly necessary"
+        default: return nil
+        }
+    }
+
+    /// Las direcciones donde ya se contestó un aviso: si sigue después de
+    /// tocar el botón, no se vuelve a tocar.
+    private var noticesAnswered: Set<String> = []
+
+    /// Contesta, sin decir nada, el aviso que tapa la página, si es de los
+    /// que no le piden nada a la persona:
+    /// - cookies: como ella eligió (`cookiesWanted`);
+    /// - propaganda, bajar la app, boletines, otros: se cierra. Tapaban la
+    ///   página —en La Vanguardia, «SUSCRÍBETE / Ahora no»— y quedaban
+    ///   arriba (Daniel).
+    /// Iniciar sesión, pagar, la edad y la prueba anti-robot no: son una
+    /// decisión de la persona o un muro. Jev elige el botón, por lo que dicen
+    /// el aviso y sus botones, en cualquier idioma; si no llega al umbral, el
+    /// aviso queda como antes y decide la persona. True si se tocó un botón.
+    private func answerNotice(_ page: ExtractedPage, on reader: ReaderModel) async -> Bool {
+        guard let overlay = page.overlay, let analyzer, let kind = noticeKind(page) else { return false }
+        let key: String, want: String?
+        switch kind {
+        case .cookies:
+            guard let wanted = Self.cookiesWanted else { return false }
+            (key, want) = ("cookies", wanted)
+        case .newsletter, .other:
+            (key, want) = ("cerrar", nil)
+        case .login, .paywall, .age, .captcha:
+            return false
+        }
+        guard noticesAnswered.insert(page.url).inserted else { return false }
+        let answer = overlay.choices.isEmpty ? nil
+            : await analyzer.noticeButton(key, want: want, text: overlay.text, among: overlay.choices.map(\.label))
+        let index = answer.flatMap { Int($0.choice) }.flatMap { overlay.choices.indices.contains($0) ? $0 : nil }
+        Registro.anotar("aviso_contestado", [
+            "url": page.url, "pregunta": key, "p": answer.map { String(format: "%.2f", $0.probability) } ?? "",
+            "boton": index.map { overlay.choices[$0].label } ?? answer?.choice ?? "sin respuesta",
+        ])
+        if let index, let answer, answer.probability >= Criterios.actuales?.umbrales[key] ?? 1 {
+            await reader.activate(Self.button(overlay.choices[index]))
+            return true
+        }
+        // Sin un botón que sólo lo cierre —el de cerrar suele ser una «×»
+        // dibujada, sin nombre—, la propaganda se cierra con Escape, como
+        // pide el estándar de los diálogos. Si sigue ahí, queda como antes.
+        guard key == "cerrar" else { return false }
+        await reader.dismiss()
+        let closed = reader.page.map { $0.overlay == nil } ?? false
+        Registro.anotar("aviso_escape", ["url": page.url, "cerrado": closed ? "si" : "no"])
+        return closed
+    }
+
     private func noticeKind(_ page: ExtractedPage) -> Overlay.Kind? {
         guard let overlay = page.overlay else { return nil }
         guard overlay.kind != .captcha else { return .captcha }

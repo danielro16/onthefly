@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biblioteca del club</title>
+<!--
+  Un buscador que navega tarde: primero "consulta" y recién a los 1,5 s
+  cambia de página, como el de Gob.pe. JEF no tiene que decir que la página
+  no cambió: tiene que esperar los resultados y contarlos.
+  Servida con: python3 -m http.server 8765 --directory Tests
+-->
+</head>
+<body>
+<main>
+<h1>Biblioteca del club</h1>
+<p>Buscá un libro por título, autor o género.</p>
+<form role="search" onsubmit="event.preventDefault(); setTimeout(function () { location.href = 'redirigido.html'; }, 1500);">
+<label for="q">Buscar en la biblioteca</label>
+<input id="q" name="q" type="search">
+<button type="submit">Buscar</button>
+</form>
+</main>
+</body>
+</html>

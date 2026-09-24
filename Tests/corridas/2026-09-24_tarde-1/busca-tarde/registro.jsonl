@@ -1,0 +1,22 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790281012.357019, "tipo": "botones"}
+{"t": 1790281012.8317962, "tipo": "ubicacion", "pais": "US"}
+{"tipo": "ubicacion", "t": 1790281012.83283, "pais": "US"}
+{"quien": "persona", "tipo": "turno", "t": 1790281018.958247, "texto": "http://localhost:8765/busca-tarde.html"}
+{"opciones": [], "tipo": "botones", "t": 1790281018.959806}
+{"quien": "jef", "tipo": "turno", "t": 1790281018.959974, "texto": "Abriendo localhost."}
+{"tipo": "voz", "cola": false, "t": 1790281018.960309, "texto": "Abriendo localhost."}
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790281019.002996}
+{"titulo": "Biblioteca del club", "texto": "PAGE: localhost — Biblioteca del club\n\nPAGE CONTENT (what the person came for):\nBiblioteca del club\nBuscá un libro por título, autor o género.\nFORM asking for: Buscar en la biblioteca — button «Buscar»\nBuscá un libro por título, autor o género.", "tipo": "pagina", "url": "http://localhost:8765/busca-tarde.html", "t": 1790281020.078542}
+{"t": 1790281020.078763, "tipo": "botones", "opciones": []}
+{"aviso_extractor": "", "sitio": "", "tipo": "tipo", "t": 1790281024.127691, "pagina": "", "aviso": "", "p_sitio": "", "p_pagina": "", "url": "http://localhost:8765/busca-tarde.html", "modelo": "otra", "p_aviso": ""}
+{"elementos": [], "t": 1790281024.128385, "url": "http://localhost:8765/busca-tarde.html", "tipo": "ruido"}
+{"texto": "Estás en la biblioteca del club, en su página de búsqueda. Sirve para buscar libros por título, autor o género, con un cuadro de búsqueda y su botón Buscar.", "quien": "jef", "t": 1790281024.1287742, "tipo": "turno"}
+{"cola": true, "texto": "Estás en la biblioteca del club, en su página de búsqueda. Sirve para buscar libros por título, autor o género, con un cuadro de búsqueda y su botón Buscar.", "tipo": "voz", "t": 1790281024.1294122}
+{"opciones": ["Buscar un libro"], "tipo": "botones", "t": 1790281024.1297488}
+{"opciones": ["Buscar un libro", "Otra cosa"], "tipo": "botones", "t": 1790281024.1299229}
+{"t": 1790281031.012041, "texto": "buscá novelas policiales", "tipo": "turno", "quien": "persona"}
+{"opciones": [], "tipo": "botones", "t": 1790281031.012445}
+{"question": "", "then": "", "tarea": "sigue", "control": "1", "tipo": "decision", "reference": "", "accion": "completar", "rest": "", "t": 1790281042.578319, "target": ""}
+{"quien": "jef", "texto": "Listo, escrito en Buscar en la biblioteca.", "t": 1790281043.30695, "tipo": "turno"}
+{"texto": "Listo, escrito en Buscar en la biblioteca.", "t": 1790281043.3080258, "cola": false, "tipo": "voz"}
+{"opciones": ["Buscar un libro", "Otra cosa"], "tipo": "botones", "t": 1790281043.3087258}

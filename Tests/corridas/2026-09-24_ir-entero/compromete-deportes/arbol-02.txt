@@ -1,0 +1,19 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: lanacion.com.ar
+  4 [txt] Abriendo lanacion.com.ar.
+  5 [txt] La Nación está en su portada de últimas noticias de Argentina y el mundo. La noticia principal informa que la pobreza llegó al 32,3% durante el primer semestre y que hay 2 millones de personas pobres nuevas; la cobertura sobre las medidas de Milei aparece al comienzo de la página.
+  6 [H] Vos: llevame a deportes
+  7 [txt] Abriendo «Deportes».
+  8 [txt] Estás en la portada de Deportes de LA NACION, con noticias sobre fútbol, otros deportes y la selección argentina. La nota principal cuenta que Cuti Romero podría asumir la capitanía de la selección y repasa a otros candidatos.
+  9 [btn] VER MÁS NOTAS DE DEPORTES  (Primera de 9 opciones.)
+ 10 [btn] Abrir «>Deportes»
+ 11 [btn] Abrir «Después de Messi, quién? Cambia el liderazgo de la selección: la ventaja de Cuti Romero y otros…»
+ 12 [btn] Abrir «La formación que probó Lionel Scaloni con el foco en el primero de los amistosos de la selección…»
+ 13 [btn] Abrir «AFA o FIFA?". Newell's y Central se sacan chispas hasta en la reserva: el clásico que se "picó…»
+ 14 [btn] Abrir «Alemania hizo un gol con un rival lesionado, erró una jugada increíble y Países Bajos aprovechó en…»
+ 15 [btn] Leer los titulares
+ 16 [btn] Volver a la portada
+ 17 [btn] Otra cosa
+ 18 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 19 [btn] Enviar
