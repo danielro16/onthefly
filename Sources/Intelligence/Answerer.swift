@@ -205,7 +205,8 @@ actor Answerer {
     /// con algo que no estaba.
     /// `kinds`: qué sitio y qué página es, cuando Jev lo dijo con seguridad
     /// ("site: store; page: product").
-    func orient(page: String, candidates: [String], goal: String? = nil, kinds: String? = nil) async throws -> Orientation? {
+    func orient(page whole: String, candidates: [String], goal: String? = nil, kinds: String? = nil) async throws -> Orientation? {
+        let page = String(whole.prefix(Gemini.pageLimit))
         // Cada elemento con una marca de dos letras y no con un número: con la
         // lista numerada, el modelo le decía a la persona "está en la lista
         // como número 4". La marca es para los campos de la respuesta.
@@ -292,7 +293,7 @@ actor Answerer {
         let list = options.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
         guard let parsed = try await ask("reinterpretar", [
             "tarea": task == request ? nil : task,
-            "pedido": request, "lista": list, "texto": String(page.prefix(6000)),
+            "pedido": request, "lista": list, "texto": String(page.prefix(Gemini.pageLimit)),
         ], maxTokens: 300) else { return nil }
         func number(_ value: Any?) -> Int? {
             let n = (value as? Int) ?? (value as? String).flatMap(Int.init)

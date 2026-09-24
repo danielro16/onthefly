@@ -330,6 +330,18 @@ Daniel. Punto de partida marcado con la etiqueta `antes-de-ajustes`.
    app) no, porque no le impide nada a JEF.
    Pendiente: el tipo de aviso lo decide el extractor por palabras
    («cookie|consentimiento|privacidad»); es una variable para Jev.
+   **Costo y velocidad (24/9):** un solo tope de texto de la página para los
+   que deciden (`Gemini.pageLimit`, 6.000 letras: ruteador, orientación,
+   reinterpretar); contestar y resumir leen la página entera. Con GLM lo que
+   pesa es lo que se lee: en una portada grande (La Nación, Clarín, El Tiempo)
+   ahorra ~3.500–4.300 tokens, la mitad de esa orientación; en la media, ~400.
+   Jev busca en la página mientras el ruteador decide, y su respuesta se usa
+   si la página, el pedido y los elementos son los mismos: en el IMSS, de
+   pedir a «Abriendo…» pasó de 2,1–5,2 s a 1,5–2,2 s.
+   Para decidir con Daniel: (1) el ruteador razonando o no (con GLM: 51 de 60
+   y 2,0 s razonando; 47 de 60 y 1,3 s sin); (2) `cual_confianza` 0,5: en
+   cinco corridas del IMSS, Jev eligió bien cuatro veces con ≥ 0,80 y una vez
+   mal con 0,57 («Suscribirse»); con 0,7 esa iría al modelo.
 5. **Voz:** un mensaje por turno.
 6. **GLM-5.3 Flash** contra Gemini, en la estructura nueva.
 

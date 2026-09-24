@@ -177,6 +177,13 @@ final class Assistant {
     /// El formulario elegido como un solo paso —«Buscar en ANSES»—: cuando
     /// tiene todos sus datos, se envía.
     private var completing: Action?
+    /// Jev buscando en la página mientras el ruteador decide: si decide
+    /// abrir o buscar acá, la respuesta ya está. Iban en fila y el ruteador
+    /// tarda un par de segundos; Jev, medio. Si decide otra cosa, se pierde
+    /// una pregunta a Jev, que cuesta unas cuarenta veces menos. Se usa sólo
+    /// con la misma página, el mismo pedido y los mismos elementos: su
+    /// respuesta es una posición en esa lista.
+    private var early: (url: String, request: String, ids: [String], answer: Task<PageAnalyzer.Found?, Never>)?
     /// El campo cuyo valor se le pidió a la persona: lo próximo que escriba
     /// va ahí. Ver `ask`.
     private var awaitingField: Action.Field? {
@@ -398,6 +405,15 @@ final class Assistant {
         // segundo resultado es anses.gob.ar. Se vio en el simulador.
         if router != nil {
             working = true
+            early = nil
+            if let page = reader.page, let analyzer {
+                let request = jevRequest(goal)
+                let options = openable(page)
+                if !options.isEmpty {
+                    early = (page.url, request, options.map(\.id),
+                             Task { await analyzer.find(request, among: options, site: page.url) })
+                }
+            }
             let decision: Router.Decision?
             do { decision = try await decide(goal, on: reader, previous: previousRequest) }
             catch Router.RouterError.transport {
@@ -1887,9 +1903,14 @@ final class Assistant {
             // aparte: medido ahí, en un campo aparte Jev tocaba «Suscribirse a
             // cita médica» (0,62); pegada, y con el link nombrado por su
             // tarjeta, el bueno (0,89).
-            let words = said ?? goal
-            let request = task.map { $0 == words ? words : "\($0): \(words)" } ?? words
-            let found = await analyzer.find(request, among: options, site: page.url)
+            let request = jevRequest(said ?? goal)
+            let found: PageAnalyzer.Found?
+            if first, let ready = early, ready.url == page.url, ready.request == request, ready.ids == options.map(\.id) {
+                found = await ready.answer.value
+            } else {
+                found = await analyzer.find(request, among: options, site: page.url)
+            }
+            early = nil
             Self.note(found, for: request, among: options)
 
             // Seguro de uno: se toca. Después del primer paso, más seguro: seguir
@@ -3048,6 +3069,12 @@ final class Assistant {
         for action in page.actions where usable(action) { add(action) }
         // Jev admite 255 opciones por pregunta. Medido, no documentado.
         return Array(out.prefix(240))
+    }
+
+    /// El pedido como lo recibe Jev: con la tarea delante, si es más que el
+    /// pedido. Ver `run`.
+    private func jevRequest(_ words: String) -> String {
+        task.map { $0 == words ? words : "\($0): \(words)" } ?? words
     }
 
     /// Lo que Jev dice de esta página: con qué se juzga es lo que se ve de

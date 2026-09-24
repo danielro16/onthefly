@@ -1,0 +1,20 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero sacar una cita en el IMSS
+  4 [txt] Buscando: cita IMSS.
+  5 [txt] Hay cuatro vías para agendar cita con tu médico familiar del IMSS: por internet en el portal de Cita Médica Digital del IMSS, con la aplicación móvil IMSS Digital en la sección de Salud, por teléfono al 800 681 2525 de lunes a viernes de 8:00 a 20:00 horas, o presencialmente con la asistente médica de tu Unidad de Medicina Familiar. En línea te piden tu CURP, tu NSS, un correo electrónico activo y estar vigente en el IMSS.
+  6 [H] Vos: Cita Médica — www.imss.gob.mx
+  7 [txt] Abriendo imss.gob.mx.
+  8 [txt] Estás en el sitio del IMSS, en una página sobre citas médicas. Para sacar tu cita, hay aquí una nota titulada Agenda tu Cita Médica Digital, que dice que ya puedes agendar tu cita y la de tus beneficiarios con tu médico familiar a través de la aplicación IMSS Digital o por internet. También hay un enlace directo a la sección Cita Médica en el menú.
+  9 [H] Vos: medicina familiar
+ 10 [txt] Abriendo Suscribirse a cita médica.
+ 11 [txt] Todavía no hay una página cargada.
+ 12 [H] Vos: volvé
+ 13 [txt] Volviendo.
+ 14 [txt] De vuelta en los resultados de «cita IMSS».
+ 15 [btn] Agenda tu Cita Médica Digital — www.imss.gob.mx  (Primera de 4 opciones.)
+ 16 [btn] Cita Médica - IMSS — citamedicadigital.imss.gob.mx
+ 17 [btn] Cita Médica — www.imss.gob.mx
+ 18 [btn] Otra cosa
+ 19 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 20 [btn] Enviar

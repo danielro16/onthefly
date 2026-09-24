@@ -22,6 +22,15 @@ struct Gemini: Sendable {
 
     static let base = "zai/glm-5.3-flash"
 
+    /// Cuánto texto de la página ven los que deciden: el ruteador, la
+    /// orientación y reinterpretar, el mismo para todos. La orientación veía
+    /// la página entera (hasta 23.000 letras en Clarín) y el ruteador 6.000:
+    /// el que entiende a la persona veía menos que el que describe. Con el
+    /// mapa de la página aparte, alcanza; en una portada grande ahorra la
+    /// mitad de la orientación. Contestar y resumir leen la página entera: la
+    /// respuesta puede estar al final.
+    static let pageLimit = 6000
+
     static func fromEnvironment() -> Gemini? {
         let chosen = UserDefaults.standard.string(forKey: "modelo") ?? base
         if chosen.hasPrefix("gemini-"), let key = value("GeminiAPIKey", unset: "$(GEMINI_API_KEY)") {

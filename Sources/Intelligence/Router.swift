@@ -104,7 +104,7 @@ actor Router {
         let list = controls.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
         let input = prompts.mensaje("ruteador", [
             "pedido": request, "tarea": task, "pagina": state, "lugar": place,
-            "formulario": list.isEmpty ? nil : list, "texto": page.map { String($0.prefix(6000)) },
+            "formulario": list.isEmpty ? nil : list, "texto": page.map { String($0.prefix(Gemini.pageLimit)) },
         ])
         let body: [String: Any] = [
             // Con el texto real de una portada razona más: 300 cortaba la
