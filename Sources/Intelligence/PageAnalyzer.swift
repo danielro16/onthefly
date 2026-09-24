@@ -57,6 +57,44 @@ actor PageAnalyzer {
         }
     }
 
+    // MARK: - Cookies
+
+    private struct CookiesState: Encodable, Sendable {
+        let want: String
+        let text: String
+        let choices: [String]
+    }
+
+    /// Cuál botón del aviso de cookies hace lo que eligió la persona
+    /// (`want`): la pregunta "cookies" de `criterios.json`, en cualquier
+    /// idioma, por lo que dicen el aviso y sus botones. Lo que contestó Jev
+    /// —un índice de `choices`, o "none"— con su probabilidad; nil si no hay
+    /// criterio o si no contesta a tiempo. El umbral lo aplica quien llama.
+    func cookieButton(_ want: String, text: String, among choices: [String]) async -> (choice: String, probability: Double)? {
+        guard let criterios = Criterios.actuales, let pregunta = criterios.jev["cookies"], !choices.isEmpty else { return nil }
+        var options: [String: String?] = [:]
+        for index in choices.indices { options.updateValue(nil, forKey: String(index)) }
+        for (key, text) in pregunta.criteria ?? [:] { options[key] = text }
+        let state = CookiesState(want: want, text: String(text.prefix(600)), choices: choices)
+        let question = JevClient.Question.choice(instructions: pregunta.instructions, options: options)
+        let jev = self.jev
+        return await withTaskGroup(of: (choice: String, probability: Double)?.self) { group in
+            group.addTask {
+                guard let result = try? await jev.evaluate(state: state, questions: ["cookies": question]),
+                      case .choice(let value, let probabilities, let confidence)? = result.answers["cookies"]
+                else { return nil }
+                return (value, confidence ?? probabilities[value] ?? 0)
+            }
+            group.addTask {
+                try? await Task.sleep(for: criterios.esperaJev)
+                return nil
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first
+        }
+    }
+
     // MARK: - Anuncios en los resultados
 
     private struct ResultsState: Encodable, Sendable {

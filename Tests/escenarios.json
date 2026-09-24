@@ -862,5 +862,25 @@
         "escribir": "¿cuánto cuestan las primeras?"
       }
     ]
+  },
+  {
+    "id": "cookies-lemonde",
+    "persona": "Vive en Francia. Entra a Le Monde y le sale el aviso de cookies.",
+    "objetivo": "Que JEF conteste el aviso de cookies como eligió la persona (por ahora, aceptar todas) sin decir nada, y cuente la página.",
+    "pasos": [
+      {
+        "escribir": "lemonde.fr"
+      }
+    ]
+  },
+  {
+    "id": "cookies-aerolineas",
+    "persona": "Entra a Aerolíneas Argentinas y le sale el aviso de cookies.",
+    "objetivo": "Que JEF conteste el aviso de cookies como eligió la persona (por ahora, aceptar todas) sin decir nada, y cuente la página.",
+    "pasos": [
+      {
+        "escribir": "aerolineas.com.ar"
+      }
+    ]
   }
 ]

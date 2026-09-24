@@ -2830,6 +2830,13 @@ final class Assistant {
         if await moved() { return }
         let sure = Criterios.actuales?.umbrales["tipo"] ?? 1
         if let kinds, let notice = kinds.notice, kinds.noticeConfidence >= sure { notices[page.url] = notice }
+        // Un aviso de cookies se contesta como eligió la persona, sin decir
+        // nada, y se cuenta la página que queda (`answerCookies`).
+        if await answerCookies(page, on: reader) {
+            working = false
+            if let now = reader.page { await arrived(now, on: reader, again: again) }
+            return
+        }
         if let overlay = page.overlay, let kind = noticeKind(page) {
             text = "A NOTICE COVERS THE PAGE (\(kind.rawValue)): \(overlay.text)\n\n" + text
         }
@@ -3267,6 +3274,42 @@ final class Assistant {
     /// ("cookie", "consentimiento") y a la promoción de Foodit la llamaba
     /// "otro"—; si no, lo del extractor. La prueba anti-robot tiene su propio
     /// camino y no se le pregunta a Jev.
+    /// Lo que la persona eligió para los avisos de cookies, dicho para Jev:
+    /// aceptar todas, rechazar las que no hacen falta, o nil si decide cada
+    /// vez. Por ahora aceptar (Daniel); se va a preguntar en la bienvenida.
+    /// Ajuste `cookies`: "aceptar", "rechazar" o "preguntar".
+    static var cookiesWanted: String? {
+        switch UserDefaults.standard.string(forKey: "cookies") ?? "aceptar" {
+        case "aceptar": return "accept all cookies"
+        case "rechazar": return "reject every cookie that is not strictly necessary"
+        default: return nil
+        }
+    }
+
+    /// Las direcciones donde ya se contestó un aviso de cookies: si el aviso
+    /// sigue después de tocar el botón, no se vuelve a tocar.
+    private var cookiesAnswered: Set<String> = []
+
+    /// Contesta un aviso de cookies como eligió la persona, sin decir nada:
+    /// Jev elige el botón que hace eso, por lo que dicen el aviso y sus
+    /// botones, en cualquier idioma. Si no llega al umbral, el aviso queda
+    /// como antes, con sus botones primero, y decide la persona. True si se
+    /// tocó un botón.
+    private func answerCookies(_ page: ExtractedPage, on reader: ReaderModel) async -> Bool {
+        guard let overlay = page.overlay, noticeKind(page) == .cookies, !overlay.choices.isEmpty,
+              let want = Self.cookiesWanted, let analyzer, cookiesAnswered.insert(page.url).inserted
+        else { return false }
+        let answer = await analyzer.cookieButton(want, text: overlay.text, among: overlay.choices.map(\.label))
+        let index = answer.flatMap { Int($0.choice) }.flatMap { overlay.choices.indices.contains($0) ? $0 : nil }
+        Registro.anotar("cookies", [
+            "url": page.url, "quiere": want, "p": answer.map { String(format: "%.2f", $0.probability) } ?? "",
+            "boton": index.map { overlay.choices[$0].label } ?? answer?.choice ?? "sin respuesta",
+        ])
+        guard let index, let answer, answer.probability >= Criterios.actuales?.umbrales["cookies"] ?? 1 else { return false }
+        await reader.activate(Self.button(overlay.choices[index]))
+        return true
+    }
+
     private func noticeKind(_ page: ExtractedPage) -> Overlay.Kind? {
         guard let overlay = page.overlay else { return nil }
         guard overlay.kind != .captcha else { return .captcha }
