@@ -3424,6 +3424,18 @@ allowedVideoRegex: /^$/,
     return { ok: true, value: el.value };
   };
 
+  /// What a field holds now, as `__jefFill` left it or as the page changed
+  /// it after reacting. A radio group answers with its checked option.
+  window.__jefValue = function (fieldId) {
+    const key = String(fieldId).replace(/"/g, "");
+    const el = document.querySelector('[data-jef-field="' + key + '"]');
+    if (el) return { ok: true, value: el.type === "checkbox" ? (el.checked ? "on" : "") : String(el.value || "") };
+    const radios = document.querySelectorAll('[data-jef-field^="' + key + ':"]');
+    if (!radios.length) return { ok: false, reason: "gone" };
+    const checked = Array.prototype.find.call(radios, function (r) { return r.checked; });
+    return { ok: true, value: checked ? String(checked.value) : "" };
+  };
+
   /*
    * What an autocomplete is offering right now.
    *

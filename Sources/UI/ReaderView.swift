@@ -251,12 +251,6 @@ final class ReaderModel {
         state = .loaded(page)
     }
 
-    /// Lleva un valor a un campo de la página sin esperar a que lo reciba.
-    /// Quien la llama espera lo que haga falta; `type` es la que espera.
-    func fill(_ field: Action.Field, with value: String) {
-        Task { try? await engine.fill(fieldID: field.id, value: value) }
-    }
-
     /// Submits a form and reads whatever the page became.
     func submit(_ action: Action) async {
         do {
@@ -302,13 +296,25 @@ final class ReaderModel {
         }
     }
 
-    /// Escribe en un campo y espera a que la página lo reciba.
-    ///
-    /// `fill` dispara sin esperar. Un asistente que escribe y a continuación
-    /// envía necesita saber que el valor llegó: acá se escribe y se espera.
-    func type(_ value: String, into field: Action.Field) async {
-        await engine.write(field.id, value)
+    /// Escribe en un campo, espera a que la página lo reciba y dice si quedó
+    /// escrito: el campo sigue ahí y tiene lo que se escribió.
+    func type(_ value: String, into field: Action.Field) async -> Bool {
+        let held = await engine.write(field.id, value)
         state = state
+        guard let held else { return false }
+        if field.type == "checkbox" { return (held == "on") == (value == "on" || value == "true") }
+        return Self.holds(held, value)
+    }
+
+    /// Si lo que tiene el campo es lo que se escribió, sin espacios ni
+    /// signos ni mayúsculas: una página que da formato ("12.345.678",
+    /// "(11) 4444-5555") lo aceptó; una que lo vació o lo cortó, no.
+    static func holds(_ held: String, _ written: String) -> Bool {
+        func bare(_ text: String) -> String {
+            String(text.lowercased().filter { $0.isLetter || $0.isNumber })
+        }
+        let wanted = bare(written)
+        return wanted.isEmpty ? bare(held).isEmpty : bare(held).contains(wanted)
     }
 
     /// Volver a la página anterior, con la sesión intacta.

@@ -808,5 +808,21 @@
         "escribir": "novelas policiales"
       }
     ]
+  },
+  {
+    "id": "campos-que-reaccionan",
+    "persona": "Cualquiera: completa un formulario cuyos campos reaccionan a lo que se escribe.",
+    "objetivo": "Que JEF diga «Listo» sólo si el valor quedó: el DNI con puntos sí; letras en el código postal, que las borra, no. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/campos.html"
+      },
+      {
+        "escribir": "poné 30123456 en el DNI"
+      },
+      {
+        "escribir": "poné Palermo en el código postal"
+      }
+    ]
   }
 ]

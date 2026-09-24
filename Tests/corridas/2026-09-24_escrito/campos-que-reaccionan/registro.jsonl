@@ -1,0 +1,31 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790281757.02966, "tipo": "botones"}
+{"t": 1790281757.31917, "pais": "US", "tipo": "ubicacion"}
+{"tipo": "turno", "texto": "http://localhost:8765/campos.html", "t": 1790281763.638524, "quien": "persona"}
+{"tipo": "botones", "opciones": [], "t": 1790281763.641854}
+{"tipo": "turno", "texto": "Abriendo localhost.", "t": 1790281763.642147, "quien": "jef"}
+{"tipo": "voz", "texto": "Abriendo localhost.", "cola": false, "t": 1790281763.642448}
+{"tipo": "botones", "t": 1790281763.6764998, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"titulo": "Datos del socio", "t": 1790281764.7836518, "texto": "PAGE: localhost — Datos del socio\n\nPAGE CONTENT (what the person came for):\nDatos del socio\nFORM asking for: DNI, Código postal — button «Guardar»", "url": "http://localhost:8765/campos.html", "tipo": "pagina"}
+{"tipo": "botones", "opciones": [], "t": 1790281764.7839909}
+{"sitio": "institution", "p_sitio": "0.74", "t": 1790281766.422065, "tipo": "tipo", "aviso": "", "p_aviso": "0.00", "pagina": "form", "url": "http://localhost:8765/campos.html", "p_pagina": "1.00", "modelo": "otra", "aviso_extractor": ""}
+{"t": 1790281766.422576, "url": "http://localhost:8765/campos.html", "elementos": [], "tipo": "ruido"}
+{"t": 1790281766.422752, "texto": "Estás en la página de datos del socio de la institución, un formulario que pide el DNI y el código postal, con un botón de Guardar al final. Si me das esos dos datos, los completo y lo guardamos.", "quien": "jef", "tipo": "turno"}
+{"t": 1790281766.4232001, "texto": "Estás en la página de datos del socio de la institución, un formulario que pide el DNI y el código postal, con un botón de Guardar al final. Si me das esos dos datos, los completo y lo guardamos.", "cola": true, "tipo": "voz"}
+{"t": 1790281766.423682, "opciones": ["Completar datos del socio"], "tipo": "botones"}
+{"t": 1790281766.423822, "opciones": ["Completar datos del socio", "Otra cosa"], "tipo": "botones"}
+{"texto": "poné 30123456 en el DNI", "t": 1790281773.882337, "tipo": "turno", "quien": "persona"}
+{"tipo": "botones", "t": 1790281773.882843, "opciones": []}
+{"reference": "", "rest": "", "t": 1790281776.716937, "accion": "completar", "question": "", "target": "", "control": "1", "tipo": "decision", "tarea": "sigue", "then": ""}
+{"tipo": "pagina", "texto": "PAGE: localhost — Datos del socio\n\nPAGE CONTENT (what the person came for):\nDatos del socio\nFORM asking for: DNI, Código postal — button «Guardar»", "t": 1790281777.570543, "titulo": "Datos del socio", "url": "http://localhost:8765/campos.html"}
+{"tipo": "escrito", "campo": "DNI", "t": 1790281777.5710669, "quedo": "si"}
+{"tipo": "turno", "texto": "Listo, escrito en DNI.", "t": 1790281777.571385, "quien": "jef"}
+{"tipo": "voz", "texto": "Listo, escrito en DNI.", "t": 1790281777.571984, "cola": false}
+{"opciones": ["Completar datos del socio", "Otra cosa"], "t": 1790281777.572597, "tipo": "botones"}
+{"quien": "persona", "texto": "poné Palermo en el código postal", "tipo": "turno", "t": 1790281785.855792}
+{"tipo": "botones", "t": 1790281785.856192, "opciones": []}
+{"question": "", "tipo": "decision", "accion": "completar", "control": "2", "reference": "", "target": "", "then": "", "rest": "", "tarea": "sigue", "t": 1790281787.974695}
+{"titulo": "Datos del socio", "tipo": "pagina", "url": "http://localhost:8765/campos.html", "texto": "PAGE: localhost — Datos del socio\n\nPAGE CONTENT (what the person came for):\nDatos del socio\nFORM asking for: DNI, Código postal — button «Guardar»", "t": 1790281788.7956119}
+{"campo": "Código postal", "tipo": "escrito", "quedo": "no", "t": 1790281788.7963428}
+{"tipo": "turno", "texto": "No quedó escrito en «Código postal»: la página no lo aceptó.", "quien": "jef", "t": 1790281788.796716}
+{"t": 1790281788.797324, "tipo": "voz", "texto": "No quedó escrito en «Código postal»: la página no lo aceptó.", "cola": false}
+{"opciones": ["Completar datos del socio", "Otra cosa"], "t": 1790281788.797649, "tipo": "botones"}

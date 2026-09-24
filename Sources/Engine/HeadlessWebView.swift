@@ -238,16 +238,34 @@ final class HeadlessWebView: NSObject {
         return (result as? [String: Any])?["ok"] as? Bool == true
     }
 
-    /// Escribe en un campo y devuelve cuando la página lo recibió.
+    /// Escribe en un campo y devuelve, cuando la página ya lo recibió, lo que
+    /// el campo tiene. Nil si no se pudo escribir o el campo ya no está.
     ///
     /// `fill(fieldID:value:)` está pensado para el tecleo de una persona:
     /// dispara y sigue. Un asistente que escribe y después envía necesita
-    /// saber que el valor llegó antes de apretar.
-    func write(_ fieldID: String, _ value: String) async {
-        _ = try? await fill(fieldID: fieldID, value: value)
+    /// saber que el valor llegó antes de apretar. Y que quedó: antes se
+    /// decía "Listo, escrito" sin mirar, aunque el campo ya no estuviera o
+    /// la página lo hubiera borrado al reaccionar.
+    func write(_ fieldID: String, _ value: String) async -> String? {
+        guard (try? await fill(fieldID: fieldID, value: value)) == true, let web = webView else { return nil }
         // Lo que un sitio con autocompletado tarda en reaccionar. Medido en
         // el buscador de vuelos: menos que esto y el submit salía vacío.
         try? await Task.sleep(for: .milliseconds(700))
+        let safeID = fieldID.filter { $0.isLetter || $0.isNumber }
+        let now = try? await web.evaluateJavaScript("window.__jefValue('\(safeID)')") as? [String: Any]
+        guard now?["ok"] as? Bool == true else { return nil }
+        return now?["value"] as? String
+    }
+
+    /// Si lo que tiene el campo es lo que se escribió, sin espacios ni
+    /// signos ni mayúsculas: una página que da formato ("12.345.678",
+    /// "(11) 4444-5555") lo aceptó; una que lo vació o lo cortó, no.
+    static func holds(_ held: String, _ written: String) -> Bool {
+        func bare(_ text: String) -> String {
+            String(text.lowercased().filter { $0.isLetter || $0.isNumber })
+        }
+        let wanted = bare(written)
+        return wanted.isEmpty ? bare(held).isEmpty : bare(held).contains(wanted)
     }
 
     /// Arriba de todo. El extractor baja hasta el final para despertar lo

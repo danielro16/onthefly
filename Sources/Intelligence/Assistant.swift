@@ -315,9 +315,9 @@ final class Assistant {
             awaitingField = nil
             if isValue {
                 working = true
-                reader.fill(field, with: goal)
-                try? await Task.sleep(for: .milliseconds(700))
+                let held = await typed(goal, into: field, on: reader)
                 working = false
+                guard held else { return }
                 filledFields.insert(field.id)
                 // Y no queda como "lo que pidió antes": eso viaja al modelo en
                 // el turno siguiente, y un DNI no tiene que ir a ningún lado.
@@ -733,9 +733,9 @@ final class Assistant {
             return
         }
         working = true
-        reader.fill(field, with: value)
-        try? await Task.sleep(for: .milliseconds(700))
+        let held = await typed(value, into: field, on: reader)
         working = false
+        guard held else { return }
         filledFields.insert(field.id)
         say(field.isSecure ? "Listo: quedó escrita en «\(Self.spoken(field))»." : "Listo, escrito en \(Self.spoken(field)).")
     }
@@ -2094,13 +2094,25 @@ final class Assistant {
             return
         }
 
-        await reader.type(found.value, into: field)
+        guard await typed(found.value, into: field, on: reader) else { return }
         filledFields.insert(field.id)
         say("Listo, escrito en \(Self.spoken(field)).")
         if found.send {
             working = false
             await submitAsked(form, on: reader)
         }
+    }
+
+    /// Escribe en un campo de la página y dice si quedó escrito. Si no —el
+    /// campo ya no está, o la página lo vació o lo cambió—, lo dice y no se
+    /// sigue: ni otro campo, ni enviar. Antes se decía "Listo, escrito" a
+    /// los 700 ms sin mirar el campo.
+    private func typed(_ value: String, into field: Action.Field, on reader: ReaderModel) async -> Bool {
+        let held = await reader.type(value, into: field)
+        // Sin el valor: un DNI no va al registro.
+        Registro.anotar("escrito", ["campo": Self.spoken(field), "quedo": held ? "si" : "no"])
+        if !held { say("No quedó escrito en «\(Self.spoken(field))»: la página no lo aceptó.") }
+        return held
     }
 
     /// Si este formulario es un buscador, según el estándar: todos sus campos
