@@ -1711,7 +1711,7 @@ final class Assistant {
                 askToSolve(page, image: page.overlay?.kind != .captcha)
                 return
             }
-            if opensNote, let page = reader.page, let kind = page.overlay?.kind, [.paywall, .login].contains(kind) {
+            if opensNote, let page = reader.page, let kind = noticeKind(page), [.paywall, .login].contains(kind) {
                 knownURL = page.url
                 say("Esa nota es para suscriptores o pide iniciar sesión: el sitio me llevó a su página de ingreso.")
                 offer = reader.canGoBack
@@ -2675,9 +2675,6 @@ final class Assistant {
         // started" y nunca llegaba a los titulares — que estaban extraídos,
         // ahí abajo. Un aviso de suscripción no impide leer.
         var text = Self.saying(page)
-        if let overlay = page.overlay {
-            text = "A NOTICE COVERS THE PAGE (\(overlay.kind.rawValue)): \(overlay.text)\n\n" + text
-        }
         // El mapa de la página, el mismo que ve Jev: las marcas del modelo
         // son posiciones en él.
         let map = Self.options(of: page)
@@ -2689,6 +2686,10 @@ final class Assistant {
         // duda, lo decide el modelo (Daniel).
         let kinds = await self.kinds(of: page, map: map)
         let sure = Criterios.actuales?.umbrales["tipo"] ?? 1
+        if let kinds, let notice = kinds.notice, kinds.noticeConfidence >= sure { notices[page.url] = notice }
+        if let overlay = page.overlay, let kind = noticeKind(page) {
+            text = "A NOTICE COVERS THE PAGE (\(kind.rawValue)): \(overlay.text)\n\n" + text
+        }
         let said = [
             kinds.flatMap { $0.siteConfidence >= sure ? "site: \($0.site)" : nil },
             kinds.flatMap { $0.pageConfidence >= sure ? "page: \($0.page)" : nil },
@@ -2716,6 +2717,8 @@ final class Assistant {
             "url": page.url, "sitio": kinds?.site ?? "", "p_sitio": kinds.map { String(format: "%.2f", $0.siteConfidence) } ?? "",
             "pagina": kinds?.page ?? "", "p_pagina": kinds.map { String(format: "%.2f", $0.pageConfidence) } ?? "",
             "modelo": orientation.kind.rawValue,
+            "aviso": kinds?.notice ?? "", "p_aviso": kinds.map { String(format: "%.2f", $0.noticeConfidence) } ?? "",
+            "aviso_extractor": page.overlay?.kind.rawValue ?? "",
         ])
         known[page.url] = (kind, [])
         // En una portada, los titulares que se nombran y los botones son los
@@ -2867,7 +2870,7 @@ final class Assistant {
         // adelante: no le impide nada a JEF, que toca la página por debajo, y
         // en Liverpool se ofrecía «Descarga». Sigue en el mapa, por si la
         // persona pide cerrarla.
-        if let overlay = page.overlay, [.cookies, .age].contains(overlay.kind) {
+        if let overlay = page.overlay, let kind = noticeKind(page), [.cookies, .age].contains(kind) {
             let wanted = overlay.choices.filter { !noiseIDs(of: page).contains($0.id) }
             let covering = (wanted.isEmpty ? overlay.choices : wanted).map { choice in
                 targets["sug-\(choice.id)"] = Self.button(choice)
@@ -3092,7 +3095,30 @@ final class Assistant {
         return await analyzer.kinds(
             domain: domain.hasPrefix("www.") ? String(domain.dropFirst(4)) : domain, title: page.title,
             headings: headings, text: content,
-            items: map.prefix(30).map { (text: $0.label, kind: $0.kind.rawValue, region: $0.region.isEmpty ? "main" : $0.region) })
+            items: map.prefix(30).map { (text: $0.label, kind: $0.kind.rawValue, region: $0.region.isEmpty ? "main" : $0.region) },
+            overlay: page.overlay?.kind == .captcha ? nil : page.overlay)
+    }
+
+    /// Qué pidió el aviso de cada página, según Jev, cuando lo dijo seguro.
+    private var notices: [String: String] = [:]
+
+    /// Qué pide el aviso que tapa la página: lo de Jev si lo dijo con
+    /// seguridad —en cualquier idioma; el extractor lo adivina con palabras
+    /// ("cookie", "consentimiento") y a la promoción de Foodit la llamaba
+    /// "otro"—; si no, lo del extractor. La prueba anti-robot tiene su propio
+    /// camino y no se le pregunta a Jev.
+    private func noticeKind(_ page: ExtractedPage) -> Overlay.Kind? {
+        guard let overlay = page.overlay else { return nil }
+        guard overlay.kind != .captcha else { return .captcha }
+        switch notices[page.url] {
+        case "cookies": return .cookies
+        case "login": return .login
+        case "paywall": return .paywall
+        case "newsletter": return .newsletter
+        case "age": return .age
+        case "app", "promo", "other": return .other
+        default: return overlay.kind
+        }
     }
 
     /// Un botón de un aviso que tapa la página, como un elemento del mapa. El

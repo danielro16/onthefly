@@ -118,11 +118,19 @@ actor PageAnalyzer {
             let kind: String
             let region: String
         }
+        struct Notice: Encodable, Sendable {
+            let text: String
+            let choices: [String]
+            let links: [String]
+        }
         let domain: String
         let title: String
         let headings: [String]
         let text: String
         let items: [Item]
+        /// El aviso que tapa la página, si hay: el extractor sabe que está
+        /// por su forma; qué pide, lo dice Jev.
+        let notice: Notice?
     }
 
     /// Lo que Jev dijo de una página: qué tipo de sitio y qué tipo de página,
@@ -132,6 +140,9 @@ actor PageAnalyzer {
         let siteConfidence: Double
         let page: String
         let pageConfidence: Double
+        /// Qué pide el aviso que tapa la página, si hay uno.
+        var notice: String? = nil
+        var noticeConfidence: Double = 0
     }
 
     /// Las preguntas "sitio" y "pagina" de `criterios.json`, en un solo
@@ -139,22 +150,31 @@ actor PageAnalyzer {
     /// nuevo es una línea, no código. Medido en 27 páginas de 9 países: con
     /// seguridad de 0,7 o más acertó 48 de 48 sitios y 45 de 45 páginas, en
     /// medio segundo. Lo que no llega a esa seguridad lo decide el modelo.
-    /// Nil si Jev no contesta a tiempo.
+    /// Con un aviso encima, también qué pide ("aviso"): medido en 8 avisos, 8
+    /// bien, y la promoción de Foodit, que el extractor no reconocía por sus
+    /// palabras. Nil si Jev no contesta a tiempo.
     func kinds(domain: String, title: String, headings: [String], text: String,
-               items: [(text: String, kind: String, region: String)]) async -> Kinds? {
+               items: [(text: String, kind: String, region: String)], overlay: Overlay? = nil) async -> Kinds? {
         guard let criterios = Criterios.actuales, let sitio = criterios.jev["sitio"], let pagina = criterios.jev["pagina"]
         else { return nil }
+        let aviso = overlay == nil ? nil : criterios.jev["aviso"]
         let state = KindState(
             domain: domain, title: String(title.prefix(120)), headings: headings.prefix(12).map { String($0.prefix(100)) },
             text: String(text.prefix(1200)),
-            items: items.prefix(30).map { .init(text: String($0.text.prefix(80)), kind: $0.kind, region: $0.region) })
-        let questions: [String: JevClient.Question] = [
+            items: items.prefix(30).map { .init(text: String($0.text.prefix(80)), kind: $0.kind, region: $0.region) },
+            notice: overlay.map { .init(text: String($0.text.prefix(600)), choices: $0.choices.map(\.label),
+                                        links: ($0.links ?? []).map(\.label)) })
+        var questions: [String: JevClient.Question] = [
             "sitio": .choice(instructions: sitio.instructions, options: (sitio.criteria ?? [:]).mapValues { $0 }),
             "pagina": .choice(instructions: pagina.instructions, options: (pagina.criteria ?? [:]).mapValues { $0 }),
         ]
+        if let aviso {
+            questions["aviso"] = .choice(instructions: aviso.instructions, options: (aviso.criteria ?? [:]).mapValues { $0 })
+        }
+        let asked = questions
         let jev = self.jev
         let answers: [String: JevClient.Answer]? = await withTaskGroup(of: [String: JevClient.Answer]?.self) { group in
-            group.addTask { try? await jev.evaluate(state: state, questions: questions).answers }
+            group.addTask { try? await jev.evaluate(state: state, questions: asked).answers }
             group.addTask {
                 try? await Task.sleep(for: criterios.esperaJev)
                 return nil
@@ -165,8 +185,13 @@ actor PageAnalyzer {
         }
         guard case .choice(let site, let siteP, let siteC)? = answers?["sitio"],
               case .choice(let page, let pageP, let pageC)? = answers?["pagina"] else { return nil }
-        return Kinds(site: site, siteConfidence: siteC ?? siteP[site] ?? 0,
-                     page: page, pageConfidence: pageC ?? pageP[page] ?? 0)
+        var found = Kinds(site: site, siteConfidence: siteC ?? siteP[site] ?? 0,
+                          page: page, pageConfidence: pageC ?? pageP[page] ?? 0)
+        if case .choice(let notice, let noticeP, let noticeC)? = answers?["aviso"] {
+            found.notice = notice
+            found.noticeConfidence = noticeC ?? noticeP[notice] ?? 0
+        }
+        return found
     }
 
     // MARK: - Controles sin nombre

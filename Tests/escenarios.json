@@ -641,5 +641,25 @@
         "escribir": "eluniverso.com"
       }
     ]
+  },
+  {
+    "id": "aviso-20minutos",
+    "persona": "Vive en España, ciega. Entra al diario.",
+    "objetivo": "Que Jev diga qué pide el aviso que tapa la página, y que sólo un aviso que pide una decisión (cookies, edad) vaya primero.",
+    "pasos": [
+      {
+        "escribir": "20minutos.es"
+      }
+    ]
+  },
+  {
+    "id": "aviso-foodit",
+    "persona": "Vive en Argentina, con baja visión. Entra a un sitio de recetas.",
+    "objetivo": "Que Jev diga qué pide el aviso que tapa la página, y que sólo un aviso que pide una decisión (cookies, edad) vaya primero.",
+    "pasos": [
+      {
+        "escribir": "foodit.lanacion.com.ar"
+      }
+    ]
   }
 ]

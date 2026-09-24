@@ -328,8 +328,17 @@ Daniel. Punto de partida marcado con la etiqueta `antes-de-ajustes`.
    Los avisos: sólo los que piden una decisión de la persona (cookies, edad)
    van primero, sin su ruido pero nunca sin salida; la propaganda (bajar la
    app) no, porque no le impide nada a JEF.
-   Pendiente: el tipo de aviso lo decide el extractor por palabras
-   («cookie|consentimiento|privacidad»); es una variable para Jev.
+   El tipo de aviso (`aviso`: cookies, ingreso, suscripción, boletín, app,
+   promoción, edad, otro) lo dice Jev en la misma llamada: 8 de 8 en la
+   medición, y la promoción de Foodit, que el extractor llamaba «otro»; lo
+   del extractor (por palabras) queda de respaldo si Jev duda.
+   **Medido y descartado (24/9): el ruido elemento por elemento con Jev.**
+   En 35 páginas de 8 países: el modelo grande leería ~30 tokens menos por
+   página (~US$ 0,000005 con GLM) y costaría ~US$ 0,0004 en Jev, 80 veces
+   más; con 5 a 7 tandas por página Jev se satura (57 de ~110 llamadas
+   fallaron). Jev cobra lo que lee (US$ 0,042 por millón, ~3,5 veces menos
+   que GLM) y cada pregunta repite sus instrucciones y definiciones: conviene
+   para pocas preguntas sobre la página entera, no para una por elemento.
    **Costo y velocidad (24/9):** un solo tope de texto de la página para los
    que deciden (`Gemini.pageLimit`, 6.000 letras: ruteador, orientación,
    reinterpretar); contestar y resumir leen la página entera. Con GLM lo que
