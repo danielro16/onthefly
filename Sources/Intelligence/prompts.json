@@ -114,6 +114,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "tarea": {
             "type": "string",
@@ -238,6 +239,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "contesta": {
             "type": "string",
@@ -299,6 +301,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "respuesta": {
             "type": [
@@ -368,6 +371,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "tipo_de_pagina": {
             "type": "string",
@@ -384,6 +388,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "etiqueta": {
                   "type": "string"
@@ -415,6 +420,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "tipo": {
                   "type": "string",
@@ -492,6 +498,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "elegir": {
             "type": [
@@ -546,6 +553,7 @@
       ],
       "devuelve": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "valor": {
             "type": [

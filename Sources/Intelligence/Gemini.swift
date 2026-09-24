@@ -2,11 +2,15 @@ import Foundation
 
 /// Adónde van las llamadas al modelo de lenguaje del ruteador y del que responde.
 ///
-/// Desde 2026-09-23, GLM-5.3 Flash por el AI Gateway de Vercel (Daniel:
-/// "necesito ahorrar costos"). Medido en nueve sitios nuevos, cuesta la mitad
-/// que Gemini 3.1 Flash-Lite por paso: US$ 0,0010 contra 0,0020. Para probar
-/// otro sin recompilar, el ajuste `modelo` (en el simulador, `simctl spawn
-/// <udid> defaults write ai.jef.browser modelo deepseek/deepseek-v4-flash`).
+/// Desde 2026-09-24, GPT-6 Luna por el AI Gateway de Vercel (Daniel). En los
+/// mismos nueve sitios, contra GLM-5.3 Flash (el base desde el 23/9): el
+/// ruteador razonando acierta 49 de 60 contra 47, sin JSON roto, y un paso
+/// cuesta ~US$ 0,00076 contra 0,00108. Sin razonar, el ruteador de Luna a veces
+/// deja texto después del JSON: por eso `razonar` sigue prendido. OpenAI
+/// rechaza el esquema si un objeto no trae `additionalProperties: false`
+/// (prompts.json). Para probar otro sin recompilar, el ajuste `modelo` (en el
+/// simulador, `simctl spawn <udid> defaults write ai.jef.browser modelo
+/// zai/glm-5.3-flash`).
 /// Un nombre que empieza con "gemini-" va directo a Google con su clave. Jev va
 /// siempre por el gateway.
 struct Gemini: Sendable {
@@ -20,7 +24,7 @@ struct Gemini: Sendable {
     /// acertaba más (52 de 60 contra 40).
     var reasons = UserDefaults.standard.object(forKey: "razonar") as? Bool ?? true
 
-    static let base = "zai/glm-5.3-flash"
+    static let base = "openai/gpt-6-luna"
 
     /// Cuánto texto de la página ven los que deciden: el ruteador, la
     /// orientación y reinterpretar, el mismo para todos. La orientación veía
