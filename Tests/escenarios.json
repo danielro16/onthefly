@@ -882,5 +882,21 @@
         "escribir": "aerolineas.com.ar"
       }
     ]
+  },
+  {
+    "id": "zapatillas-desde-lanacion",
+    "persona": "Está leyendo La Nación y quiere comprar algo en otro sitio.",
+    "objetivo": "Que con una página abierta, una tarea nueva que nombra otro sitio se busque tal cual (zapatillas en Amazon), no sólo «Amazon».",
+    "pasos": [
+      {
+        "escribir": "lanacion.com.ar"
+      },
+      {
+        "escribir": "quiero comprar zapatillas en Amazon"
+      },
+      {
+        "boton": 1
+      }
+    ]
   }
 ]

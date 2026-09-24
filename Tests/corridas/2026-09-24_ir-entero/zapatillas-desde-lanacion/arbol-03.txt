@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: lanacion.com.ar
+  4 [txt] Abriendo lanacion.com.ar.
+  5 [txt] La Nación está en su portada de últimas noticias de Argentina y el mundo. La noticia principal informa que la pobreza llegó al 32,3% en el primer semestre y que hay 2 millones de personas pobres nuevas.
+  6 [H] Vos: quiero comprar zapatillas en Amazon
+  7 [txt] Buscando: quiero comprar zapatillas en Amazon.
+  8 [txt] Estás en los resultados de «quiero comprar zapatillas en Amazon». Los 3 más probables:
+  9 [H] Vos: Oferta Del Día - Zapatos Para Mujer / Moda Femenina — www.amazon.com
+ 10 [txt] Abriendo amazon.com.
+ 11 [txt] Estás en los resultados de Amazon para comprar zapatillas; hay filtros y productos como zuecos, pantuflas, sandalias y botas, pero no se ven principalmente zapatillas deportivas. Puedes filtrar los resultados o abrir los zuecos KIDMI.
+ 12 [btn] Ícono de todos los filtros  (Primera de 4 opciones.)
+ 13 [btn] Abrir «KIDMI Zuecos de gamuza genuina para mujer con plantilla de corcho, mules de cuero, zapatos tipo…»
+ 14 [btn] Volver a los resultados
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 17 [btn] Enviar

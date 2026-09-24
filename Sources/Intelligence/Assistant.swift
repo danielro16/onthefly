@@ -459,7 +459,7 @@ final class Assistant {
                 // Y lo que falta de la tarea, ahora que ya hay otra página.
                 // "Quiero entrar a ANSES y pedir un turno" aterrizaba en ANSES
                 // y el turno se perdía: el pedido no sobrevivía al viaje.
-                if let rest = decision.rest, !rest.isEmpty {
+                if let rest = decision.rest, !rest.isEmpty, !Self.whole(decision) {
                     if offer?.options.contains(where: { $0.id.hasPrefix("res-") }) == true {
                         // Se frenó a preguntar cuál resultado. La tarea espera
                         // a que la persona elija; seguir ahora sería resolver
@@ -484,6 +484,12 @@ final class Assistant {
             return
         }
         await run(goal, on: reader, steps: Self.maxSteps)
+    }
+
+    /// Si la frase entera va al buscador: ir a un sitio, como tarea nueva.
+    /// Lo que quedaba para después (`rest`) ya va en la búsqueda.
+    static func whole(_ decision: Router.Decision) -> Bool {
+        decision.action == .ir && decision.newTask
     }
 
     /// Si el segundo pedido de una frase se hace a continuación del primero.
@@ -604,7 +610,13 @@ final class Assistant {
     ) async {
         switch action {
         case .ir:
-            await arrive(decision.target ?? goal, on: reader)
+            // Una tarea nueva que nombra un sitio va al buscador como la dijo
+            // la persona, igual que sin página abierta (Daniel): «quiero
+            // comprar zapatillas en Amazon» desde La Nación se buscaba como
+            // «Amazon», y las zapatillas quedaban para después, en la portada.
+            // Lo que sigue a lo que se venía haciendo sí lleva el sitio que
+            // nombró el ruteador.
+            await arrive(Self.whole(decision) ? goal : decision.target ?? goal, on: reader)
 
         case .buscar:
             // Primero la página (Daniel, 2026-09-22): con un sitio abierto, lo
