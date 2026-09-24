@@ -85,7 +85,7 @@
   },
   "umbrales": {
     "compromete": 0.2,
-    "cual_confianza": 0.5,
+    "cual_confianza": 0.7,
     "cual_seguir": 0.8,
     "esta_si": 0.75,
     "esta_no": 0.35,
