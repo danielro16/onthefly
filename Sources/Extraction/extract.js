@@ -2588,6 +2588,48 @@
     /// A destination the reader can load. Ver `opensAnotherPage`.
     const opens = opensAnotherPage;
 
+    /// A headline under an empty link that `cardLink` misses. Clarín's lead
+    /// story is a heading that is no link, an <a> with nothing in it
+    /// stretched over the card, and a related story's own link in the same
+    /// card: two destinations, so not "one card, one link", and the lead
+    /// read as loose text nobody could open (Daniel, on his iPhone). A link
+    /// with no text of its own (an aria-label is not shown) belongs to the
+    /// one heading around it that no link holds, when it lies over that
+    /// heading and no other nameless link there leads elsewhere; that
+    /// heading becomes the link, and everything else in the card is read as
+    /// before. Structure and geometry only: no class names, no words.
+    const headlineLinks = new WeakMap();
+    /// Whether the link lies over the heading, as a stretched card link
+    /// does — the one a finger on the headline would press. Wikipedia's
+    /// edit pencil sits beside its section heading and is no headline's.
+    function covers(link, heading) {
+      const l = link.getBoundingClientRect(), h = heading.getBoundingClientRect();
+      if (l.width < 2 || l.height < 2 || h.width < 2 || h.height < 2) return false;
+      const x = h.left + h.width / 2, y = h.top + h.height / 2;
+      return x >= l.left && x <= l.right && y >= l.top && y <= l.bottom;
+    }
+    (function pairEmptyLinks() {
+      const free = function (h) { return !h.closest("a[href]") && !h.querySelector("a[href]"); };
+      for (const a of document.querySelectorAll("a[href]")) {
+        // No visible text: an aria-label names it for a screen reader —
+        // Clarín's says the whole headline — but the walk reads what is shown.
+        if (isPruned(a) || textOf(a) || a.querySelector("img[alt]:not([alt=''])")) continue;
+        const to = absolute(a.getAttribute("href") || "");
+        if (!to || !opens(to)) continue;
+        for (let up = a.parentElement; up && up.nodeType === Node.ELEMENT_NODE && !up.matches("body, main, nav, header, footer, aside, [role=main], [role=navigation], [role=banner], [role=contentinfo]"); up = up.parentElement) {
+          const headings = Array.prototype.filter.call(up.querySelectorAll("h1, h2, h3, h4, h5, h6, [role=heading]"), free);
+          if (!headings.length) continue;
+          const rival = Array.prototype.some.call(up.querySelectorAll("a[href]"), function (o) {
+            return o !== a && !textOf(o) && absolute(o.getAttribute("href") || "") !== to;
+          });
+          if (headings.length === 1 && !rival && covers(a, headings[0]) && !headlineLinks.has(headings[0])) {
+            headlineLinks.set(headings[0], to);
+          }
+          break;
+        }
+      }
+    })();
+
     /// What names a link that does not name itself. «Leer» under «Agenda tu
     /// Cita Médica Digital» (imss.gob.mx) reached every model as "Leer",
     /// and Jev chose the feed «Suscribirse a cita médica» instead. The
@@ -2909,6 +2951,11 @@
         // A heading that is a reported control: the control is the stop.
         if (holdsStamp.has(el)) { walk(el); return; }
         if (isHidden(el)) return;
+        // The headline of an empty link stretched over its card.
+        if (headlineLinks.has(el) && textOf(el)) {
+          putLink(textOf(el), headlineLinks.get(el), el, level, groupOf(el));
+          return;
+        }
         // A headline is a heading AND a link. As a block it could be jumped
         // to and never opened; as a link with a level it is both.
         flush(Array.prototype.slice.call(el.childNodes), el, "paragraph", level);
