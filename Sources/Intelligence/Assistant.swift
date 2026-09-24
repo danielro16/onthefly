@@ -1354,13 +1354,14 @@ final class Assistant {
         return document(now.url) == document(page.url) && now.sameContent(as: page)
     }
 
-    /// La opción que se llama exactamente como lo pedido, sin artículos ni
-    /// verbos de ir: "llevame a deportes" → "Deportes".
+    /// La opción que se llama exactamente como lo pedido, sin mirar
+    /// mayúsculas, tildes ni signos: la referencia del ruteador «Deportes» y
+    /// el link "Deportes". El nombre lo saca el ruteador de las palabras de
+    /// la persona, en cualquier idioma; lo que no coincide lo decide Jev.
+    /// Antes se sacaban acá verbos y artículos en castellano ("llevame a",
+    /// "la"): una lista de palabras, que en otro idioma no hacía nada (Daniel).
     static func exactOption(for goal: String, among options: [Action]) -> Action? {
-        let filler = "^(llevame|lleva|abri|abrime|abrir|anda|ir|quiero ir|mostrame|ver|entra)( a| al| a la| a los| a las)?\\s+"
-        let asked = flatten(goal.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
-            .replacingOccurrences(of: filler, with: "", options: .regularExpression)
-            .replacingOccurrences(of: "^(la|el|los|las)\\s+", with: "", options: .regularExpression))
+        let asked = flatten(goal)
         guard asked.count >= 4 else { return nil }
         return options.first { flatten($0.label) == asked && $0.kind != .form }
     }
