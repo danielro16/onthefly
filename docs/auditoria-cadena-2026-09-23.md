@@ -210,6 +210,16 @@ Daniel. Punto de partida marcado con la etiqueta `antes-de-ajustes`.
 
 1. **La tarea:** el ruteador devuelve "tarea" (sigue / nueva); una sola
    variable en el código; la reciben Gemini y Jev.
+   **Hecho (23/9):** `task` en Assistant; la reciben el ruteador, la
+   orientación y reinterpretar. Probado en el IMSS (México) y en la cita del
+   DNI (España): «nueva» al empezar, «sigue» en «medicina familiar», «volvé»,
+   «renovación» y «¿qué necesito para la cita?»; al llegar, la orientación
+   habla de la cita. **Jev todavía no la recibe:** medido en el IMSS con la
+   lista real, sin la tarea Jev dice «ninguno» y decide Gemini; con la tarea
+   (en un campo aparte o pegada al pedido) toca «Suscribirse a cita médica»
+   (0,62–0,91), porque el link bueno se llama sólo «Leer». Con el link
+   nombrado por su tarjeta y la tarea pegada al pedido, elige el bueno
+   (0,89). Va en el paso 2, con el mapa, y se vuelve a medir ahí.
 2. **Un solo mapa de la página:** en el orden de la página, con las mismas
    marcas para todos.
 3. **Un solo lugar para los próximos pasos:** la orientación devuelve el tipo

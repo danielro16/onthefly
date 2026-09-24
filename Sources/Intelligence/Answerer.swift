@@ -282,9 +282,10 @@ actor Answerer {
         let search: String?
     }
 
-    func reinterpret(_ request: String, options: [String], page: String) async throws -> Reinterpretation? {
+    func reinterpret(_ request: String, task: String? = nil, options: [String], page: String) async throws -> Reinterpretation? {
         let list = options.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
         guard let parsed = try await ask("reinterpretar", [
+            "tarea": task == request ? nil : task,
             "pedido": request, "lista": list, "texto": String(page.prefix(6000)),
         ], maxTokens: 300) else { return nil }
         func number(_ value: Any?) -> Int? {

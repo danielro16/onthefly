@@ -425,5 +425,46 @@
         "escribir": "buscame vuelos baratos a Madrid"
       }
     ]
+  },
+  {
+    "id": "cita-imss",
+    "persona": "Trabajador en México, ciego. Quiere sacar una cita en el IMSS; contesta escribiendo y en un momento vuelve atrás.",
+    "objetivo": "Que la tarea (sacar una cita en el IMSS) siga viva en cada paso: al contestar, al volver, y que lo que se ofrece en cada página apunte a sacar la cita.",
+    "pasos": [
+      {
+        "escribir": "quiero sacar una cita en el IMSS"
+      },
+      {
+        "tocar": "Cita Médica — www.imss.gob.mx"
+      },
+      {
+        "escribir": "medicina familiar"
+      },
+      {
+        "escribir": "volvé"
+      },
+      {
+        "escribir": "¿qué necesito para la cita?"
+      }
+    ]
+  },
+  {
+    "id": "cita-dni-espana",
+    "persona": "Jubilado en España, con baja visión. Quiere pedir cita para renovar el DNI; contesta con una palabra y vuelve atrás.",
+    "objetivo": "Que la tarea (pedir cita para renovar el DNI) siga viva en cada paso y que lo que JEF dice y ofrece en cada página apunte a esa cita.",
+    "pasos": [
+      {
+        "escribir": "quiero pedir cita previa para renovar el DNI"
+      },
+      {
+        "boton": 1
+      },
+      {
+        "escribir": "renovación"
+      },
+      {
+        "escribir": "volvé"
+      }
+    ]
   }
 ]

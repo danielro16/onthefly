@@ -99,6 +99,14 @@ final class Assistant {
     private var waiting: String?
     /// El último pedido escrito, para "Intentar de nuevo".
     private var lastRequest: String?
+    /// Lo que la persona vino a hacer, en sus palabras: «quiero sacar un turno
+    /// en ANSES». Lo declara ella y dura hasta que pida otra cosa —lo dice el
+    /// ruteador—; un «volvé» o un «jubilación» no la pisan. La reciben el
+    /// ruteador, la orientación y Gemini al reinterpretar. Jev todavía no: con
+    /// links sin contexto («Leer») la tarea lo llevaba a lo que la nombra —en
+    /// el IMSS, «Suscribirse a cita médica» con 0,62—; sin ella dice ninguno
+    /// y decide Gemini.
+    private var task: String?
     /// El de antes, para entender el de ahora: "¿y el oficial?".
     private var previousRequest: String?
     /// Algo de este turno salió mal: el camino sigue con "Intentar de nuevo".
@@ -316,6 +324,7 @@ final class Assistant {
         // es lo que hacía— termina ofreciendo "¿querés que vaya a Inicio?"
         // cuando lo que se pidió fue google.com.
         if let url = ReaderModel.normalize(goal), goal.contains(".") , !goal.contains(" ") {
+            task = goal
             say("Abriendo \(Self.bare(Self.unicode(url.host() ?? "")) ?? goal).")
             working = true
             reader.address = goal
@@ -366,6 +375,7 @@ final class Assistant {
                 decision = nil
             }
             working = false
+            if decision?.newTask ?? true || task == nil { task = goal }
 
             if let decision {
                 await carry(decision.action, of: decision, goal: goal, on: reader)
@@ -398,6 +408,7 @@ final class Assistant {
         // tal cual es mejor que decir que no hay página. Pasó en una prueba:
         // la API devolvió "demasiados pedidos" y "clarín" terminó en "Todavía
         // no hay una página cargada".
+        if router == nil { task = goal }
         guard reader.page != nil else {
             await arrive(goal, on: reader)
             return
@@ -491,7 +502,7 @@ final class Assistant {
         let state = Router.state(page: page, reading: readingProgress(page), previous: previous)
         controls = page.map(Self.formControls) ?? []
         let decision = try await router.decide(
-            goal, state: state, place: Ubicacion.shared.place,
+            goal, task: task == goal ? nil : task, state: state, place: Ubicacion.shared.place,
             page: page.map(Self.saying), controls: controls.map(\.label)
         )
         // Sin el valor: un DNI dictado no va al registro.
@@ -499,6 +510,7 @@ final class Assistant {
             "accion": decision.action.rawValue, "target": decision.target ?? "", "reference": decision.reference ?? "",
             "question": decision.question ?? "", "control": decision.control.map(String.init) ?? "",
             "then": decision.then?.rawValue ?? "", "rest": decision.rest ?? "",
+            "tarea": decision.newTask ? "nueva" : "sigue",
         ])
         return decision
     }
@@ -1850,7 +1862,7 @@ final class Assistant {
             func rescue() async -> Action? {
                 guard let answerer,
                       let found = try? await answerer.reinterpret(
-                          said ?? goal, options: options.map { "\($0.kind.rawValue): \($0.label)" }, page: Self.saying(page))
+                          said ?? goal, task: task, options: options.map { "\($0.kind.rawValue): \($0.label)" }, page: Self.saying(page))
                 else { return nil }
                 elsewhere = found.search
                 if let index = found.choice { return options[index] }
@@ -2092,7 +2104,7 @@ final class Assistant {
     /// barato?": lo que se escribe salió de ella, un turno antes. Nunca de la
     /// página.
     private func personSaid(_ value: String, goal: String) -> Bool {
-        [goal, previousRequest, runningTask].compactMap { $0 }.contains { Self.said(value, in: $0) }
+        [goal, previousRequest, runningTask, task].compactMap { $0 }.contains { Self.said(value, in: $0) }
     }
 
     /// Si lo que se va a escribir en un campo lo dijo la persona. Se compara
@@ -2713,7 +2725,7 @@ final class Assistant {
         if let overlay = page.overlay {
             text = "A NOTICE COVERS THE PAGE (\(overlay.kind.rawValue)): \(overlay.text)\n\n" + text
         }
-        let candidates = Self.candidates(of: page, goal: lastRequest)
+        let candidates = Self.candidates(of: page, goal: task)
         // En una portada, los titulares que se nombran y los botones son los
         // mismos porque los elige el código: los primeros de la página. Dejando
         // que el modelo eligiera los botones por número, nombraba unos y
@@ -2724,7 +2736,7 @@ final class Assistant {
         var orientation: Answerer.Orientation?
         do {
             orientation = try await answerer.orient(
-                page: text, candidates: candidates.map(Self.described), goal: lastRequest, frontPage: !lead.isEmpty
+                page: text, candidates: candidates.map(Self.described), goal: task, frontPage: !lead.isEmpty
             )
         } catch {
             // Por qué se cayó a la descripción: en una prueba pasó en Clarín
@@ -2830,7 +2842,7 @@ final class Assistant {
             let hrefs = Set(named.compactMap(\.href))
             // Y sólo si tiene que ver con lo pedido: en Clarín, con "clarín"
             // como pedido, ese lugar lo ocupaba una nota que nadie nombró.
-            let asked = Self.stems(lastRequest ?? "")
+            let asked = Self.stems(task ?? "")
             let forGoal = ordered.filter {
                 $0.id.hasPrefix("sug-") && !hrefs.contains($0.href ?? "") && !Self.stems($0.label).isDisjoint(with: asked)
             }.prefix(1)
