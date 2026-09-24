@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: quiero sacar una cita en el IMSS
+  4 [txt] Buscando: quiero sacar una cita en el IMSS.
+  5 [txt] Estás en los resultados de «quiero sacar una cita en el IMSS». Los 3 más probables:
+  6 [H] Vos: Cita Médica — www.imss.gob.mx
+  7 [txt] Abriendo imss.gob.mx.
+  8 [txt] Esta página del IMSS sirve para avanzar con tu cita médica: indica que puedes agendarla para ti o tus beneficiarios con tu médico familiar, por internet o mediante la aplicación IMSS Digital. La opción más directa es «Agenda tu Cita Médica Digital», que explica cómo hacerlo.
+  9 [H] Vos: medicina familiar
+ 10 [txt] «Agenda tu Cita Médica Digital — Leer» puede confirmar algo: queda abajo, para tocarlo.
+ 11 [btn] Pulsar «Agenda tu Cita Médica Digital — Leer»  (Primera de 3 opciones.)
+ 12 [btn] Volver a los resultados
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 15 [btn] Enviar

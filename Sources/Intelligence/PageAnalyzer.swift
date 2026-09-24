@@ -410,6 +410,13 @@ actor PageAnalyzer {
                 .sorted { $0.value > $1.value }.prefix(2)
                 .compactMap { Int($0.key) }.filter { group.indices.contains($0) }.map { group[$0] }
         }
+        // Una sola tanda ya eligió entre todas las opciones: la final le volvía
+        // a preguntar lo mismo entre sus dos favoritas (la auditoría, llamadas
+        // de más). Su respuesta es la de la página.
+        if groups.count == 1, let answers = first[0], case .choice(let value, let probabilities, let confidence)? = answers["cual"] {
+            let index = Int(value).flatMap { groups[0].indices.contains($0) ? groups[0][$0] : nil }
+            return Found(choice: index, confidence: confidence ?? probabilities[value] ?? 0, here: here.max())
+        }
         guard !candidates.isEmpty else {
             // Ninguna tanda tuvo un candidato: ninguno, si contestaron todas, y
             // tan seguro como la tanda menos segura de que no hay. Antes era

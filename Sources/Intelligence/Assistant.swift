@@ -424,7 +424,7 @@ final class Assistant {
         // segundo resultado es anses.gob.ar. Se vio en el simulador.
         if router != nil {
             working = true
-            early = nil
+            dropEarly(used: false)
             if let page = reader.page, let analyzer {
                 let request = jevRequest(goal)
                 let options = openable(page)
@@ -446,6 +446,9 @@ final class Assistant {
             }
             working = false
             if decision?.newTask ?? true || task == nil { task = goal }
+            // Lo que no busca en la página no la usa: leer, resumir, contestar,
+            // ir a otro lado. Se cancela ya, en vez de dejarla correr.
+            if let action = decision?.action, ![.abrir, .buscar, .enviar].contains(action) { dropEarly(used: false) }
 
             if let decision {
                 let before = reader.page
@@ -502,6 +505,16 @@ final class Assistant {
         let moved = now.map { !stillOn(before, $0) } ?? false
         if !moved { Registro.anotar("resto_descartado", ["resto": rest]) }
         return moved
+    }
+
+    /// Deja la búsqueda de Jev que se adelantó mientras decidía el ruteador:
+    /// si no se usó, se cancela (la auditoría: seguía corriendo). El registro
+    /// dice cuántas se aprovechan.
+    private func dropEarly(used: Bool) {
+        guard let ready = early else { return }
+        early = nil
+        if !used { ready.answer.cancel() }
+        Registro.anotar("jev_adelantado", ["usado": used ? "si" : "no"])
     }
 
     /// Si la frase entera va al buscador: ir a un sitio, como tarea nueva.
@@ -2015,10 +2028,11 @@ final class Assistant {
             let found: PageAnalyzer.Found?
             if first, let ready = early, ready.url == page.url, ready.request == request, ready.ids == options.map(\.id) {
                 found = await ready.answer.value
+                dropEarly(used: true)
             } else {
+                dropEarly(used: false)
                 found = await analyzer.find(request, among: options, site: page.url)
             }
-            early = nil
             Self.note(found, for: request, among: options)
 
             // Seguro de uno: se toca. Después del primer paso, más seguro: seguir
