@@ -413,9 +413,25 @@ sigue en Google. Sin mejora de carga en el simulador. **Rompen Clarín:** con
 cualquiera de las dos, falló o tardó más de 20 s en 5 de 6 cargas; sin
 ellas, 4,5 s siempre.
 
-**Decisión (Daniel, 24/9): se sacan.** No aportan en lo que JEF lee y
+**Primera decisión (Daniel, 24/9): se sacan.** No aportan en lo que JEF lee y
 cuestan (14 MB, actualizarlas, sitios rotos). Filtran ya: Jev en Google
 (anuncio ≥ 0,7; si se cuela uno, se ofrece como un resultado más), el
 extractor, que no lee los marcos donde van los anuncios, y el ruido de la
 orientación, que nunca se sugiere. "No importa si se cuelan anuncios; lo
 importante es que algo filtre." El trabajo queda en el commit 372e642.
+
+**Y vuelven, prendidas (24/9, a pedido de Daniel: "si no funcionó, hay que
+ver por qué; Brave lo hace").** Clarín en Chrome con los dominios de
+EasyPrivacy bloqueados andaba perfecto (y más rápido). En el simulador, con
+un latido desde la página y marcas en el extractor: la página estaba lista
+y quieta desde el segundo 2, los relojes de la página andaban (una espera
+suelta de 6 s tardó 6 s), pero las esperas del extractor —que corren con
+esos relojes, en un WebView fuera de pantalla— a veces se estiraban a 20 s.
+**La causa era nuestra, no de las listas.** Arreglo: una red de seguridad en
+`HeadlessWebView` (`didFinish`): si a los 3 s de terminar la carga el
+extractor no entregó nada, se le pide que lea ya (`__jefExtractNow`). Con
+listas, Clarín cargó 4 de 4 (5,0–7,8 s; sin listas 4,5 s) y hace la mitad de
+los pedidos (55 contra 118). Probado con listas en 10 recorridos de 7
+países: todos cargan. Pendiente, visto ahí y no de las listas: un link que
+descarga un archivo (el feed «Suscribirse a cita médica» del IMSS) deja a
+JEF sin página.

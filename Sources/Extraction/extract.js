@@ -3631,6 +3631,14 @@ allowedVideoRegex: /^$/,
     whenSettled(extractAndSend);
   };
 
+  /// Reads the page now, without waiting for it to settle. The app's safety
+  /// net calls it when the page finished loading and nothing has arrived:
+  /// the waits above run on the page's own clock, and in an off-screen
+  /// WebView that clock sometimes stretches a 6 s wait to 20.
+  window.__jefExtractNow = function () {
+    extractAndSend(false);
+  };
+
   /// What a reading of the page amounts to, for telling two apart. Not
   /// field values: typing must not read as the page changing.
   function signatureOf(page) {

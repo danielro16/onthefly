@@ -52,6 +52,7 @@ final class HeadlessWebView: NSObject {
     /// The live page. Nil until the first load. Exposed so the UI can put it
     /// on screen; nothing else should reach into it.
     private(set) var webView: WKWebView?
+    private var blocking: Task<Void, Never>?
 
     /// Called when the page changed without anyone awaiting it: the user
     /// navigated inside the visible WebView, a site redirected, a form the
@@ -66,6 +67,9 @@ final class HeadlessWebView: NSObject {
     /// único que no miente: preguntárselo a la página en el mismo instante del
     /// click siempre daba que no, porque navegar es asincrónico.
     private var navigationStarted = false
+    /// Cuántas navegaciones empezaron: la red de seguridad de `didFinish`
+    /// sólo actúa si, cuando le toca, sigue siendo la misma.
+    private var navigations = 0
     private var continuation: CheckedContinuation<ExtractedPage, Error>?
     /// A page that arrived while nobody was waiting for one. The next waiter
     /// takes it instead of blocking on a load that already happened.
@@ -86,6 +90,7 @@ final class HeadlessWebView: NSObject {
     func extract(url: URL) async throws -> ExtractedPage {
         settle(.failure(CancellationError()))
         let web = try session()
+        await blocking?.value
 
         // Anything that arrived before this load belongs to the previous page.
         unconsumed = nil
@@ -111,6 +116,8 @@ final class HeadlessWebView: NSObject {
         if let webView { return webView }
 
         let config = try makeConfiguration()
+        let controller = config.userContentController
+        blocking = Task { await Bloqueo.cargar(en: controller) }
         let web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = self
         web.uiDelegate = self
@@ -412,7 +419,6 @@ final class HeadlessWebView: NSObject {
         // its handlers strongly, and a direct `self` here would leak the
         // WebView for the lifetime of the app.
         controller.add(WeakMessageHandler(self), name: "jefExtract")
-
         let config = WKWebViewConfiguration()
         config.userContentController = controller
         // Persistent on purpose: this is a browser, and a login that vanishes
@@ -522,6 +528,22 @@ extension HeadlessWebView: WKNavigationDelegate {
         didStartProvisionalNavigation navigation: WKNavigation!
     ) {
         navigationStarted = true
+        navigations += 1
+    }
+
+    /// La red de seguridad: si a los 3 s de terminar la carga el extractor
+    /// todavía no entregó la página, se le pide que la lea ya, sin esperas.
+    /// Sus esperas corren con los relojes de la página, y en un WebView
+    /// fuera de pantalla a veces se estiran: en Clarín, una de 6 s tardó 20,
+    /// y JEF decía "no pude abrir esa página" con la página lista desde el
+    /// segundo 2. Lo que la página haga después se sigue leyendo como antes.
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        let started = navigations
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(3))
+            guard let self, self.navigations == started, self.continuation != nil else { return }
+            _ = try? await webView.evaluateJavaScript("window.__jefExtractNow && window.__jefExtractNow()")
+        }
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
@@ -584,3 +606,4 @@ private final class WeakMessageHandler: NSObject, WKScriptMessageHandler {
         }
     }
 }
+
