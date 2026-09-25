@@ -467,9 +467,6 @@
 
         if (tag === "P") {
           const content = inlineContent(el);
-          // A video that did not load says so in a paragraph, four times a
-          // page. Nothing a reader can do with it.
-          if (/video player failed|error code:?\s*\d/i.test(content.text)) continue;
           if (content.text) {
             blocks.push({
               id: nextId(),
@@ -2786,7 +2783,6 @@
       // A line that only repeats what the rebuilt form already says — a
       // field's name, its complaint, the form's notice — is that, said twice.
       if (!content.links.length && content.text.length <= 200 && fieldNames.has(plain(content.text))) return;
-      if (/video player failed|error code:?\s*\d/i.test(content.text)) return;
       putBlock({ id: nextId(), type: type || "paragraph", text: content.text, links: content.links }, anchor);
     }
 
