@@ -946,5 +946,18 @@
         "escribir": "30123456"
       }
     ]
+  },
+  {
+    "id": "producto-tarde",
+    "persona": "Ciega, compra por internet. Abre la página de un producto que carga el producto un rato después que la página.",
+    "objetivo": "Que JEF cuente el producto (licuadora, $ 62.300), no la tienda vacía, y que después sepa el precio. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/producto-tarde.html"
+      },
+      {
+        "escribir": "¿cuánto cuesta?"
+      }
+    ]
   }
 ]

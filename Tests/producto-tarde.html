@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tienda Norte</title>
+<!--
+  Como Demoblaze: la página carga el esqueleto y el producto llega después,
+  en pocos elementos —nombre, precio, descripción—, cuando la página ya
+  estaba quieta. JEF tiene que contar el producto, no la tienda vacía.
+  Servida con: python3 -m http.server 8765 --directory Tests
+-->
+</head>
+<body>
+<nav><a href="producto-tarde.html">Tienda Norte</a> · <a href="producto.html">Carrito</a></nav>
+<main>
+<h1 id="nombre"></h1>
+<h2 id="precio"></h2>
+<div id="descripcion"></div>
+<button type="button">Agregar al carrito</button>
+</main>
+<script>
+setTimeout(function () {
+  document.getElementById('nombre').textContent = 'Licuadora de vaso de vidrio 1,5 litros';
+  document.getElementById('precio').textContent = '$ 62.300';
+  document.getElementById('descripcion').textContent = 'Motor de 800 W, cinco velocidades y función pulso. Cuchillas de acero inoxidable desmontables. Vaso de vidrio apto para lavavajillas.';
+}, 1500);
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790354629.9566069}
+{"pais": "US", "tipo": "ubicacion", "t": 1790354630.190351}
+{"pais": "US", "tipo": "ubicacion", "t": 1790354630.200038}
+{"quien": "persona", "texto": "http://localhost:8765/producto-tarde.html", "tipo": "turno", "t": 1790354636.6418428}
+{"opciones": [], "tipo": "botones", "t": 1790354636.6428099}
+{"quien": "jef", "texto": "Abriendo localhost.", "tipo": "turno", "t": 1790354636.643251}
+{"texto": "Abriendo localhost.", "cola": false, "tipo": "voz", "t": 1790354636.643499}
+{"tipo": "botones", "t": 1790354636.6751099, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"t": 1790354637.7416248, "tipo": "carga", "red_ms": 21, "url": "http://localhost:8765/producto-tarde.html", "leida_ms": 630, "apurada": false}
+{"titulo": "Tienda Norte", "texto": "PAGE: localhost — Tienda Norte\n\nPAGE CONTENT (what the person came for):\nAgregar al carrito\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nTienda Norte\nCarrito", "tipo": "pagina", "url": "http://localhost:8765/producto-tarde.html", "t": 1790354637.742877}
+{"tipo": "botones", "t": 1790354637.742999, "opciones": []}
+{"titulo": "Licuadora de vaso de vidrio 1,5 litros", "url": "http://localhost:8765/producto-tarde.html", "tipo": "pagina", "texto": "PAGE: localhost — Licuadora de vaso de vidrio 1,5 litros\n\nPAGE CONTENT (what the person came for):\nLicuadora de vaso de vidrio 1,5 litros\n$ 62.300\nMotor de 800 W, cinco velocidades y función pulso. Cuchillas de acero inoxidable desmontables. Vaso de vidrio apto para lavavajillas.\nAgregar al carrito\n$ 62.300\nMotor de 800 W, cinco velocidades y función pulso. Cuchillas de acero inoxidable desmontables. Vaso de vidrio apto para lavavajillas.\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nTienda Norte\nCarrito", "t": 1790354639.242096}
+{"t": 1790354639.992796, "es": "http://localhost:8765/producto-tarde.html", "era": "http://localhost:8765/producto-tarde.html", "tipo": "atrasada"}
+{"opciones": [], "tipo": "botones", "t": 1790354639.993115}
+{"sitio": "store", "p_aviso": "0.00", "aviso": "", "pagina": "product", "tipo": "tipo", "aviso_extractor": "", "p_pagina": "1.00", "t": 1790354642.440006, "p_sitio": "1.00", "modelo": "otra", "url": "http://localhost:8765/producto-tarde.html"}
+{"tipo": "ruido", "url": "http://localhost:8765/producto-tarde.html", "t": 1790354642.440697, "elementos": []}
+{"tipo": "turno", "quien": "jef", "t": 1790354642.440926, "texto": "Estás en la página de producto de Tienda Norte. La licuadora tiene un vaso de vidrio de 1,5 litros, motor de 800 W, cinco velocidades y función pulso; cuesta $ 62.300."}
+{"texto": "Estás en la página de producto de Tienda Norte. La licuadora tiene un vaso de vidrio de 1,5 litros, motor de 800 W, cinco velocidades y función pulso; cuesta $ 62.300.", "t": 1790354642.4413319, "cola": true, "tipo": "voz"}
+{"tipo": "botones", "opciones": ["Agregar al carrito", "Abrir «Carrito»"], "t": 1790354642.443264}
+{"tipo": "botones", "opciones": ["Agregar al carrito", "Abrir «Carrito»", "Otra cosa"], "t": 1790354642.4437609}
+{"t": 1790354650.246443, "texto": "¿cuánto cuesta?", "tipo": "turno", "quien": "persona"}
+{"t": 1790354650.246655, "opciones": [], "tipo": "botones"}
+{"reference": "", "target": "", "then": "", "accion": "responder", "tarea": "sigue", "t": 1790354652.956696, "question": "¿Cuánto cuesta la licuadora de vaso de vidrio de 1,5 litros?", "control": "", "tipo": "decision", "rest": ""}
+{"t": 1790354652.957248, "usado": "no", "tipo": "jev_adelantado"}
+{"texto": "La licuadora cuesta $ 62.300.", "tipo": "turno", "t": 1790354655.078436, "quien": "jef"}
+{"texto": "La licuadora cuesta $ 62.300.", "cola": false, "tipo": "voz", "t": 1790354655.0794802}
+{"opciones": ["Agregar al carrito", "Abrir «Carrito»", "Otra cosa"], "tipo": "botones", "t": 1790354655.080223}

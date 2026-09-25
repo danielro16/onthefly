@@ -1,0 +1,24 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790354567.602}
+{"t": 1790354567.834869, "pais": "US", "tipo": "ubicacion"}
+{"tipo": "ubicacion", "t": 1790354567.8352199, "pais": "US"}
+{"quien": "persona", "t": 1790354574.2096438, "tipo": "turno", "texto": "http://localhost:8765/producto-tarde.html"}
+{"opciones": [], "tipo": "botones", "t": 1790354574.21048}
+{"quien": "jef", "t": 1790354574.210711, "tipo": "turno", "texto": "Abriendo localhost."}
+{"t": 1790354574.2108722, "cola": false, "tipo": "voz", "texto": "Abriendo localhost."}
+{"t": 1790354574.238957, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"tipo": "carga", "red_ms": 19, "url": "http://localhost:8765/producto-tarde.html", "leida_ms": 629, "apurada": false, "t": 1790354575.2932649}
+{"t": 1790354575.2939692, "titulo": "Tienda Norte", "texto": "PAGE: localhost — Tienda Norte\n\nPAGE CONTENT (what the person came for):\nAgregar al carrito\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nTienda Norte\nCarrito", "url": "http://localhost:8765/producto-tarde.html", "tipo": "pagina"}
+{"opciones": [], "t": 1790354575.294091, "tipo": "botones"}
+{"p_aviso": "0.00", "sitio": "store", "tipo": "tipo", "aviso": "", "p_pagina": "0.68", "url": "http://localhost:8765/producto-tarde.html", "aviso_extractor": "", "p_sitio": "1.00", "pagina": "product", "modelo": "otra", "t": 1790354578.0881019}
+{"url": "http://localhost:8765/producto-tarde.html", "t": 1790354578.088664, "tipo": "ruido", "elementos": []}
+{"t": 1790354578.089003, "tipo": "turno", "texto": "Tienda Norte es una tienda; la página muestra el acceso al carrito, pero no indica ningún producto ni confirma que se haya agregado algo.", "quien": "jef"}
+{"t": 1790354578.089515, "tipo": "voz", "texto": "Tienda Norte es una tienda; la página muestra el acceso al carrito, pero no indica ningún producto ni confirma que se haya agregado algo.", "cola": true}
+{"tipo": "botones", "t": 1790354578.089909, "opciones": ["Abrir «Carrito»", "Abrir «Tienda Norte»"]}
+{"tipo": "botones", "t": 1790354578.090055, "opciones": ["Abrir «Carrito»", "Abrir «Tienda Norte»", "Otra cosa"]}
+{"t": 1790354586.099462, "quien": "persona", "texto": "¿cuánto cuesta?", "tipo": "turno"}
+{"opciones": [], "tipo": "botones", "t": 1790354586.0998712}
+{"reference": "", "control": "", "rest": "", "tipo": "decision", "tarea": "sigue", "accion": "responder", "question": "¿Cuánto cuesta el producto de esta página?", "t": 1790354590.093484, "target": "", "then": ""}
+{"usado": "no", "tipo": "jev_adelantado", "t": 1790354590.094182}
+{"texto": "Eso no aparece en esta página.", "quien": "jef", "t": 1790354591.590845, "tipo": "turno"}
+{"texto": "Eso no aparece en esta página.", "cola": false, "t": 1790354591.59193, "tipo": "voz"}
+{"t": 1790354591.592762, "tipo": "botones", "opciones": ["Buscarlo en internet", "Abrir «Carrito»", "Abrir «Tienda Norte»", "Otra cosa"]}

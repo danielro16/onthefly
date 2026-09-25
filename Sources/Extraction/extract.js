@@ -3807,16 +3807,23 @@ allowedVideoRegex: /^$/,
    * prices arrive two seconds later, and nothing looks again.
    *
    * So every extraction leaves an observer behind for a while. A real
-   * change — twenty nodes or more, not a ticker or an ad slot — followed by
-   * the usual quiet is read again and delivered as a page that changed on
-   * its own. Bounded: a few rounds per route, inside a short window, so a
-   * page that never stops moving cannot keep the reader re-rendering.
+   * change — twenty nodes or a paragraph of text, not a ticker or an ad
+   * slot — followed by the usual quiet is read again and delivered as a
+   * page that changed on its own. Bounded: a few rounds per route, inside
+   * a short window, so a page that never stops moving cannot keep the
+   * reader re-rendering.
    */
   // Ninety seconds, because a checkout took longer than twenty to render
   // its form and the reader kept a spinner; six rounds, so a page that
   // never stops moving still stops being re-read.
   const LATE_WINDOW_MS = 90000;
   const LATE_THRESHOLD = 20;
+  // Few nodes can still be the page. Demoblaze fills its product a second
+  // after loading: name, price and description, nine nodes and 175
+  // characters. Read before that, the store was described as empty and
+  // «¿cuánto cuesta?» went to Google. A paragraph of new text is a change;
+  // a ticker brings a few characters at a time, an ad slot none.
+  const LATE_TEXT_THRESHOLD = 100;
   const LATE_MAX_ROUNDS = 6;
   /// How long a change may keep churning before it is read anyway.
   const LATE_DEADLINE_MS = 2500;
@@ -3841,6 +3848,7 @@ allowedVideoRegex: /^$/,
     }
 
     let pending = 0;
+    let pendingText = 0;
     let quiet = null;
     let deadline = null;
 
@@ -3863,8 +3871,9 @@ allowedVideoRegex: /^$/,
           continue;
         }
         pending += weight(record.addedNodes) + weight(record.removedNodes);
+        for (const node of record.addedNodes) pendingText += (node.textContent || "").trim().length;
       }
-      if (pending < LATE_THRESHOLD) return;
+      if (pending < LATE_THRESHOLD && pendingText < LATE_TEXT_THRESHOLD) return;
       // Wait for quiet, but not forever. A spinner animating by class
       // never leaves 600 ms of silence, and the checkout's passenger
       // form sat there unread until the person pressed "Leer de nuevo".
