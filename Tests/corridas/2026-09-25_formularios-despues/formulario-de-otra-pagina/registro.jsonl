@@ -1,0 +1,55 @@
+{"t": 1790352759.416719, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones"}
+{"quien": "persona", "texto": "http://localhost:8765/dos-formularios.html", "tipo": "turno", "t": 1790352765.857139}
+{"opciones": [], "t": 1790352765.858129, "tipo": "botones"}
+{"quien": "jef", "texto": "Abriendo localhost.", "tipo": "turno", "t": 1790352765.858309}
+{"texto": "Abriendo localhost.", "cola": false, "tipo": "voz", "t": 1790352765.858521}
+{"tipo": "botones", "t": 1790352765.940041, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"leida_ms": 722, "apurada": false, "url": "http://localhost:8765/dos-formularios.html", "tipo": "carga", "t": 1790352767.273816, "red_ms": 95}
+{"titulo": "Club Social del Barrio", "texto": "PAGE: localhost — Club Social del Barrio\n\nPAGE CONTENT (what the person came for):\nClub Social del Barrio\nActividades para todas las edades, de lunes a sábado.\nRecibí las novedades\nEscribinos\nPedir un turno para la pileta\nFORM asking for: Correo electrónico — button «Suscribirme»\nFORM asking for: Nombre, Mensaje — button «Enviar mensaje»\nActividades para todas las edades, de lunes a sábado.\nRecibí las novedades\nEscribinos\nPedir un turno para la pileta", "tipo": "pagina", "url": "http://localhost:8765/dos-formularios.html", "t": 1790352767.291057}
+{"t": 1790352767.292377, "opciones": [], "tipo": "botones"}
+{"orientar": "transport(\"La conexión a internet parece estar desactivada.\")", "t": 1790352767.353692, "tipo": "error"}
+{"tipo": "turno", "quien": "jef", "texto": "Estás en «Club Social del Barrio», localhost.", "t": 1790352767.353982}
+{"tipo": "voz", "texto": "Estás en «Club Social del Barrio», localhost.", "t": 1790352767.3541288, "cola": true}
+{"tipo": "turno", "quien": "jef", "texto": "Hay un formulario de 1 campo: Correo electrónico.", "t": 1790352767.354227}
+{"tipo": "voz", "texto": "Hay un formulario de 1 campo: Correo electrónico.", "t": 1790352767.3543081, "cola": true}
+{"tipo": "turno", "quien": "jef", "texto": "Indicar qué poner y lo completo.", "t": 1790352767.354353}
+{"tipo": "voz", "texto": "Indicar qué poner y lo completo.", "t": 1790352767.354434, "cola": true}
+{"opciones": ["Leer la página", "Resumir la página", "Otra cosa"], "t": 1790352767.354531, "tipo": "botones"}
+{"t": 1790352769.696908, "tipo": "ubicacion", "pais": "sin resultado"}
+{"t": 1790352769.697768, "tipo": "ubicacion", "pais": "sin resultado"}
+{"quien": "persona", "texto": "poné Juan en el nombre", "tipo": "turno", "t": 1790352777.8448238}
+{"tipo": "botones", "t": 1790352777.845108, "opciones": []}
+{"quien": "jef", "t": 1790352777.856452, "tipo": "turno", "texto": "Sin conexión. No puedo entender lo que pedís sin internet."}
+{"t": 1790352777.8566232, "tipo": "voz", "texto": "Sin conexión. No puedo entender lo que pedís sin internet.", "cola": false}
+{"tipo": "botones", "t": 1790352777.856731, "opciones": ["Leer la página", "Resumir la página", "Otra cosa"]}
+{"quien": "persona", "t": 1790352788.04248, "texto": "http://localhost:8765/turno.html", "tipo": "turno"}
+{"opciones": [], "tipo": "botones", "t": 1790352788.0428982}
+{"quien": "jef", "t": 1790352788.043027, "texto": "Abriendo localhost.", "tipo": "turno"}
+{"t": 1790352788.043138, "texto": "Abriendo localhost.", "cola": false, "tipo": "voz"}
+{"leida_ms": 619, "apurada": false, "red_ms": 11, "url": "http://localhost:8765/turno.html", "tipo": "carga", "t": 1790352788.6743}
+{"t": 1790352788.674969, "titulo": "Turnos de la pileta", "texto": "PAGE: localhost — Turnos de la pileta\n\nPAGE CONTENT (what the person came for):\nTurnos de la pileta\nFORM asking for: DNI, Día, Hora — button «Pedir turno»", "url": "http://localhost:8765/turno.html", "tipo": "pagina"}
+{"tipo": "botones", "t": 1790352788.675156, "opciones": []}
+{"tipo": "error", "orientar": "transport(\"La conexión a internet parece estar desactivada.\")", "t": 1790352788.683865}
+{"t": 1790352788.6841202, "texto": "Estás en «Turnos de la pileta», localhost.", "tipo": "turno", "quien": "jef"}
+{"t": 1790352788.684266, "texto": "Estás en «Turnos de la pileta», localhost.", "cola": true, "tipo": "voz"}
+{"t": 1790352788.684348, "quien": "jef", "texto": "Hay un formulario de 3 campos: DNI, Día, Hora.", "tipo": "turno"}
+{"t": 1790352788.684463, "texto": "Hay un formulario de 3 campos: DNI, Día, Hora.", "tipo": "voz", "cola": true}
+{"t": 1790352788.6845121, "quien": "jef", "texto": "Indicar qué poner y lo completo.", "tipo": "turno"}
+{"t": 1790352788.684583, "texto": "Indicar qué poner y lo completo.", "tipo": "voz", "cola": true}
+{"t": 1790352788.684794, "opciones": ["Volver a «Club Social del Barrio»", "Otra cosa"], "tipo": "botones"}
+{"t": 1790352798.321245, "opciones": [], "tipo": "botones"}
+{"tipo": "turno", "texto": "Volver a «Club Social del Barrio»", "t": 1790352798.322022, "quien": "persona"}
+{"tipo": "turno", "texto": "Volviendo.", "t": 1790352798.3222861, "quien": "jef"}
+{"tipo": "voz", "texto": "Volviendo.", "t": 1790352798.322756, "cola": false}
+{"t": 1790352798.9548202, "apurada": false, "url": "http://localhost:8765/dos-formularios.html", "red_ms": 5, "leida_ms": 613, "tipo": "carga"}
+{"t": 1790352798.955688, "texto": "PAGE: localhost — Club Social del Barrio\n\nPAGE CONTENT (what the person came for):\nClub Social del Barrio\nActividades para todas las edades, de lunes a sábado.\nRecibí las novedades\nEscribinos\nPedir un turno para la pileta\nFORM asking for: Correo electrónico — button «Suscribirme»\nFORM asking for: Nombre, Mensaje — button «Enviar mensaje»\nActividades para todas las edades, de lunes a sábado.\nRecibí las novedades\nEscribinos\nPedir un turno para la pileta", "titulo": "Club Social del Barrio", "url": "http://localhost:8765/dos-formularios.html", "tipo": "pagina"}
+{"t": 1790352798.955893, "tipo": "botones", "opciones": []}
+{"t": 1790352798.9560971, "tipo": "turno", "texto": "De vuelta en «Club Social del Barrio», localhost.", "quien": "jef"}
+{"t": 1790352798.956522, "tipo": "voz", "texto": "De vuelta en «Club Social del Barrio», localhost.", "cola": true}
+{"t": 1790352798.95679, "tipo": "botones", "opciones": ["Leer la página", "Resumir la página", "Otra cosa"]}
+{"quien": "persona", "texto": "30123456", "t": 1790352807.954097, "tipo": "turno"}
+{"t": 1790352807.954577, "tipo": "botones", "opciones": []}
+{"usado": "no", "tipo": "jev_adelantado", "t": 1790352807.954752}
+{"quien": "jef", "t": 1790352807.963266, "tipo": "turno", "texto": "Sin conexión. No puedo entender lo que pedís sin internet."}
+{"cola": false, "t": 1790352807.963521, "tipo": "voz", "texto": "Sin conexión. No puedo entender lo que pedís sin internet."}
+{"opciones": ["Leer la página", "Resumir la página", "Otra cosa"], "tipo": "botones", "t": 1790352807.963656}

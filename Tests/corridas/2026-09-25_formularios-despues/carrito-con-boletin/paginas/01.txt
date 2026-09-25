@@ -1,0 +1,16 @@
+http://localhost:8765/producto.html
+Pava eléctrica 1,7 litros — Casa Ferreira
+
+PAGE: localhost — Pava eléctrica 1,7 litros
+
+PAGE CONTENT (what the person came for):
+Pava eléctrica 1,7 litros
+Acero inoxidable, corte automático, base giratoria.
+Precio: $ 48.900
+Agregar al carrito
+FORM asking for: Correo electrónico — button «Suscribirme»
+Acero inoxidable, corte automático, base giratoria.
+Precio: $ 48.900
+
+SITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):
+Ofertas en tu correo

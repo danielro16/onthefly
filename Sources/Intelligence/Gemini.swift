@@ -76,6 +76,19 @@ struct Gemini: Sendable {
         return body
     }
 
+    /// Si un pedido que falló es falta de red. Un modelo que tarda más de lo
+    /// que se lo espera también corta el pedido, y eso no es la red: el
+    /// ruteador, razonando, pasó los 15 s en 3 de 111 pedidos medidos, y la
+    /// persona oía «Sin conexión» con internet andando.
+    static func offline(_ error: Error) -> Bool {
+        guard let error = error as? URLError else { return false }
+        let network: [URLError.Code] = [
+            .notConnectedToInternet, .networkConnectionLost, .cannotFindHost, .cannotConnectToHost,
+            .dnsLookupFailed, .dataNotAllowed, .internationalRoamingOff, .callIsActive,
+        ]
+        return network.contains(error.code)
+    }
+
     /// El objeto JSON de una respuesta: el primero completo. GPT-6 Luna, sin
     /// razonar, a veces deja texto después del objeto (medido al cambiar de
     /// modelo), y leído entero no era JSON: la orientación se descartaba y

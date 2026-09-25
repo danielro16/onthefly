@@ -33,7 +33,10 @@ actor Answerer {
 
     enum AnswerError: Error {
         case http(Int)
+        /// Sin red.
         case transport(String)
+        /// El pedido se cortó por otra cosa: el modelo tardó de más.
+        case failed(String)
         case unusable
         /// Cifras que el modelo dijo haber usado y la página no tiene.
         case unverified([String])
@@ -87,7 +90,9 @@ actor Answerer {
             do {
                 (data, response) = try await session.data(for: request)
             } catch {
-                throw AnswerError.transport(error.localizedDescription)
+                throw Gemini.offline(error)
+                    ? AnswerError.transport(error.localizedDescription)
+                    : AnswerError.failed(error.localizedDescription)
             }
             guard let http = response as? HTTPURLResponse else {
                 throw AnswerError.transport("Sin respuesta HTTP")

@@ -1,0 +1,22 @@
+{"tipo": "botones", "t": 1790352712.257159, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"t": 1790352712.7249641, "pais": "US", "tipo": "ubicacion"}
+{"pais": "US", "t": 1790352712.725374, "tipo": "ubicacion"}
+{"texto": "http://localhost:8765/producto.html", "t": 1790352718.6854138, "quien": "persona", "tipo": "turno"}
+{"opciones": [], "t": 1790352718.686469, "tipo": "botones"}
+{"texto": "Abriendo localhost.", "t": 1790352718.687232, "quien": "jef", "tipo": "turno"}
+{"texto": "Abriendo localhost.", "cola": false, "t": 1790352718.687511, "tipo": "voz"}
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790352718.764584}
+{"leida_ms": 716, "url": "http://localhost:8765/producto.html", "red_ms": 79, "tipo": "carga", "apurada": false, "t": 1790352720.0383968}
+{"texto": "PAGE: localhost — Pava eléctrica 1,7 litros\n\nPAGE CONTENT (what the person came for):\nPava eléctrica 1,7 litros\nAcero inoxidable, corte automático, base giratoria.\nPrecio: $ 48.900\nAgregar al carrito\nFORM asking for: Correo electrónico — button «Suscribirme»\nAcero inoxidable, corte automático, base giratoria.\nPrecio: $ 48.900\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nOfertas en tu correo", "url": "http://localhost:8765/producto.html", "tipo": "pagina", "titulo": "Pava eléctrica 1,7 litros — Casa Ferreira", "t": 1790352720.0460792}
+{"tipo": "botones", "opciones": [], "t": 1790352720.0463948}
+{"p_sitio": "0.98", "aviso_extractor": "", "t": 1790352728.989804, "aviso": "", "p_aviso": "0.00", "p_pagina": "1.00", "modelo": "otra", "url": "http://localhost:8765/producto.html", "sitio": "store", "pagina": "product", "tipo": "tipo"}
+{"tipo": "ruido", "t": 1790352728.990236, "url": "http://localhost:8765/producto.html", "elementos": ["Correo electrónico"]}
+{"quien": "jef", "tipo": "turno", "t": 1790352728.9905782, "texto": "Estás en la página de una pava eléctrica de 1,7 litros, de acero inoxidable, con corte automático y base giratoria; cuesta $ 48.900."}
+{"cola": true, "tipo": "voz", "t": 1790352728.990922, "texto": "Estás en la página de una pava eléctrica de 1,7 litros, de acero inoxidable, con corte automático y base giratoria; cuesta $ 48.900."}
+{"t": 1790352728.991311, "opciones": ["Agregar al carrito", "Resumir la página"], "tipo": "botones"}
+{"t": 1790352728.9915972, "opciones": ["Agregar al carrito", "Resumir la página", "Otra cosa"], "tipo": "botones"}
+{"quien": "persona", "texto": "agregalo al carrito", "tipo": "turno", "t": 1790352735.87009}
+{"opciones": [], "tipo": "botones", "t": 1790352735.870473}
+{"quien": "jef", "texto": "Sin conexión. No puedo entender lo que pedís sin internet.", "tipo": "turno", "t": 1790352751.880868}
+{"texto": "Sin conexión. No puedo entender lo que pedís sin internet.", "cola": false, "tipo": "voz", "t": 1790352751.882856}
+{"t": 1790352751.8840609, "tipo": "botones", "opciones": ["Agregar al carrito", "Resumir la página", "Otra cosa"]}
