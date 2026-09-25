@@ -1326,11 +1326,13 @@ final class Assistant {
     /// imagen, y ni el extractor ni el asistente lo ven. Los de reCAPTCHA los
     /// agarra `detectChallenge` en el extractor; éste es el casero, que en
     /// ANSES es un input común con un cartel al lado.
+    ///
+    /// Se lo reconoce por el nombre que le da el código —en ANSES,
+    /// `ctl00$PlaceContent$txt_Captcha`—, que es el mismo en cualquier país.
+    /// Antes también por frases en castellano («código de la imagen»,
+    /// «verificación visual»), que ningún sitio medido usaba.
     static func isChallenge(_ field: Action.Field) -> Bool {
-        let text = (field.name + " " + field.value)
-            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
-        return text.range(of: "captcha|codigo de (la )?imagen|codigo que se muestra|verificacion visual",
-                          options: .regularExpression) != nil
+        (field.name + " " + field.value).localizedCaseInsensitiveContains("captcha")
     }
 
     /// El nombre de un campo, dicho como se le dice a una persona.

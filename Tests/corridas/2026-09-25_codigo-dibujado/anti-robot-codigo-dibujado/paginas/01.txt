@@ -1,0 +1,7 @@
+http://localhost:64997/codigo-dibujado.html
+Clave de la Seguridad Social
+
+PAGE: localhost — Clave de la Seguridad Social
+
+PAGE CONTENT (what the person came for):
+FORM asking for: un campo sin nombre — button «Continuar»

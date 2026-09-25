@@ -46,5 +46,16 @@
       }
     ],
     "servir": "Tests/fixtures/anti-robot"
+  },
+  {
+    "id": "anti-robot-codigo-dibujado",
+    "persona": "Ciega. Entra a un sistema del Estado que pide copiar un código dibujado en una imagen.",
+    "objetivo": "Que JEF reconozca el código dibujado por el nombre que le da el código de la página, y diga que hay que resolverlo en la página, en vez de preguntar qué escribir.",
+    "servir": "Tests/fixtures/anti-robot",
+    "pasos": [
+      {
+        "escribir": "{servidor}/codigo-dibujado.html"
+      }
+    ]
   }
 ]
