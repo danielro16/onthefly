@@ -2722,24 +2722,14 @@ final class Assistant {
         return rest.count >= 20 ? rest : title
     }
 
-    /// Un titular sin la hora de publicación que algunos sitios le pegan:
-    /// "Medidas de Milei, Hace 34 min". Leída en voz alta, la hora sonaba a
-    /// parte de la noticia.
-    static func tidy(_ title: String) -> String {
-        title.replacingOccurrences(
-            of: "[,.·|-]?\\s*[Hh]ace \\d+\\s*(min|minutos|h|hs|horas|d|días)\\.?\\s*$",
-            with: "", options: .regularExpression
-        ).trimmingCharacters(in: .whitespaces)
-    }
-
     /// A dónde lleva un titular: el mismo recorrido del que sale
     /// `headlines(of:)`, así que el texto coincide letra por letra.
     static func href(ofHeadline title: String, in page: ExtractedPage) -> String? {
         let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for entry in page.stream ?? [] {
-            if entry.kind == "link", (entry.title ?? entry.label).map(tidy) == title, let href = entry.href { return href }
+            if entry.kind == "link", (entry.title ?? entry.label) == title, let href = entry.href { return href }
             if entry.kind == "listing", let listing = entry.ref.flatMap({ byID[$0] }),
-               let href = listing.items.first(where: { tidy($0.title) == title })?.href {
+               let href = listing.items.first(where: { $0.title == title })?.href {
                 return href
             }
         }
@@ -2992,8 +2982,8 @@ final class Assistant {
         // Tampoco entre los titulares, que elige el código: en StubHub, con
         // cara de portada, los "titulares" eran partidos de Miami que Gemini
         // ya había marcado como ruido, y se decían igual.
-        let noisyTitles = Set(noisyLabels.map(Self.tidy))
-        lead = lead.filter { !noisyTitles.contains(Self.tidy($0)) }
+        let noisyTitles = Set(noisyLabels)
+        lead = lead.filter { !noisyTitles.contains($0) }
 
         remember(orientation.text, on: page)
         if lead.isEmpty {
@@ -3538,15 +3528,18 @@ final class Assistant {
         let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for entry in page.stream ?? [] {
             // Veinte letras como piso: "Medidas de Milei" y "Dólar hoy" son
-            // etiquetas de sección del ticker, no notas.
+            // etiquetas de sección del ticker, no notas. El titular solo, sin
+            // la hora que la tarjeta le pega ("Hace 34 min"), lo separa el
+            // extractor (`title`); antes lo hacía acá una regla en castellano,
+            // que en 1.398 titulares de 18 diarios ya no sacaba nada.
             if entry.kind == "link", entry.level != nil, let href = entry.href,
-               let label = (entry.title ?? entry.label).map(tidy), label.count >= 20 {
+               let label = entry.title ?? entry.label, label.count >= 20 {
                 if seen.insert(label).inserted, opened.insert(place(href)).inserted { out.append(label) }
             }
             if entry.kind == "listing", let listing = entry.ref.flatMap({ byID[$0] }) {
                 for item in listing.items where item.title.count >= 25 {
                     guard let href = item.href else { continue }
-                    let title = tidy(item.title)
+                    let title = item.title
                     if seen.insert(title).inserted, opened.insert(place(href)).inserted { out.append(title) }
                 }
             }
