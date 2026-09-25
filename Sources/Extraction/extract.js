@@ -2036,8 +2036,12 @@
       // Kept so the action inventory can skip what belongs to the overlay.
       element: el,
       overlay: {
-        // What it is, so the app can say it plainly.
-        kind: classifyOverlay(text, choices),
+        // That something covers the page, by its shape. What it asks —
+        // cookies, a subscription, an age — Jev says from its text and its
+        // buttons, in any language (`aviso` in criterios.json). A list of
+        // words did it here: 17 of 22 real notices, none in Polish, Dutch or
+        // Arabic, and LinkedIn's sign-in wall read as cookies. Jev: 22.
+        kind: "other",
         text: text.slice(0, 400),
         choices: choices,
         links: links,
@@ -2334,18 +2338,6 @@
     } catch (_) {
       return false;
     }
-  }
-
-  /// Names the overlay from its own words. A guess, but a narrow one, and the
-  /// full text travels alongside so the user can judge for themselves.
-  function classifyOverlay(text, choices) {
-    const all = (text + " " + choices.map(function (c) { return c.label; }).join(" ")).toLowerCase();
-    if (/cookie|consentimiento|consent|privacidad|rgpd|gdpr/.test(all)) return "cookies";
-    if (/suscri|subscribe|paywall|seguí leyendo|continuar leyendo|registrate para/.test(all)) return "paywall";
-    if (/newsletter|bolet[ií]n|not[ií]cias por mail/.test(all)) return "newsletter";
-    if (/iniciar sesi[oó]n|log ?in|sign ?in|ingres[aá]/.test(all)) return "login";
-    if (/edad|age|mayor de/.test(all)) return "age";
-    return "other";
   }
 
   /// Counts what a screen reader would stop on, before any of our work.

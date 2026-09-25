@@ -959,5 +959,25 @@
         "escribir": "¿cuánto cuesta?"
       }
     ]
+  },
+  {
+    "id": "cookies-onet",
+    "persona": "Vive en Polonia, ciega. Abre el portal más leído del país.",
+    "objetivo": "Que JEF reconozca el aviso de consentimiento en polaco como uno de cookies y lo conteste como eligió la persona (aceptar), sin decir nada, y cuente la portada.",
+    "pasos": [
+      {
+        "escribir": "onet.pl"
+      }
+    ]
+  },
+  {
+    "id": "cookies-telegraaf",
+    "persona": "Vive en los Países Bajos, ciega. Abre un diario.",
+    "objetivo": "Que JEF reconozca el aviso de consentimiento en neerlandés como uno de cookies y lo conteste como eligió la persona (aceptar), sin decir nada, y cuente la portada.",
+    "pasos": [
+      {
+        "escribir": "telegraaf.nl"
+      }
+    ]
   }
 ]

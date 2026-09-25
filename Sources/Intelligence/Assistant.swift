@@ -2975,7 +2975,6 @@ final class Assistant {
             "pagina": kinds?.page ?? "", "p_pagina": kinds.map { String(format: "%.2f", $0.pageConfidence) } ?? "",
             "modelo": orientation.kind.rawValue,
             "aviso": kinds?.notice ?? "", "p_aviso": kinds.map { String(format: "%.2f", $0.noticeConfidence) } ?? "",
-            "aviso_extractor": page.overlay?.kind.rawValue ?? "",
         ])
         known[page.url] = (kind, [])
         // En una portada, los titulares que se nombran y los botones son los
@@ -3171,9 +3170,11 @@ final class Assistant {
             }
             // "Aviso de la página tapa la página" se oía roto: el título de un
             // aviso genérico ya dice "página". Se nombra lo que tapa y listo.
-            say(overlay.kind == .other
+            // Qué es lo dice Jev; el extractor sólo sabe que tapa.
+            let kind = noticeKind(page) ?? overlay.kind
+            say(kind == .other
                 ? "Hay un aviso encima de la página."
-                : "\(overlay.kind.title) encima de la página.")
+                : "\(kind.title) encima de la página.")
             if !overlay.choices.isEmpty {
                 say("Opciones: \(overlay.choices.map(\.label).prefix(3).joined(separator: ", ")).")
             } else {
