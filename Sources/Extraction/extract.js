@@ -1961,12 +1961,22 @@
     // notice is. Read as an overlay it came out as "Contenido para
     // suscriptores" (one of its links says so) with eight answers, and the
     // other sixty sections were thrown away with it.
+    //
+    // Told apart by shape, not by words. Measured on 56 sites in 14
+    // languages: the menus had 27 to 243 links, the notices 15 at most —
+    // Le Monde's consent with its partners, Jack Daniel's age gate with its
+    // countries. Fewer links make a menu only in a navigation landmark with
+    // nothing to answer: Jägermeister's age gate carries a nav of five links
+    // and a form, and it was being skipped as a menu.
     function isMenu(el) {
       const links = el.querySelectorAll("a[href]").length;
-      const many = links >= 12
-        || (links >= 5 && !!(el.matches("nav, [role=navigation]") || el.querySelector("nav, [role=navigation]")));
-      // A consent manager lists its partners, and those are links too.
-      return many && !/cookie|consentimiento|consent|gdpr|rgpd/i.test(textOf(el).slice(0, 600));
+      if (links >= 20) return true;
+      if (links < 5) return false;
+      const nav = !!(el.matches("nav, [role=navigation]") || el.querySelector("nav, [role=navigation]"));
+      const answers = Array.prototype.some.call(
+        el.querySelectorAll("button, [role=button], input:not([type=hidden]), select, textarea"),
+        function (c) { return !isHidden(c); });
+      return nav && !answers;
     }
     for (const el of document.querySelectorAll("[role=dialog], [role=alertdialog], [aria-modal=true], dialog[open]")) {
       if (!isHidden(el) && !isPopupList(el) && !isMenu(el)) candidates.push(el);
