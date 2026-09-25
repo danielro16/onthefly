@@ -464,7 +464,9 @@ final class Assistant {
                 // Y lo que falta de la tarea, ahora que ya hay otra página.
                 // "Quiero entrar a ANSES y pedir un turno" aterrizaba en ANSES
                 // y el turno se perdía: el pedido no sobrevivía al viaje.
-                if let rest = decision.rest, !rest.isEmpty, !Self.whole(decision), Self.reached(from: before, reader.page, rest: rest) {
+                if let rest = decision.rest, !rest.isEmpty, !Self.whole(decision),
+                   Self.pending(rest, of: decision, goal: goal, from: before, to: reader.page,
+                                waiting: awaitingField != nil || pendingSubmit != nil) {
                     if offer?.options.contains(where: { $0.id.hasPrefix("res-") }) == true {
                         // Se frenó a preguntar cuál resultado. La tarea espera
                         // a que la persona elija; seguir ahora sería resolver
@@ -503,16 +505,24 @@ final class Assistant {
         (page?.url ?? "") + "|" + id
     }
 
-    /// Si hay que seguir con lo que queda de la tarea (`rest`): sólo si se
-    /// llegó a otra página, que es como lo define el ruteador. Sin moverse,
-    /// lo que quedaba ya lo cubrió lo que se hizo: en httpbin, «mandá el
-    /// pedido» se pedía dos veces; en Demoblaze, el pedido entero volvía
-    /// como resto y se hacía otra vez.
-    static func reached(from before: ExtractedPage?, _ now: ExtractedPage?, rest: String) -> Bool {
+    /// Si hay que seguir con lo que queda de la tarea (`rest`). Llegando a
+    /// otra página, sí: es como lo define el ruteador. Sin moverse, sólo si
+    /// todavía no se hizo ni tiene que esperar: no si es el pedido mismo otra
+    /// vez —en Demoblaze, «llevame al carrito» volvía entero como resto y se
+    /// hacía dos veces—, ni si ya lo hace el segundo paso de la frase
+    /// (`then`) —en httpbin, «mandá el pedido» se pedía dos veces—, ni si
+    /// falta un dato o hay un botón esperando la mano. Pero si el ruteador lo
+    /// dejó sólo como resto, se hace: descartarlo siempre dejaba «poné Juan
+    /// en el nombre y mandá el pedido» sin el mandar, y sin decirlo.
+    static func pending(
+        _ rest: String, of decision: Router.Decision, goal: String,
+        from before: ExtractedPage?, to now: ExtractedPage?, waiting: Bool
+    ) -> Bool {
         guard let before else { return true }
-        let moved = now.map { !stillOn(before, $0) } ?? false
-        if !moved { Registro.anotar("resto_descartado", ["resto": rest]) }
-        return moved
+        if let now, !stillOn(before, now) { return true }
+        let owed = !waiting && decision.then == nil && flatten(rest) != flatten(goal)
+        if !owed { Registro.anotar("resto_descartado", ["resto": rest]) }
+        return owed
     }
 
     /// Deja la búsqueda de Jev que se adelantó mientras decidía el ruteador:
@@ -574,7 +584,9 @@ final class Assistant {
             if let next = decision.then, Self.chains(decision.action, next), !working, awaitingField == nil {
                 await carry(next, of: decision, goal: goal, on: reader)
             }
-            guard let more = decision.rest, !more.isEmpty, more != goal, Self.reached(from: before, reader.page, rest: more) else { return }
+            guard let more = decision.rest, !more.isEmpty, more != goal,
+                  Self.pending(more, of: decision, goal: goal, from: before, to: reader.page,
+                               waiting: awaitingField != nil || pendingSubmit != nil) else { return }
             goal = more
         }
     }
@@ -587,11 +599,17 @@ final class Assistant {
     }
 
     /// Los campos y botones de todos los formularios de la página, en orden.
-    static func formControls(_ page: ExtractedPage) -> [FormControl] {
+    /// `filled`: lo que JEF ya escribió (`fieldKey`). Un campo con algo escrito
+    /// se marca, sin lo escrito: sin eso, «mandá el pedido» después de
+    /// escribir el nombre volvía a escribir el nombre (httpbin).
+    static func formControls(_ page: ExtractedPage, filled: Set<String> = []) -> [FormControl] {
         var out: [FormControl] = []
         for form in page.actions where form.kind == .form && !(form.fields ?? []).isEmpty {
             for field in (form.fields ?? []) where field.type != "hidden" {
-                let name = spoken(field) + (field.isSecure ? " (secreto)" : "")
+                let written = filled.contains(fieldKey(field.id, on: page))
+                    || (!field.value.isEmpty && field.type != "checkbox" && field.type != "radiogroup" && field.options == nil)
+                let notes = (field.isSecure ? ["secreto"] : []) + (written ? ["escrito"] : [])
+                let name = spoken(field) + (notes.isEmpty ? "" : " (\(notes.joined(separator: ", ")))")
                 out.append(FormControl(label: "campo «\(name)»", form: form, field: field))
             }
             if let button = form.submit?.trimmingCharacters(in: .whitespacesAndNewlines), !button.isEmpty {
@@ -616,7 +634,7 @@ final class Assistant {
         guard let router else { return nil }
         let page = reader.page
         let state = Router.state(page: page, reading: readingProgress(page), previous: previous)
-        controls = page.map(Self.formControls) ?? []
+        controls = page.map { Self.formControls($0, filled: filledFields) } ?? []
         let decision = try await router.decide(
             goal, task: task == goal ? nil : task, state: state, place: Ubicacion.shared.place,
             page: page.map(Self.saying), controls: controls.map(\.label)
