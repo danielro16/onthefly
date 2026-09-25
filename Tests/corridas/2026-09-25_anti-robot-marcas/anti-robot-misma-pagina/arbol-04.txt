@@ -1,0 +1,17 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: http://localhost:61304/misma-pagina.html
+  4 [txt] Abriendo localhost.
+  5 [txt] El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, seguimos.
+  6 [H] Vos: Ir a la prueba
+  7 [txt] La prueba quedó a la vista, en la página, con el asistente cerrado. Cuando esté resuelta, sigo solo y el asistente vuelve; si no, está el botón «Asistente».
+  8 [txt] Listo, ya pasamos la verificación.
+  9 [txt] Esta tienda muestra tres auriculares bluetooth disponibles, con envío gratis a todo el país y ordenados de menor a mayor precio. ¿Cuál de los tres auriculares necesitas?
+ 10 [H] Vos: ¿cuánto sale el más barato?
+ 11 [txt] El más barato, los Auriculares In Ear Bluetooth Básicos, cuesta $12.499.
+ 12 [btn] Abrir «Auriculares In Ear Bluetooth Básicos»  (Primera de 4 opciones.)
+ 13 [btn] Abrir «Auriculares Vincha Bluetooth con Micrófono»
+ 14 [btn] Abrir «Auriculares con Cancelación de Ruido»
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 17 [btn] Enviar

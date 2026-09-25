@@ -1,0 +1,11 @@
+http://localhost:61281/captcha.html
+Verificación de seguridad
+
+PAGE: localhost — Verificación de seguridad
+
+PAGE CONTENT (what the person came for):
+Por seguridad, completá este paso
+Confirmá que no sos un robot para ver los resultados.
+Continuar
+Por seguridad, completá este paso
+Confirmá que no sos un robot para ver los resultados.

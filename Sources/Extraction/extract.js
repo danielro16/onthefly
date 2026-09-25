@@ -2391,13 +2391,19 @@
       if (/size=invisible/i.test(src) || f.closest(".grecaptcha-badge")) return false;
       return /recaptcha|hcaptcha|turnstile|challenges\.cloudflare|arkoselabs|funcaptcha/i.test(src) && !isHidden(f);
     });
-    const words = /no soy un robot|i'm not a robot|verific[aá] que (sos|eres)|verify you are human|completá este paso/i;
-    const saysSo = words.test(textOf(document.body).slice(0, 3000));
-    if (!frame && !saysSo) return null;
-    // A form with an invisible reCAPTCHA badge is a form, not a wall. The
-    // passenger-data page carried one and read as "Verificación de
-    // seguridad" over forty fields. A wall says so, or has nothing else.
-    if (frame && !saysSo) {
+    // Cloudflare's own check page hides its widget in a closed shadow root,
+    // so no iframe is found; the page declares itself with its challenge
+    // objects instead, which ordinary pages behind Cloudflare do not carry.
+    // It used to be caught by its words — "verify you are human", "no soy un
+    // robot" —, which only worked in Spanish and English.
+    const cloudflare = typeof window._cf_chl_opt !== "undefined"
+      || !!document.querySelector("#challenge-stage, #challenge-form, #cf-challenge-running");
+    if (!frame && !cloudflare) return null;
+    // A form with a check is a form, not a wall. The passenger-data page
+    // carried one and read as "Verificación de seguridad" over forty fields.
+    // A wall has little else: Mercado Libre's is a heading, «Ir al login»
+    // and a cookie notice.
+    if (!cloudflare) {
       const controls = Array.prototype.filter.call(
         document.querySelectorAll("input:not([type=hidden]), select, textarea, button, a[href]"),
         function (c) { return !isHidden(c); }

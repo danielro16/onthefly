@@ -35,5 +35,16 @@
         "escribir": "¿cuánto sale el más barato?"
       }
     ]
+  },
+  {
+    "id": "anti-robot-cloudflare",
+    "persona": "Vive en Brasil, ciega. Un sitio la frena con la página de espera de Cloudflare, en portugués.",
+    "objetivo": "Que JEF reconozca la prueba anti-robot aunque la página no diga nada en castellano ni en inglés, y lo cuente, en vez de describir una página vacía.",
+    "pasos": [
+      {
+        "escribir": "{servidor}/cloudflare.html"
+      }
+    ],
+    "servir": "Tests/fixtures/anti-robot"
   }
 ]
