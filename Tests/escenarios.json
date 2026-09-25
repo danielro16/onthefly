@@ -911,5 +911,40 @@
         "escribir": "abrí el reglamento"
       }
     ]
+  },
+  {
+    "id": "carrito-con-boletin",
+    "persona": "Ciega, compra por internet. En la página de un producto pide agregarlo al carrito.",
+    "objetivo": "Que JEF vaya al botón «Agregar al carrito» (suelto, sin formulario) y no al formulario del boletín del pie de la página. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/producto.html"
+      },
+      {
+        "escribir": "agregalo al carrito"
+      }
+    ]
+  },
+  {
+    "id": "formulario-de-otra-pagina",
+    "persona": "Ciega. Escribió su nombre en una página y después fue a otra a pedir un turno.",
+    "objetivo": "Que lo escrito en la página anterior no cuente como escrito en el formulario de la nueva: después del DNI, JEF tiene que pedir el día, no saltearlo. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/dos-formularios.html"
+      },
+      {
+        "escribir": "poné Juan en el nombre"
+      },
+      {
+        "escribir": "http://localhost:8765/turno.html"
+      },
+      {
+        "boton": "turno"
+      },
+      {
+        "escribir": "30123456"
+      }
+    ]
   }
 ]

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pava eléctrica 1,7 litros — Casa Ferreira</title>
+<!--
+  Un producto con su botón de carrito suelto (hecho con JavaScript, fuera de
+  todo formulario) y, al pie, el formulario del boletín, como tantas tiendas.
+  «Agregalo al carrito» tiene que llegar al botón del carrito, no al boletín.
+  Servida con: python3 -m http.server 8765 --directory Tests
+-->
+</head>
+<body>
+<main>
+<h1>Pava eléctrica 1,7 litros</h1>
+<p>Acero inoxidable, corte automático, base giratoria.</p>
+<p>Precio: $ 48.900</p>
+<button type="button" id="carrito">Agregar al carrito</button>
+<p id="estado" role="status"></p>
+</main>
+<footer>
+<h2>Ofertas en tu correo</h2>
+<form action="redirigido.html">
+<label for="correo">Correo electrónico</label>
+<input id="correo" name="correo" type="email">
+<button type="submit">Suscribirme</button>
+</form>
+</footer>
+<script>
+document.getElementById('carrito').addEventListener('click', function () {
+  document.getElementById('estado').textContent = 'Agregaste la pava eléctrica al carrito.';
+});
+</script>
+</body>
+</html>

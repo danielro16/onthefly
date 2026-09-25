@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Club Social del Barrio</title>
+<!--
+  Dos formularios, como muchas páginas: el del boletín primero y el de
+  contacto después. «Enviá» sin nombrar cuál no puede caer en el primero.
+  Servida con: python3 -m http.server 8765 --directory Tests
+-->
+</head>
+<body>
+<main>
+<h1>Club Social del Barrio</h1>
+<p>Actividades para todas las edades, de lunes a sábado.</p>
+<section>
+<h2>Recibí las novedades</h2>
+<form action="redirigido.html">
+<label for="correo">Correo electrónico</label>
+<input id="correo" name="correo" type="email">
+<button type="submit">Suscribirme</button>
+</form>
+</section>
+<section>
+<h2>Escribinos</h2>
+<form action="redirigido.html">
+<label for="nombre">Nombre</label>
+<input id="nombre" name="nombre">
+<label for="mensaje">Mensaje</label>
+<textarea id="mensaje" name="mensaje"></textarea>
+<button type="submit">Enviar mensaje</button>
+</form>
+</section>
+<p><a href="turno.html">Pedir un turno para la pileta</a></p>
+</main>
+</body>
+</html>

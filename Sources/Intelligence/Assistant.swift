@@ -200,7 +200,8 @@ final class Assistant {
     /// El nombre del campo que espera su dato, para que el campo de escribir
     /// lo diga en vez de "¿Qué querés hacer?".
     private(set) var awaiting: String?
-    /// Campos ya completados, para no volver a ofrecerlos.
+    /// Campos ya completados, para no volver a ofrecerlos: con su página
+    /// (`fieldKey`).
     private var filledFields: Set<String> = []
     /// Las preguntas que siguen a una respuesta, como botones.
     private var nextQuestions: [String] = []
@@ -323,7 +324,7 @@ final class Assistant {
                 let held = await typed(goal, into: field, on: reader)
                 working = false
                 guard held else { return }
-                filledFields.insert(field.id)
+                filledFields.insert(Self.fieldKey(field.id, on: reader.page))
                 // Y no queda como "lo que pidió antes": eso viaja al modelo en
                 // el turno siguiente, y un DNI no tiene que ir a ningún lado.
                 lastRequest = previousRequest
@@ -332,7 +333,7 @@ final class Assistant {
                 if let form = completing, (form.fields ?? []).contains(where: { $0.id == field.id }) {
                     completing = nil
                     let missing = (form.fields ?? []).filter {
-                        $0.type != "hidden" && $0.type != "checkbox" && !Self.isChallenge($0) && !filledFields.contains($0.id)
+                        $0.type != "hidden" && $0.type != "checkbox" && !Self.isChallenge($0) && !filledFields.contains(Self.fieldKey($0.id, on: reader.page))
                     }
                     if let next = missing.first {
                         awaitingField = next
@@ -493,6 +494,13 @@ final class Assistant {
     /// Un control tocado, de qué página: sus marcas se repiten entre páginas.
     static func touchKey(_ action: Action, on page: ExtractedPage?) -> String {
         (page?.url ?? "") + "|" + action.id
+    }
+
+    /// Un campo escrito, de qué página, por lo mismo. En la de turnos, «Día»
+    /// llevaba la marca de «Nombre» de la página anterior, y JEF lo daba por
+    /// escrito: pedía el DNI, salteaba el día y pedía la hora.
+    static func fieldKey(_ id: String, on page: ExtractedPage?) -> String {
+        (page?.url ?? "") + "|" + id
     }
 
     /// Si hay que seguir con lo que queda de la tarea (`rest`): sólo si se
@@ -744,11 +752,12 @@ final class Assistant {
             if decision.action == .completar, controls.isEmpty { return }
             guard let page = reader.page else { return }
             guard let form = control(decision)?.form ?? pageForm(page) else {
-                // Sin formulario, lo que se aprieta es un botón suelto:
-                // «Add to cart», «Guardar preferencias». Se busca como
-                // cualquier cosa de la página, y pasa por `free` como todo
-                // lo que JEF toca. Antes: "Acá no hay un formulario para
-                // enviar", con el botón ahí.
+                // Sin un formulario nombrado ni uno ya escrito, lo que se
+                // aprieta se busca como cualquier cosa de la página: un
+                // botón suelto —«Add to cart», «Guardar preferencias»— o un
+                // formulario, que se completa antes de enviarse. Y pasa por
+                // `free` como todo lo que JEF toca. Antes: "Acá no hay un
+                // formulario para enviar", con el botón ahí.
                 await run(decision.reference ?? goal, on: reader, steps: 1, said: goal)
                 return
             }
@@ -808,7 +817,7 @@ final class Assistant {
         let held = await typed(value, into: field, on: reader)
         working = false
         guard held else { return }
-        filledFields.insert(field.id)
+        filledFields.insert(Self.fieldKey(field.id, on: reader.page))
         say(field.isSecure ? "Listo: quedó escrita en «\(Self.spoken(field))»." : "Listo, escrito en \(Self.spoken(field)).")
     }
 
@@ -1750,9 +1759,9 @@ final class Assistant {
             return
         }
         // El botón que JEF dejó para la mano: lo tocó la persona, así que se
-        // aprieta. El que se le ofreció, si fue por un pedido —un formulario,
-        // o un botón o link que no toca solo—; si no, el formulario de la página.
-        if action.id == Self.submitID, let page = reader.page, let control = pendingSubmit ?? pageForm(page) {
+        // aprieta. Es el que se le ofreció —un formulario, o un botón o link
+        // que no toca solo—, y nunca otro que JEF elija en su lugar.
+        if action.id == Self.submitID, let control = pendingSubmit {
             pendingSubmit = nil
             say("Pulsando «\(control.kind == .form ? control.submit ?? action.label : control.label)».")
             await pressed(control, on: reader)
@@ -2190,7 +2199,7 @@ final class Assistant {
         }
 
         guard await typed(found.value, into: field, on: reader) else { return }
-        filledFields.insert(field.id)
+        filledFields.insert(Self.fieldKey(field.id, on: reader.page))
         say("Listo, escrito en \(Self.spoken(field)).")
         if found.send {
             working = false
@@ -2717,20 +2726,19 @@ final class Assistant {
         return nil
     }
 
-    /// El formulario de la página, para cuando se pide su botón:
-    /// en el que ya se escribió algo —también un buscador: en Mercado Libre
-    /// quedaba escrito y sin forma de apretar «Buscar»—, o si no, el primero
-    /// que no es de búsqueda.
-    /// `noise`: los formularios que Gemini marcó como ruido al llegar —el del
-    /// boletín en Meteored— no se ofrecen.
-    static func pageForm(_ page: ExtractedPage, filled: Set<String> = [], skipping noise: Set<String> = []) -> Action? {
-        page.actions.first { $0.kind == .form && ($0.fields ?? []).contains { filled.contains($0.id) } }
-            ?? page.actions.first { $0.kind == .form && !isSearch($0) && !noise.contains($0.id) && !($0.fields ?? []).isEmpty }
+    /// El formulario de la página, para cuando se pide su botón sin nombrar
+    /// cuál: en el que JEF ya escribió algo en esta página —también un
+    /// buscador: en Mercado Libre quedaba escrito y sin forma de apretar
+    /// «Buscar»—. Ninguno: no se adivina, y lo pedido se busca entre todo lo
+    /// que la página ofrece. Antes caía al primero que no era de búsqueda, y
+    /// en Meteored era el del boletín.
+    static func pageForm(_ page: ExtractedPage, filled: Set<String>) -> Action? {
+        page.actions.first { $0.kind == .form && ($0.fields ?? []).contains { filled.contains(fieldKey($0.id, on: page)) } }
     }
 
-    /// El de esta página, con lo que ya se escribió y sin lo que es ruido.
+    /// El de esta página, con lo que ya se escribió.
     private func pageForm(_ page: ExtractedPage) -> Action? {
-        Self.pageForm(page, filled: filledFields, skipping: noiseIDs(of: page))
+        Self.pageForm(page, filled: filledFields)
     }
 
     /// Lo que Gemini marcó como ruido en esta página, si es ésta.
