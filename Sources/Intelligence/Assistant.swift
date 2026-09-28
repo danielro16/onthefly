@@ -200,7 +200,8 @@ final class Assistant {
     /// El nombre del campo que espera su dato, para que el campo de escribir
     /// lo diga en vez de "¿Qué querés hacer?".
     private(set) var awaiting: String?
-    /// Campos ya completados, para no volver a ofrecerlos.
+    /// Campos ya completados, para no volver a ofrecerlos: con su página
+    /// (`fieldKey`).
     private var filledFields: Set<String> = []
     /// Las preguntas que siguen a una respuesta, como botones.
     private var nextQuestions: [String] = []
@@ -323,7 +324,7 @@ final class Assistant {
                 let held = await typed(goal, into: field, on: reader)
                 working = false
                 guard held else { return }
-                filledFields.insert(field.id)
+                filledFields.insert(Self.fieldKey(field.id, on: reader.page))
                 // Y no queda como "lo que pidió antes": eso viaja al modelo en
                 // el turno siguiente, y un DNI no tiene que ir a ningún lado.
                 lastRequest = previousRequest
@@ -332,7 +333,7 @@ final class Assistant {
                 if let form = completing, (form.fields ?? []).contains(where: { $0.id == field.id }) {
                     completing = nil
                     let missing = (form.fields ?? []).filter {
-                        $0.type != "hidden" && $0.type != "checkbox" && !Self.isChallenge($0) && !filledFields.contains($0.id)
+                        $0.type != "hidden" && $0.type != "checkbox" && !Self.isChallenge($0) && !filledFields.contains(Self.fieldKey($0.id, on: reader.page))
                     }
                     if let next = missing.first {
                         awaitingField = next
@@ -463,7 +464,9 @@ final class Assistant {
                 // Y lo que falta de la tarea, ahora que ya hay otra página.
                 // "Quiero entrar a ANSES y pedir un turno" aterrizaba en ANSES
                 // y el turno se perdía: el pedido no sobrevivía al viaje.
-                if let rest = decision.rest, !rest.isEmpty, !Self.whole(decision), Self.reached(from: before, reader.page, rest: rest) {
+                if let rest = decision.rest, !rest.isEmpty, !Self.whole(decision),
+                   Self.pending(rest, of: decision, goal: goal, from: before, to: reader.page,
+                                waiting: awaitingField != nil || pendingSubmit != nil) {
                     if offer?.options.contains(where: { $0.id.hasPrefix("res-") }) == true {
                         // Se frenó a preguntar cuál resultado. La tarea espera
                         // a que la persona elija; seguir ahora sería resolver
@@ -495,16 +498,31 @@ final class Assistant {
         (page?.url ?? "") + "|" + action.id
     }
 
-    /// Si hay que seguir con lo que queda de la tarea (`rest`): sólo si se
-    /// llegó a otra página, que es como lo define el ruteador. Sin moverse,
-    /// lo que quedaba ya lo cubrió lo que se hizo: en httpbin, «mandá el
-    /// pedido» se pedía dos veces; en Demoblaze, el pedido entero volvía
-    /// como resto y se hacía otra vez.
-    static func reached(from before: ExtractedPage?, _ now: ExtractedPage?, rest: String) -> Bool {
+    /// Un campo escrito, de qué página, por lo mismo. En la de turnos, «Día»
+    /// llevaba la marca de «Nombre» de la página anterior, y JEF lo daba por
+    /// escrito: pedía el DNI, salteaba el día y pedía la hora.
+    static func fieldKey(_ id: String, on page: ExtractedPage?) -> String {
+        (page?.url ?? "") + "|" + id
+    }
+
+    /// Si hay que seguir con lo que queda de la tarea (`rest`). Llegando a
+    /// otra página, sí: es como lo define el ruteador. Sin moverse, sólo si
+    /// todavía no se hizo ni tiene que esperar: no si es el pedido mismo otra
+    /// vez —en Demoblaze, «llevame al carrito» volvía entero como resto y se
+    /// hacía dos veces—, ni si ya lo hace el segundo paso de la frase
+    /// (`then`) —en httpbin, «mandá el pedido» se pedía dos veces—, ni si
+    /// falta un dato o hay un botón esperando la mano. Pero si el ruteador lo
+    /// dejó sólo como resto, se hace: descartarlo siempre dejaba «poné Juan
+    /// en el nombre y mandá el pedido» sin el mandar, y sin decirlo.
+    static func pending(
+        _ rest: String, of decision: Router.Decision, goal: String,
+        from before: ExtractedPage?, to now: ExtractedPage?, waiting: Bool
+    ) -> Bool {
         guard let before else { return true }
-        let moved = now.map { !stillOn(before, $0) } ?? false
-        if !moved { Registro.anotar("resto_descartado", ["resto": rest]) }
-        return moved
+        if let now, !stillOn(before, now) { return true }
+        let owed = !waiting && decision.then == nil && flatten(rest) != flatten(goal)
+        if !owed { Registro.anotar("resto_descartado", ["resto": rest]) }
+        return owed
     }
 
     /// Deja la búsqueda de Jev que se adelantó mientras decidía el ruteador:
@@ -566,7 +584,9 @@ final class Assistant {
             if let next = decision.then, Self.chains(decision.action, next), !working, awaitingField == nil {
                 await carry(next, of: decision, goal: goal, on: reader)
             }
-            guard let more = decision.rest, !more.isEmpty, more != goal, Self.reached(from: before, reader.page, rest: more) else { return }
+            guard let more = decision.rest, !more.isEmpty, more != goal,
+                  Self.pending(more, of: decision, goal: goal, from: before, to: reader.page,
+                               waiting: awaitingField != nil || pendingSubmit != nil) else { return }
             goal = more
         }
     }
@@ -579,11 +599,17 @@ final class Assistant {
     }
 
     /// Los campos y botones de todos los formularios de la página, en orden.
-    static func formControls(_ page: ExtractedPage) -> [FormControl] {
+    /// `filled`: lo que JEF ya escribió (`fieldKey`). Un campo con algo escrito
+    /// se marca, sin lo escrito: sin eso, «mandá el pedido» después de
+    /// escribir el nombre volvía a escribir el nombre (httpbin).
+    static func formControls(_ page: ExtractedPage, filled: Set<String> = []) -> [FormControl] {
         var out: [FormControl] = []
         for form in page.actions where form.kind == .form && !(form.fields ?? []).isEmpty {
             for field in (form.fields ?? []) where field.type != "hidden" {
-                let name = spoken(field) + (field.isSecure ? " (secreto)" : "")
+                let written = filled.contains(fieldKey(field.id, on: page))
+                    || (!field.value.isEmpty && field.type != "checkbox" && field.type != "radiogroup" && field.options == nil)
+                let notes = (field.isSecure ? ["secreto"] : []) + (written ? ["escrito"] : [])
+                let name = spoken(field) + (notes.isEmpty ? "" : " (\(notes.joined(separator: ", ")))")
                 out.append(FormControl(label: "campo «\(name)»", form: form, field: field))
             }
             if let button = form.submit?.trimmingCharacters(in: .whitespacesAndNewlines), !button.isEmpty {
@@ -608,7 +634,7 @@ final class Assistant {
         guard let router else { return nil }
         let page = reader.page
         let state = Router.state(page: page, reading: readingProgress(page), previous: previous)
-        controls = page.map(Self.formControls) ?? []
+        controls = page.map { Self.formControls($0, filled: filledFields) } ?? []
         let decision = try await router.decide(
             goal, task: task == goal ? nil : task, state: state, place: Ubicacion.shared.place,
             page: page.map(Self.saying), controls: controls.map(\.label)
@@ -744,11 +770,12 @@ final class Assistant {
             if decision.action == .completar, controls.isEmpty { return }
             guard let page = reader.page else { return }
             guard let form = control(decision)?.form ?? pageForm(page) else {
-                // Sin formulario, lo que se aprieta es un botón suelto:
-                // «Add to cart», «Guardar preferencias». Se busca como
-                // cualquier cosa de la página, y pasa por `free` como todo
-                // lo que JEF toca. Antes: "Acá no hay un formulario para
-                // enviar", con el botón ahí.
+                // Sin un formulario nombrado ni uno ya escrito, lo que se
+                // aprieta se busca como cualquier cosa de la página: un
+                // botón suelto —«Add to cart», «Guardar preferencias»— o un
+                // formulario, que se completa antes de enviarse. Y pasa por
+                // `free` como todo lo que JEF toca. Antes: "Acá no hay un
+                // formulario para enviar", con el botón ahí.
                 await run(decision.reference ?? goal, on: reader, steps: 1, said: goal)
                 return
             }
@@ -808,7 +835,7 @@ final class Assistant {
         let held = await typed(value, into: field, on: reader)
         working = false
         guard held else { return }
-        filledFields.insert(field.id)
+        filledFields.insert(Self.fieldKey(field.id, on: reader.page))
         say(field.isSecure ? "Listo: quedó escrita en «\(Self.spoken(field))»." : "Listo, escrito en \(Self.spoken(field)).")
     }
 
@@ -1299,11 +1326,13 @@ final class Assistant {
     /// imagen, y ni el extractor ni el asistente lo ven. Los de reCAPTCHA los
     /// agarra `detectChallenge` en el extractor; éste es el casero, que en
     /// ANSES es un input común con un cartel al lado.
+    ///
+    /// Se lo reconoce por el nombre que le da el código —en ANSES,
+    /// `ctl00$PlaceContent$txt_Captcha`—, que es el mismo en cualquier país.
+    /// Antes también por frases en castellano («código de la imagen»,
+    /// «verificación visual»), que ningún sitio medido usaba.
     static func isChallenge(_ field: Action.Field) -> Bool {
-        let text = (field.name + " " + field.value)
-            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
-        return text.range(of: "captcha|codigo de (la )?imagen|codigo que se muestra|verificacion visual",
-                          options: .regularExpression) != nil
+        (field.name + " " + field.value).localizedCaseInsensitiveContains("captcha")
     }
 
     /// El nombre de un campo, dicho como se le dice a una persona.
@@ -1750,9 +1779,9 @@ final class Assistant {
             return
         }
         // El botón que JEF dejó para la mano: lo tocó la persona, así que se
-        // aprieta. El que se le ofreció, si fue por un pedido —un formulario,
-        // o un botón o link que no toca solo—; si no, el formulario de la página.
-        if action.id == Self.submitID, let page = reader.page, let control = pendingSubmit ?? pageForm(page) {
+        // aprieta. Es el que se le ofreció —un formulario, o un botón o link
+        // que no toca solo—, y nunca otro que JEF elija en su lugar.
+        if action.id == Self.submitID, let control = pendingSubmit {
             pendingSubmit = nil
             say("Pulsando «\(control.kind == .form ? control.submit ?? action.label : control.label)».")
             await pressed(control, on: reader)
@@ -2190,7 +2219,7 @@ final class Assistant {
         }
 
         guard await typed(found.value, into: field, on: reader) else { return }
-        filledFields.insert(field.id)
+        filledFields.insert(Self.fieldKey(field.id, on: reader.page))
         say("Listo, escrito en \(Self.spoken(field)).")
         if found.send {
             working = false
@@ -2693,44 +2722,33 @@ final class Assistant {
         return rest.count >= 20 ? rest : title
     }
 
-    /// Un titular sin la hora de publicación que algunos sitios le pegan:
-    /// "Medidas de Milei, Hace 34 min". Leída en voz alta, la hora sonaba a
-    /// parte de la noticia.
-    static func tidy(_ title: String) -> String {
-        title.replacingOccurrences(
-            of: "[,.·|-]?\\s*[Hh]ace \\d+\\s*(min|minutos|h|hs|horas|d|días)\\.?\\s*$",
-            with: "", options: .regularExpression
-        ).trimmingCharacters(in: .whitespaces)
-    }
-
     /// A dónde lleva un titular: el mismo recorrido del que sale
     /// `headlines(of:)`, así que el texto coincide letra por letra.
     static func href(ofHeadline title: String, in page: ExtractedPage) -> String? {
         let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for entry in page.stream ?? [] {
-            if entry.kind == "link", (entry.title ?? entry.label).map(tidy) == title, let href = entry.href { return href }
+            if entry.kind == "link", (entry.title ?? entry.label) == title, let href = entry.href { return href }
             if entry.kind == "listing", let listing = entry.ref.flatMap({ byID[$0] }),
-               let href = listing.items.first(where: { tidy($0.title) == title })?.href {
+               let href = listing.items.first(where: { $0.title == title })?.href {
                 return href
             }
         }
         return nil
     }
 
-    /// El formulario de la página, para cuando se pide su botón:
-    /// en el que ya se escribió algo —también un buscador: en Mercado Libre
-    /// quedaba escrito y sin forma de apretar «Buscar»—, o si no, el primero
-    /// que no es de búsqueda.
-    /// `noise`: los formularios que Gemini marcó como ruido al llegar —el del
-    /// boletín en Meteored— no se ofrecen.
-    static func pageForm(_ page: ExtractedPage, filled: Set<String> = [], skipping noise: Set<String> = []) -> Action? {
-        page.actions.first { $0.kind == .form && ($0.fields ?? []).contains { filled.contains($0.id) } }
-            ?? page.actions.first { $0.kind == .form && !isSearch($0) && !noise.contains($0.id) && !($0.fields ?? []).isEmpty }
+    /// El formulario de la página, para cuando se pide su botón sin nombrar
+    /// cuál: en el que JEF ya escribió algo en esta página —también un
+    /// buscador: en Mercado Libre quedaba escrito y sin forma de apretar
+    /// «Buscar»—. Ninguno: no se adivina, y lo pedido se busca entre todo lo
+    /// que la página ofrece. Antes caía al primero que no era de búsqueda, y
+    /// en Meteored era el del boletín.
+    static func pageForm(_ page: ExtractedPage, filled: Set<String>) -> Action? {
+        page.actions.first { $0.kind == .form && ($0.fields ?? []).contains { filled.contains(fieldKey($0.id, on: page)) } }
     }
 
-    /// El de esta página, con lo que ya se escribió y sin lo que es ruido.
+    /// El de esta página, con lo que ya se escribió.
     private func pageForm(_ page: ExtractedPage) -> Action? {
-        Self.pageForm(page, filled: filledFields, skipping: noiseIDs(of: page))
+        Self.pageForm(page, filled: filledFields)
     }
 
     /// Lo que Gemini marcó como ruido en esta página, si es ésta.
@@ -2949,7 +2967,6 @@ final class Assistant {
             "pagina": kinds?.page ?? "", "p_pagina": kinds.map { String(format: "%.2f", $0.pageConfidence) } ?? "",
             "modelo": orientation.kind.rawValue,
             "aviso": kinds?.notice ?? "", "p_aviso": kinds.map { String(format: "%.2f", $0.noticeConfidence) } ?? "",
-            "aviso_extractor": page.overlay?.kind.rawValue ?? "",
         ])
         known[page.url] = (kind, [])
         // En una portada, los titulares que se nombran y los botones son los
@@ -2965,8 +2982,8 @@ final class Assistant {
         // Tampoco entre los titulares, que elige el código: en StubHub, con
         // cara de portada, los "titulares" eran partidos de Miami que Gemini
         // ya había marcado como ruido, y se decían igual.
-        let noisyTitles = Set(noisyLabels.map(Self.tidy))
-        lead = lead.filter { !noisyTitles.contains(Self.tidy($0)) }
+        let noisyTitles = Set(noisyLabels)
+        lead = lead.filter { !noisyTitles.contains($0) }
 
         remember(orientation.text, on: page)
         if lead.isEmpty {
@@ -3145,9 +3162,11 @@ final class Assistant {
             }
             // "Aviso de la página tapa la página" se oía roto: el título de un
             // aviso genérico ya dice "página". Se nombra lo que tapa y listo.
-            say(overlay.kind == .other
+            // Qué es lo dice Jev; el extractor sólo sabe que tapa.
+            let kind = noticeKind(page) ?? overlay.kind
+            say(kind == .other
                 ? "Hay un aviso encima de la página."
-                : "\(overlay.kind.title) encima de la página.")
+                : "\(kind.title) encima de la página.")
             if !overlay.choices.isEmpty {
                 say("Opciones: \(overlay.choices.map(\.label).prefix(3).joined(separator: ", ")).")
             } else {
@@ -3509,15 +3528,18 @@ final class Assistant {
         let byID = Dictionary(page.listings.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for entry in page.stream ?? [] {
             // Veinte letras como piso: "Medidas de Milei" y "Dólar hoy" son
-            // etiquetas de sección del ticker, no notas.
+            // etiquetas de sección del ticker, no notas. El titular solo, sin
+            // la hora que la tarjeta le pega ("Hace 34 min"), lo separa el
+            // extractor (`title`); antes lo hacía acá una regla en castellano,
+            // que en 1.398 titulares de 18 diarios ya no sacaba nada.
             if entry.kind == "link", entry.level != nil, let href = entry.href,
-               let label = (entry.title ?? entry.label).map(tidy), label.count >= 20 {
+               let label = entry.title ?? entry.label, label.count >= 20 {
                 if seen.insert(label).inserted, opened.insert(place(href)).inserted { out.append(label) }
             }
             if entry.kind == "listing", let listing = entry.ref.flatMap({ byID[$0] }) {
                 for item in listing.items where item.title.count >= 25 {
                     guard let href = item.href else { continue }
-                    let title = tidy(item.title)
+                    let title = item.title
                     if seen.insert(title).inserted, opened.insert(place(href)).inserted { out.append(title) }
                 }
             }

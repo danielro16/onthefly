@@ -1,0 +1,22 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: http://localhost:8765/dos-formularios.html
+  4 [txt] Abriendo localhost.
+  5 [txt] Estás en «Club Social del Barrio», localhost.
+  6 [txt] Hay un formulario de 1 campo: Correo electrónico.
+  7 [txt] Indicar qué poner y lo completo.
+  8 [H] Vos: poné Juan en el nombre
+  9 [txt] Sin conexión. No puedo entender lo que pedís sin internet.
+ 10 [H] Vos: http://localhost:8765/turno.html
+ 11 [txt] Abriendo localhost.
+ 12 [txt] Estás en «Turnos de la pileta», localhost.
+ 13 [txt] Hay un formulario de 3 campos: DNI, Día, Hora.
+ 14 [txt] Indicar qué poner y lo completo.
+ 15 [H] Vos: Volver a «Club Social del Barrio»
+ 16 [txt] Volviendo.
+ 17 [txt] De vuelta en «Club Social del Barrio», localhost.
+ 18 [btn] Leer la página  (Primera de 3 opciones.)
+ 19 [btn] Resumir la página
+ 20 [btn] Otra cosa
+ 21 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 22 [btn] Enviar

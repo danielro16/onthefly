@@ -15,11 +15,33 @@ actor PageAnalyzer {
 
     // MARK: - ¿Compromete?
 
+    /// El control como lo muestra la página: qué es, dónde está y a dónde
+    /// lleva. Con el nombre solo, «Cart» del menú de Demoblaze —un link a
+    /// cart.html— daba 0,18–0,20 contra un umbral de 0,2, y a veces quedaba
+    /// para la mano; así, 0,07. Medido en 25 controles: los links de
+    /// navegación bajan y lo que compromete queda igual.
     private struct CommitState: Encodable, Sendable {
         let button: String
+        let kind: String
+        let region: String
+        /// Nil —null, no ausente— si no lleva a ningún lado.
+        let address: String?
         let fields: [String]
         let site: String
         let title: String
+
+        private enum CodingKeys: String, CodingKey { case button, kind, region, address, fields, site, title }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(button, forKey: .button)
+            try container.encode(kind, forKey: .kind)
+            try container.encode(region, forKey: .region)
+            try container.encode(address, forKey: .address)
+            try container.encode(fields, forKey: .fields)
+            try container.encode(site, forKey: .site)
+            try container.encode(title, forKey: .title)
+        }
     }
 
     /// Qué tan probable es que apretar este botón comprometa a la persona:
@@ -36,7 +58,10 @@ actor PageAnalyzer {
         let fields = (control.fields ?? []).filter { $0.type != "hidden" }.map { field in
             "\(field.name) (\(field.type)\(field.autocomplete.map { ", \($0)" } ?? ""))"
         }
-        let state = CommitState(button: button, fields: fields, site: page.displaySite, title: page.title)
+        let address = control.href.flatMap { $0.isEmpty ? nil : $0 }
+        let state = CommitState(
+            button: button, kind: control.kind.rawValue, region: control.region, address: address,
+            fields: fields, site: page.displaySite, title: page.title)
         let question = JevClient.Question.boolean(
             instructions: pregunta.instructions,
             whenTrue: pregunta.criteria?["true"], whenFalse: pregunta.criteria?["false"])

@@ -47,7 +47,9 @@ actor Router {
         var newTask = false
     }
 
-    enum RouterError: Error { case http(Int), transport(String), unusable }
+    /// `transport`: sin red. `failed`: el pedido se cortó por otra cosa —el
+    /// modelo tardó de más—, y se sigue como con cualquier falla del modelo.
+    enum RouterError: Error { case http(Int), transport(String), failed(String), unusable }
 
     private let gemini: Gemini
     private let session: URLSession
@@ -124,7 +126,11 @@ actor Router {
         for attempt in 0..<3 {
             let response: URLResponse
             do { (data, response) = try await session.data(for: request) }
-            catch { throw RouterError.transport(error.localizedDescription) }
+            catch {
+                throw Gemini.offline(error)
+                    ? RouterError.transport(error.localizedDescription)
+                    : RouterError.failed(error.localizedDescription)
+            }
             guard let http = response as? HTTPURLResponse else { throw RouterError.transport("Sin respuesta HTTP") }
             if (200..<300).contains(http.statusCode) { break }
             guard [429, 503, 529].contains(http.statusCode), attempt < 2 else { throw RouterError.http(http.statusCode) }

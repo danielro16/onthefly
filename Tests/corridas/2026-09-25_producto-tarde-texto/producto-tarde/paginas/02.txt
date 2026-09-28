@@ -1,0 +1,16 @@
+http://localhost:8765/producto-tarde.html
+Licuadora de vaso de vidrio 1,5 litros
+
+PAGE: localhost — Licuadora de vaso de vidrio 1,5 litros
+
+PAGE CONTENT (what the person came for):
+Licuadora de vaso de vidrio 1,5 litros
+$ 62.300
+Motor de 800 W, cinco velocidades y función pulso. Cuchillas de acero inoxidable desmontables. Vaso de vidrio apto para lavavajillas.
+Agregar al carrito
+$ 62.300
+Motor de 800 W, cinco velocidades y función pulso. Cuchillas de acero inoxidable desmontables. Vaso de vidrio apto para lavavajillas.
+
+SITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):
+Tienda Norte
+Carrito

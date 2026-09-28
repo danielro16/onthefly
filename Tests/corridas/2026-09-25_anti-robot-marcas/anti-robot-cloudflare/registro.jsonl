@@ -1,0 +1,14 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790363392.404551}
+{"pais": "US", "tipo": "ubicacion", "t": 1790363392.627678}
+{"pais": "US", "tipo": "ubicacion", "t": 1790363392.628186}
+{"tipo": "turno", "texto": "http://localhost:61411/cloudflare.html", "t": 1790363399.014415, "quien": "persona"}
+{"tipo": "botones", "opciones": [], "t": 1790363399.015244}
+{"tipo": "turno", "texto": "Abriendo localhost.", "t": 1790363399.015384, "quien": "jef"}
+{"cola": false, "tipo": "voz", "texto": "Abriendo localhost.", "t": 1790363399.0155602}
+{"tipo": "botones", "t": 1790363399.046932, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"red_ms": 17, "url": "http://localhost:61411/cloudflare.html", "apurada": false, "t": 1790363400.099194, "leida_ms": 625, "tipo": "carga"}
+{"t": 1790363400.099957, "url": "http://localhost:61411/cloudflare.html", "texto": "PAGE: localhost — Um momento…\n\nPAGE CONTENT (what the person came for):\nexemplo.com.br\nVerifique se você é humano concluindo a ação abaixo.\nexemplo.com.br precisa revisar a segurança da sua conexão antes de prosseguir.\nexemplo.com.br\nVerifique se você é humano concluindo a ação abaixo.\nexemplo.com.br precisa revisar a segurança da sua conexão antes de prosseguir.", "titulo": "Um momento…", "tipo": "pagina"}
+{"opciones": [], "t": 1790363400.100062, "tipo": "botones"}
+{"t": 1790363400.100164, "quien": "jef", "texto": "El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, seguimos.", "tipo": "turno"}
+{"tipo": "voz", "t": 1790363400.100306, "texto": "El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, seguimos.", "cola": false}
+{"opciones": ["Ir a la prueba", "Ya la resolví", "Otra cosa"], "t": 1790363400.1003819, "tipo": "botones"}

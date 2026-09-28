@@ -1,0 +1,51 @@
+{"tipo": "botones", "t": 1790353713.524889, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"pais": "US", "t": 1790353713.736514, "tipo": "ubicacion"}
+{"pais": "US", "t": 1790353713.74816, "tipo": "ubicacion"}
+{"texto": "http://localhost:8765/dos-formularios.html", "t": 1790353720.13173, "quien": "persona", "tipo": "turno"}
+{"t": 1790353720.13308, "opciones": [], "tipo": "botones"}
+{"texto": "Abriendo localhost.", "t": 1790353720.133288, "quien": "jef", "tipo": "turno"}
+{"cola": false, "texto": "Abriendo localhost.", "t": 1790353720.133538, "tipo": "voz"}
+{"tipo": "botones", "t": 1790353720.1658769, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"t": 1790353721.222412, "tipo": "carga", "red_ms": 15, "url": "http://localhost:8765/dos-formularios.html", "leida_ms": 627, "apurada": false}
+{"titulo": "Club Social del Barrio", "url": "http://localhost:8765/dos-formularios.html", "texto": "PAGE: localhost — Club Social del Barrio\n\nPAGE CONTENT (what the person came for):\nClub Social del Barrio\nActividades para todas las edades, de lunes a sábado.\nRecibí las novedades\nEscribinos\nPedir un turno para la pileta\nFORM asking for: Correo electrónico — button «Suscribirme»\nFORM asking for: Nombre, Mensaje — button «Enviar mensaje»\nActividades para todas las edades, de lunes a sábado.\nRecibí las novedades\nEscribinos\nPedir un turno para la pileta", "tipo": "pagina", "t": 1790353721.2231112}
+{"t": 1790353721.2232242, "tipo": "botones", "opciones": []}
+{"aviso": "", "p_aviso": "0.00", "aviso_extractor": "", "url": "http://localhost:8765/dos-formularios.html", "sitio": "institution", "pagina": "home", "t": 1790353723.9400969, "modelo": "otra", "tipo": "tipo", "p_sitio": "0.99", "p_pagina": "0.96"}
+{"t": 1790353723.940829, "elementos": [], "tipo": "ruido", "url": "http://localhost:8765/dos-formularios.html"}
+{"texto": "Estás en la página de inicio del Club Social del Barrio, que ofrece actividades para todas las edades, de lunes a sábado. Desde aquí puedes pedir un turno para la pileta, escribir al club o recibir sus novedades.", "quien": "jef", "t": 1790353723.94109, "tipo": "turno"}
+{"texto": "Estás en la página de inicio del Club Social del Barrio, que ofrece actividades para todas las edades, de lunes a sábado. Desde aquí puedes pedir un turno para la pileta, escribir al club o recibir sus novedades.", "t": 1790353723.941607, "cola": true, "tipo": "voz"}
+{"tipo": "botones", "t": 1790353723.941915, "opciones": ["Abrir «Pedir un turno para la pileta»", "Escribir al club", "Recibir novedades del club"]}
+{"tipo": "botones", "t": 1790353723.942065, "opciones": ["Abrir «Pedir un turno para la pileta»", "Escribir al club", "Recibir novedades del club", "Otra cosa"]}
+{"tipo": "turno", "quien": "persona", "texto": "poné Juan en el nombre", "t": 1790353732.011462}
+{"opciones": [], "t": 1790353732.011852, "tipo": "botones"}
+{"reference": "", "question": "", "accion": "completar", "then": "", "rest": "", "tarea": "sigue", "tipo": "decision", "t": 1790353733.98202, "control": "3", "target": ""}
+{"tipo": "jev_adelantado", "usado": "no", "t": 1790353733.982946}
+{"t": 1790353734.8133202, "tipo": "pagina", "url": "http://localhost:8765/dos-formularios.html", "texto": "PAGE: localhost — Club Social del Barrio\n\nPAGE CONTENT (what the person came for):\nClub Social del Barrio\nActividades para todas las edades, de lunes a sábado.\nRecibí las novedades\nEscribinos\nPedir un turno para la pileta\nFORM asking for: Correo electrónico — button «Suscribirme»\nFORM asking for: Nombre, Mensaje — button «Enviar mensaje»\nActividades para todas las edades, de lunes a sábado.\nRecibí las novedades\nEscribinos\nPedir un turno para la pileta", "titulo": "Club Social del Barrio"}
+{"t": 1790353734.8140202, "quedo": "si", "campo": "Nombre", "tipo": "escrito"}
+{"t": 1790353734.814508, "texto": "Listo, escrito en Nombre.", "tipo": "turno", "quien": "jef"}
+{"t": 1790353734.815113, "texto": "Listo, escrito en Nombre.", "cola": false, "tipo": "voz"}
+{"opciones": ["Abrir «Pedir un turno para la pileta»", "Escribir al club", "Recibir novedades del club", "Otra cosa"], "t": 1790353734.815549, "tipo": "botones"}
+{"quien": "persona", "t": 1790353742.175147, "tipo": "turno", "texto": "http://localhost:8765/turno.html"}
+{"tipo": "botones", "opciones": [], "t": 1790353742.175579}
+{"quien": "jef", "t": 1790353742.175699, "tipo": "turno", "texto": "Abriendo localhost."}
+{"t": 1790353742.175815, "tipo": "voz", "cola": false, "texto": "Abriendo localhost."}
+{"leida_ms": 612, "apurada": false, "url": "http://localhost:8765/turno.html", "t": 1790353742.7990031, "tipo": "carga", "red_ms": 6}
+{"titulo": "Turnos de la pileta", "url": "http://localhost:8765/turno.html", "t": 1790353742.799514, "tipo": "pagina", "texto": "PAGE: localhost — Turnos de la pileta\n\nPAGE CONTENT (what the person came for):\nTurnos de la pileta\nFORM asking for: DNI, Día, Hora — button «Pedir turno»"}
+{"t": 1790353742.7996922, "opciones": [], "tipo": "botones"}
+{"p_pagina": "1.00", "pagina": "form", "aviso_extractor": "", "modelo": "otra", "aviso": "", "p_aviso": "0.00", "tipo": "tipo", "p_sitio": "0.72", "sitio": "institution", "url": "http://localhost:8765/turno.html", "t": 1790353745.144455}
+{"elementos": [], "t": 1790353745.14543, "url": "http://localhost:8765/turno.html", "tipo": "ruido"}
+{"quien": "jef", "t": 1790353745.145781, "tipo": "turno", "texto": "Estás en el formulario para pedir un turno de la pileta; solicita el DNI, el día y la hora."}
+{"cola": true, "t": 1790353745.146504, "tipo": "voz", "texto": "Estás en el formulario para pedir un turno de la pileta; solicita el DNI, el día y la hora."}
+{"t": 1790353745.1468, "opciones": ["Pedir turno para la pileta"], "tipo": "botones"}
+{"t": 1790353745.1473122, "opciones": ["Pedir turno para la pileta", "Volver a «Club Social del Barrio»", "Otra cosa"], "tipo": "botones"}
+{"t": 1790353750.759815, "opciones": [], "tipo": "botones"}
+{"texto": "Pedir turno para la pileta", "t": 1790353750.7603722, "quien": "persona", "tipo": "turno"}
+{"texto": "«Pedir turno para la pileta»: ¿qué escribo? Se puede escribir o dictar acá abajo.", "t": 1790353750.762567, "quien": "jef", "tipo": "turno"}
+{"cola": false, "texto": "«Pedir turno para la pileta»: ¿qué escribo? Se puede escribir o dictar acá abajo.", "t": 1790353750.763339, "tipo": "voz"}
+{"opciones": ["Pedir turno para la pileta", "Volver a «Club Social del Barrio»", "Otra cosa"], "tipo": "botones", "t": 1790353750.763801}
+{"quien": "persona", "t": 1790353760.340915, "tipo": "turno", "texto": "DNI terminado en 456"}
+{"tipo": "botones", "t": 1790353760.343193, "opciones": []}
+{"tipo": "pagina", "titulo": "Turnos de la pileta", "url": "http://localhost:8765/turno.html", "t": 1790353761.134804, "texto": "PAGE: localhost — Turnos de la pileta\n\nPAGE CONTENT (what the person came for):\nTurnos de la pileta\nFORM asking for: DNI, Día, Hora — button «Pedir turno»"}
+{"quedo": "si", "tipo": "escrito", "campo": "DNI", "t": 1790353761.135562}
+{"tipo": "turno", "quien": "jef", "t": 1790353761.13592, "texto": "Listo. ¿Qué pongo en «Día»?"}
+{"cola": false, "tipo": "voz", "t": 1790353761.136282, "texto": "Listo. ¿Qué pongo en «Día»?"}
+{"t": 1790353761.136523, "opciones": ["Pedir turno para la pileta", "Volver a «Club Social del Barrio»", "Otra cosa"], "tipo": "botones"}

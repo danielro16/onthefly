@@ -1,0 +1,11 @@
+http://localhost:8765/producto-tarde.html
+Tienda Norte
+
+PAGE: localhost — Tienda Norte
+
+PAGE CONTENT (what the person came for):
+Agregar al carrito
+
+SITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):
+Tienda Norte
+Carrito

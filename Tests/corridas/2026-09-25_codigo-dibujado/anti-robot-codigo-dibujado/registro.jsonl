@@ -1,0 +1,14 @@
+{"tipo": "botones", "t": 1790363831.282559, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"pais": "US", "tipo": "ubicacion", "t": 1790363831.757386}
+{"pais": "US", "tipo": "ubicacion", "t": 1790363831.75768}
+{"t": 1790363837.856699, "texto": "http://localhost:64997/codigo-dibujado.html", "tipo": "turno", "quien": "persona"}
+{"opciones": [], "tipo": "botones", "t": 1790363837.8576798}
+{"t": 1790363837.8582249, "texto": "Abriendo localhost.", "tipo": "turno", "quien": "jef"}
+{"cola": false, "texto": "Abriendo localhost.", "tipo": "voz", "t": 1790363837.858491}
+{"t": 1790363837.914511, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"t": 1790363839.215754, "tipo": "carga", "red_ms": 95, "url": "http://localhost:64997/codigo-dibujado.html", "leida_ms": 689, "apurada": false}
+{"t": 1790363839.220006, "tipo": "pagina", "texto": "PAGE: localhost — Clave de la Seguridad Social\n\nPAGE CONTENT (what the person came for):\nFORM asking for: un campo sin nombre — button «Continuar»", "url": "http://localhost:64997/codigo-dibujado.html", "titulo": "Clave de la Seguridad Social"}
+{"opciones": [], "tipo": "botones", "t": 1790363839.220179}
+{"quien": "jef", "tipo": "turno", "t": 1790363839.2202911, "texto": "El sitio web pide copiar un código dibujado en una imagen, y eso no lo puedo hacer yo: hace falta resolverlo en la página. Cuando esté resuelto, seguimos."}
+{"t": 1790363839.2204509, "tipo": "voz", "texto": "El sitio web pide copiar un código dibujado en una imagen, y eso no lo puedo hacer yo: hace falta resolverlo en la página. Cuando esté resuelto, seguimos.", "cola": false}
+{"opciones": ["Ir a la prueba", "Ya la resolví", "Otra cosa"], "tipo": "botones", "t": 1790363839.220831}

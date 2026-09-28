@@ -467,9 +467,6 @@
 
         if (tag === "P") {
           const content = inlineContent(el);
-          // A video that did not load says so in a paragraph, four times a
-          // page. Nothing a reader can do with it.
-          if (/video player failed|error code:?\s*\d/i.test(content.text)) continue;
           if (content.text) {
             blocks.push({
               id: nextId(),
@@ -1961,12 +1958,22 @@
     // notice is. Read as an overlay it came out as "Contenido para
     // suscriptores" (one of its links says so) with eight answers, and the
     // other sixty sections were thrown away with it.
+    //
+    // Told apart by shape, not by words. Measured on 56 sites in 14
+    // languages: the menus had 27 to 243 links, the notices 15 at most —
+    // Le Monde's consent with its partners, Jack Daniel's age gate with its
+    // countries. Fewer links make a menu only in a navigation landmark with
+    // nothing to answer: Jägermeister's age gate carries a nav of five links
+    // and a form, and it was being skipped as a menu.
     function isMenu(el) {
       const links = el.querySelectorAll("a[href]").length;
-      const many = links >= 12
-        || (links >= 5 && !!(el.matches("nav, [role=navigation]") || el.querySelector("nav, [role=navigation]")));
-      // A consent manager lists its partners, and those are links too.
-      return many && !/cookie|consentimiento|consent|gdpr|rgpd/i.test(textOf(el).slice(0, 600));
+      if (links >= 20) return true;
+      if (links < 5) return false;
+      const nav = !!(el.matches("nav, [role=navigation]") || el.querySelector("nav, [role=navigation]"));
+      const answers = Array.prototype.some.call(
+        el.querySelectorAll("button, [role=button], input:not([type=hidden]), select, textarea"),
+        function (c) { return !isHidden(c); });
+      return nav && !answers;
     }
     for (const el of document.querySelectorAll("[role=dialog], [role=alertdialog], [aria-modal=true], dialog[open]")) {
       if (!isHidden(el) && !isPopupList(el) && !isMenu(el)) candidates.push(el);
@@ -2036,8 +2043,12 @@
       // Kept so the action inventory can skip what belongs to the overlay.
       element: el,
       overlay: {
-        // What it is, so the app can say it plainly.
-        kind: classifyOverlay(text, choices),
+        // That something covers the page, by its shape. What it asks —
+        // cookies, a subscription, an age — Jev says from its text and its
+        // buttons, in any language (`aviso` in criterios.json). A list of
+        // words did it here: 17 of 22 real notices, none in Polish, Dutch or
+        // Arabic, and LinkedIn's sign-in wall read as cookies. Jev: 22.
+        kind: "other",
         text: text.slice(0, 400),
         choices: choices,
         links: links,
@@ -2336,18 +2347,6 @@
     }
   }
 
-  /// Names the overlay from its own words. A guess, but a narrow one, and the
-  /// full text travels alongside so the user can judge for themselves.
-  function classifyOverlay(text, choices) {
-    const all = (text + " " + choices.map(function (c) { return c.label; }).join(" ")).toLowerCase();
-    if (/cookie|consentimiento|consent|privacidad|rgpd|gdpr/.test(all)) return "cookies";
-    if (/suscri|subscribe|paywall|seguí leyendo|continuar leyendo|registrate para/.test(all)) return "paywall";
-    if (/newsletter|bolet[ií]n|not[ií]cias por mail/.test(all)) return "newsletter";
-    if (/iniciar sesi[oó]n|log ?in|sign ?in|ingres[aá]/.test(all)) return "login";
-    if (/edad|age|mayor de/.test(all)) return "age";
-    return "other";
-  }
-
   /// Counts what a screen reader would stop on, before any of our work.
   /// Reported so the app can show the user what it saved them, and so the
   /// number stays honest as sites change.
@@ -2389,13 +2388,19 @@
       if (/size=invisible/i.test(src) || f.closest(".grecaptcha-badge")) return false;
       return /recaptcha|hcaptcha|turnstile|challenges\.cloudflare|arkoselabs|funcaptcha/i.test(src) && !isHidden(f);
     });
-    const words = /no soy un robot|i'm not a robot|verific[aá] que (sos|eres)|verify you are human|completá este paso/i;
-    const saysSo = words.test(textOf(document.body).slice(0, 3000));
-    if (!frame && !saysSo) return null;
-    // A form with an invisible reCAPTCHA badge is a form, not a wall. The
-    // passenger-data page carried one and read as "Verificación de
-    // seguridad" over forty fields. A wall says so, or has nothing else.
-    if (frame && !saysSo) {
+    // Cloudflare's own check page hides its widget in a closed shadow root,
+    // so no iframe is found; the page declares itself with its challenge
+    // objects instead, which ordinary pages behind Cloudflare do not carry.
+    // It used to be caught by its words — "verify you are human", "no soy un
+    // robot" —, which only worked in Spanish and English.
+    const cloudflare = typeof window._cf_chl_opt !== "undefined"
+      || !!document.querySelector("#challenge-stage, #challenge-form, #cf-challenge-running");
+    if (!frame && !cloudflare) return null;
+    // A form with a check is a form, not a wall. The passenger-data page
+    // carried one and read as "Verificación de seguridad" over forty fields.
+    // A wall has little else: Mercado Libre's is a heading, «Ir al login»
+    // and a cookie notice.
+    if (!cloudflare) {
       const controls = Array.prototype.filter.call(
         document.querySelectorAll("input:not([type=hidden]), select, textarea, button, a[href]"),
         function (c) { return !isHidden(c); }
@@ -2778,7 +2783,6 @@
       // A line that only repeats what the rebuilt form already says — a
       // field's name, its complaint, the form's notice — is that, said twice.
       if (!content.links.length && content.text.length <= 200 && fieldNames.has(plain(content.text))) return;
-      if (/video player failed|error code:?\s*\d/i.test(content.text)) return;
       putBlock({ id: nextId(), type: type || "paragraph", text: content.text, links: content.links }, anchor);
     }
 
@@ -3807,16 +3811,23 @@ allowedVideoRegex: /^$/,
    * prices arrive two seconds later, and nothing looks again.
    *
    * So every extraction leaves an observer behind for a while. A real
-   * change — twenty nodes or more, not a ticker or an ad slot — followed by
-   * the usual quiet is read again and delivered as a page that changed on
-   * its own. Bounded: a few rounds per route, inside a short window, so a
-   * page that never stops moving cannot keep the reader re-rendering.
+   * change — twenty nodes or a paragraph of text, not a ticker or an ad
+   * slot — followed by the usual quiet is read again and delivered as a
+   * page that changed on its own. Bounded: a few rounds per route, inside
+   * a short window, so a page that never stops moving cannot keep the
+   * reader re-rendering.
    */
   // Ninety seconds, because a checkout took longer than twenty to render
   // its form and the reader kept a spinner; six rounds, so a page that
   // never stops moving still stops being re-read.
   const LATE_WINDOW_MS = 90000;
   const LATE_THRESHOLD = 20;
+  // Few nodes can still be the page. Demoblaze fills its product a second
+  // after loading: name, price and description, nine nodes and 175
+  // characters. Read before that, the store was described as empty and
+  // «¿cuánto cuesta?» went to Google. A paragraph of new text is a change;
+  // a ticker brings a few characters at a time, an ad slot none.
+  const LATE_TEXT_THRESHOLD = 100;
   const LATE_MAX_ROUNDS = 6;
   /// How long a change may keep churning before it is read anyway.
   const LATE_DEADLINE_MS = 2500;
@@ -3841,6 +3852,7 @@ allowedVideoRegex: /^$/,
     }
 
     let pending = 0;
+    let pendingText = 0;
     let quiet = null;
     let deadline = null;
 
@@ -3863,8 +3875,9 @@ allowedVideoRegex: /^$/,
           continue;
         }
         pending += weight(record.addedNodes) + weight(record.removedNodes);
+        for (const node of record.addedNodes) pendingText += (node.textContent || "").trim().length;
       }
-      if (pending < LATE_THRESHOLD) return;
+      if (pending < LATE_THRESHOLD && pendingText < LATE_TEXT_THRESHOLD) return;
       // Wait for quiet, but not forever. A spinner animating by class
       // never leaves 600 ms of silence, and the checkout's passenger
       // form sat there unread until the person pressed "Leer de nuevo".

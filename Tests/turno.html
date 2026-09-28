@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Turnos de la pileta</title>
+<!--
+  Un formulario cuyos campos llevan las mismas marcas que los de
+  dos-formularios.html. Lo escrito allá no está escrito acá.
+  Servida con: python3 -m http.server 8765 --directory Tests
+-->
+</head>
+<body>
+<main>
+<h1>Turnos de la pileta</h1>
+<form action="redirigido.html">
+<label for="dni">DNI</label>
+<input id="dni" name="dni" inputmode="numeric">
+<label for="dia">Día</label>
+<input id="dia" name="dia">
+<label for="hora">Hora</label>
+<input id="hora" name="hora">
+<button type="submit">Pedir turno</button>
+</form>
+</main>
+</body>
+</html>

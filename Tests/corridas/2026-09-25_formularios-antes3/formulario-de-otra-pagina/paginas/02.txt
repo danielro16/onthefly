@@ -1,0 +1,17 @@
+http://localhost:8765/dos-formularios.html
+Club Social del Barrio
+
+PAGE: localhost — Club Social del Barrio
+
+PAGE CONTENT (what the person came for):
+Club Social del Barrio
+Actividades para todas las edades, de lunes a sábado.
+Recibí las novedades
+Escribinos
+Pedir un turno para la pileta
+FORM asking for: Correo electrónico — button «Suscribirme»
+FORM asking for: Nombre, Mensaje — button «Enviar mensaje»
+Actividades para todas las edades, de lunes a sábado.
+Recibí las novedades
+Escribinos
+Pedir un turno para la pileta

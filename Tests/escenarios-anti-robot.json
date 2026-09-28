@@ -35,5 +35,27 @@
         "escribir": "¿cuánto sale el más barato?"
       }
     ]
+  },
+  {
+    "id": "anti-robot-cloudflare",
+    "persona": "Vive en Brasil, ciega. Un sitio la frena con la página de espera de Cloudflare, en portugués.",
+    "objetivo": "Que JEF reconozca la prueba anti-robot aunque la página no diga nada en castellano ni en inglés, y lo cuente, en vez de describir una página vacía.",
+    "pasos": [
+      {
+        "escribir": "{servidor}/cloudflare.html"
+      }
+    ],
+    "servir": "Tests/fixtures/anti-robot"
+  },
+  {
+    "id": "anti-robot-codigo-dibujado",
+    "persona": "Ciega. Entra a un sistema del Estado que pide copiar un código dibujado en una imagen.",
+    "objetivo": "Que JEF reconozca el código dibujado por el nombre que le da el código de la página, y diga que hay que resolverlo en la página, en vez de preguntar qué escribir.",
+    "servir": "Tests/fixtures/anti-robot",
+    "pasos": [
+      {
+        "escribir": "{servidor}/codigo-dibujado.html"
+      }
+    ]
   }
 ]

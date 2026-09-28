@@ -1,0 +1,35 @@
+{"t": 1790363289.772979, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones"}
+{"pais": "US", "tipo": "ubicacion", "t": 1790363290.024764}
+{"pais": "US", "tipo": "ubicacion", "t": 1790363290.025107}
+{"quien": "persona", "t": 1790363296.318821, "tipo": "turno", "texto": "http://localhost:61304/misma-pagina.html"}
+{"t": 1790363296.319699, "opciones": [], "tipo": "botones"}
+{"quien": "jef", "t": 1790363296.319865, "tipo": "turno", "texto": "Abriendo localhost."}
+{"t": 1790363296.3200521, "tipo": "voz", "cola": false, "texto": "Abriendo localhost."}
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790363296.351459}
+{"leida_ms": 627, "tipo": "carga", "url": "http://localhost:61304/misma-pagina.html", "t": 1790363297.4099069, "red_ms": 22, "apurada": false}
+{"tipo": "pagina", "texto": "PAGE: localhost — Auriculares bluetooth\n\nPAGE CONTENT (what the person came for):\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.\nPor seguridad, completá este paso\nConfirmá que no sos un robot para ver los resultados.", "url": "http://localhost:61304/misma-pagina.html", "t": 1790363297.410553, "titulo": "Auriculares bluetooth"}
+{"opciones": [], "t": 1790363297.410672, "tipo": "botones"}
+{"tipo": "turno", "texto": "El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, seguimos.", "quien": "jef", "t": 1790363297.410771}
+{"tipo": "voz", "texto": "El sitio web pide resolver una prueba anti-robot, y esa prueba no la puedo resolver yo: hace falta resolverla en la página. «Ir a la prueba» lleva hasta ella. Cuando esté resuelta, seguimos.", "t": 1790363297.410921, "cola": false}
+{"opciones": ["Ir a la prueba", "Ya la resolví", "Otra cosa"], "t": 1790363297.410993, "tipo": "botones"}
+{"t": 1790363306.575354, "opciones": [], "tipo": "botones"}
+{"texto": "Ir a la prueba", "quien": "persona", "t": 1790363306.576181, "tipo": "turno"}
+{"texto": "La prueba quedó a la vista, en la página, con el asistente cerrado. Cuando esté resuelta, sigo solo y el asistente vuelve; si no, está el botón «Asistente».", "quien": "jef", "t": 1790363306.576374, "tipo": "turno"}
+{"cola": false, "tipo": "voz", "t": 1790363306.576836, "texto": "La prueba quedó a la vista, en la página, con el asistente cerrado. Cuando esté resuelta, sigo solo y el asistente vuelve; si no, está el botón «Asistente»."}
+{"t": 1790363306.5770159, "opciones": ["Ya la resolví", "Ir a la prueba", "Otra cosa"], "tipo": "botones"}
+{"t": 1790363309.415132, "titulo": "Auriculares bluetooth", "texto": "PAGE: localhost — Auriculares bluetooth\n\nPAGE CONTENT (what the person came for):\nAuriculares bluetooth\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499\nAuriculares Vincha Bluetooth con Micrófono $24.990\nAuriculares con Cancelación de Ruido $89.900\nEncontramos tres auriculares bluetooth disponibles con envío gratis a todo el país, ordenados por precio de menor a mayor.\nAuriculares In Ear Bluetooth Básicos $12.499, Auriculares Vincha Bluetooth con Micrófono $24.990, Auriculares con Cancelación de Ruido $89.900", "tipo": "pagina", "url": "http://localhost:61304/misma-pagina.html"}
+{"t": 1790363309.415601, "quien": "jef", "texto": "Listo, ya pasamos la verificación.", "tipo": "turno"}
+{"cola": false, "t": 1790363309.416043, "texto": "Listo, ya pasamos la verificación.", "tipo": "voz"}
+{"opciones": [], "tipo": "botones", "t": 1790363309.416175}
+{"url": "http://localhost:61304/misma-pagina.html", "sitio": "store", "tipo": "tipo", "t": 1790363312.09795, "pagina": "list", "p_sitio": "0.95", "aviso": "", "p_pagina": "0.54", "modelo": "otra", "p_aviso": "0.00"}
+{"elementos": [], "t": 1790363312.098805, "url": "http://localhost:61304/misma-pagina.html", "tipo": "ruido"}
+{"t": 1790363312.099153, "quien": "jef", "texto": "Esta tienda muestra tres auriculares bluetooth disponibles, con envío gratis a todo el país y ordenados de menor a mayor precio. ¿Cuál de los tres auriculares necesitas?", "tipo": "turno"}
+{"texto": "Esta tienda muestra tres auriculares bluetooth disponibles, con envío gratis a todo el país y ordenados de menor a mayor precio. ¿Cuál de los tres auriculares necesitas?", "cola": true, "tipo": "voz", "t": 1790363312.0996408}
+{"tipo": "botones", "t": 1790363312.100194, "opciones": ["Auriculares In Ear Bluetooth Básicos", "Auriculares Vincha Bluetooth con Micrófono", "Auriculares con Cancelación de Ruido"]}
+{"tipo": "botones", "t": 1790363312.1003551, "opciones": ["Auriculares In Ear Bluetooth Básicos", "Auriculares Vincha Bluetooth con Micrófono", "Auriculares con Cancelación de Ruido", "Otra cosa"]}
+{"tipo": "turno", "t": 1790363338.3212938, "texto": "¿cuánto sale el más barato?", "quien": "persona"}
+{"tipo": "botones", "t": 1790363338.323493, "opciones": []}
+{"control": "", "tipo": "decision", "target": "", "then": "", "tarea": "sigue", "reference": "", "accion": "responder", "question": "¿Cuánto cuesta el auricular Bluetooth más barato?", "t": 1790363341.2071462, "rest": ""}
+{"texto": "El más barato, los Auriculares In Ear Bluetooth Básicos, cuesta $12.499.", "quien": "jef", "t": 1790363342.432541, "tipo": "turno"}
+{"texto": "El más barato, los Auriculares In Ear Bluetooth Básicos, cuesta $12.499.", "cola": false, "t": 1790363342.432852, "tipo": "voz"}
+{"t": 1790363342.433008, "opciones": ["Abrir «Auriculares In Ear Bluetooth Básicos»", "Abrir «Auriculares Vincha Bluetooth con Micrófono»", "Abrir «Auriculares con Cancelación de Ruido»", "Otra cosa"], "tipo": "botones"}
