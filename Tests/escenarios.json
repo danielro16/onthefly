@@ -979,5 +979,18 @@
         "escribir": "telegraaf.nl"
       }
     ]
+  },
+  {
+    "id": "mi-argentina",
+    "persona": "Ciega, de Argentina. Quiere entrar a Mi Argentina desde el portal del Estado.",
+    "objetivo": "Que JEF encuentre el link «Ir a Mi Argentina» —que una lista de palabras escondía por empezar con «Ir a»— y la lleve.",
+    "pasos": [
+      {
+        "escribir": "argentina.gob.ar"
+      },
+      {
+        "escribir": "entrá a Mi Argentina"
+      }
+    ]
   }
 ]
