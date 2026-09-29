@@ -992,5 +992,18 @@
         "escribir": "entrá a Mi Argentina"
       }
     ]
+  },
+  {
+    "id": "tren-trenitalia",
+    "persona": "Ciega, habla castellano, está de viaje en Italia. Quiere un tren de Roma a Milán para mañana.",
+    "objetivo": "Que JEF abra el formulario de verdad (detrás de «Biglietti»), lo complete con lo que ella dijo y busque, sin apretar un botón equivocado y sin inventar un formulario con los casilleros de muestra de la portada.",
+    "pasos": [
+      {
+        "escribir": "trenitalia.com"
+      },
+      {
+        "escribir": "quiero un tren de Roma a Milán mañana"
+      }
+    ]
   }
 ]

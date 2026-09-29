@@ -1179,7 +1179,6 @@
      * swallows the page. Biggest buttons first, so a box's prominent button
      * is the one that claims it.
      */
-    const SUBMIT_WORDS = /\b(buscar|search|enviar|send|submit|ingresar|entrar|login|iniciar|acceder|continuar|siguiente|next|comprar|pagar|reservar|suscrib\w*|registr\w*|sign|aplicar|apply|confirmar|calcular|cotizar|consultar|ir|go|ok)\b/i;
 
     function area(el) {
       const rect = el.getBoundingClientRect();
@@ -1192,9 +1191,28 @@
         .filter(function (c) { return !isHidden(c) && !c.closest("form"); });
     }
 
+    /*
+     * Whether a button sends, by what the page declares, in any language. A
+     * submit says so. A button that opens something — a menu, a date
+     * picker, "1 Pasajero/a, Economy" — says so too (aria-expanded,
+     * aria-haspopup, aria-controls, a toggle's aria-pressed, the role of a
+     * tab or a switch), and it does not send. The rest act, and one of them
+     * sends a box's fields when it comes after them. This used to be some
+     * 35 words in Spanish and English ("buscar", "enviar", "go", "ok"…),
+     * and on Trenitalia, in Italian, it took «Biglietti» — the button that
+     * opens the real ticket form — for the one that sends the fields
+     * beneath it.
+     */
     function isSubmitLike(button) {
-      const label = labelFor(button) || button.getAttribute("value") || "";
-      return button.matches("[type=submit]") || SUBMIT_WORDS.test(label);
+      if (button.matches("[type=submit], input[type=image]")) return true;
+      return !button.matches(
+        "[aria-expanded], [aria-haspopup], [aria-controls], [aria-pressed], "
+        + "[role=tab], [role=switch], [role=checkbox], [role=menuitem], [role=combobox], [role=option]");
+    }
+
+    /// Whether a button sits after a control, as a form's button does.
+    function follows(button, control) {
+      return !!(control.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING);
     }
 
     function defactoForms() {
@@ -1223,7 +1241,14 @@
           if (box === document.body || box === document.documentElement) break;
           const controls = looseControls(box);
           if (controls.length > 30) break;
-          if (controls.length >= needed) { claimed = box; break; }
+          // Small, as when it grows below: a carousel's button further down
+          // would otherwise reach up to the search box above it.
+          if (textOf(box).length > 2000) break;
+          // A button that does not say it submits sends only what comes
+          // before it.
+          const before = button.matches("[type=submit], input[type=image]")
+            ? controls : controls.filter(function (c) { return follows(button, c); });
+          if (before.length >= needed) { claimed = box; break; }
         }
         if (!claimed) continue;
 
@@ -1244,6 +1269,10 @@
           parent = parent.parentElement;
         }
 
+        // And it comes after all of them, as a form's button does: the one
+        // that swaps origin and destination sits between the two fields.
+        if (!button.matches("[type=submit], input[type=image]")
+            && looseControls(claimed).some(function (c) { return !follows(button, c); })) continue;
         if (found.some(function (f) { return f.box === claimed || f.box.contains(claimed) || claimed.contains(f.box); })) continue;
         found.push({ box: claimed, submit: button });
       }
