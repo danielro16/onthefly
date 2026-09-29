@@ -1,0 +1,18 @@
+https://id.argentina.gob.ar/ingresar/?next=/authorize/%3Fclient_id%3D613410%26response_type%3Dcode%26scope%3Dopenid%2Bprofile%2Bemail%2Boptional%26redirect_uri%3Dhttps%3A//mi.argentina.gob.ar/_oauth/oidc%26state%3DeyJsb2dpblN0eWxlIjoicmVkaXJlY3QiLCJjcmVkZW50aWFsVG9rZW4iOiJmZDJBQ2NxV0w0U2V3QWRGOSIsImlzQ29yZG92YSI6ZmFsc2UsInJlZGlyZWN0VXJsIjoiaHR0cHM6Ly9taS5hcmdlbnRpbmEuZ29iLmFyLyJ9
+Ingresar | Mi Argentina
+
+PAGE: id.argentina.gob.ar — Ingresar
+
+PAGE CONTENT (what the person came for):
+Pasar al contenido principal
+¿Olvidaste tu contraseña?
+¿No tenés cuenta?
+Creá tu cuenta
+FORM asking for: CUIL, Contraseña (secreto) — button «Ingresar»
+Pasar al contenido principal
+
+SITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):
+Mi Argentina
+miArgentina
+Preguntas frecuentes
+Términos y condiciones

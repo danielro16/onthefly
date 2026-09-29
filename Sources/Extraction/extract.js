@@ -597,27 +597,78 @@
     const reported = new Set();
 
     /*
-     * Chrome that is never a user task. Measured against a real airline home
-     * page, where a consent banner and a carousel ate 7 of the 40 slots and
-     * pushed real tasks past the cap.
+     * Chrome that is never a user task, told by its shape. Measured against
+     * a real airline home page, where a consent banner and a carousel ate 7
+     * of the 40 slots and pushed real tasks past the cap.
+     *
+     * A list of words in Spanish and English did it — «ir a», «skip to»,
+     * «anterior», «siguiente», «aceptar cookies», «entendido» — and on 86
+     * sites it hid more than chrome: of twenty «Ir a…», three were skip
+     * links, and the rest were «Ir a Mi Argentina», «Ir a videos», «Ir a la
+     * página 2». A bare number is still a carousel's dot, in any language.
      */
     const NOISE = [
       /^\d+$/,                                        // carousel dots
-      // Cookie consent only — the overlay reports those as its choices. A
-      // bare "Aceptar" is a confirm button, and the fare warning's one was
-      // being thrown away with the banners'.
-      /^(aceptar|accept|rechazar|reject|permitir|allow)\b.*(cookie|esencial|essential|todas|all)/i,
-      // "Cerrar" is NOT here on purpose. An overlay's own controls are
-      // already excluded, so the only close buttons that reach this list
-      // belong to modals we failed to detect — and there, closing is the
-      // one way out. Discarding it turned the modal into a trap.
-      /^(ok|got it|entendido)\b/i,
-      /^(ir a|skip to|saltar a)\b/i,                  // skip links
-      /^(cerrar alerta|close alert)$/i,
-      /^(quitar|agregar|remove|add) (uno|one)$/i,     // stepper controls
-      /^(anterior|siguiente|previous|next)$/i,
-      /^(página|page)\s*\d+$/i,                    // carousel pagination
     ];
+
+    // A skip link: it jumps to a place in this same page, sits off the
+    // screen until a keyboard reaches it (Aerolíneas at -1000 px, El Mundo
+    // at -32760 px), and comes before the page's content, which is where a
+    // keyboard starts. Xataka's sign-in links are also off the screen, in a
+    // closed panel, but after the content: those are not skip links.
+    function isSkipLink(el) {
+      if (el.tagName !== "A") return false;
+      const href = el.getAttribute("href") || "";
+      if (href.length < 2 || href.charAt(0) !== "#") return false;
+      let target = null;
+      try { target = document.getElementById(decodeURIComponent(href.slice(1))); } catch (_) {}
+      if (!target) return false;
+      const rect = el.getBoundingClientRect();
+      if (!(rect.right <= 0 || rect.left >= window.innerWidth || rect.bottom <= 0)) return false;
+      // It lands on the content, or on a control (El Mundo's «Saltar a
+      // navegación» lands on the menu button) — not on a panel.
+      const main = document.querySelector("main, [role=main]");
+      const toContent = !!main && (target === main || main.contains(target) || target.contains(main));
+      if (!toContent && !target.matches("a[href], button, input, select, textarea")) return false;
+      const content = main || target;
+      return !content.contains(el) && !!(el.compareDocumentPosition(content) & Node.DOCUMENT_POSITION_FOLLOWING);
+    }
+
+    // A carousel's own arrows and dots: small controls that go nowhere,
+    // beside a strip that clips or scrolls what runs off the side of the
+    // screen — 9033 px wide in a 390 px screen on 20minutos, and the same on
+    // Página/12, IKEA and Trenitalia. Buttons only: not what the page
+    // declares to open something (a menu, a Wikipedia section), nor a
+    // form's button (a search box beside a strip), nor a link («Vídeos, Ver
+    // todos» beside Público's videos).
+    function isCarouselControl(el) {
+      if (el.tagName === "A" || el.matches("[aria-expanded], [aria-haspopup], [type=submit]") || el.closest("form")) return false;
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 60 || rect.height > 60) return false;
+      function strip(box) {
+        const inside = [box].concat(Array.prototype.slice.call(box.getElementsByTagName("*"), 0, 1500));
+        return inside.some(function (inner) {
+          return inner.clientWidth > 100 && inner.scrollWidth > inner.clientWidth + 40
+            && window.getComputedStyle(inner).overflowX !== "visible";
+        });
+      }
+      // What it moves, when the page says so: Welt's «mehr» controls its
+      // sections slider.
+      const controls = el.getAttribute("aria-controls");
+      if (controls) {
+        const target = document.getElementById(controls);
+        return !!target && strip(target);
+      }
+      // Otherwise, beside the strip — but not in the header or the menu,
+      // where a strip of sections sits beside the menu's own button (El
+      // Mundo, The Guardian, Absolut).
+      if (el.closest("header, nav, [role=banner], [role=navigation]")) return false;
+      for (let box = el.parentElement, depth = 0; box && depth < 2; box = box.parentElement, depth++) {
+        if (box.getElementsByTagName("*").length > 1500) break;
+        if (strip(box)) return true;
+      }
+      return false;
+    }
 
     function isNoise(label) {
       if (label.length < 3) return true;
@@ -647,10 +698,13 @@
         action.hints = hints;
       }
       if (!action.unnamed && (!action.label || isNoise(action.label))) return;
+      if (element && element.nodeType === Node.ELEMENT_NODE && (isSkipLink(element) || isCarouselControl(element))) return;
       // Controls the overlay owns are reported as its choices, not as page
       // actions. Listing them twice would also mean stamping one element with
       // two ids, and the second stamp wins: the action becomes unpressable.
-      if (excluded && element && excluded.contains(element)) return;
+      // So are those of the other boxes on top — the cookie notice under an
+      // age gate —: they answer that box, when it is its turn.
+      if (excluded && element && excluded.some(function (box) { return box.contains(element); })) return;
       if (element && reported.has(element)) return;
       // Same label twice is the same link to a user, however the markup
       // differs (mobile nav duplicating desktop nav is the usual culprit).
@@ -1125,7 +1179,6 @@
      * swallows the page. Biggest buttons first, so a box's prominent button
      * is the one that claims it.
      */
-    const SUBMIT_WORDS = /\b(buscar|search|enviar|send|submit|ingresar|entrar|login|iniciar|acceder|continuar|siguiente|next|comprar|pagar|reservar|suscrib\w*|registr\w*|sign|aplicar|apply|confirmar|calcular|cotizar|consultar|ir|go|ok)\b/i;
 
     function area(el) {
       const rect = el.getBoundingClientRect();
@@ -1138,9 +1191,28 @@
         .filter(function (c) { return !isHidden(c) && !c.closest("form"); });
     }
 
+    /*
+     * Whether a button sends, by what the page declares, in any language. A
+     * submit says so. A button that opens something — a menu, a date
+     * picker, "1 Pasajero/a, Economy" — says so too (aria-expanded,
+     * aria-haspopup, aria-controls, a toggle's aria-pressed, the role of a
+     * tab or a switch), and it does not send. The rest act, and one of them
+     * sends a box's fields when it comes after them. This used to be some
+     * 35 words in Spanish and English ("buscar", "enviar", "go", "ok"…),
+     * and on Trenitalia, in Italian, it took «Biglietti» — the button that
+     * opens the real ticket form — for the one that sends the fields
+     * beneath it.
+     */
     function isSubmitLike(button) {
-      const label = labelFor(button) || button.getAttribute("value") || "";
-      return button.matches("[type=submit]") || SUBMIT_WORDS.test(label);
+      if (button.matches("[type=submit], input[type=image]")) return true;
+      return !button.matches(
+        "[aria-expanded], [aria-haspopup], [aria-controls], [aria-pressed], "
+        + "[role=tab], [role=switch], [role=checkbox], [role=menuitem], [role=combobox], [role=option]");
+    }
+
+    /// Whether a button sits after a control, as a form's button does.
+    function follows(button, control) {
+      return !!(control.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING);
     }
 
     function defactoForms() {
@@ -1169,7 +1241,14 @@
           if (box === document.body || box === document.documentElement) break;
           const controls = looseControls(box);
           if (controls.length > 30) break;
-          if (controls.length >= needed) { claimed = box; break; }
+          // Small, as when it grows below: a carousel's button further down
+          // would otherwise reach up to the search box above it.
+          if (textOf(box).length > 2000) break;
+          // A button that does not say it submits sends only what comes
+          // before it.
+          const before = button.matches("[type=submit], input[type=image]")
+            ? controls : controls.filter(function (c) { return follows(button, c); });
+          if (before.length >= needed) { claimed = box; break; }
         }
         if (!claimed) continue;
 
@@ -1190,6 +1269,10 @@
           parent = parent.parentElement;
         }
 
+        // And it comes after all of them, as a form's button does: the one
+        // that swaps origin and destination sits between the two fields.
+        if (!button.matches("[type=submit], input[type=image]")
+            && looseControls(claimed).some(function (c) { return !follows(button, c); })) continue;
         if (found.some(function (f) { return f.box === claimed || f.box.contains(claimed) || claimed.contains(f.box); })) continue;
         found.push({ box: claimed, submit: button });
       }
@@ -2042,6 +2125,7 @@
     return {
       // Kept so the action inventory can skip what belongs to the overlay.
       element: el,
+      others: outer.filter(function (o) { return o !== el; }),
       overlay: {
         // That something covers the page, by its shape. What it asks —
         // cookies, a subscription, an age — Jev says from its text and its
@@ -3115,7 +3199,7 @@
     // A human check outranks a cookie notice: nothing else on the page works
     // until it is passed.
     const overlay = detectChallenge() || (found ? found.overlay : null);
-    const actions = collectActions(found ? found.element : null);
+    const actions = collectActions(found ? [found.element].concat(found.others) : null);
     const groups = groupActions(actions);
     const listings = collectListings();
     const original = countStops();
