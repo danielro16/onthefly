@@ -1,0 +1,15 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: trenitalia.com
+  4 [txt] Abriendo trenitalia.com.
+  5 [txt] Estás en la página de inicio de Trenitalia, donde puedes consultar la circulación y comprar billetes. La red de alta velocidad tiene circulación regular; también hay un buscador de billetes con campos de salida y llegada.
+  6 [H] Vos: quiero un tren de Roma a Milán mañana
+  7 [txt] Abriendo «Biglietti».
+  8 [txt] Al pulsar «Biglietti», se abrió en Trenitalia el formulario para buscar billetes. Esta página sirve para buscar el tren de Roma a Milán para mañana: el formulario pide las estaciones de salida y llegada, y muestra una fecha de viaje que tendrás que ajustar.
+  9 [txt] Listo, escrito en Partenza da Stazione di partenza, digita la stazione poi selezionala dall’elenco con i tasti frecce e conferma con invio.
+ 10 [txt] ¿Qué pongo en Arrivo a Stazione di arrivo, digita la stazione poi selezionala dall’elenco con i tasti frecce e conferma con invio? Se puede escribir o dictar acá abajo: va directo a ese campo de la página.
+ 11 [btn] Buscar trenes en Trenitalia  (Primera de 3 opciones.)
+ 12 [btn] 29 Settembre 2026, Mercoledì
+ 13 [btn] Otra cosa
+ 14 [campo] Pedido  = Escribir: Arrivo a Stazione di arrivo, digita la stazione poi selezionala dall’elenco con i tasti frecce e conferma con invio  (Va directo al campo «Arrivo a Stazione di arrivo, digita la stazione poi selezionala dall’elenco con i tasti frecce e conferma con invio» de la página.)
+ 15 [btn] Enviar
