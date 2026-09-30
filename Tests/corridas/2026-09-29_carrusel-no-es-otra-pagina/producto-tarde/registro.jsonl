@@ -1,0 +1,27 @@
+{"tipo": "botones", "t": 1790705157.7817369, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"t": 1790705158.0190291, "tipo": "ubicacion", "pais": "US"}
+{"t": 1790705158.019347, "tipo": "ubicacion", "pais": "US"}
+{"texto": "http://localhost:8765/producto-tarde.html", "t": 1790705164.4026508, "quien": "persona", "tipo": "turno"}
+{"t": 1790705164.403714, "tipo": "botones", "opciones": []}
+{"texto": "Abriendo localhost.", "t": 1790705164.403909, "quien": "jef", "tipo": "turno"}
+{"texto": "Abriendo localhost.", "t": 1790705164.404169, "cola": false, "tipo": "voz"}
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790705164.437581}
+{"t": 1790705165.528678, "leida_ms": 634, "tipo": "carga", "apurada": false, "url": "http://localhost:8765/producto-tarde.html", "red_ms": 24}
+{"texto": "PAGE: localhost — Tienda Norte\n\nPAGE CONTENT (what the person came for):\nAgregar al carrito\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nTienda Norte\nCarrito", "t": 1790705165.52956, "tipo": "pagina", "url": "http://localhost:8765/producto-tarde.html", "titulo": "Tienda Norte"}
+{"opciones": [], "t": 1790705165.5296822, "tipo": "botones"}
+{"tipo": "pagina", "t": 1790705167.019827, "texto": "PAGE: localhost — Licuadora de vaso de vidrio 1,5 litros\n\nPAGE CONTENT (what the person came for):\nLicuadora de vaso de vidrio 1,5 litros\n$ 62.300\nMotor de 800 W, cinco velocidades y función pulso. Cuchillas de acero inoxidable desmontables. Vaso de vidrio apto para lavavajillas.\nAgregar al carrito\n$ 62.300\nMotor de 800 W, cinco velocidades y función pulso. Cuchillas de acero inoxidable desmontables. Vaso de vidrio apto para lavavajillas.\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nTienda Norte\nCarrito", "url": "http://localhost:8765/producto-tarde.html", "titulo": "Licuadora de vaso de vidrio 1,5 litros"}
+{"tipo": "atrasada", "t": 1790705168.615209, "era": "http://localhost:8765/producto-tarde.html", "es": "http://localhost:8765/producto-tarde.html"}
+{"opciones": [], "tipo": "botones", "t": 1790705168.615539}
+{"sitio": "store", "p_sitio": "1.00", "pagina": "product", "p_pagina": "1.00", "p_aviso": "0.00", "tipo": "tipo", "aviso": "", "url": "http://localhost:8765/producto-tarde.html", "modelo": "otra", "t": 1790705171.1882439}
+{"elementos": [], "tipo": "ruido", "t": 1790705171.188667, "url": "http://localhost:8765/producto-tarde.html"}
+{"tipo": "turno", "quien": "jef", "t": 1790705171.188836, "texto": "Estás en la página de producto de Tienda Norte: una licuadora con vaso de vidrio de 1,5 litros, motor de 800 W, cinco velocidades, función de pulso y cuchillas desmontables de acero inoxidable; cuesta $ 62.300."}
+{"tipo": "voz", "t": 1790705171.1891341, "cola": true, "texto": "Estás en la página de producto de Tienda Norte: una licuadora con vaso de vidrio de 1,5 litros, motor de 800 W, cinco velocidades, función de pulso y cuchillas desmontables de acero inoxidable; cuesta $ 62.300."}
+{"tipo": "botones", "t": 1790705171.189364, "opciones": ["Agregar al carrito", "Abrir «Carrito»"]}
+{"tipo": "botones", "t": 1790705171.1894732, "opciones": ["Agregar al carrito", "Abrir «Carrito»", "Otra cosa"]}
+{"quien": "persona", "tipo": "turno", "texto": "¿cuánto cuesta?", "t": 1790705178.251461}
+{"tipo": "botones", "t": 1790705178.2517, "opciones": []}
+{"rest": "", "accion": "responder", "target": "", "reference": "", "control": "", "then": "", "question": "¿Cuánto cuesta la licuadora de vaso de vidrio de 1,5 litros?", "tipo": "decision", "tarea": "sigue", "t": 1790705180.845022}
+{"tipo": "jev_adelantado", "t": 1790705180.845423, "usado": "no"}
+{"texto": "La licuadora cuesta $ 62.300.", "tipo": "turno", "quien": "jef", "t": 1790705183.4333591}
+{"tipo": "voz", "texto": "La licuadora cuesta $ 62.300.", "t": 1790705183.4337978, "cola": false}
+{"t": 1790705183.434027, "opciones": ["Agregar al carrito", "Abrir «Carrito»", "Otra cosa"], "tipo": "botones"}

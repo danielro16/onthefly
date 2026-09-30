@@ -52,13 +52,44 @@ struct ExtractedPage: Codable, Sendable {
     /// JEF le pone a uno que no tenía no es otra página. Un carrito que carga
     /// sus productos después de la página, sí: en Demoblaze se contaba
     /// "no veo ningún producto" con los productos ahí.
+    ///
+    /// Un carrusel que gira, no. En Aerolíneas, cada cinco segundos cambiaba
+    /// una parada de 79 —el link de la oferta a la vista— y «Pausar
+    /// carrusel» volvía a crearse con otra marca; JEF lo tomaba por otra
+    /// página, volvía a empezar dos veces y terminaba en la descripción de
+    /// plantilla. Medido en sitios con carrusel, un giro cambia de 0,3% a
+    /// 3,6% del recorrido sin cambiar cuántas paradas hay; lo que llega
+    /// después —los productos de un carrito, lo que hay detrás de una
+    /// verificación de edad— suma paradas.
     func sameContent(as other: ExtractedPage) -> Bool {
         title == other.title
             && blocks.count == other.blocks.count
             && listings.count == other.listings.count
-            && actions.map(\.id) == other.actions.map(\.id)
-            && streamShape == other.streamShape
+            && sameControls(as: other)
+            && sameShape(as: other)
             && overlay?.text == other.overlay?.text
+    }
+
+    /// Los mismos controles: por su marca, o por su nombre cuando la página
+    /// volvió a crear uno igual.
+    private func sameControls(as other: ExtractedPage) -> Bool {
+        if actions.map(\.id) == other.actions.map(\.id) { return true }
+        func named(_ page: ExtractedPage) -> [String] { page.actions.map { $0.kind.rawValue + "|" + $0.label }.sorted() }
+        return named(self) == named(other)
+    }
+
+    /// El mismo recorrido, o uno con las mismas paradas salvo unas pocas
+    /// cambiadas en su lugar: a lo sumo el 5%, sin sumar ni sacar ninguna.
+    private func sameShape(as other: ExtractedPage) -> Bool {
+        let mine = streamShape, theirs = other.streamShape
+        if mine == theirs { return true }
+        guard mine.count == theirs.count, !mine.isEmpty else { return false }
+        var left = Dictionary(mine.map { ($0, 1) }, uniquingKeysWith: +)
+        var replaced = 0
+        for entry in theirs {
+            if let count = left[entry], count > 0 { left[entry] = count - 1 } else { replaced += 1 }
+        }
+        return Double(replaced) <= Double(mine.count) * 0.05
     }
 
     /// La FORMA del recorrido, para distinguir dos lecturas.
