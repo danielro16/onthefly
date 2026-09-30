@@ -1,0 +1,8 @@
+http://localhost:8765/turno.html
+Turnos de la pileta
+
+PAGE: localhost — Turnos de la pileta
+
+PAGE CONTENT (what the person came for):
+Turnos de la pileta
+FORM asking for: DNI, Día, Hora — button «Pedir turno»

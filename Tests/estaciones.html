@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treni — Cerca il tuo viaggio</title>
+<!--
+  Dos campos con lista, como las estaciones de Trenitalia: se escribe
+  «Roma» y la página ofrece varias estaciones; el campo cuenta cuando se
+  elige una. Patrón ARIA estándar: role=combobox + role=listbox/option.
+  Servida con: python3 -m http.server 8765 --directory Tests
+-->
+<style>
+  .field { position: relative; margin: 12px 0; }
+  ul[role=listbox] { list-style: none; margin: 0; padding: 0; border: 1px solid #999; }
+  ul[role=listbox][hidden] { display: none; }
+  li[role=option] { padding: 8px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Cerca il tuo viaggio</h1>
+<form action="redirigido.html">
+  <div class="field">
+    <label for="da">Partenza</label>
+    <input id="da" name="da" role="combobox" aria-autocomplete="list" aria-controls="lista-da" aria-expanded="false" autocomplete="off">
+    <ul id="lista-da" role="listbox" hidden></ul>
+  </div>
+  <div class="field">
+    <label for="a">Arrivo</label>
+    <input id="a" name="a" role="combobox" aria-autocomplete="list" aria-controls="lista-a" aria-expanded="false" autocomplete="off">
+    <ul id="lista-a" role="listbox" hidden></ul>
+  </div>
+  <button type="submit">Cerca</button>
+</form>
+</main>
+<script>
+var STAZIONI = ["Roma (Tutte le stazioni)", "Roma Termini", "Roma Tiburtina", "Roma Ostiense",
+  "Roma Trastevere", "Roma San Pietro", "Milano (Tutte le stazioni)", "Milano Centrale",
+  "Milano Porta Garibaldi", "Milano Rogoredo", "Napoli Centrale", "Firenze Santa Maria Novella"];
+function combo(inputId, listId) {
+  var input = document.getElementById(inputId), list = document.getElementById(listId);
+  input.addEventListener("input", function () {
+    var q = input.value.trim().toLowerCase();
+    list.innerHTML = "";
+    // Como un buscador de estaciones: responde un rato después.
+    setTimeout(function () {
+      var found = q ? STAZIONI.filter(function (s) { return s.toLowerCase().indexOf(q) !== -1; }) : [];
+      found.forEach(function (s) {
+        var li = document.createElement("li");
+        li.setAttribute("role", "option");
+        li.textContent = s;
+        li.addEventListener("mousedown", function () {
+          input.value = s;
+          list.hidden = true;
+          input.setAttribute("aria-expanded", "false");
+        });
+        list.appendChild(li);
+      });
+      list.hidden = !found.length;
+      input.setAttribute("aria-expanded", found.length ? "true" : "false");
+    }, 400);
+  });
+}
+combo("da", "lista-da");
+combo("a", "lista-a");
+</script>
+</body>
+</html>

@@ -3595,7 +3595,13 @@ allowedVideoRegex: /^$/,
     let scope = null;
     const controls = control.getAttribute("aria-controls") || control.getAttribute("aria-owns");
     if (controls) scope = document.getElementById(controls.split(/\s+/)[0]);
-    if (!scope) scope = control.closest("[role=combobox]");
+    // The combobox that holds the field — not the field itself, which is
+    // where ARIA 1.2 puts the role: on Trenitalia the station input is the
+    // combobox, and its list was looked for inside the input.
+    if (!scope) {
+      const box = control.parentElement && control.parentElement.closest("[role=combobox]");
+      if (box) scope = box;
+    }
     for (let up = control.parentElement, depth = 0; !scope && up && depth < 4; up = up.parentElement, depth++) {
       if (up.querySelector("[role=listbox], [role=option]")) scope = up;
     }

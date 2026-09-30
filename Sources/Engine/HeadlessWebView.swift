@@ -284,6 +284,54 @@ final class HeadlessWebView: NSObject {
         return now?["value"] as? String
     }
 
+    /// Una opción de la lista que un campo muestra al escribir: las
+    /// estaciones de «Roma» en Trenitalia, los aeropuertos de «Buenos» en
+    /// Aerolíneas.
+    struct Suggestion: Sendable {
+        let index: Int
+        let label: String
+    }
+
+    /// Lo que la lista del campo ofrece ahora (`__jefSuggestions`). La lista
+    /// llega cuando la página contesta —una búsqueda en su servidor—, así que
+    /// se espera un poco a que aparezca, y un poco más a que termine de
+    /// llenarse. Vacía si no apareció.
+    func suggestions(_ fieldID: String) async -> [Suggestion] {
+        guard let web = webView else { return [] }
+        let safeID = fieldID.filter { $0.isLetter || $0.isNumber }
+        func read() async -> [Suggestion] {
+            let result = try? await web.evaluateJavaScript("window.__jefSuggestions('\(safeID)')") as? [String: Any]
+            let items = result?["suggestions"] as? [[String: Any]] ?? []
+            return items.compactMap { item in
+                guard let index = item["index"] as? Int, let label = item["label"] as? String else { return nil }
+                return Suggestion(index: index, label: label)
+            }
+        }
+        for _ in 0..<8 {
+            let found = await read()
+            if !found.isEmpty {
+                try? await Task.sleep(for: .milliseconds(300))
+                let settled = await read()
+                return settled.count >= found.count ? settled : found
+            }
+            try? await Task.sleep(for: .milliseconds(300))
+        }
+        return []
+    }
+
+    /// Elige una opción de la lista como la tocaría una persona
+    /// (`__jefChoose`) y devuelve lo que quedó en el campo. Nil si la opción
+    /// ya no estaba.
+    func choose(_ fieldID: String, _ index: Int) async -> String? {
+        guard let web = webView else { return nil }
+        let safeID = fieldID.filter { $0.isLetter || $0.isNumber }
+        let result = try? await web.evaluateJavaScript("window.__jefChoose('\(safeID)', \(index))") as? [String: Any]
+        guard result?["ok"] as? Bool == true else { return nil }
+        try? await Task.sleep(for: .milliseconds(500))
+        let now = try? await web.evaluateJavaScript("window.__jefValue('\(safeID)')") as? [String: Any]
+        return (now?["value"] as? String) ?? (result?["value"] as? String) ?? ""
+    }
+
     /// Si lo que tiene el campo es lo que se escribió, sin espacios ni
     /// signos ni mayúsculas: una página que da formato ("12.345.678",
     /// "(11) 4444-5555") lo aceptó; una que lo vació o lo cortó, no.

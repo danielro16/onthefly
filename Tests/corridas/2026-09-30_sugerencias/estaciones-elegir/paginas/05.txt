@@ -1,0 +1,15 @@
+http://localhost:8765/estaciones.html
+Treni — Cerca il tuo viaggio
+
+PAGE: localhost — Treni
+
+PAGE CONTENT (what the person came for):
+Cerca il tuo viaggio
+Cerca il tuo viaggio
+Roma (Tutte le stazioni)
+Roma Termini
+Roma Tiburtina
+Roma Ostiense
+Roma Trastevere
+Roma San Pietro
+FORM asking for: Partenza, Arrivo — button «Cerca»

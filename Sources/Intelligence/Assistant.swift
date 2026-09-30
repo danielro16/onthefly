@@ -320,44 +320,47 @@ final class Assistant {
         if let field = awaitingField {
             awaitingField = nil
             if isValue {
+                // Un formulario elegido como un paso: se sigue con él.
+                let form = completing.flatMap { (($0.fields ?? []).contains { $0.id == field.id }) ? $0 : nil }
+                completing = nil
                 working = true
-                let held = await typed(goal, into: field, on: reader)
+                let written = await typed(goal, into: field, on: reader, form: form)
                 working = false
-                guard held else { return }
-                filledFields.insert(Self.fieldKey(field.id, on: reader.page))
                 // Y no queda como "lo que pidió antes": eso viaja al modelo en
                 // el turno siguiente, y un DNI no tiene que ir a ningún lado.
-                lastRequest = previousRequest
-                // Un formulario elegido como un paso: con todos sus datos, se
-                // envía. Un buscador se busca; lo demás pasa por "¿compromete?".
-                if let form = completing, (form.fields ?? []).contains(where: { $0.id == field.id }) {
-                    completing = nil
-                    let missing = (form.fields ?? []).filter {
-                        $0.type != "hidden" && $0.type != "checkbox" && !Self.isChallenge($0) && !filledFields.contains(Self.fieldKey($0.id, on: reader.page))
-                    }
-                    if let next = missing.first {
-                        awaitingField = next
-                        completing = form
-                        say("Listo. ¿Qué pongo en «\(Self.spoken(next))»?")
-                        inputRequests += 1
-                        return
-                    }
-                    if Self.isSearch(form) {
-                        say("Buscando «\(Self.short(goal, 60))».")
-                        working = true
-                        await reader.submit(form)
-                        working = false
-                        await landed(reader)
-                    } else {
-                        await submitAsked(form, on: reader)
-                    }
-                    return
+                if written != .failed { lastRequest = previousRequest }
+                let done: String
+                switch written {
+                case .failed, .asking: return
+                case .picked(let label): done = "Listo: elegí «\(label)»."
+                case .written:
+                    // Sin repetir el dato entero: un DNI dicho en voz alta en
+                    // la calle no. Las tres últimas cifras alcanzan.
+                    done = form != nil ? "Listo."
+                        : field.isSecure ? "Listo: quedó escrita en «\(Self.spoken(field))»."
+                        : "Listo: quedó escrito en «\(Self.spoken(field))», terminado en \(goal.suffix(3))."
                 }
-                // Sin repetir el dato entero: un DNI dicho en voz alta en la
-                // calle no. Las tres últimas cifras alcanzan para confirmarlo.
-                say(field.isSecure
-                    ? "Listo: quedó escrita en «\(Self.spoken(field))»."
-                    : "Listo: quedó escrito en «\(Self.spoken(field))», terminado en \(goal.suffix(3)).")
+                filledFields.insert(Self.fieldKey(field.id, on: reader.page))
+                if let form {
+                    await continueForm(form, done: done, searching: goal, on: reader)
+                } else {
+                    say(done)
+                }
+                return
+            }
+        }
+        // Se preguntó cuál de las opciones de una lista, y esto es la
+        // respuesta en palabras —«Termini»—: si nombra una sola, es esa. Si
+        // no, es otro pedido, y la lista queda sin elegir.
+        if let pending = pendingPick {
+            pendingPick = nil
+            let said = Self.flatten(goal)
+            let named = pending.options.filter { !said.isEmpty && Self.flatten($0.label).contains(said) }
+            if named.count == 1 {
+                pendingPick = pending
+                working = true
+                await pick(named[0].index, on: reader)
+                working = false
                 return
             }
         }
@@ -458,8 +461,15 @@ final class Assistant {
                 // después entrame a la de Milei". Descartarlo en silencio era
                 // uno de los errores que la medición encontró. Si se quedó
                 // esperando un dato, el segundo espera: enviar sin el dato no.
-                if let next = decision.then, Self.chains(decision.action, next), !working, awaitingField == nil {
+                if let next = decision.then, Self.chains(decision.action, next), !working, awaitingField == nil, pendingPick == nil {
                     await carry(next, of: decision, goal: goal, on: reader)
+                }
+                // Se frenó a preguntar cuál opción de una lista: lo que falta
+                // espera a que elija.
+                if pendingPick != nil, let rest = decision.rest, !rest.isEmpty {
+                    waiting = rest
+                    say("Cuando elijas, sigo con «\(rest)».")
+                    return
                 }
                 // Y lo que falta de la tarea, ahora que ya hay otra página.
                 // "Quiero entrar a ANSES y pedir un turno" aterrizaba en ANSES
@@ -581,8 +591,13 @@ final class Assistant {
             // El segundo pedido de la frase, como en `ask`: "completar" y
             // "enviar" es buscar con el buscador del sitio, y acá se perdía —
             // en Mercado Libre quedaba escrito y sin buscar.
-            if let next = decision.then, Self.chains(decision.action, next), !working, awaitingField == nil {
+            if let next = decision.then, Self.chains(decision.action, next), !working, awaitingField == nil, pendingPick == nil {
                 await carry(next, of: decision, goal: goal, on: reader)
+            }
+            if pendingPick != nil, let more = decision.rest, !more.isEmpty {
+                waiting = more
+                say("Cuando elijas, sigo con «\(more)».")
+                return
             }
             guard let more = decision.rest, !more.isEmpty, more != goal,
                   Self.pending(more, of: decision, goal: goal, from: before, to: reader.page,
@@ -832,11 +847,17 @@ final class Assistant {
             return
         }
         working = true
-        let held = await typed(value, into: field, on: reader)
+        let written = await typed(value, into: field, on: reader)
         working = false
-        guard held else { return }
-        filledFields.insert(Self.fieldKey(field.id, on: reader.page))
-        say(field.isSecure ? "Listo: quedó escrita en «\(Self.spoken(field))»." : "Listo, escrito en \(Self.spoken(field)).")
+        switch written {
+        case .failed, .asking: return
+        case .picked(let label):
+            filledFields.insert(Self.fieldKey(field.id, on: reader.page))
+            say("Listo: elegí «\(label)».")
+        case .written:
+            filledFields.insert(Self.fieldKey(field.id, on: reader.page))
+            say(field.isSecure ? "Listo: quedó escrita en «\(Self.spoken(field))»." : "Listo, escrito en \(Self.spoken(field)).")
+        }
     }
 
     // MARK: - Llegar a algún lado desde la nada
@@ -1690,6 +1711,14 @@ final class Assistant {
         inTurn = true
         defer { inTurn = false }
         heard(action.label)
+        // Una opción de la lista de un campo.
+        if action.id.hasPrefix(Self.pickPrefix), let index = Int(action.id.dropFirst(Self.pickPrefix.count)) {
+            working = true
+            await pick(index, on: reader)
+            working = false
+            closeTurn(on: reader)
+            return
+        }
         lastDone = nil
         justDid = nil
         failedTurn = false
@@ -2218,9 +2247,15 @@ final class Assistant {
             return
         }
 
-        guard await typed(found.value, into: field, on: reader) else { return }
-        filledFields.insert(Self.fieldKey(field.id, on: reader.page))
-        say("Listo, escrito en \(Self.spoken(field)).")
+        switch await typed(found.value, into: field, on: reader, send: found.send ? form : nil) {
+        case .failed, .asking: return
+        case .picked(let label):
+            filledFields.insert(Self.fieldKey(field.id, on: reader.page))
+            say("Listo: elegí «\(label)».")
+        case .written:
+            filledFields.insert(Self.fieldKey(field.id, on: reader.page))
+            say("Listo, escrito en \(Self.spoken(field)).")
+        }
         if found.send {
             working = false
             await submitAsked(form, on: reader)
@@ -2231,12 +2266,113 @@ final class Assistant {
     /// campo ya no está, o la página lo vació o lo cambió—, lo dice y no se
     /// sigue: ni otro campo, ni enviar. Antes se decía "Listo, escrito" a
     /// los 700 ms sin mirar el campo.
-    private func typed(_ value: String, into field: Action.Field, on reader: ReaderModel) async -> Bool {
+    /// Cómo quedó un campo después de escribir en él.
+    enum Written: Equatable {
+        /// No quedó: ya se dijo por qué.
+        case failed
+        case written
+        /// Era un campo con lista, y se eligió esta opción.
+        case picked(String)
+        /// Era un campo con lista, y se le preguntó a la persona cuál.
+        case asking
+    }
+
+    /// El campo con lista que espera que la persona elija: sus opciones y
+    /// cómo seguir después —el formulario que se estaba completando, o el
+    /// que había que enviar—.
+    private var pendingPick: (field: Action.Field, options: [HeadlessWebView.Suggestion], form: Action?, send: Action?)?
+    static let pickPrefix = "jef-elegir-"
+
+    /// Escribe lo que la persona dijo y verifica que quedó.
+    ///
+    /// Un campo con lista —las estaciones de Trenitalia, los aeropuertos de
+    /// Aerolíneas— recién cuenta cuando se elige una opción: escribir «Roma»
+    /// deja «Roma» en el campo y ninguna estación elegida, y JEF decía
+    /// «Listo». Ahora lee la lista: una sola opción, o una que es lo que la
+    /// persona dijo, se elige; si hay varias, se le pregunta cuál, con las
+    /// primeras como botones, y lo que venía después espera (`form`, `send`).
+    private func typed(
+        _ value: String, into field: Action.Field, on reader: ReaderModel,
+        form: Action? = nil, send: Action? = nil
+    ) async -> Written {
         let held = await reader.type(value, into: field)
         // Sin el valor: un DNI no va al registro.
         Registro.anotar("escrito", ["campo": Self.spoken(field), "quedo": held ? "si" : "no"])
-        if !held { say("No quedó escrito en «\(Self.spoken(field))»: la página no lo aceptó.") }
-        return held
+        if !held {
+            say("No quedó escrito en «\(Self.spoken(field))»: la página no lo aceptó.")
+            return .failed
+        }
+        guard field.type == "combobox" else { return .written }
+        let options = await reader.suggestions(for: field)
+        Registro.anotar("sugerencias", ["campo": Self.spoken(field), "opciones": String(options.count)])
+        guard !options.isEmpty else {
+            say("No encontré «\(Self.short(value, 40))» entre las opciones de la página.")
+            return .failed
+        }
+        let same = options.filter { Self.flatten($0.label) == Self.flatten(value) }
+        if let only = options.count == 1 ? options.first : same.count == 1 ? same.first : nil {
+            guard let chosen = await reader.choose(only.index, for: field) else {
+                say("No pude elegir «\(only.label)»: la lista ya no está en la página.")
+                return .failed
+            }
+            return .picked(chosen.isEmpty ? only.label : chosen)
+        }
+        pendingPick = (field, options, form, send)
+        let first = options.prefix(3).map(\.label)
+        let question = "Hay \(options.count) opciones para «\(Self.short(value, 40))». ¿Cuál?"
+        say(question, aloud: question + " " + first.joined(separator: ". "))
+        offerChoices(options.map { .link(id: Self.pickPrefix + String($0.index), label: $0.label, href: "", region: "main") }, first: 3)
+        return .asking
+    }
+
+    /// La persona eligió una opción de la lista de un campo: se elige en la
+    /// página y se sigue con lo que esperaba —el campo siguiente del
+    /// formulario, su envío, o el resto del pedido—.
+    private func pick(_ index: Int, on reader: ReaderModel) async {
+        guard let pending = pendingPick else { return }
+        pendingPick = nil
+        let label = pending.options.first { $0.index == index }?.label ?? ""
+        guard let chosen = await reader.choose(index, for: pending.field) else {
+            say("No pude elegir «\(label)»: la lista ya no está en la página.")
+            return
+        }
+        filledFields.insert(Self.fieldKey(pending.field.id, on: reader.page))
+        let done = "Listo: elegí «\(chosen.isEmpty ? label : chosen)»."
+        if let form = pending.form {
+            await continueForm(form, done: done, searching: label, on: reader)
+        } else {
+            say(done)
+            if let form = pending.send { await submitAsked(form, on: reader) }
+        }
+        if let rest = waiting, awaitingField == nil, pendingPick == nil {
+            waiting = nil
+            await continueWith(rest, on: reader)
+        }
+    }
+
+    /// Un formulario elegido como un paso: con todos sus datos, se envía. Un
+    /// buscador se busca; lo demás pasa por "¿compromete?". Si falta un
+    /// dato, se pide. `done`: lo que se dice de lo que se acaba de escribir.
+    private func continueForm(_ form: Action, done: String, searching: String, on reader: ReaderModel) async {
+        let missing = (form.fields ?? []).filter {
+            $0.type != "hidden" && $0.type != "checkbox" && !Self.isChallenge($0) && !filledFields.contains(Self.fieldKey($0.id, on: reader.page))
+        }
+        if let next = missing.first {
+            awaitingField = next
+            completing = form
+            say("\(done) ¿Qué pongo en «\(Self.spoken(next))»?")
+            inputRequests += 1
+            return
+        }
+        if Self.isSearch(form) {
+            say("Buscando «\(Self.short(searching, 60))».")
+            working = true
+            await reader.submit(form)
+            working = false
+            await landed(reader)
+        } else {
+            await submitAsked(form, on: reader)
+        }
     }
 
     /// Si este formulario es un buscador, según el estándar: todos sus campos
@@ -2872,8 +3008,10 @@ final class Assistant {
         // "no soy un robot", seguían ofreciéndose "Suscribirme a Meli+" y
         // "Configurar cookies" de la portada.
         offer = nil
-        // Y el botón ofrecido para la mano también era de la otra página.
+        // Y el botón ofrecido para la mano también era de la otra página, y la
+        // lista de un campo que esperaba elegir.
         pendingSubmit = nil
+        pendingPick = nil
         knownURL = page.url
         // Un captcha es el único aviso que es un muro: detrás no hay nada que
         // contar hasta que alguien lo resuelva.
@@ -3121,9 +3259,9 @@ final class Assistant {
     private var pendingChoices: [Action] = []
     static let moreChoicesID = "jef-mas-de-la-lista"
 
-    private func offerChoices(_ choices: [Action]) {
-        pendingChoices = Array(choices.dropFirst(4))
-        var options = Array(choices.prefix(4))
+    private func offerChoices(_ choices: [Action], first: Int = 4) {
+        pendingChoices = Array(choices.dropFirst(first))
+        var options = Array(choices.prefix(first))
         if !pendingChoices.isEmpty {
             options.append(.link(id: Self.moreChoicesID, label: "Ver más opciones (\(pendingChoices.count))", href: "", region: "main"))
         }
