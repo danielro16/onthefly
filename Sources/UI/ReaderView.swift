@@ -316,6 +316,18 @@ final class ReaderModel {
         return Self.holds(held, value)
     }
 
+    /// Lo que la lista de un campo ofrece después de escribir en él.
+    func suggestions(for field: Action.Field) async -> [HeadlessWebView.Suggestion] {
+        await engine.suggestions(field.id)
+    }
+
+    /// Elige una opción de la lista de un campo; lo que quedó escrito, o nil.
+    func choose(_ index: Int, for field: Action.Field) async -> String? {
+        let chosen = await engine.choose(field.id, index)
+        state = state
+        return chosen
+    }
+
     /// Lo que la página dijo sola desde la última vez que se preguntó: sus
     /// carteles y sus zonas de estado (`HeadlessWebView.takeSaid`).
     func takeSaid() async -> [HeadlessWebView.Said] {

@@ -1005,5 +1005,81 @@
         "escribir": "quiero un tren de Roma a Milán mañana"
       }
     ]
+  },
+  {
+    "id": "estaciones-elegir",
+    "persona": "Ciega, habla castellano, en Italia. Busca un tren y no sabe los nombres de las estaciones.",
+    "objetivo": "Que JEF, al escribir «Roma», no diga «Listo» sin estación elegida: que pregunte cuál, con las primeras como botones; que entienda «Termini» dicho en palabras y un botón tocado, y que siga con el resto del pedido. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/estaciones.html"
+      },
+      {
+        "escribir": "quiero un tren de Roma a Milano"
+      },
+      {
+        "escribir": "Termini"
+      },
+      {
+        "boton": "Centrale"
+      }
+    ]
+  },
+  {
+    "id": "estaciones-nombre-completo",
+    "persona": "Ciega. Ya sabe el nombre exacto de la estación.",
+    "objetivo": "Que JEF elija sola la estación cuando la persona la nombró completa, y lo diga. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/estaciones.html"
+      },
+      {
+        "escribir": "poné Roma Termini en partenza"
+      }
+    ]
+  },
+  {
+    "id": "estaciones-botones",
+    "persona": "Ciega. Elige estaciones tocando los botones que ofrece JEF.",
+    "objetivo": "Que tocar una opción la elija en la página, y que «Ver más opciones» muestre el resto de la lista. Necesita la página de prueba servida: python3 -m http.server 8765 --directory Tests",
+    "pasos": [
+      {
+        "escribir": "http://localhost:8765/estaciones.html"
+      },
+      {
+        "escribir": "poné Roma en partenza"
+      },
+      {
+        "boton": "Tiburtina"
+      },
+      {
+        "escribir": "poné Milano en arrivo"
+      },
+      {
+        "boton": "Ver más"
+      },
+      {
+        "boton": "Rogoredo"
+      }
+    ]
+  },
+  {
+    "id": "trenitalia-estacion",
+    "persona": "Ciega, habla castellano, en Italia. Completa la estación de salida en Trenitalia.",
+    "objetivo": "Que en el formulario real de Trenitalia, al escribir «Roma», JEF pregunte cuál estación y elija la que ella toque.",
+    "pasos": [
+      {
+        "escribir": "trenitalia.com"
+      },
+      {
+        "escribir": "abrí Biglietti"
+      },
+      {
+        "escribir": "poné Roma en partenza"
+      },
+      {
+        "boton": "Termini"
+      }
+    ]
   }
 ]

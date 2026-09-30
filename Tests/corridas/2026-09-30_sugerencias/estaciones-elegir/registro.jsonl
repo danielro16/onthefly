@@ -1,0 +1,45 @@
+{"tipo": "botones", "t": 1790802069.664452, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"pais": "US", "t": 1790802070.255153, "tipo": "ubicacion"}
+{"t": 1790802076.382251, "quien": "persona", "tipo": "turno", "texto": "http://localhost:8765/estaciones.html"}
+{"t": 1790802076.383609, "tipo": "botones", "opciones": []}
+{"t": 1790802076.3840752, "quien": "jef", "tipo": "turno", "texto": "Abriendo localhost."}
+{"t": 1790802076.38433, "tipo": "voz", "cola": false, "texto": "Abriendo localhost."}
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790802076.444839}
+{"url": "http://localhost:8765/estaciones.html", "apurada": false, "red_ms": 69, "leida_ms": 696, "t": 1790802077.974971, "tipo": "carga"}
+{"url": "http://localhost:8765/estaciones.html", "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»", "titulo": "Treni — Cerca il tuo viaggio", "t": 1790802077.9765248, "tipo": "pagina"}
+{"tipo": "botones", "t": 1790802077.976857, "opciones": []}
+{"tipo": "tipo", "p_aviso": "0.00", "pagina": "form", "aviso": "", "url": "http://localhost:8765/estaciones.html", "p_sitio": "1.00", "sitio": "travel", "t": 1790802081.7852879, "modelo": "otra", "p_pagina": "0.99"}
+{"url": "http://localhost:8765/estaciones.html", "tipo": "ruido", "t": 1790802081.786303, "elementos": []}
+{"texto": "Estás en el formulario de Treni para buscar un viaje; pide el lugar de partida y el de llegada.", "tipo": "turno", "t": 1790802081.786588, "quien": "jef"}
+{"texto": "Estás en el formulario de Treni para buscar un viaje; pide el lugar de partida y el de llegada.", "tipo": "voz", "t": 1790802081.7870889, "cola": true}
+{"t": 1790802081.78751, "opciones": ["Buscar un viaje en Treni"], "tipo": "botones"}
+{"t": 1790802081.787901, "opciones": ["Buscar un viaje en Treni", "Otra cosa"], "tipo": "botones"}
+{"quien": "persona", "tipo": "turno", "texto": "quiero un tren de Roma a Milano", "t": 1790802090.4303842}
+{"opciones": [], "t": 1790802090.430779, "tipo": "botones"}
+{"accion": "completar", "tipo": "decision", "control": "1", "question": "", "then": "", "rest": "Inserisci Milano come arrivo e cerca un treno.", "tarea": "nueva", "reference": "", "target": "", "t": 1790802094.6127338}
+{"usado": "no", "t": 1790802094.613245, "tipo": "jev_adelantado"}
+{"t": 1790802095.54882, "titulo": "Treni — Cerca il tuo viaggio", "url": "http://localhost:8765/estaciones.html", "tipo": "pagina", "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»"}
+{"t": 1790802095.549152, "quedo": "si", "campo": "Partenza", "tipo": "escrito"}
+{"campo": "Partenza", "opciones": "6", "t": 1790802095.873899, "tipo": "sugerencias"}
+{"t": 1790802095.875218, "texto": "Hay 6 opciones para «Roma». ¿Cuál?", "tipo": "turno", "quien": "jef"}
+{"t": 1790802095.87611, "cola": false, "texto": "Hay 6 opciones para «Roma». ¿Cuál? Roma (Tutte le stazioni). Roma Termini. Roma Tiburtina", "tipo": "voz"}
+{"opciones": ["Roma (Tutte le stazioni)", "Roma Termini", "Roma Tiburtina", "Ver más opciones (3)"], "t": 1790802095.876597, "tipo": "botones"}
+{"tipo": "turno", "quien": "jef", "t": 1790802095.876967, "texto": "Cuando elijas, sigo con «Inserisci Milano come arrivo e cerca un treno.»."}
+{"tipo": "voz", "cola": true, "t": 1790802095.877522, "texto": "Cuando elijas, sigo con «Inserisci Milano come arrivo e cerca un treno.»."}
+{"opciones": ["Roma (Tutte le stazioni)", "Roma Termini", "Roma Tiburtina", "Ver más opciones (3)", "Otra cosa"], "t": 1790802095.877799, "tipo": "botones"}
+{"quien": "persona", "texto": "Termini", "t": 1790802104.364832, "tipo": "turno"}
+{"tipo": "botones", "opciones": [], "t": 1790802104.365196}
+{"t": 1790802104.88783, "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»", "tipo": "pagina", "titulo": "Treni — Cerca il tuo viaggio", "url": "http://localhost:8765/estaciones.html"}
+{"tipo": "turno", "texto": "Listo: elegí «Roma Termini».", "quien": "jef", "t": 1790802104.888144}
+{"cola": false, "tipo": "voz", "texto": "Listo: elegí «Roma Termini».", "t": 1790802104.888531}
+{"then": "", "t": 1790802112.24504, "accion": "completar", "target": "", "question": "", "rest": "Inserisci Milano come arrivo e cerca un treno.", "tarea": "sigue", "tipo": "decision", "reference": "", "control": "1"}
+{"titulo": "Treni — Cerca il tuo viaggio", "url": "http://localhost:8765/estaciones.html", "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»", "tipo": "pagina", "t": 1790802113.071783}
+{"tipo": "escrito", "campo": "Partenza", "t": 1790802113.07197, "quedo": "si"}
+{"url": "http://localhost:8765/estaciones.html", "t": 1790802113.267389, "titulo": "Treni — Cerca il tuo viaggio", "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nCerca il tuo viaggio\nRoma (Tutte le stazioni)\nRoma Termini\nRoma Tiburtina\nRoma Ostiense\nRoma Trastevere\nRoma San Pietro\nFORM asking for: Partenza, Arrivo — button «Cerca»", "tipo": "pagina"}
+{"opciones": "6", "tipo": "sugerencias", "t": 1790802113.3787289, "campo": "Partenza"}
+{"texto": "Hay 6 opciones para «Roma». ¿Cuál?", "tipo": "turno", "quien": "jef", "t": 1790802113.379334}
+{"texto": "Hay 6 opciones para «Roma». ¿Cuál? Roma (Tutte le stazioni). Roma Termini. Roma Tiburtina", "tipo": "voz", "cola": true, "t": 1790802113.380049}
+{"opciones": ["Roma (Tutte le stazioni)", "Roma Termini", "Roma Tiburtina", "Ver más opciones (3)"], "tipo": "botones", "t": 1790802113.380275}
+{"tipo": "turno", "quien": "jef", "t": 1790802113.380392, "texto": "Cuando elijas, sigo con «Inserisci Milano come arrivo e cerca un treno.»."}
+{"tipo": "voz", "cola": true, "t": 1790802113.380549, "texto": "Cuando elijas, sigo con «Inserisci Milano come arrivo e cerca un treno.»."}
+{"opciones": ["Roma (Tutte le stazioni)", "Roma Termini", "Roma Tiburtina", "Ver más opciones (3)", "Otra cosa"], "tipo": "botones", "t": 1790802113.3806682}

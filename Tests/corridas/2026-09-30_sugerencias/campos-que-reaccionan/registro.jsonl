@@ -1,0 +1,35 @@
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1790802455.5004668}
+{"pais": "US", "tipo": "ubicacion", "t": 1790802455.959099}
+{"pais": "US", "tipo": "ubicacion", "t": 1790802455.959667}
+{"texto": "http://localhost:8765/campos.html", "tipo": "turno", "t": 1790802461.885899, "quien": "persona"}
+{"opciones": [], "t": 1790802461.887282, "tipo": "botones"}
+{"texto": "Abriendo localhost.", "tipo": "turno", "t": 1790802461.8875961, "quien": "jef"}
+{"texto": "Abriendo localhost.", "tipo": "voz", "t": 1790802461.887896, "cola": false}
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1790802461.9675279}
+{"red_ms": 67, "leida_ms": 692, "apurada": false, "t": 1790802463.4775062, "tipo": "carga", "url": "http://localhost:8765/campos.html"}
+{"titulo": "Datos del socio", "texto": "PAGE: localhost — Datos del socio\n\nPAGE CONTENT (what the person came for):\nDatos del socio\nFORM asking for: DNI, Código postal — button «Guardar»", "t": 1790802463.481463, "tipo": "pagina", "url": "http://localhost:8765/campos.html"}
+{"t": 1790802463.4818711, "tipo": "botones", "opciones": []}
+{"t": 1790802466.0047998, "p_sitio": "0.82", "pagina": "form", "modelo": "otra", "url": "http://localhost:8765/campos.html", "p_pagina": "1.00", "aviso": "", "tipo": "tipo", "sitio": "institution", "p_aviso": "0.00"}
+{"t": 1790802466.005762, "tipo": "ruido", "url": "http://localhost:8765/campos.html", "elementos": []}
+{"t": 1790802466.006176, "tipo": "turno", "quien": "jef", "texto": "Estás en la página de datos del socio de la institución. El formulario pide el DNI y el código postal."}
+{"t": 1790802466.008191, "tipo": "voz", "texto": "Estás en la página de datos del socio de la institución. El formulario pide el DNI y el código postal.", "cola": true}
+{"tipo": "botones", "t": 1790802466.008768, "opciones": ["Completar los datos del socio", "Resumir la página"]}
+{"tipo": "botones", "t": 1790802466.009517, "opciones": ["Completar los datos del socio", "Resumir la página", "Otra cosa"]}
+{"quien": "persona", "t": 1790802476.797886, "texto": "poné 30123456 en el DNI", "tipo": "turno"}
+{"tipo": "botones", "t": 1790802476.8001251, "opciones": []}
+{"control": "1", "reference": "", "tarea": "sigue", "tipo": "decision", "target": "", "t": 1790802478.749438, "accion": "completar", "then": "", "rest": "", "question": ""}
+{"tipo": "jev_adelantado", "usado": "no", "t": 1790802478.750104}
+{"t": 1790802479.8830528, "titulo": "Datos del socio", "tipo": "pagina", "texto": "PAGE: localhost — Datos del socio\n\nPAGE CONTENT (what the person came for):\nDatos del socio\nFORM asking for: DNI, Código postal — button «Guardar»", "url": "http://localhost:8765/campos.html"}
+{"campo": "DNI", "t": 1790802479.883319, "tipo": "escrito", "quedo": "si"}
+{"t": 1790802479.8834372, "tipo": "turno", "quien": "jef", "texto": "Listo, escrito en DNI."}
+{"t": 1790802479.8837981, "tipo": "voz", "texto": "Listo, escrito en DNI.", "cola": false}
+{"t": 1790802479.884666, "tipo": "botones", "opciones": ["Completar los datos del socio", "Resumir la página", "Otra cosa"]}
+{"texto": "poné Palermo en el código postal", "quien": "persona", "tipo": "turno", "t": 1790802491.1613312}
+{"opciones": [], "t": 1790802491.16181, "tipo": "botones"}
+{"question": "", "t": 1790802494.677109, "accion": "completar", "then": "", "rest": "", "target": "", "reference": "", "tarea": "sigue", "tipo": "decision", "control": "2"}
+{"usado": "no", "tipo": "jev_adelantado", "t": 1790802494.677546}
+{"titulo": "Datos del socio", "t": 1790802495.506, "url": "http://localhost:8765/campos.html", "tipo": "pagina", "texto": "PAGE: localhost — Datos del socio\n\nPAGE CONTENT (what the person came for):\nDatos del socio\nFORM asking for: DNI, Código postal — button «Guardar»"}
+{"quedo": "no", "tipo": "escrito", "campo": "Código postal", "t": 1790802495.506458}
+{"t": 1790802495.506616, "tipo": "turno", "quien": "jef", "texto": "No quedó escrito en «Código postal»: la página no lo aceptó."}
+{"cola": false, "t": 1790802495.507203, "tipo": "voz", "texto": "No quedó escrito en «Código postal»: la página no lo aceptó."}
+{"opciones": ["Completar los datos del socio", "Resumir la página", "Otra cosa"], "t": 1790802495.507473, "tipo": "botones"}

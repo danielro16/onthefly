@@ -1,0 +1,20 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: http://localhost:8765/dos-formularios.html
+  4 [txt] Abriendo localhost.
+  5 [txt] Estás en la página principal del Club Social del Barrio, que ofrece actividades para todas las edades de lunes a sábado.
+  6 [H] Vos: poné Juan en el nombre
+  7 [txt] Listo, escrito en Nombre.
+  8 [H] Vos: http://localhost:8765/turno.html
+  9 [txt] Abriendo localhost.
+ 10 [txt] Estás en el formulario de turnos de la pileta; pide el DNI, el día y la hora para solicitar un turno.
+ 11 [H] Vos: Pedir turno para la pileta
+ 12 [txt] «Pedir turno para la pileta»: ¿qué escribo? Se puede escribir o dictar acá abajo.
+ 13 [H] Vos: DNI terminado en 456
+ 14 [txt] Listo. ¿Qué pongo en «Día»?
+ 15 [btn] Pedir turno para la pileta  (Primera de 4 opciones.)
+ 16 [btn] Resumir la página
+ 17 [btn] Volver a «Club Social del Barrio»
+ 18 [btn] Otra cosa
+ 19 [campo] Pedido  = Escribir: Día  (Va directo al campo «Día» de la página.)
+ 20 [btn] Enviar
