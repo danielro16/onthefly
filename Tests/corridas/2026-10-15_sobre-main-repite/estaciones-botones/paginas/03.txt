@@ -1,0 +1,8 @@
+http://localhost:8765/estaciones.html
+Treni — Cerca il tuo viaggio
+
+PAGE: localhost — Treni
+
+PAGE CONTENT (what the person came for):
+Cerca il tuo viaggio
+FORM asking for: Partenza, Arrivo — button «Cerca»

@@ -1,0 +1,35 @@
+{"tipo": "botones", "t": 1790706656.580611, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"tipo": "ubicacion", "pais": "US", "t": 1790706657.139462}
+{"tipo": "ubicacion", "pais": "US", "t": 1790706657.140211}
+{"quien": "persona", "texto": "http://localhost:50620/portal.html", "t": 1790706662.880276, "tipo": "turno"}
+{"t": 1790706662.88131, "tipo": "botones", "opciones": []}
+{"tipo": "turno", "texto": "Abriendo localhost.", "t": 1790706662.881655, "quien": "jef"}
+{"texto": "Abriendo localhost.", "t": 1790706662.881937, "cola": false, "tipo": "voz"}
+{"tipo": "botones", "t": 1790706662.9498749, "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"tipo": "carga", "t": 1790706664.4529638, "red_ms": 84, "leida_ms": 762, "url": "http://localhost:50620/portal.html", "apurada": false}
+{"tipo": "pagina", "titulo": "Meu INSS: passo a passo para pedir aposentadoria", "t": 1790706664.456737, "url": "http://localhost:50620/portal.html", "texto": "PAGE: localhost — Meu INSS: passo a passo para pedir aposentadoria\n\nPAGE CONTENT (what the person came for):\nMeu INSS: passo a passo para pedir aposentadoria\nPara solicitar a aposentadoria pelo portal, os seguintes passos serão necessários:\nAcesse o site do Meu INSS (https://meu.inss.gov.br/).\nEntre com a senha gov.br.\nClique em «Novo Pedido» e escolha o tipo de aposentadoria.\nLeia também: Mudanças na Previdência em 2026\nPara solicitar a aposentadoria pelo portal, os seguintes passos serão necessários:\nAcesse o site do Meu INSS (https://meu.inss.gov.br/)., Entre com a senha gov.br., Clique em «Novo Pedido» e escolha o tipo de aposentadoria.\nLeia também: Mudanças na Previdência em 2026\n\nSITE MENU, NOTICES AND SIDE DATA (not the content, but it can be asked about):\nInício\nNotícias"}
+{"opciones": [], "tipo": "botones", "t": 1790706664.457237}
+{"p_pagina": "1.00", "modelo": "nota", "p_aviso": "0.00", "pagina": "article", "t": 1790706667.335952, "aviso": "", "tipo": "tipo", "p_sitio": "0.96", "sitio": "government", "url": "http://localhost:50620/portal.html"}
+{"url": "http://localhost:50620/portal.html", "elementos": [], "t": 1790706667.3364968, "tipo": "ruido"}
+{"quien": "jef", "t": 1790706667.3366752, "tipo": "turno", "texto": "Estás en una nota sobre cómo solicitar la jubilación por el portal Meu INSS: indica entrar con la contraseña de gov.br, seleccionar «Nuevo pedido» y elegir el tipo de jubilación. También menciona cambios en la previsión social para 2026."}
+{"t": 1790706667.337075, "cola": true, "texto": "Estás en una nota sobre cómo solicitar la jubilación por el portal Meu INSS: indica entrar con la contraseña de gov.br, seleccionar «Nuevo pedido» y elegir el tipo de jubilación. También menciona cambios en la previsión social para 2026.", "tipo": "voz"}
+{"opciones": ["Abrir «https://meu.inss.gov.br/»", "Leer la nota", "Resumir la nota"], "tipo": "botones", "t": 1790706667.337486}
+{"opciones": ["Abrir «https://meu.inss.gov.br/»", "Leer la nota", "Resumir la nota", "Otra cosa"], "tipo": "botones", "t": 1790706667.3376122}
+{"quien": "persona", "t": 1790706675.396346, "texto": "quiero pedir la jubilación", "tipo": "turno"}
+{"tipo": "botones", "t": 1790706675.396772, "opciones": []}
+{"target": "", "control": "", "then": "", "tipo": "decision", "t": 1790706680.263632, "rest": "", "tarea": "nueva", "reference": "el sitio Meu INSS", "question": "", "accion": "abrir"}
+{"tipo": "jev_adelantado", "t": 1790706680.265483, "usado": "si"}
+{"eleccion": "https://meu.inss.gov.br/", "t": 1790706680.265866, "pedido": "quiero pedir la jubilación", "esta": "0.65", "confianza": "0.85", "tipo": "jev"}
+{"p": "0.07", "tipo": "compromete", "boton": "https://meu.inss.gov.br/", "t": 1790706680.489079}
+{"tipo": "turno", "texto": "Abriendo https://meu.inss.gov.br/.", "quien": "jef", "t": 1790706680.490936}
+{"tipo": "voz", "texto": "Abriendo https://meu.inss.gov.br/.", "t": 1790706680.491307, "cola": false}
+{"t": 1790706681.1221051, "tipo": "carga", "apurada": false, "red_ms": 13, "leida_ms": 615, "url": "http://localhost:50620/inss.html"}
+{"texto": "PAGE: localhost — Meu INSS\n\nPAGE CONTENT (what the person came for):\nGovBR\nGovBR", "tipo": "pagina", "t": 1790706681.1225538, "url": "http://localhost:50620/inss.html", "titulo": "Meu INSS"}
+{"t": 1790706681.12286, "tipo": "turno", "quien": "jef", "texto": "Esta página no ofrece nada que pueda abrir."}
+{"t": 1790706681.123256, "tipo": "voz", "cola": true, "texto": "Esta página no ofrece nada que pueda abrir."}
+{"tipo": "botones", "t": 1790706681.123826, "opciones": ["Volver a «Meu INSS: passo a passo para pedir aposentadoria»", "Otra cosa"]}
+{"tipo": "pagina", "titulo": "Meu INSS", "t": 1790706682.631402, "url": "http://localhost:50620/inss.html#/login", "texto": "PAGE: localhost — Meu INSS\n\nPAGE CONTENT (what the person came for):\nMeu INSS\nServiços sem senha\nNovo Pedido\nTaxas de Empréstimo Consignado\nCalendário de Pagamento\nEncontre uma Agência\nMais Serviços\nServiços sem senha\nNovo Pedido, Taxas de Empréstimo Consignado, Calendário de Pagamento, Encontre uma Agência, Mais Serviços"}
+{"opciones": [], "tipo": "botones", "t": 1790706682.631783}
+{"quien": "jef", "t": 1790706682.631912, "texto": "La página cambió: ahora estás en «Meu INSS», localhost.", "tipo": "turno"}
+{"cola": false, "t": 1790706682.632123, "texto": "La página cambió: ahora estás en «Meu INSS», localhost.", "tipo": "voz"}
+{"opciones": ["Leer la página", "Resumir la página", "Volver a «Meu INSS: passo a passo para pedir aposentadoria»", "Otra cosa"], "tipo": "botones", "t": 1790706682.632267}

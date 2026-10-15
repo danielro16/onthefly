@@ -1081,5 +1081,19 @@
         "boton": "Termini"
       }
     ]
+  },
+  {
+    "id": "inss-contenido-tarde",
+    "persona": "Vive en Brasil, habla español, ciego. Quiere pedir la jubilación en el INSS.",
+    "objetivo": "Que JEF camine hasta Meu INSS, que arma su página después de cargar, y siga con la jubilación en vez de decir que no hay nada para abrir.",
+    "servir": "Tests/fixtures/contenido-tarde",
+    "pasos": [
+      {
+        "escribir": "{servidor}/portal.html"
+      },
+      {
+        "escribir": "quiero pedir la jubilación"
+      }
+    ]
   }
 ]

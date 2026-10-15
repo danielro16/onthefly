@@ -1,0 +1,18 @@
+  1 [H] Asistente
+  2 [btn] Cerrar el asistente  (Deja la página entera a la vista. Para volver, «Abrir el asistente», abajo.)
+  3 [H] Vos: trenitalia.com
+  4 [txt] Abriendo trenitalia.com.
+  5 [txt] La página de inicio de Trenitalia permite consultar la circulación y buscar billetes; ahora indica circulación regular en la red de alta velocidad. Para comprar billetes, el buscador está en la sección «Biglietti».
+  6 [H] Vos: abrí Biglietti
+  7 [txt] Abriendo «Biglietti».
+  8 [txt] Dopo aver premuto «Biglietti», è aperta la pagina per cercare viaggi in treno. Trenitalia è sulla pagina iniziale: qui puoi inserire stazione di partenza e di arrivo e cercare i biglietti; è indicata la data del 15 ottobre 2026. La pagina segnala inoltre circolazione regolare sulla rete ad alta velocità.
+  9 [H] Vos: poné Roma en partenza
+ 10 [txt] Hay 40 opciones para «Roma». ¿Cuál?
+ 11 [btn] Roma ( Tutte Le Stazioni )  (Primera de 5 opciones.)
+ 12 [btn] Roma Anagnina
+ 13 [btn] Roma Termini
+ 14 [btn] Ver más opciones (37)
+ 15 [btn] Otra cosa
+ 16 [campo] Pedido  = ¿Qué querés hacer?  (Un sitio, algo para buscar o una pregunta. También se puede dictar con el teclado.)
+ 17 [btn] Enviar
+ 18 [grp] Barra de herramientas

@@ -1,0 +1,50 @@
+{"tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1792100910.952539}
+{"texto": "http://localhost:8765/estaciones.html", "quien": "persona", "t": 1792100917.472262, "tipo": "turno"}
+{"t": 1792100917.473349, "opciones": [], "tipo": "botones"}
+{"texto": "Abriendo localhost.", "quien": "jef", "t": 1792100917.473538, "tipo": "turno"}
+{"texto": "Abriendo localhost.", "cola": false, "t": 1792100917.473742, "tipo": "voz"}
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "t": 1792100917.506012, "tipo": "botones"}
+{"red_ms": 19, "url": "http://localhost:8765/estaciones.html", "leida_ms": 628, "t": 1792100918.5892239, "apurada": false, "tipo": "carga"}
+{"titulo": "Treni — Cerca il tuo viaggio", "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»", "url": "http://localhost:8765/estaciones.html", "t": 1792100918.5899901, "tipo": "pagina"}
+{"t": 1792100918.590114, "tipo": "botones", "opciones": []}
+{"p_sitio": "1.00", "p_pagina": "1.00", "tipo": "tipo", "t": 1792100920.695091, "pagina": "form", "p_aviso": "0.00", "aviso": "", "sitio": "travel", "modelo": "otra", "url": "http://localhost:8765/estaciones.html"}
+{"elementos": [], "t": 1792100920.695523, "url": "http://localhost:8765/estaciones.html", "tipo": "ruido"}
+{"quien": "jef", "t": 1792100920.695652, "tipo": "turno", "texto": "Estás en el formulario de Treni para buscar un viaje; pide el lugar de partida y el de llegada."}
+{"t": 1792100920.695969, "tipo": "voz", "cola": true, "texto": "Estás en el formulario de Treni para buscar un viaje; pide el lugar de partida y el de llegada."}
+{"tipo": "botones", "t": 1792100920.6961498, "opciones": ["Buscar un viaje en Treni"]}
+{"tipo": "botones", "t": 1792100920.696265, "opciones": ["Buscar un viaje en Treni", "Otra cosa"]}
+{"error": "No se ha podido completar la operación. (Error de kCLErrorDomain 0.)", "t": 1792100921.023401, "tipo": "ubicacion"}
+{"quien": "persona", "tipo": "turno", "t": 1792100929.310556, "texto": "poné Roma en partenza"}
+{"opciones": [], "tipo": "botones", "t": 1792100929.3110409}
+{"tarea": "sigue", "reference": "", "question": "", "t": 1792100931.0776649, "accion": "completar", "tipo": "decision", "control": "1", "target": "", "rest": "", "then": ""}
+{"t": 1792100931.0782409, "usado": "no", "tipo": "jev_adelantado"}
+{"titulo": "Treni — Cerca il tuo viaggio", "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»", "tipo": "pagina", "t": 1792100931.899689, "url": "http://localhost:8765/estaciones.html"}
+{"t": 1792100931.900216, "tipo": "escrito", "quedo": "si", "campo": "Partenza"}
+{"t": 1792100932.207734, "opciones": "6", "campo": "Partenza", "tipo": "sugerencias"}
+{"t": 1792100932.208559, "texto": "Hay 6 opciones para «Roma». ¿Cuál?", "tipo": "turno", "quien": "jef"}
+{"t": 1792100932.2089128, "texto": "Hay 6 opciones para «Roma». ¿Cuál? Roma (Tutte le stazioni). Roma Termini. Roma Tiburtina", "tipo": "voz", "cola": false}
+{"tipo": "botones", "opciones": ["Roma (Tutte le stazioni)", "Roma Termini", "Roma Tiburtina", "Ver más opciones (3)"], "t": 1792100932.2091131}
+{"tipo": "botones", "opciones": ["Roma (Tutte le stazioni)", "Roma Termini", "Roma Tiburtina", "Ver más opciones (3)", "Otra cosa"], "t": 1792100932.209259}
+{"t": 1792100937.948168, "opciones": [], "tipo": "botones"}
+{"quien": "persona", "tipo": "turno", "texto": "Roma Tiburtina", "t": 1792100937.948731}
+{"tipo": "pagina", "url": "http://localhost:8765/estaciones.html", "titulo": "Treni — Cerca il tuo viaggio", "t": 1792100938.570374, "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»"}
+{"tipo": "turno", "t": 1792100938.5707378, "quien": "jef", "texto": "Listo: elegí «Roma Tiburtina»."}
+{"tipo": "voz", "cola": false, "t": 1792100938.571022, "texto": "Listo: elegí «Roma Tiburtina»."}
+{"opciones": ["Buscar un viaje en Treni", "Otra cosa"], "t": 1792100938.571363, "tipo": "botones"}
+{"quien": "persona", "tipo": "turno", "t": 1792100947.41763, "texto": "poné Milano en arrivo"}
+{"opciones": [], "tipo": "botones", "t": 1792100947.418194}
+{"tipo": "decision", "then": "", "control": "2", "question": "", "t": 1792100950.130657, "target": "", "accion": "completar", "reference": "", "tarea": "sigue", "rest": ""}
+{"usado": "no", "tipo": "jev_adelantado", "t": 1792100950.132062}
+{"t": 1792100950.934112, "url": "http://localhost:8765/estaciones.html", "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»", "tipo": "pagina", "titulo": "Treni — Cerca il tuo viaggio"}
+{"campo": "Arrivo", "tipo": "escrito", "quedo": "si", "t": 1792100950.9346352}
+{"campo": "Arrivo", "tipo": "sugerencias", "t": 1792100951.249178, "opciones": "4"}
+{"quien": "jef", "tipo": "turno", "t": 1792100951.250109, "texto": "Hay 4 opciones para «Milano». ¿Cuál?"}
+{"tipo": "voz", "t": 1792100951.250774, "texto": "Hay 4 opciones para «Milano». ¿Cuál? Milano (Tutte le stazioni). Milano Centrale. Milano Porta Garibaldi", "cola": false}
+{"tipo": "botones", "opciones": ["Milano (Tutte le stazioni)", "Milano Centrale", "Milano Porta Garibaldi", "Ver más opciones (1)"], "t": 1792100951.2511048}
+{"tipo": "botones", "opciones": ["Milano (Tutte le stazioni)", "Milano Centrale", "Milano Porta Garibaldi", "Ver más opciones (1)", "Otra cosa"], "t": 1792100951.251322}
+{"opciones": [], "tipo": "botones", "t": 1792100958.948967}
+{"quien": "persona", "tipo": "turno", "texto": "Ver más opciones (1)", "t": 1792100958.950038}
+{"quien": "jef", "tipo": "turno", "texto": "Más opciones.", "t": 1792100958.950201}
+{"tipo": "voz", "texto": "Más opciones: Milano Rogoredo", "cola": false, "t": 1792100958.950671}
+{"tipo": "botones", "t": 1792100958.9507709, "opciones": ["Milano Rogoredo"]}
+{"tipo": "botones", "t": 1792100958.9509668, "opciones": ["Milano Rogoredo", "Otra cosa"]}

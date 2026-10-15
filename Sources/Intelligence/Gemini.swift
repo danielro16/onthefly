@@ -71,7 +71,11 @@ struct Gemini: Sendable {
         if direct {
             body["reasoning_effort"] = thinking ? "low" : "none"
         } else {
-            body["reasoning"] = ["enabled": thinking]
+            // Poco, como directo a Google. Prendido sin más, Luna razonaba
+            // hasta gastar los 1.000 tokens del ruteador y no contestaba nada
+            // (Trenitalia: 2 de 5, hasta 12,7 s); con "low", 5 de 5 en 3,6–5,5
+            // s y la misma decisión.
+            body["reasoning"] = thinking ? ["effort": "low"] : ["enabled": false]
         }
         return body
     }

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Meu INSS</title></head>
+<body>
+<!-- Como Meu INSS: la página se arma con JavaScript después de cargar. Al
+     llegar sólo está «GovBR»; un segundo y medio después, los servicios. -->
+<div id="app"><span>GovBR</span></div>
+<script>
+setTimeout(function () {
+  history.replaceState(null, "", "#/login");
+  document.getElementById("app").innerHTML =
+    '<h1>Meu INSS</h1>' +
+    '<h2>Serviços sem senha</h2>' +
+    '<ul>' +
+    '<li><a href="aposentadoria.html">Novo Pedido</a></li>' +
+    '<li><a href="taxas.html">Taxas de Empréstimo Consignado</a></li>' +
+    '<li><a href="calendario.html">Calendário de Pagamento</a></li>' +
+    '<li><a href="agencia.html">Encontre uma Agência</a></li>' +
+    '<li><a href="servicos.html">Mais Serviços</a></li>' +
+    '</ul>';
+}, 1500);
+</script>
+</body>
+</html>

@@ -2022,13 +2022,27 @@ final class Assistant {
         }
 
         for _ in 0..<max(steps, 1) {
-            guard let page = reader.page else {
+            guard let loaded = reader.page else {
                 say("Todavía no hay una página cargada.")
                 return
             }
+            // Una página sin nada para abrir casi siempre es una que todavía
+            // no se dibujó: Meu INSS arma la suya después de cargar, y al
+            // llegar sólo tenía «GovBR»; sus servicios aparecieron un segundo
+            // y medio después, y JEF ya había dicho que no había nada.
+            let later = openable(loaded).isEmpty ? await laterContent(than: loaded, on: reader) : nil
+            let page = later ?? loaded
             let options = openable(page)
+            // Y si de verdad no hay nada: en el primer paso, no está acá y se
+            // busca afuera; ya caminando, se cuenta dónde se llegó. Antes
+            // terminaba en "Esta página no ofrece nada que pueda abrir".
             guard !options.isEmpty else {
-                say("Esta página no ofrece nada que pueda abrir.")
+                working = false
+                if first {
+                    await searchElsewhere(orElse ?? "\(said ?? goal) \(page.displaySite)", question: question, on: reader)
+                } else {
+                    await landed(reader)
+                }
                 return
             }
 
@@ -2156,6 +2170,18 @@ final class Assistant {
         }
 
         await landed(reader)
+    }
+
+    /// La página que llegó después de `page`, si llega a tiempo: lo que un
+    /// sitio dibuja después de cargar entra solo (`pageChangedOnItsOwn`).
+    /// El mismo margen que se le da a un toque (`ReaderModel.lateLimit`).
+    private func laterContent(than page: ExtractedPage, on reader: ReaderModel) async -> ExtractedPage? {
+        let end = ContinuousClock.now.advanced(by: ReaderModel.lateLimit)
+        while ContinuousClock.now < end {
+            if let now = reader.page, !Self.stillOn(page, now) { return now }
+            try? await Task.sleep(for: .milliseconds(150))
+        }
+        return nil
     }
 
     /// No está en esta página: se busca afuera, diciéndolo. Con la pregunta,

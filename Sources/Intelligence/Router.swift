@@ -137,15 +137,22 @@ actor Router {
             try? await Task.sleep(for: .milliseconds(500 << attempt))
         }
 
+        let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        let choices = root?["choices"] as? [[String: Any]]
+        let message = choices?.first?["message"] as? [String: Any]
         guard
-            let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-            let choices = root["choices"] as? [[String: Any]],
-            let message = choices.first?["message"] as? [String: Any],
-            let content = message["content"] as? String,
+            let content = message?["content"] as? String,
             let parsed = Gemini.object(in: content),
             let name = (parsed["action"] ?? parsed["accion"]) as? String,
             let action = Action(rawValue: name)
-        else { throw RouterError.unusable }
+        else {
+            // Lo que vino, para saber por qué, como en `Answerer`: en
+            // Trenitalia quedó sólo "unusable" y no se supo la causa.
+            let head = String(((message?["content"] as? String) ?? String(decoding: data, as: UTF8.self)).prefix(400))
+            let reason = choices?.first?["finish_reason"] as? String ?? ""
+            await MainActor.run { Registro.anotar("respuesta_rota", ["donde": "ruteador", "contenido": head, "fin": reason]) }
+            throw RouterError.unusable
+        }
 
         func text(_ key: String) -> String? {
             guard let value = parsed[key] as? String else { return nil }
