@@ -1,0 +1,27 @@
+{"opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"], "tipo": "botones", "t": 1792100881.781069}
+{"quien": "persona", "t": 1792100888.234581, "texto": "http://localhost:8765/estaciones.html", "tipo": "turno"}
+{"tipo": "botones", "t": 1792100888.2357001, "opciones": []}
+{"quien": "jef", "t": 1792100888.236, "texto": "Abriendo localhost.", "tipo": "turno"}
+{"cola": false, "t": 1792100888.2362719, "texto": "Abriendo localhost.", "tipo": "voz"}
+{"t": 1792100888.285394, "tipo": "botones", "opciones": ["Llevame a La Nación", "¿A cuánto está el dólar hoy?", "¿Cómo va a estar el tiempo mañana?"]}
+{"red_ms": 82, "leida_ms": 663, "t": 1792100889.5397692, "url": "http://localhost:8765/estaciones.html", "apurada": false, "tipo": "carga"}
+{"t": 1792100889.541203, "titulo": "Treni — Cerca il tuo viaggio", "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»", "url": "http://localhost:8765/estaciones.html", "tipo": "pagina"}
+{"tipo": "botones", "t": 1792100889.541332, "opciones": []}
+{"p_sitio": "1.00", "pagina": "form", "aviso": "", "url": "http://localhost:8765/estaciones.html", "t": 1792100891.76503, "sitio": "travel", "modelo": "otra", "tipo": "tipo", "p_pagina": "1.00", "p_aviso": "0.00"}
+{"elementos": [], "url": "http://localhost:8765/estaciones.html", "tipo": "ruido", "t": 1792100891.765461}
+{"t": 1792100891.765655, "texto": "Treni sirve para buscar un viaje en tren; el formulario pide el lugar de partida y el de llegada.", "tipo": "turno", "quien": "jef"}
+{"texto": "Treni sirve para buscar un viaje en tren; el formulario pide el lugar de partida y el de llegada.", "cola": true, "tipo": "voz", "t": 1792100891.766155}
+{"t": 1792100891.766429, "opciones": ["Buscar un viaje en Treni"], "tipo": "botones"}
+{"t": 1792100891.766566, "opciones": ["Buscar un viaje en Treni", "Otra cosa"], "tipo": "botones"}
+{"tipo": "ubicacion", "t": 1792100891.914195, "error": "No se ha podido completar la operación. (Error de kCLErrorDomain 0.)"}
+{"texto": "poné Roma Termini en partenza", "t": 1792100900.171808, "quien": "persona", "tipo": "turno"}
+{"t": 1792100900.1720948, "opciones": [], "tipo": "botones"}
+{"question": "", "then": "", "accion": "completar", "target": "", "control": "1", "tipo": "decision", "rest": "", "reference": "", "tarea": "sigue", "t": 1792100902.0223908}
+{"tipo": "jev_adelantado", "usado": "no", "t": 1792100902.023097}
+{"url": "http://localhost:8765/estaciones.html", "titulo": "Treni — Cerca il tuo viaggio", "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»", "tipo": "pagina", "t": 1792100902.9164882}
+{"t": 1792100902.916802, "quedo": "si", "tipo": "escrito", "campo": "Partenza"}
+{"campo": "Partenza", "opciones": "1", "tipo": "sugerencias", "t": 1792100903.229426}
+{"titulo": "Treni — Cerca il tuo viaggio", "url": "http://localhost:8765/estaciones.html", "t": 1792100903.733572, "tipo": "pagina", "texto": "PAGE: localhost — Treni\n\nPAGE CONTENT (what the person came for):\nCerca il tuo viaggio\nFORM asking for: Partenza, Arrivo — button «Cerca»"}
+{"t": 1792100903.73398, "tipo": "turno", "quien": "jef", "texto": "Listo: elegí «Roma Termini»."}
+{"cola": false, "t": 1792100903.734396, "tipo": "voz", "texto": "Listo: elegí «Roma Termini»."}
+{"tipo": "botones", "opciones": ["Buscar un viaje en Treni", "Otra cosa"], "t": 1792100903.736228}
